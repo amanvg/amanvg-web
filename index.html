@@ -91,67 +91,14 @@
     }
 
     /* ─────────────────────────────────────────
-       HERO
-    ───────────────────────────────────────── */
-    .hero {
-      max-width: 960px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 80px 32px 60px;
-    }
-
-    .hero h1 {
-      font-size: clamp(38px, 6vw, 64px);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.05;
-      color: var(--text-primary);
-    }
-
-    .hero h1 em {
-      font-style: normal;
-      color: var(--text-tertiary);
-    }
-
-    .hero-sub {
-      font-size: 17px;
-      color: var(--text-secondary);
-      margin-top: 20px;
-      max-width: 480px;
-      line-height: 1.7;
-    }
-
-    /* ─────────────────────────────────────────
        PROJECTS
     ───────────────────────────────────────── */
     .projects {
       max-width: 960px;
       width: 100%;
       margin: 0 auto;
-      padding: 0 32px 80px;
+      padding: 40px 32px 80px;
       flex: 1;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-tertiary);
-      white-space: nowrap;
-    }
-
-    .section-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border);
     }
 
     .grid {
@@ -284,32 +231,6 @@
       gap: 8px;
     }
 
-    /* ── Placeholder card ── */
-    .card-placeholder {
-      background: transparent;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius-card);
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-height: 220px;
-      text-align: center;
-    }
-
-    .placeholder-icon {
-      font-size: 24px;
-      opacity: 0.2;
-    }
-
-    .placeholder-text {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-tertiary);
-    }
-
     /* ─────────────────────────────────────────
        ABOUT
     ───────────────────────────────────────── */
@@ -393,8 +314,7 @@
        RESPONSIVE
     ───────────────────────────────────────── */
     @media (max-width: 640px) {
-      .hero, .projects { padding-left: 20px; padding-right: 20px; }
-      .hero { padding-top: 52px; padding-bottom: 40px; }
+      .projects { padding-left: 20px; padding-right: 20px; }
       .nav-inner { padding: 0 20px; }
       .nav-links { display: none; }
       .about { padding: 40px 20px 48px; }
@@ -417,21 +337,8 @@
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="hero">
-    <h1>Hi, I'm Aman.<br><em>I make things sometimes.</em></h1>
-    <p class="hero-sub">
-      Not a developer — just someone who gets ideas and figures out how to build them. This is where they live.
-    </p>
-  </section>
-
   <!-- PROJECT GRID -->
   <main class="projects" id="projects">
-    <div class="section-header">
-      <span class="section-label">Things I've made</span>
-      <div class="section-line"></div>
-    </div>
-
     <div class="grid">
 
       <a class="card" href="/carpicker/">
@@ -451,12 +358,6 @@
         </div>
       </a>
 
-      <!-- Add new projects above this line -->
-      <div class="card-placeholder">
-        <div class="placeholder-icon">＋</div>
-        <p class="placeholder-text">More coming soon</p>
-      </div>
-
     </div>
   </main>
 
@@ -464,9 +365,9 @@
   <section class="about" id="about">
     <div class="about-inner">
       <div class="about-text">
-        <h2>About me</h2>
+        <h2>Aman Gandhi</h2>
         <p>
-          I'm not a programmer by trade, but I get ideas I can't let go of — so I build them. Some are useful, most are just fun. If something here made you smile or you want to chat, reach out.
+          Aman Gandhi is an IT analyst from Washington, USA.
         </p>
       </div>
       <a class="btn-email" href="mailto:amanvg@gmail.com">
