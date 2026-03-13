@@ -43,50 +43,52 @@
     /* ── SITE NAV ── */
     .site-nav {
       width: 100%;
-      background: rgba(13, 13, 13, 0.88);
+      background: rgba(13, 13, 13, 0.85);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid #262626;
       position: sticky;
       top: 0;
       z-index: 200;
     }
 
     .site-nav-inner {
-      max-width: 480px;
+      max-width: 960px;
       margin: 0 auto;
-      padding: 0 24px;
-      height: 48px;
+      padding: 0 32px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
+
+    .site-nav-logo {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #f0f0f0;
+      text-decoration: none;
+    }
+
+    .site-nav-logo span { color: #444; }
 
     .site-nav-back {
       font-size: 13px;
       font-weight: 500;
       color: #888;
       text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 5px 10px;
+      padding: 6px 12px;
       border-radius: 8px;
       transition: color 0.15s, background 0.15s;
     }
 
     .site-nav-back:hover {
       color: #f0f0f0;
-      background: rgba(255,255,255,0.07);
+      background: #262626;
     }
 
-    .site-nav-logo {
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #f0f0f0;
-      text-decoration: none;
-      opacity: 0.3;
+    @media (max-width: 640px) {
+      .site-nav-inner { padding: 0 20px; }
     }
 
     /* ── HEADER ── */
@@ -587,8 +589,8 @@
 
   <nav class="site-nav">
     <div class="site-nav-inner">
+      <a class="site-nav-logo" href="/">aman<span>vg</span></a>
       <a class="site-nav-back" href="/">← All projects</a>
-      <a class="site-nav-logo" href="/">amanvg</a>
     </div>
   </nav>
 
