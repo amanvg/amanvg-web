@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>carswipe — Find your perfect car</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --text-tertiary: #9ca3af;
+      --accept: #16a34a;
+      --accept-hover: #15803d;
+      --reject: #ef4444;
+      --reject-bg-hover: #fef2f2;
+      --find-btn: #1d4ed8;
+      --find-btn-hover: #1e40af;
+      --bubble-bg: #f9fafb;
+      --bubble-border: #e5e7eb;
+      --bubble-active-bg: #111827;
+      --bubble-active-text: #ffffff;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 10px 40px -4px rgba(0,0,0,0.10);
+      --radius-card: 20px;
+      --radius-btn: 12px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── HEADER ── */
+    header {
+      width: 100%;
+      max-width: 480px;
+      padding: 24px 24px 16px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .logo span {
+      color: var(--reject);
+    }
+
+    .tagline {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    /* ── MAIN WRAPPER ── */
+    #app {
+      width: 100%;
+      max-width: 440px;
+      padding: 0 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* ── CARD STAGE ── */
+    #card-stage {
+      position: relative;
+    }
+
+    #card-stage:empty {
+      display: none;
+    }
+
+    .car-card {
+      background: var(--card);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      animation: cardSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .car-card.exiting {
+      animation: cardSlideOut 0.35s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+    }
+
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes cardSlideOut {
+      from { opacity: 1; transform: translateX(0) rotate(0deg); }
+      to   { opacity: 0; transform: translateX(-110%) rotate(-8deg); }
+    }
+
+    /* ── CARD VISUAL ── */
+    .card-visual {
+      height: 220px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .card-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.18) 0%, transparent 70%);
+    }
+
+    .car-emoji {
+      font-size: 96px;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+      line-height: 1;
+    }
+
+    .card-year-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: blur(8px);
+      color: rgba(255,255,255,0.95);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.3);
+      letter-spacing: 0.04em;
+      z-index: 2;
+    }
+
+    /* ── CARD BODY ── */
+    .card-body {
+      padding: 20px 24px 0;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .body-type-pill {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      background: #f3f4f6;
+      color: var(--text-secondary);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .rarity-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+    }
+
+    .rarity-tag::before {
+      content: '·  ';
+    }
+
+    .car-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .car-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .car-price {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 12px;
+    }
+
+    .car-price-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-tertiary);
+      margin-right: 6px;
+    }
+
+    .car-note {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    /* ── SPEC BARS ── */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+      margin-top: 16px;
+    }
+
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .spec-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-tertiary);
+    }
+
+    .spec-track {
+      height: 6px;
+      background: #f3f4f6;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .spec-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ── CARD ACTIONS ── */
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      padding: 20px 24px 24px;
+      margin-top: 8px;
+    }
+
+    #reject-btn {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: var(--radius-btn);
+      background: transparent;
+      color: var(--reject);
+      border: 2px solid var(--reject);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.18s, color 0.18s;
+      animation: rejectPulse 2s ease-in-out 1.2s infinite;
+    }
+
+    #reject-btn:hover {
+      background: var(--reject-bg-hover);
+      animation: none;
+    }
+
+    @keyframes rejectPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+      50%       { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.12); }
+    }
+
+    #accept-btn {
+      flex: 1.4;
+      padding: 14px 20px;
+      border-radius: var(--radius-btn);
+      background: var(--accept);
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.18s, transform 0.1s;
+    }
+
+    #accept-btn:hover { background: var(--accept-hover); }
+    #accept-btn:active { transform: scale(0.98); }
+
+    /* ── REJECTION PANEL ── */
+    #rejection-panel {
+      background: var(--card);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-sm);
+      padding: 20px 24px 24px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    #rejection-panel.hidden { display: none; }
+
+    #rejection-panel.revealing {
+      animation: panelReveal 0.35s ease-out forwards;
+    }
+
+    @keyframes panelReveal {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-prompt {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-tertiary);
+      margin-bottom: 14px;
+    }
+
+    #bubble-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .axis-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .axis-row .reason-bubble {
+      flex: 1;
+      text-align: center;
+    }
+
+    .axis-row.single-row .reason-bubble {
+      flex: unset;
+      width: 100%;
+      text-align: center;
+      background: #f3f4f6;
+      color: var(--text-secondary);
+    }
+
+    .reason-bubble {
+      padding: 9px 18px;
+      border-radius: 999px;
+      border: 1.5px solid var(--bubble-border);
+      background: var(--bubble-bg);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      opacity: 0;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s;
+      animation: bubblePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .reason-bubble:hover:not(.active) {
+      border-color: #d1d5db;
+      background: #f3f4f6;
+    }
+
+    .reason-bubble.active {
+      background: var(--bubble-active-bg);
+      color: var(--bubble-active-text);
+      border-color: var(--bubble-active-bg);
+      transform: scale(1.04);
+    }
+
+    @keyframes bubblePop {
+      0%   { opacity: 0; transform: scale(0.5) translateY(8px); }
+      70%  { transform: scale(1.08) translateY(-2px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    #find-better-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: var(--radius-btn);
+      background: var(--find-btn);
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 16px;
+      transition: background 0.18s;
+    }
+
+    #find-better-btn:hover { background: var(--find-btn-hover); }
+    #find-better-btn.hidden { display: none; }
+
+    #find-better-btn.appearing {
+      animation: findBtnFadeUp 0.25s ease-out forwards;
+    }
+
+    @keyframes findBtnFadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CONFIRMATION SCREEN ── */
+    #confirmation-screen {
+      background: var(--card);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      padding: 48px 32px;
+      text-align: center;
+    }
+
+    #confirmation-screen.hidden { display: none; }
+
+    #confirmation-screen.appearing {
+      animation: confirmReveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes confirmReveal {
+      from { opacity: 0; transform: scale(0.9); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .confirm-icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+    }
+
+    .confirm-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .confirm-car-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accept);
+      margin-top: 8px;
+    }
+
+    .confirm-message {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    #restart-btn {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 13px 32px;
+      border-radius: var(--radius-btn);
+      background: var(--text-primary);
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.18s;
+    }
+
+    #restart-btn:hover { opacity: 0.85; }
+
+    /* ── EMPTY STATE ── */
+    #empty-screen {
+      background: var(--card);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      padding: 48px 32px;
+      text-align: center;
+    }
+
+    #empty-screen.hidden { display: none; }
+
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+    .empty-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .empty-message {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    #empty-restart-btn {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 13px 32px;
+      border-radius: var(--radius-btn);
+      background: var(--find-btn);
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.18s;
+    }
+
+    #empty-restart-btn:hover { background: var(--find-btn-hover); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .car-name { font-size: 24px; }
+      .card-actions { flex-direction: column; gap: 8px; }
+      #accept-btn, #reject-btn { flex: unset; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">car<span>swipe</span></div>
+    <p class="tagline">Find the car that's actually you.</p>
+  </header>
+
+  <div id="app">
+
+    <div id="card-stage">
+      <!-- Car card injected here by JS -->
+    </div>
+
+    <div id="rejection-panel" class="hidden">
+      <p class="panel-prompt">What's not working for you?</p>
+      <div id="bubble-container"></div>
+      <button id="find-better-btn" class="hidden">Find Me Something Better →</button>
+    </div>
+
+    <div id="confirmation-screen" class="hidden">
+      <div class="confirm-icon">🎉</div>
+      <h2 class="confirm-title">Great Choice!</h2>
+      <p class="confirm-car-name" id="confirm-car-name"></p>
+      <p class="confirm-message" id="confirm-message"></p>
+      <button id="restart-btn">Start Over</button>
+    </div>
+
+    <div id="empty-screen" class="hidden">
+      <div class="empty-icon">😤</div>
+      <h2 class="empty-title">You're impossible to please...</h2>
+      <p class="empty-message">You've rejected every car in existence. Honestly? Respect. Maybe it's time to lower the bar — just a little.</p>
+      <button id="empty-restart-btn">Start Over</button>
+    </div>
+
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    // DATA
+    // ═══════════════════════════════════════════════════════════
+
+    const CAR_DATABASE = [
+      {
+        id: 'versa', name: 'Nissan Versa', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$18,330 – $22,000',
+        priceScore: 1, speedScore: 1, sizeScore: 3, styleScore: 1, rarityScore: 1, funScore: 1, practicalityScore: 3,
+        colorAccent: '#6b7280',
+        emoji: '🚗',
+        description: "The most basic car money can buy. Gets you there. That's about it.",
+        note: null
+      },
+      {
+        id: 'spark', name: 'Chevrolet Spark', year: '2025', bodyType: 'Hatchback',
+        priceDisplay: '$19,300 – $22,000',
+        priceScore: 1, speedScore: 1, sizeScore: 2, styleScore: 2, rarityScore: 2, funScore: 2, practicalityScore: 2,
+        colorAccent: '#9ca3af',
+        emoji: '🚗',
+        description: "Tiny. Cheap. Parks anywhere. Practically invisible on the highway.",
+        note: null
+      },
+      {
+        id: 'venue', name: 'Hyundai Venue', year: '2025', bodyType: 'Subcompact SUV',
+        priceDisplay: '$21,550 – $26,000',
+        priceScore: 2, speedScore: 1, sizeScore: 3, styleScore: 3, rarityScore: 2, funScore: 2, practicalityScore: 4,
+        colorAccent: '#60a5fa',
+        emoji: '🚙',
+        description: "A miniature SUV for city life. What it lacks in power, it makes up for in cuteness.",
+        note: null
+      },
+      {
+        id: 'trax', name: 'Chevrolet Trax', year: '2025', bodyType: 'Subcompact SUV',
+        priceDisplay: '$21,795 – $26,500',
+        priceScore: 2, speedScore: 1, sizeScore: 4, styleScore: 3, rarityScore: 2, funScore: 2, practicalityScore: 5,
+        colorAccent: '#f97316',
+        emoji: '🚙',
+        description: "Budget SUV with a bold face. More style than its price tag suggests.",
+        note: null
+      },
+      {
+        id: 'soul', name: 'Kia Soul', year: '2025', bodyType: 'Hatchback',
+        priceDisplay: '$21,885 – $28,000',
+        priceScore: 2, speedScore: 1, sizeScore: 3, styleScore: 5, rarityScore: 3, funScore: 4, practicalityScore: 5,
+        colorAccent: '#f59e0b',
+        emoji: '🚗',
+        description: "Boxy but beautiful. A true original that refuses to blend in.",
+        note: null
+      },
+      {
+        id: 'sentra', name: 'Nissan Sentra', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$22,730 – $26,000',
+        priceScore: 2, speedScore: 2, sizeScore: 3, styleScore: 2, rarityScore: 1, funScore: 2, practicalityScore: 3,
+        colorAccent: '#64748b',
+        emoji: '🚗',
+        description: "The reliable sedan you rent at the airport. Competent and completely forgettable.",
+        note: null
+      },
+      {
+        id: 'forte', name: 'Kia Forte', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$23,850 – $27,000',
+        priceScore: 2, speedScore: 2, sizeScore: 3, styleScore: 3, rarityScore: 2, funScore: 3, practicalityScore: 3,
+        colorAccent: '#3b82f6',
+        emoji: '🚗',
+        description: "Good value, good warranty, good enough. Kia's bread-and-butter done right.",
+        note: null
+      },
+      {
+        id: 'elantra', name: 'Hyundai Elantra', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$23,450 – $27,500',
+        priceScore: 2, speedScore: 2, sizeScore: 3, styleScore: 4, rarityScore: 2, funScore: 3, practicalityScore: 3,
+        colorAccent: '#0ea5e9',
+        emoji: '🚗',
+        description: "Looks sharper than its price tag. The Elantra quietly outpunches its class.",
+        note: null
+      },
+      {
+        id: 'corolla', name: 'Toyota Corolla', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$24,200 – $28,500',
+        priceScore: 3, speedScore: 2, sizeScore: 3, styleScore: 2, rarityScore: 2, funScore: 2, practicalityScore: 4,
+        colorAccent: '#dc2626',
+        emoji: '🚗',
+        description: "The gold standard of sensible — dependable, efficient, invisible.",
+        note: null
+      },
+      {
+        id: 'civic', name: 'Honda Civic', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$24,950 – $30,000',
+        priceScore: 3, speedScore: 3, sizeScore: 3, styleScore: 4, rarityScore: 2, funScore: 4, practicalityScore: 4,
+        colorAccent: '#2563eb',
+        emoji: '🚗',
+        description: "America's favorite compact for a reason. Reliable, refined, and everywhere.",
+        note: null
+      },
+      {
+        id: 'jetta', name: 'Volkswagen Jetta', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$24,895 – $30,000',
+        priceScore: 3, speedScore: 3, sizeScore: 3, styleScore: 4, rarityScore: 3, funScore: 4, practicalityScore: 4,
+        colorAccent: '#1d4ed8',
+        emoji: '🚗',
+        description: "German engineering for the masses. Slightly upscale, surprisingly fun.",
+        note: null
+      },
+      {
+        id: 'impreza', name: 'Subaru Impreza', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$25,995 – $30,000',
+        priceScore: 3, speedScore: 3, sizeScore: 3, styleScore: 3, rarityScore: 3, funScore: 4, practicalityScore: 4,
+        colorAccent: '#16a34a',
+        emoji: '🚗',
+        description: "AWD as standard. For people who live somewhere it actually snows.",
+        note: null
+      },
+      {
+        id: 'mazda3', name: 'Mazda Mazda3', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$26,450 – $34,000',
+        priceScore: 3, speedScore: 3, sizeScore: 3, styleScore: 6, rarityScore: 4, funScore: 6, practicalityScore: 3,
+        colorAccent: '#b91c1c',
+        emoji: '🚗',
+        description: "The fun-to-drive pick in a boring class. Mazda3 makes economy feel premium.",
+        note: null
+      },
+      {
+        id: 'leaf', name: 'Nissan Leaf', year: '2024', bodyType: 'EV Hatchback',
+        priceDisplay: '$28,140 – $36,000',
+        priceScore: 3, speedScore: 3, sizeScore: 3, styleScore: 4, rarityScore: 3, funScore: 4, practicalityScore: 4,
+        colorAccent: '#22c55e',
+        emoji: '🚗',
+        description: "The original mass-market EV. Quietly changed the world, now quietly commutes.",
+        note: null
+      },
+      {
+        id: 'prius', name: 'Toyota Prius', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$28,650 – $35,000',
+        priceScore: 3, speedScore: 1, sizeScore: 3, styleScore: 3, rarityScore: 2, funScore: 2, practicalityScore: 4,
+        colorAccent: '#4ade80',
+        emoji: '🚗',
+        description: "57 mpg combined. You'll save on gas while being gently teased about it.",
+        note: null
+      },
+      {
+        id: 'miata', name: 'Mazda MX-5 Miata', year: '2024', bodyType: 'Roadster',
+        priceDisplay: '$30,170 – $38,000',
+        priceScore: 3, speedScore: 6, sizeScore: 1, styleScore: 8, rarityScore: 6, funScore: 9, practicalityScore: 1,
+        colorAccent: '#dc2626',
+        emoji: '🏎️',
+        description: "Pure driving joy in a tiny package. No trunk, no back seat, no apologies.",
+        note: "2 seats — trunk fits 1 carry-on"
+      },
+      {
+        id: 'mustang', name: 'Ford Mustang GT', year: '2025', bodyType: 'Coupe',
+        priceDisplay: '$28,995 – $42,000',
+        priceScore: 3, speedScore: 8, sizeScore: 3, styleScore: 9, rarityScore: 4, funScore: 10, practicalityScore: 2,
+        colorAccent: '#dc2626',
+        emoji: '🏎️',
+        description: "America's pony car. Still the loudest, most theatrical way to get groceries.",
+        note: "0–60 in ~4.3s"
+      },
+      {
+        id: 'accord', name: 'Honda Accord', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$28,700 – $38,000',
+        priceScore: 3, speedScore: 4, sizeScore: 5, styleScore: 4, rarityScore: 2, funScore: 4, practicalityScore: 5,
+        colorAccent: '#475569',
+        emoji: '🚗',
+        description: "The midsize sedan that has been quietly excellent for 40+ years.",
+        note: null
+      },
+      {
+        id: 'camry', name: 'Toyota Camry', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$29,400 – $37,000',
+        priceScore: 3, speedScore: 3, sizeScore: 5, styleScore: 3, rarityScore: 2, funScore: 3, practicalityScore: 5,
+        colorAccent: '#374151',
+        emoji: '🚗',
+        description: "If reliability were a car, it would be this. Impossibly durable, slightly dull.",
+        note: null
+      },
+      {
+        id: 'sonata', name: 'Hyundai Sonata', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$29,850 – $36,000',
+        priceScore: 3, speedScore: 3, sizeScore: 4, styleScore: 5, rarityScore: 3, funScore: 4, practicalityScore: 4,
+        colorAccent: '#2563eb',
+        emoji: '🚗',
+        description: "More stylish than it gets credit for. The Sonata keeps raising the bar.",
+        note: null
+      },
+      {
+        id: 'altima', name: 'Nissan Altima', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$30,100 – $36,000',
+        priceScore: 3, speedScore: 3, sizeScore: 4, styleScore: 3, rarityScore: 2, funScore: 3, practicalityScore: 4,
+        colorAccent: '#0f172a',
+        emoji: '🚗',
+        description: "Roomy, comfortable, and utterly inoffensive. The quintessential midsize.",
+        note: null
+      },
+      {
+        id: 'gr86', name: 'Toyota GR86', year: '2025', bodyType: 'Sports Coupe',
+        priceDisplay: '$30,000 – $34,000',
+        priceScore: 3, speedScore: 7, sizeScore: 2, styleScore: 8, rarityScore: 6, funScore: 9, practicalityScore: 1,
+        colorAccent: '#c2410c',
+        emoji: '🏎️',
+        description: "The purest sports car under $35k. Lightweight, rear-wheel-drive, grin-inducing.",
+        note: "0–60 in ~6.1s"
+      },
+      {
+        id: 'wrx', name: 'Subaru WRX', year: '2025', bodyType: 'Sedan',
+        priceDisplay: '$32,000 – $40,000',
+        priceScore: 4, speedScore: 8, sizeScore: 4, styleScore: 7, rarityScore: 5, funScore: 9, practicalityScore: 3,
+        colorAccent: '#1d4ed8',
+        emoji: '🏎️',
+        description: "Rally car for everyday use. Turbo AWD in a sensible sedan shape.",
+        note: "0–60 in ~5.1s"
+      },
+      {
+        id: 'blazer', name: 'Chevrolet Blazer', year: '2025', bodyType: 'Compact SUV',
+        priceDisplay: '$33,500 – $47,000',
+        priceScore: 4, speedScore: 4, sizeScore: 5, styleScore: 6, rarityScore: 3, funScore: 5, practicalityScore: 5,
+        colorAccent: '#c2410c',
+        emoji: '🚙',
+        description: "Sporty lines and bold styling that actually mean something on this SUV.",
+        note: null
+      },
+      {
+        id: 'escape', name: 'Ford Escape', year: '2025', bodyType: 'Compact SUV',
+        priceDisplay: '$34,795 – $42,000',
+        priceScore: 4, speedScore: 3, sizeScore: 5, styleScore: 3, rarityScore: 2, funScore: 3, practicalityScore: 6,
+        colorAccent: '#6d28d9',
+        emoji: '🚙',
+        description: "The go-to family compact SUV. Practical, popular, and perfectly adequate.",
+        note: null
+      },
+      {
+        id: 'crv', name: 'Honda CR-V', year: '2025', bodyType: 'Compact SUV',
+        priceDisplay: '$35,250 – $43,000',
+        priceScore: 4, speedScore: 3, sizeScore: 6, styleScore: 3, rarityScore: 2, funScore: 3, practicalityScore: 7,
+        colorAccent: '#1e40af',
+        emoji: '🚙',
+        description: "The benchmark compact SUV. Best-in-class cargo space, always in someone's driveway.",
+        note: "68 cu ft cargo"
+      },
+      {
+        id: 'rav4', name: 'Toyota RAV4', year: '2025', bodyType: 'Compact SUV',
+        priceDisplay: '$36,100 – $43,000',
+        priceScore: 4, speedScore: 3, sizeScore: 6, styleScore: 3, rarityScore: 2, funScore: 3, practicalityScore: 7,
+        colorAccent: '#92400e',
+        emoji: '🚙',
+        description: "The best-selling SUV in the US for good reason. Bulletproof reliability.",
+        note: "37.6 mpg hybrid"
+      },
+      {
+        id: 'cx5', name: 'Mazda CX-5', year: '2025', bodyType: 'Compact SUV',
+        priceDisplay: '$36,500 – $44,000',
+        priceScore: 4, speedScore: 4, sizeScore: 5, styleScore: 7, rarityScore: 4, funScore: 6, practicalityScore: 5,
+        colorAccent: '#7c3aed',
+        emoji: '🚙',
+        description: "The beautiful overachiever of compact SUVs. Premium feel without the premium price.",
+        note: null
+      },
+      {
+        id: 'equinox_ev', name: 'Chevrolet Equinox EV', year: '2025', bodyType: 'Electric SUV',
+        priceDisplay: '$35,000 – $45,000',
+        priceScore: 4, speedScore: 3, sizeScore: 6, styleScore: 5, rarityScore: 3, funScore: 5, practicalityScore: 6,
+        colorAccent: '#0369a1',
+        emoji: '🚙',
+        description: "Affordable electric SUV with 300+ miles of range. The EV for everyone.",
+        note: "300+ mile range"
+      },
+      {
+        id: 'sorento', name: 'Kia Sorento', year: '2025', bodyType: 'Midsize SUV',
+        priceDisplay: '$38,450 – $50,000',
+        priceScore: 4, speedScore: 3, sizeScore: 7, styleScore: 5, rarityScore: 3, funScore: 4, practicalityScore: 7,
+        colorAccent: '#065f46',
+        emoji: '🚙',
+        description: "Three-row family transport done with surprising style and value.",
+        note: "Seats 7"
+      },
+      {
+        id: 'santa_fe', name: 'Hyundai Santa Fe', year: '2025', bodyType: 'Midsize SUV',
+        priceDisplay: '$39,250 – $48,000',
+        priceScore: 4, speedScore: 3, sizeScore: 7, styleScore: 5, rarityScore: 3, funScore: 4, practicalityScore: 7,
+        colorAccent: '#7e22ce',
+        emoji: '🚙',
+        description: "Bold styling meets family practicality. The Santa Fe just got bolder.",
+        note: "Seats 7"
+      },
+      {
+        id: 'odyssey', name: 'Honda Odyssey', year: '2025', bodyType: 'Minivan',
+        priceDisplay: '$38,700 – $53,000',
+        priceScore: 4, speedScore: 2, sizeScore: 9, styleScore: 1, rarityScore: 1, funScore: 1, practicalityScore: 10,
+        colorAccent: '#6b7280',
+        emoji: '🚐',
+        description: "The ultimate family hauler. Zero street cred. Infinite dad cred.",
+        note: "Seats 8 · 158 cu ft cargo"
+      },
+      {
+        id: 'sienna', name: 'Toyota Sienna', year: '2025', bodyType: 'Minivan',
+        priceDisplay: '$39,850 – $55,000',
+        priceScore: 4, speedScore: 2, sizeScore: 9, styleScore: 2, rarityScore: 1, funScore: 2, practicalityScore: 10,
+        colorAccent: '#4b5563',
+        emoji: '🚐',
+        description: "The only hybrid minivan. 36 mpg while hauling your whole soccer team.",
+        note: "Seats 8 · 36 mpg hybrid"
+      },
+      {
+        id: 'pacifica', name: 'Chrysler Pacifica', year: '2025', bodyType: 'Minivan',
+        priceDisplay: '$42,500 – $57,000',
+        priceScore: 5, speedScore: 2, sizeScore: 9, styleScore: 3, rarityScore: 2, funScore: 2, practicalityScore: 9,
+        colorAccent: '#7c3aed',
+        emoji: '🚐',
+        description: "The most stylish minivan ever made. Still a minivan, but you knew that.",
+        note: "Seats 7–8 · Available PHEV"
+      },
+      {
+        id: 'f150', name: 'Ford F-150', year: '2025', bodyType: 'Pickup Truck',
+        priceDisplay: '$39,885 – $70,000',
+        priceScore: 4, speedScore: 5, sizeScore: 9, styleScore: 5, rarityScore: 2, funScore: 5, practicalityScore: 9,
+        colorAccent: '#1e3a5f',
+        emoji: '🛻',
+        description: "America's best-selling vehicle for 47 years running. There's a reason.",
+        note: "Tows up to 14,000 lbs"
+      },
+      {
+        id: 'silverado', name: 'Chevrolet Silverado 1500', year: '2025', bodyType: 'Pickup Truck',
+        priceDisplay: '$39,400 – $65,000',
+        priceScore: 4, speedScore: 5, sizeScore: 9, styleScore: 4, rarityScore: 2, funScore: 5, practicalityScore: 9,
+        colorAccent: '#b91c1c',
+        emoji: '🛻',
+        description: "The working man's workhorse. Does everything you need, nothing it doesn't.",
+        note: "Tows up to 13,300 lbs"
+      },
+      {
+        id: 'tundra', name: 'Toyota Tundra', year: '2025', bodyType: 'Pickup Truck',
+        priceDisplay: '$43,000 – $67,000',
+        priceScore: 5, speedScore: 6, sizeScore: 9, styleScore: 5, rarityScore: 3, funScore: 6, practicalityScore: 9,
+        colorAccent: '#7c2d12',
+        emoji: '🛻',
+        description: "Toyota's tough truck finally gets a twin-turbo hybrid. Big, reliable, capable.",
+        note: "Tows up to 12,000 lbs"
+      },
+      {
+        id: 'trx', name: 'RAM 1500 TRX', year: '2024', bodyType: 'Performance Truck',
+        priceDisplay: '$51,185 – $72,000',
+        priceScore: 6, speedScore: 8, sizeScore: 9, styleScore: 7, rarityScore: 5, funScore: 9, practicalityScore: 8,
+        colorAccent: '#dc2626',
+        emoji: '🛻',
+        description: "702 horsepower pickup truck. Entirely unnecessary. Absolutely magnificent.",
+        note: "702hp · 0–60 in 4.5s · Tows 8,100 lbs"
+      },
+      {
+        id: 'model3', name: 'Tesla Model 3', year: '2025', bodyType: 'Electric Sedan',
+        priceDisplay: '$39,990 – $54,000',
+        priceScore: 5, speedScore: 7, sizeScore: 4, styleScore: 8, rarityScore: 4, funScore: 8, practicalityScore: 4,
+        colorAccent: '#374151',
+        emoji: '🚗',
+        description: "The EV that made EVs mainstream. Screaming fast, minimal interior, divisive.",
+        note: "0–60 in 3.1s (Performance) · 358 mi range"
+      },
+      {
+        id: 'model_y', name: 'Tesla Model Y', year: '2025', bodyType: 'Electric SUV',
+        priceDisplay: '$45,990 – $58,000',
+        priceScore: 5, speedScore: 7, sizeScore: 6, styleScore: 7, rarityScore: 3, funScore: 7, practicalityScore: 6,
+        colorAccent: '#374151',
+        emoji: '🚙',
+        description: "The best-selling vehicle on earth. Fast, practical, minimalist, polarizing.",
+        note: "0–60 in 3.5s · 330 mi range"
+      },
+      {
+        id: 'ioniq5', name: 'Hyundai Ioniq 5', year: '2025', bodyType: 'Electric SUV',
+        priceDisplay: '$42,650 – $55,000',
+        priceScore: 5, speedScore: 8, sizeScore: 5, styleScore: 8, rarityScore: 5, funScore: 8, practicalityScore: 4,
+        colorAccent: '#4338ca',
+        emoji: '🚙',
+        description: "Retro-futuristic design, blazing fast charging, and genuinely quick. Stand-out EV.",
+        note: "0–60 in 3.4s · 266 mi range"
+      },
+      {
+        id: 'highlander', name: 'Toyota Highlander', year: '2025', bodyType: 'Midsize SUV',
+        priceDisplay: '$42,700 – $55,000',
+        priceScore: 5, speedScore: 3, sizeScore: 8, styleScore: 4, rarityScore: 2, funScore: 3, practicalityScore: 8,
+        colorAccent: '#6b7280',
+        emoji: '🚙',
+        description: "Seats eight, hauls everything, never breaks down. The family road trip champion.",
+        note: "Seats 8 · Available hybrid"
+      },
+      {
+        id: 'pilot', name: 'Honda Pilot', year: '2025', bodyType: 'Midsize SUV',
+        priceDisplay: '$43,850 – $54,000',
+        priceScore: 5, speedScore: 3, sizeScore: 8, styleScore: 4, rarityScore: 2, funScore: 3, practicalityScore: 9,
+        colorAccent: '#0f172a',
+        emoji: '🚙',
+        description: "The thoughtful family SUV. More clever storage solutions than IKEA.",
+        note: "Seats 8 · 5,000 lb tow"
+      },
+      {
+        id: 'telluride', name: 'Kia Telluride', year: '2025', bodyType: 'Midsize SUV',
+        priceDisplay: '$45,700 – $58,000',
+        priceScore: 5, speedScore: 3, sizeScore: 8, styleScore: 6, rarityScore: 3, funScore: 5, practicalityScore: 8,
+        colorAccent: '#134e4a',
+        emoji: '🚙',
+        description: "The SUV that embarrassed luxury brands. Stunning value, striking looks.",
+        note: "Seats 8 · Car of the Year winner"
+      },
+      {
+        id: 'grand_cherokee', name: 'Jeep Grand Cherokee L', year: '2025', bodyType: 'Midsize SUV',
+        priceDisplay: '$47,200 – $65,000',
+        priceScore: 5, speedScore: 5, sizeScore: 9, styleScore: 6, rarityScore: 3, funScore: 6, practicalityScore: 7,
+        colorAccent: '#166534',
+        emoji: '🚙',
+        description: "Off-road capability with three rows. Goes anywhere, fits everyone.",
+        note: "Seats 7 · Trail Rated"
+      },
+      {
+        id: 'cadxt5', name: 'Cadillac XT5', year: '2025', bodyType: 'Luxury SUV',
+        priceDisplay: '$44,295 – $58,000',
+        priceScore: 5, speedScore: 5, sizeScore: 6, styleScore: 7, rarityScore: 5, funScore: 6, practicalityScore: 6,
+        colorAccent: '#92400e',
+        emoji: '🚙',
+        description: "American luxury in a compact SUV form. Plush, quiet, and distinctive.",
+        note: null
+      },
+      {
+        id: 'volvo_xc90', name: 'Volvo XC90', year: '2025', bodyType: 'Luxury SUV',
+        priceDisplay: '$51,550 – $72,000',
+        priceScore: 6, speedScore: 5, sizeScore: 8, styleScore: 7, rarityScore: 5, funScore: 6, practicalityScore: 7,
+        colorAccent: '#475569',
+        emoji: '🚙',
+        description: "Scandinavia's finest SUV. Serenely safe, understated luxury, world-class interior.",
+        note: "Seats 7 · Available PHEV"
+      },
+      {
+        id: 'genesis_gv80', name: 'Genesis GV80', year: '2025', bodyType: 'Luxury SUV',
+        priceDisplay: '$52,200 – $70,000',
+        priceScore: 6, speedScore: 6, sizeScore: 6, styleScore: 8, rarityScore: 6, funScore: 7, practicalityScore: 6,
+        colorAccent: '#1e293b',
+        emoji: '🚙',
+        description: "Korea's answer to BMW and Mercedes. Jaw-dropping interior, under-the-radar appeal.",
+        note: null
+      },
+      {
+        id: 'lexus_gx', name: 'Lexus GX 550', year: '2025', bodyType: 'Luxury SUV',
+        priceDisplay: '$52,700 – $72,000',
+        priceScore: 6, speedScore: 5, sizeScore: 7, styleScore: 7, rarityScore: 6, funScore: 7, practicalityScore: 6,
+        colorAccent: '#3f3f46',
+        emoji: '🚙',
+        description: "Off-road luxury done the Lexus way. Tough enough to go anywhere, refined enough to regret going there.",
+        note: null
+      },
+      {
+        id: 'cadct5', name: 'Cadillac CT5', year: '2025', bodyType: 'Luxury Sedan',
+        priceDisplay: '$48,990 – $72,000',
+        priceScore: 6, speedScore: 7, sizeScore: 5, styleScore: 7, rarityScore: 6, funScore: 7, practicalityScore: 4,
+        colorAccent: '#fbbf24',
+        emoji: '🚗',
+        description: "The last American luxury sports sedan standing. Bold, V8-powered, and defiant.",
+        note: null
+      },
+      {
+        id: 'escalade', name: 'Cadillac Escalade', year: '2025', bodyType: 'Full-Size Luxury SUV',
+        priceDisplay: '$58,900 – $105,000',
+        priceScore: 7, speedScore: 6, sizeScore: 10, styleScore: 8, rarityScore: 5, funScore: 7, practicalityScore: 7,
+        colorAccent: '#1c1917',
+        emoji: '🚙',
+        description: "American excess at its most unapologetic. The original luxury SUV, still the king.",
+        note: "Seats 7–8 · Available Super Cruise"
+      },
+      {
+        id: 'bmwm2', name: 'BMW M2', year: '2025', bodyType: 'Sports Coupe',
+        priceDisplay: '$65,500 – $78,000',
+        priceScore: 7, speedScore: 9, sizeScore: 3, styleScore: 9, rarityScore: 7, funScore: 10, practicalityScore: 1,
+        colorAccent: '#1e3a5f',
+        emoji: '🏎️',
+        description: "The last pure M car. Analog thrills in the age of digital everything.",
+        note: "0–60 in 4.1s"
+      },
+      {
+        id: 'corvette', name: 'Chevrolet Corvette', year: '2025', bodyType: 'Sports Coupe',
+        priceDisplay: '$68,300 – $95,000',
+        priceScore: 7, speedScore: 10, sizeScore: 3, styleScore: 10, rarityScore: 7, funScore: 10, practicalityScore: 1,
+        colorAccent: '#fbbf24',
+        emoji: '🏎️',
+        description: "Mid-engine American supercar. 0–60 in under 3 seconds. You're welcome, world.",
+        note: "0–60 in 2.9s"
+      },
+      {
+        id: 'model_s', name: 'Tesla Model S', year: '2025', bodyType: 'Electric Sedan',
+        priceDisplay: '$68,990 – $90,000',
+        priceScore: 8, speedScore: 10, sizeScore: 5, styleScore: 9, rarityScore: 6, funScore: 9, practicalityScore: 4,
+        colorAccent: '#111827',
+        emoji: '🚗',
+        description: "The Plaid does 0–60 in 1.99s. No exhaust note, just science fiction.",
+        note: "0–60 in 1.99s (Plaid) · 405 mi range"
+      },
+      {
+        id: 'lucid_gt', name: 'Lucid Air Grand Touring', year: '2025', bodyType: 'Electric Luxury Sedan',
+        priceDisplay: '$69,900 – $88,000',
+        priceScore: 8, speedScore: 9, sizeScore: 5, styleScore: 9, rarityScore: 8, funScore: 9, practicalityScore: 4,
+        colorAccent: '#1e1b4b',
+        emoji: '🚗',
+        description: "516 miles of range. The future of luxury arrived early and smells like leather.",
+        note: "516 mi range · 0–60 in 3.0s"
+      },
+      {
+        id: 'cayman', name: 'Porsche 718 Cayman', year: '2025', bodyType: 'Sports Coupe',
+        priceDisplay: '$68,300 – $90,000',
+        priceScore: 7, speedScore: 8, sizeScore: 3, styleScore: 10, rarityScore: 8, funScore: 10, practicalityScore: 1,
+        colorAccent: '#7c3aed',
+        emoji: '🏎️',
+        description: "Mid-engine perfection. The benchmark for how a sports car should feel.",
+        note: "0–60 in 4.4s"
+      },
+      {
+        id: 'g_class', name: 'Mercedes G-Class', year: '2025', bodyType: 'Luxury SUV',
+        priceDisplay: '$145,000 – $175,000',
+        priceScore: 10, speedScore: 7, sizeScore: 8, styleScore: 10, rarityScore: 9, funScore: 9, practicalityScore: 6,
+        colorAccent: '#1c1917',
+        emoji: '🚙',
+        description: "45 years of design: zero changes, zero apologies. The boxy legend lives on.",
+        note: "Turns heads. Every. Single. Time."
+      },
+      {
+        id: 'porsche911', name: 'Porsche 911', year: '2025', bodyType: 'Sports Coupe',
+        priceDisplay: '$120,100 – $200,000',
+        priceScore: 9, speedScore: 10, sizeScore: 3, styleScore: 10, rarityScore: 9, funScore: 10, practicalityScore: 1,
+        colorAccent: '#c2410c',
+        emoji: '🏎️',
+        description: "The benchmark sports car since 1963. Rear engine, rear-wheel-drive, religious experience.",
+        note: "0–60 in 3.1s (Carrera)"
+      },
+      {
+        id: 'amg_gt', name: 'Mercedes-AMG GT 55', year: '2025', bodyType: 'Sports Coupe',
+        priceDisplay: '$134,900 – $165,000',
+        priceScore: 9, speedScore: 9, sizeScore: 4, styleScore: 10, rarityScore: 9, funScore: 10, practicalityScore: 1,
+        colorAccent: '#111827',
+        emoji: '🏎️',
+        description: "German theater on four wheels. The AMG GT is violent, beautiful, and loud.",
+        note: "0–60 in 3.7s · AMG 4.0L V8"
+      },
+      {
+        id: 'lucid_sapphire', name: 'Lucid Air Sapphire', year: '2025', bodyType: 'Electric Hypercar Sedan',
+        priceDisplay: '$249,000+',
+        priceScore: 10, speedScore: 10, sizeScore: 5, styleScore: 10, rarityScore: 10, funScore: 10, practicalityScore: 3,
+        colorAccent: '#4c1d95',
+        emoji: '🚗',
+        description: "1,234 horsepower. 0–60 in 1.89 seconds. A family sedan from another dimension.",
+        note: "0–60 in 1.89s · Fastest sedan ever made"
+      }
+    ];
+
+    const REJECTION_AXES = [
+      {
+        left:  { label: 'Boring',        emoji: '😴', effects: { minFun: 2, minStyle: 1 } },
+        right: { label: 'Flashy',        emoji: '⚡', effects: { maxFun: -2, maxStyle: -1 } }
+      },
+      {
+        left:  { label: 'Slow',          emoji: '🐢', effects: { minSpeed: 2 } },
+        right: { label: 'Fast',          emoji: '🚀', effects: { maxSpeed: -2 } }
+      },
+      {
+        left:  { label: 'Expensive',     emoji: '💸', effects: { maxPrice: -2 } },
+        right: { label: 'Cheap',         emoji: '🪙', effects: { minPrice: 2 } }
+      },
+      {
+        left:  { label: 'Common',        emoji: '👀', effects: { minRarity: 2 } },
+        right: { label: 'Rare',          emoji: '💎', effects: { maxRarity: -2 } }
+      },
+      {
+        left:  { label: 'Not Practical', emoji: '🧳', effects: { minPracticality: 2 } },
+        right: { label: 'Too Practical', emoji: '📦', effects: { maxPracticality: -2 } }
+      },
+      {
+        single: { label: "Just don't like it", emoji: '🤷', effects: {} }
+      }
+    ];
+
+    function getRarityLabel(score) {
+      if (score <= 2) return 'Very Common';
+      if (score <= 4) return 'Common';
+      if (score <= 6) return 'Distinctive';
+      if (score <= 8) return 'Rare';
+      return 'Exotic';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════
+
+    function freshState() {
+      return {
+        currentCar: null,
+        selectedReasons: new Set(),
+        preferences: {
+          minSpeed: 0,       maxSpeed: 10,
+          minPrice: 0,       maxPrice: 10,
+          minStyle: 0,       maxStyle: 10,
+          minRarity: 0,      maxRarity: 10,
+          minFun: 0,         maxFun: 10,
+          minPracticality: 0, maxPracticality: 10,
+          rejectedIds: []
+        },
+        phase: 'showing'
+      };
+    }
+
+    let state = freshState();
+
+    // ═══════════════════════════════════════════════════════════
+    // ALGORITHM
+    // ═══════════════════════════════════════════════════════════
+
+    function filterCandidates(prefs) {
+      return CAR_DATABASE.filter(car => {
+        if (prefs.rejectedIds.includes(car.id))                return false;
+        if (car.speedScore        < prefs.minSpeed)            return false;
+        if (car.speedScore        > prefs.maxSpeed)            return false;
+        if (car.priceScore        < prefs.minPrice)            return false;
+        if (car.priceScore        > prefs.maxPrice)            return false;
+        if (car.styleScore        < prefs.minStyle)            return false;
+        if (car.styleScore        > prefs.maxStyle)            return false;
+        if (car.rarityScore       < prefs.minRarity)           return false;
+        if (car.rarityScore       > prefs.maxRarity)           return false;
+        if (car.funScore          < prefs.minFun)              return false;
+        if (car.funScore          > prefs.maxFun)              return false;
+        if (car.practicalityScore < prefs.minPracticality)     return false;
+        if (car.practicalityScore > prefs.maxPracticality)     return false;
+        return true;
+      });
+    }
+
+    function scoreCandidate(car, prefs) {
+      // Score by proximity to the midpoint of each preference window
+      const mid      = (mn, mx) => (mn + mx) / 2;
+      const range    = (mn, mx) => Math.max(1, mx - mn);
+      const proximity = (val, mn, mx) => 1 - Math.abs(val - mid(mn, mx)) / range(mn, mx);
+
+      let score = 0;
+      score += proximity(car.funScore,          prefs.minFun,          prefs.maxFun)          * 2.0;
+      score += proximity(car.speedScore,        prefs.minSpeed,        prefs.maxSpeed)        * 1.5;
+      score += proximity(car.styleScore,        prefs.minStyle,        prefs.maxStyle)        * 1.5;
+      score += proximity(car.practicalityScore, prefs.minPracticality, prefs.maxPracticality) * 1.5;
+      score += proximity(car.rarityScore,       prefs.minRarity,       prefs.maxRarity)       * 1.0;
+      score += proximity(car.priceScore,        prefs.minPrice,        prefs.maxPrice)        * 1.0;
+      return score;
+    }
+
+    function relaxPreferences(prefs) {
+      const axes = [
+        ['minSpeed','maxSpeed'], ['minPrice','maxPrice'], ['minStyle','maxStyle'],
+        ['minRarity','maxRarity'], ['minFun','maxFun'], ['minPracticality','maxPracticality']
+      ];
+      axes.forEach(([mn, mx]) => {
+        if (prefs[mn] > 0)  prefs[mn] -= 1;
+        if (prefs[mx] < 10) prefs[mx] += 1;
+      });
+    }
+
+    function getNextRecommendation() {
+      const prefs = state.preferences;
+      let candidates = filterCandidates(prefs);
+
+      // Relax up to 3 times if stuck
+      for (let i = 0; i < 3 && candidates.length === 0; i++) {
+        relaxPreferences(prefs);
+        candidates = filterCandidates(prefs);
+      }
+
+      if (candidates.length === 0) return null;
+
+      candidates.sort((a, b) => scoreCandidate(b, prefs) - scoreCandidate(a, prefs));
+      return candidates[0];
+    }
+
+    function applyRejectionReasons(reasons) {
+      const prefs = state.preferences;
+      // Build a lookup from label → effects across all axes
+      const effectsMap = {};
+      REJECTION_AXES.forEach(axis => {
+        if (axis.single) {
+          effectsMap[axis.single.label] = axis.single.effects;
+        } else {
+          effectsMap[axis.left.label]  = axis.left.effects;
+          effectsMap[axis.right.label] = axis.right.effects;
+        }
+      });
+      reasons.forEach(reason => {
+        const effects = effectsMap[reason];
+        if (!effects) return;
+        Object.entries(effects).forEach(([key, delta]) => {
+          prefs[key] = Math.max(0, Math.min(10, (prefs[key] || 0) + delta));
+        });
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // RENDER
+    // ═══════════════════════════════════════════════════════════
+
+    function renderCard(car) {
+      const stage = document.getElementById('card-stage');
+
+      const styleBar = (score, accent) =>
+        `<div class="spec-track"><div class="spec-fill" style="width:${score * 10}%;background:${accent}"></div></div>`;
+
+      stage.innerHTML = `
+        <div class="car-card" id="current-card">
+          <div class="card-visual" style="background:linear-gradient(135deg, ${car.colorAccent} 0%, ${darken(car.colorAccent)} 100%)">
+            <div class="car-emoji">${car.emoji}</div>
+            <div class="card-year-badge">${car.year}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="body-type-pill">${car.bodyType}</span>
+              <span class="rarity-tag">${getRarityLabel(car.rarityScore)}</span>
+            </div>
+            <h2 class="car-name">${car.name}</h2>
+            <p class="car-description">${car.description}</p>
+            <p class="car-price"><span class="car-price-label">MSRP</span>${car.priceDisplay}</p>
+            ${car.note ? `<p class="car-note">${car.note}</p>` : ''}
+            <div class="specs-grid">
+              <div class="spec-item">
+                <span class="spec-label">Style</span>
+                ${styleBar(car.styleScore, car.colorAccent)}
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Speed</span>
+                ${styleBar(car.speedScore, car.colorAccent)}
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Fun</span>
+                ${styleBar(car.funScore, car.colorAccent)}
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Practicality</span>
+                ${styleBar(car.practicalityScore, car.colorAccent)}
+              </div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button id="reject-btn">✕ Reject</button>
+            <button id="accept-btn">✓ Love it!</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('reject-btn').addEventListener('click', handleReject);
+      document.getElementById('accept-btn').addEventListener('click', handleAccept);
+    }
+
+    // Simple color darkening utility
+    function darken(hex) {
+      let r = parseInt(hex.slice(1,3),16);
+      let g = parseInt(hex.slice(3,5),16);
+      let b = parseInt(hex.slice(5,7),16);
+      r = Math.max(0, r - 40);
+      g = Math.max(0, g - 40);
+      b = Math.max(0, b - 40);
+      return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    }
+
+    function renderBubbles() {
+      const container = document.getElementById('bubble-container');
+      container.innerHTML = '';
+      let btnIndex = 0; // global index for stagger delay
+
+      REJECTION_AXES.forEach((axis, axisIndex) => {
+        const row = document.createElement('div');
+
+        if (axis.single) {
+          row.className = 'axis-row single-row';
+          const btn = makeBubbleBtn(axis.single, axisIndex, null, btnIndex++);
+          row.appendChild(btn);
+        } else {
+          row.className = 'axis-row';
+          const leftBtn  = makeBubbleBtn(axis.left,  axisIndex, 'left',  btnIndex++);
+          const rightBtn = makeBubbleBtn(axis.right, axisIndex, 'right', btnIndex++);
+          row.appendChild(leftBtn);
+          row.appendChild(rightBtn);
+        }
+
+        container.appendChild(row);
+      });
+    }
+
+    function makeBubbleBtn(option, axisIndex, side, staggerIndex) {
+      const btn = document.createElement('button');
+      btn.className = 'reason-bubble';
+      btn.textContent = `${option.emoji} ${option.label}`;
+      btn.style.animationDelay = `${staggerIndex * 55}ms`;
+      btn.dataset.reason = option.label;
+      btn.dataset.axisIndex = axisIndex;
+      btn.dataset.side = side || 'single';
+      btn.addEventListener('click', () => handleBubbleToggle(option.label, btn));
+      return btn;
+    }
+
+    function updateFindButton() {
+      const btn = document.getElementById('find-better-btn');
+      if (state.selectedReasons.size > 0) {
+        if (btn.classList.contains('hidden')) {
+          btn.classList.remove('hidden');
+          btn.classList.add('appearing');
+          btn.addEventListener('animationend', () => btn.classList.remove('appearing'), { once: true });
+        }
+      } else {
+        btn.classList.add('hidden');
+      }
+    }
+
+    function showRejectionPanel() {
+      const panel = document.getElementById('rejection-panel');
+      panel.classList.remove('hidden');
+      panel.classList.add('revealing');
+      panel.addEventListener('animationend', () => panel.classList.remove('revealing'), { once: true });
+      renderBubbles();
+    }
+
+    function showConfirmationScreen(car) {
+      document.getElementById('card-stage').innerHTML = '';
+      document.getElementById('rejection-panel').classList.add('hidden');
+
+      const screen = document.getElementById('confirmation-screen');
+      screen.classList.remove('hidden');
+      screen.classList.add('appearing');
+      screen.addEventListener('animationend', () => screen.classList.remove('appearing'), { once: true });
+
+      document.getElementById('confirm-car-name').textContent = `${car.year} ${car.name}`;
+      document.getElementById('confirm-message').textContent =
+        `You found your perfect match — ${car.description.toLowerCase().replace(/\.$/, '')}. Time to visit a dealer!`;
+
+      document.getElementById('restart-btn').addEventListener('click', handleRestart);
+    }
+
+    function showEmptyScreen() {
+      document.getElementById('card-stage').innerHTML = '';
+      document.getElementById('rejection-panel').classList.add('hidden');
+      const screen = document.getElementById('empty-screen');
+      screen.classList.remove('hidden');
+      document.getElementById('empty-restart-btn').addEventListener('click', handleRestart);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // EVENT HANDLERS
+    // ═══════════════════════════════════════════════════════════
+
+    function handleAccept() {
+      state.phase = 'confirmed';
+      showConfirmationScreen(state.currentCar);
+    }
+
+    function handleReject() {
+      // Mark rejected immediately but panel still shows this card
+      state.preferences.rejectedIds.push(state.currentCar.id);
+      document.getElementById('reject-btn').disabled = true;
+      document.getElementById('accept-btn').disabled = true;
+      showRejectionPanel();
+      state.phase = 'rejected';
+    }
+
+    function handleBubbleToggle(reason, btn) {
+      const axisIndex = btn.dataset.axisIndex;
+      const side = btn.dataset.side;
+
+      // Deselect the sibling on the opposite side of this axis (mutual exclusion)
+      if (side !== 'single') {
+        const siblingSelector = `.reason-bubble[data-axis-index="${axisIndex}"]:not([data-side="${side}"])`;
+        const sibling = document.querySelector(siblingSelector);
+        if (sibling && sibling.classList.contains('active')) {
+          sibling.classList.remove('active');
+          state.selectedReasons.delete(sibling.dataset.reason);
+        }
+      }
+
+      // Toggle this button
+      if (state.selectedReasons.has(reason)) {
+        state.selectedReasons.delete(reason);
+        btn.classList.remove('active');
+      } else {
+        state.selectedReasons.add(reason);
+        btn.classList.add('active');
+      }
+      updateFindButton();
+    }
+
+    function handleFindBetter() {
+      applyRejectionReasons([...state.selectedReasons]);
+      state.selectedReasons.clear();
+
+      const nextCar = getNextRecommendation();
+
+      // Animate card out
+      const card = document.getElementById('current-card');
+      if (card) {
+        card.classList.add('exiting');
+        card.addEventListener('animationend', () => {
+          finishTransition(nextCar);
+        }, { once: true });
+      } else {
+        finishTransition(nextCar);
+      }
+    }
+
+    function finishTransition(nextCar) {
+      // Hide rejection panel
+      const panel = document.getElementById('rejection-panel');
+      panel.classList.add('hidden');
+      document.getElementById('bubble-container').innerHTML = '';
+      document.getElementById('find-better-btn').classList.add('hidden');
+
+      if (!nextCar) {
+        showEmptyScreen();
+        return;
+      }
+
+      state.currentCar = nextCar;
+      state.phase = 'showing';
+      renderCard(nextCar);
+    }
+
+    function handleRestart() {
+      state = freshState();
+      document.getElementById('confirmation-screen').classList.add('hidden');
+      document.getElementById('empty-screen').classList.add('hidden');
+      document.getElementById('rejection-panel').classList.add('hidden');
+      document.getElementById('bubble-container').innerHTML = '';
+      document.getElementById('find-better-btn').classList.add('hidden');
+      init();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════════
+
+    function init() {
+      const corolla = CAR_DATABASE.find(c => c.id === 'corolla');
+      state.currentCar = corolla;
+      renderCard(corolla);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('find-better-btn').addEventListener('click', handleFindBetter);
+      init();
+    });
+  </script>
+</body>
+</html>
