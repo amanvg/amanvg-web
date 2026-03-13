@@ -3,44 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seattle Sports Dashboard</title>
+    <title>Seattle Sports — amanvg</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg: #0f1117;
-            --surface: #1a1d27;
-            --surface-hover: #22252f;
-            --border: #2a2d37;
-            --text: #e4e4e7;
-            --text-muted: #a1a1aa;
-            --text-dim: #71717a;
+            --bg: #141414;
+            --surface: #1e1e1e;
+            --surface-hover: #252525;
+            --border: #2e2e2e;
+            --border-hover: #3d3d3d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #606060;
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+            --radius-card: 20px;
+            --radius-pill: 999px;
             --green: #22c55e;
             --red: #ef4444;
             --live-red: #ef4444;
         }
 
+        html { scroll-behavior: smooth; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg);
-            color: var(--text);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
+        /* ── Nav ─────────────────────────────────────────────────── */
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(13, 13, 13, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
         }
 
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
+        .nav-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 40px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-logo span { color: var(--text-tertiary); }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: var(--border);
+        }
+
+        /* ── Page layout ─────────────────────────────────────────── */
+
+        .page-content {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 40px 80px;
+            flex: 1;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
         }
 
         .header-right {
@@ -51,28 +125,31 @@
 
         .auto-refresh-label {
             font-size: 0.75rem;
-            color: var(--text-dim);
+            color: var(--text-tertiary);
         }
 
         #last-updated {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-size: 0.8rem;
         }
 
         #refresh-btn {
             background: var(--surface);
             border: 1px solid var(--border);
-            color: var(--text-muted);
+            color: var(--text-secondary);
             padding: 6px 14px;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.15s;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
         }
 
         #refresh-btn:hover {
             background: var(--surface-hover);
-            color: var(--text);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
         }
 
         .dashboard {
@@ -84,13 +161,14 @@
         .team-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            transition: border-color 0.15s;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            box-shadow: var(--shadow-md);
         }
 
         .team-card:hover {
-            border-color: #3a3d47;
+            border-color: var(--border-hover);
         }
 
         .accent-bar {
@@ -115,10 +193,11 @@
         .team-name {
             font-weight: 700;
             font-size: 1.05rem;
+            color: var(--text-primary);
         }
 
         .team-record {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-size: 0.85rem;
             margin-top: 2px;
         }
@@ -166,10 +245,10 @@
         }
 
         .card-standings {
-            width: 270px;
+            width: 300px;
             flex-shrink: 0;
             border-left: 1px solid var(--border);
-            padding-left: 16px;
+            padding-left: 20px;
         }
 
         /* ── Game sections (left side, unchanged) ─────────────── */
@@ -178,7 +257,7 @@
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: var(--text-dim);
+            color: var(--text-tertiary);
             font-weight: 600;
             margin-bottom: 6px;
         }
@@ -206,7 +285,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .game-team-logo {
@@ -231,7 +310,7 @@
         }
 
         .game-team-row.winner { font-weight: 700; }
-        .game-team-row.loser { color: var(--text-dim); }
+        .game-team-row.loser { color: var(--text-tertiary); }
 
         .game-footer {
             display: flex;
@@ -239,7 +318,7 @@
             justify-content: space-between;
             margin-top: 6px;
             font-size: 0.75rem;
-            color: var(--text-dim);
+            color: var(--text-tertiary);
         }
 
         .result-w { color: var(--green); font-weight: 700; }
@@ -252,33 +331,39 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
         }
 
         .next-opponent {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            min-width: 0;
         }
 
         .next-details {
             text-align: right;
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .next-details .date {
-            font-size: 0.75rem;
-            color: var(--text-dim);
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            white-space: nowrap;
         }
 
         .no-data {
-            color: var(--text-dim);
+            color: var(--text-tertiary);
             font-size: 0.85rem;
         }
 
         .loading-text {
-            color: var(--text-dim);
+            color: var(--text-tertiary);
             font-size: 0.85rem;
             padding: 20px 0;
             text-align: center;
@@ -294,11 +379,11 @@
         .standings-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.78rem;
+            font-size: 0.82rem;
         }
 
         .standings-table th {
-            color: var(--text-dim);
+            color: var(--text-tertiary);
             font-size: 0.65rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -317,13 +402,13 @@
             padding: 5px 5px;
             text-align: right;
             font-variant-numeric: tabular-nums;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             white-space: nowrap;
         }
 
         .standings-table td.rank-col {
             text-align: left;
-            color: var(--text-dim);
+            color: var(--text-tertiary);
             width: 18px;
         }
 
@@ -332,7 +417,7 @@
         }
 
         .standings-table tr.is-us td {
-            color: var(--text);
+            color: var(--text-primary);
             font-weight: 600;
         }
 
@@ -346,16 +431,18 @@
 
         /* ── Responsive ───────────────────────────────────────── */
 
-        @media (max-width: 1100px) {
+        @media (max-width: 900px) {
             .dashboard { grid-template-columns: 1fr; }
         }
 
-        @media (max-width: 600px) {
-            body { padding: 16px; }
-            header {
+        @media (max-width: 640px) {
+            .nav-inner { padding: 0 20px; }
+            .nav-links { display: none; }
+            .page-content { padding: 32px 20px 60px; }
+            .page-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 8px;
+                gap: 12px;
             }
             .team-body { flex-direction: column; }
             .card-standings {
@@ -369,15 +456,29 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Seattle Sports</h1>
-        <div class="header-right">
-            <span class="auto-refresh-label">Auto-refreshes every 30s</span>
-            <span id="last-updated"></span>
-            <button id="refresh-btn" onclick="manualRefresh()">Refresh</button>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-inner">
+            <a class="nav-logo" href="/">aman<span>vg</span></a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+            </ul>
         </div>
-    </header>
-    <div id="dashboard" class="dashboard"></div>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <div class="page-content">
+        <div class="page-header">
+            <h1>Seattle Sports</h1>
+            <div class="header-right">
+                <span class="auto-refresh-label">Auto-refreshes every 30s</span>
+                <span id="last-updated"></span>
+                <button id="refresh-btn" onclick="manualRefresh()">Refresh</button>
+            </div>
+        </div>
+        <div id="dashboard" class="dashboard"></div>
+    </div>
 
     <script>
         // ── Configuration ───────────────────────────────────────
@@ -647,7 +748,7 @@
                     <div class="team-header">
                         <div class="team-info">
                             <div class="team-name">${t.name}</div>
-                            <div class="team-record" style="color:var(--text-dim)">Loading...</div>
+                            <div class="team-record" style="color:var(--text-tertiary)">Loading...</div>
                         </div>
                     </div>
                     <div class="team-body"><div class="loading-text">Fetching data...</div></div>
