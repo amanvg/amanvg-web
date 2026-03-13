@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — amanvg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #141414;
+      --surface: #1e1e1e;
+      --surface-hover: #252525;
+      --border: #2e2e2e;
+      --border-hover: #3d3d3d;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-tertiary: #606060;
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+      --radius-card: 20px;
+      --radius-pill: 999px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─────────────────────────────────────────
+       NAV
+    ───────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 13, 13, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--text-tertiary); }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+      background: var(--border);
+    }
+
+    /* ─────────────────────────────────────────
+       CONTENT
+    ───────────────────────────────────────── */
+    .page {
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 56px 32px 80px;
+      flex: 1;
+    }
+
+    .page h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 32px;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+
+    .block {
+      margin-bottom: 40px;
+    }
+
+    .block h2 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+    }
+
+    .block p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    /* ─────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .nav-inner { padding: 0 20px; }
+      .nav-links { display: none; }
+      .page { padding: 40px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="/">aman<span>vg</span></a>
+      <ul class="nav-links">
+        <li><a href="/aboutme/">About me</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="page">
+    <h1>About me</h1>
+    <hr class="section-divider">
+
+    <div class="block">
+      <h2>Background</h2>
+      <p>I grew up in Washington State, and currently work as an IT Analyst in the HR-Tech industry.</p>
+    </div>
+
+    <div class="block">
+      <h2>Hobbies</h2>
+      <p>Too many to count, but I enjoy anything to do with motorsports, aviation, baseball, and meteorology. I also play quite a few instruments, but the Bass guitar is my favorite to jam along to 60–70s rock with.</p>
+    </div>
+
+  </main>
+
+</body>
+</html>
