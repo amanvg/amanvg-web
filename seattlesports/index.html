@@ -604,9 +604,15 @@
             let lastGame = null, liveGame = null, nextGame = null;
             for (const ev of events) {
                 const state = ev.competitions?.[0]?.status?.type?.state;
-                if (state === 'post' && !lastGame) lastGame = ev;
-                else if (state === 'in') liveGame = ev;
-                else if (state === 'pre' && !nextGame) nextGame = ev;
+                if (state === 'post') {
+                    // Always keep the most-recent completed game (leagues vary in sort order)
+                    if (!lastGame || new Date(ev.date) > new Date(lastGame.date)) lastGame = ev;
+                } else if (state === 'in') {
+                    liveGame = ev;
+                } else if (state === 'pre') {
+                    // Always keep the earliest upcoming game
+                    if (!nextGame || new Date(ev.date) < new Date(nextGame.date)) nextGame = ev;
+                }
             }
 
             // Some leagues (e.g. MLS) don't include future games in the team schedule endpoint.
