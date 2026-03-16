@@ -228,6 +228,36 @@
             50% { opacity: 0.3; }
         }
 
+        .season-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .season-badge.phase-regular {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .season-badge.phase-pre {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        .season-badge.phase-post {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+        }
+
+        .season-badge.phase-off {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-tertiary);
+        }
+
         /* ── Card body: two-column layout ─────────────────────── */
 
         .team-body {
@@ -595,11 +625,21 @@
             renderCard(team);
         }
 
+        const SEASON_PHASES = {
+            1: { label: 'Pre-Season',     cls: 'phase-pre' },
+            2: { label: 'Regular Season', cls: 'phase-regular' },
+            3: { label: 'Playoffs',       cls: 'phase-post' },
+            4: { label: 'Offseason',      cls: 'phase-off' },
+        };
+
         async function fetchSchedule(team) {
             const res = await fetch(`${ESPN}/${team.sport}/${team.league}/teams/${team.id}/schedule`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             const events = data.events || [];
+
+            const seasonType = data.season?.type ?? data.requestedSeason?.type ?? null;
+            const seasonPhase = SEASON_PHASES[seasonType] ?? { label: 'Offseason', cls: 'phase-off' };
 
             let lastGame = null, liveGame = null, nextGame = null;
             for (const ev of events) {
@@ -637,7 +677,7 @@
                 } catch (e) { /* non-critical */ }
             }
 
-            return { lastGame, liveGame, nextGame };
+            return { lastGame, liveGame, nextGame, seasonPhase };
         }
 
         async function fetchLiveScore(team) {
@@ -806,6 +846,7 @@
             const { schedule, standings, live } = d || {};
             const record = formatRecord(team, standings?.teamEntry);
             const liveGame = live || schedule?.liveGame;
+            const seasonPhase = schedule?.seasonPhase;
             const lastGame = schedule?.lastGame;
             const nextGame = schedule?.nextGame;
 
@@ -840,6 +881,7 @@
                         <div class="team-record">${record || 'Record unavailable'}</div>
                     </div>
                     ${liveGame ? '<div class="live-badge"><span class="live-dot"></span>LIVE</div>' : ''}
+                    ${seasonPhase ? `<div class="season-badge ${seasonPhase.cls}">${seasonPhase.label}</div>` : ''}
                 </div>
                 <div class="team-body">
                     <div class="card-games">${gamesBody}</div>
