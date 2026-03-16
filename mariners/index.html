@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seattle Mariners Dashboard — amanvg</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #07111e;
+            --surface: #0d1e30;
+            --surface-hover: #122438;
+            --border: #1c3350;
+            --border-hover: #2a4d72;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --text-tertiary: #b0b0b0;
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5), 0 10px 40px -4px rgba(0,0,0,0.6);
+            --shadow-lg: 0 8px 24px -4px rgba(0,0,0,0.7), 0 24px 64px -8px rgba(0,0,0,0.8);
+            --green: #34d399;
+            --red: #f87171;
+            --live-red: #f87171;
+            --teal: #00c4b4;
+            --navy: #0C2C56;
+            --sidebar-width: 220px;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Top nav ──────────────────────────────────────────────── */
+
+        .topnav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5, 14, 26, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .topnav-inner {
+            max-width: 100%;
+            padding: 0 24px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--text-tertiary); }
+
+        .nav-links { display: flex; gap: 4px; list-style: none; }
+
+        .nav-links a {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 7px;
+            transition: color 0.15s, background 0.15s;
+        }
+        .nav-links a:hover { color: var(--text-primary); background: var(--border); }
+
+        /* ── App shell: sidebar + content ────────────────────────── */
+
+        .app {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            height: calc(100vh - 52px);
+        }
+
+        /* ── Sidebar ──────────────────────────────────────────────── */
+
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            border-right: 1px solid var(--border);
+            background: #060f1a;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 10px;
+            gap: 2px;
+            overflow-y: auto;
+        }
+
+        .sidebar-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-tertiary);
+            padding: 6px 10px 4px;
+            margin-top: 6px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .sidebar-item:hover {
+            color: var(--text-primary);
+            background: var(--border);
+        }
+
+        .sidebar-item.active {
+            color: var(--text-primary);
+            background: var(--surface);
+        }
+
+        .sidebar-icon {
+            font-size: 15px;
+            flex-shrink: 0;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ── Main content area ────────────────────────────────────── */
+
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .view { display: none; flex: 1; }
+        .view.active { display: flex; flex-direction: column; }
+
+        /* ── Overview view ───────────────────────────────────────── */
+
+        .schedule-view {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            padding: 32px 32px;
+            gap: 32px;
+            overflow-y: auto;
+        }
+
+        .schedule-column {
+            display: flex;
+            flex-direction: column;
+            width: 420px;
+            flex-shrink: 0;
+        }
+
+        .lineup-column {
+            flex: 0 0 260px;
+            min-width: 0;
+        }
+
+        .standings-column {
+            flex: 0 0 220px;
+            min-width: 0;
+        }
+
+        /* ── Game slots ───────────────────────────────────────────── */
+
+        .game-slot {
+            width: 100%;
+            position: relative;
+        }
+
+        /* Connector line between slots */
+        .game-slot::after {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+            margin: 0 auto;
+        }
+
+        .game-slot:last-child::after { display: none; }
+
+        /* ── Side cards (above / below) ───────────────────────────── */
+
+        .game-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            opacity: 0.72;
+            transition: opacity 0.2s;
+        }
+
+        .game-card:hover { opacity: 0.88; }
+
+        .game-card.featured {
+            opacity: 1;
+            border-radius: 18px;
+            padding: 22px 24px;
+            border-color: rgba(0, 196, 180, 0.4);
+            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0, 196, 180, 0.15);
+            background: #0f2236;
+        }
+
+        /* ── Teams inside a card ──────────────────────────────────── */
+
+        .card-teams {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-teams.featured { gap: 12px; }
+
+        .team-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team-logo {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .team-logo.lg {
+            width: 34px;
+            height: 34px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 3px;
+        }
+
+        .team-name {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-secondary);
+        }
+
+        .team-name.featured {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .team-score {
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            min-width: 22px;
+            text-align: right;
+            color: var(--text-secondary);
+        }
+
+        .team-score.featured { font-size: 1.3rem; font-weight: 800; color: var(--text-primary); }
+
+        .team-row.winner .team-name,
+        .team-row.winner .team-score { color: var(--text-primary); }
+
+        .team-row.loser .team-name,
+        .team-row.loser .team-score { color: var(--text-tertiary); }
+
+        /* ── Card meta (right side) ───────────────────────────────── */
+
+        .card-meta {
+            text-align: right;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .meta-primary {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .meta-primary.featured {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .meta-secondary {
+            font-size: 0.72rem;
+            color: var(--text-tertiary);
+        }
+
+        .result-w { color: var(--green); font-weight: 700; font-size: 0.75rem; }
+        .result-l { color: var(--red);   font-weight: 700; font-size: 0.75rem; }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(239,68,68,0.15);
+            color: var(--live-red);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+
+        .live-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--live-red);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ── Featured card: vertical layout ─────────────────────── */
+
+        .game-card.featured {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 16px !important;
+        }
+
+        /* Top row: opponent + date/time */
+        .featured-matchup {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .featured-matchup-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .featured-opp-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .featured-opp-sub {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .featured-matchup-meta {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .featured-matchup-meta .meta-primary {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .featured-matchup-meta .meta-secondary {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        /* Score rows (live/past) */
+        .featured-scores {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Bottom row: probable pitchers strip */
+        .pitchers-strip {
+            border-top: 1px solid var(--border);
+            padding-top: 14px;
+            display: flex;
+            gap: 0;
+        }
+
+        .pitchers-strip-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .pitcher-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pitcher-col + .pitcher-col {
+            border-left: 1px solid var(--border);
+            padding-left: 20px;
+            margin-left: 20px;
+        }
+
+        .pitcher-side-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-tertiary);
+        }
+
+        .pitcher-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .pitcher-stats {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+        }
+
+        /* ── Lineup panel ────────────────────────────────────────── */
+
+        .lineup-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .lineup-panel-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .lineup-panel-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-tertiary);
+        }
+
+        .lineup-panel-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .lineup-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lineup-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 18px;
+            border-bottom: 1px solid rgba(100, 160, 220, 0.08);
+        }
+
+        .lineup-row:last-child { border-bottom: none; }
+
+        .lineup-order {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            width: 14px;
+            text-align: center;
+            flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .lineup-pos {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--teal);
+            width: 28px;
+            flex-shrink: 0;
+        }
+
+        .lineup-name {
+            flex: 1;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .lineup-jersey {
+            font-size: 0.72rem;
+            color: var(--text-tertiary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .lineup-not-ready {
+            padding: 28px 18px;
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+
+        /* ── Standings panel ─────────────────────────────────────── */
+
+        .standings-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .standings-panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .standings-panel-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-tertiary);
+        }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .standings-table th {
+            font-size: 0.62rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-tertiary);
+            padding: 6px 8px;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .standings-table th:first-child,
+        .standings-table th:nth-child(2) { text-align: left; }
+
+        .standings-table td {
+            padding: 7px 8px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(100,160,220,0.06);
+            white-space: nowrap;
+        }
+
+        .standings-table tr:last-child td { border-bottom: none; }
+
+        .standings-table td:first-child { color: var(--text-tertiary); width: 18px; text-align: left; }
+        .standings-table td:nth-child(2) { text-align: left; }
+
+        .standings-table tr.is-us td { color: var(--text-primary); font-weight: 600; }
+
+        .standings-logo {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+        .wc-spot {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--teal);
+            background: rgba(0,196,180,0.12);
+            border-radius: 3px;
+            padding: 1px 4px;
+            margin-left: 4px;
+            vertical-align: middle;
+            letter-spacing: 0.04em;
+        }
+
+
+        /* ── Empty / loading states ───────────────────────────────── */
+
+        .empty-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        .loading-view {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        /* ── Refresh bar at bottom of view ───────────────────────── */
+
+        .refresh-bar {
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .refresh-bar span {
+            font-size: 0.72rem;
+            color: var(--text-tertiary);
+        }
+
+        #refresh-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 5px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: inherit;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+        #refresh-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
+        /* ── Responsive ───────────────────────────────────────────── */
+
+        @media (max-width: 900px) {
+            .schedule-view { flex-direction: column; }
+            .schedule-column { width: 100%; }
+            .lineup-column, .standings-column { flex: 0 0 auto; width: 100%; }
+        }
+
+        @media (max-width: 600px) {
+            :root { --sidebar-width: 56px; }
+            .sidebar-item span:not(.sidebar-icon) { display: none; }
+            .sidebar-section-label { display: none; }
+            .sidebar-item { justify-content: center; padding: 10px; }
+            .topnav-inner { padding: 0 16px; }
+            .schedule-view { padding: 16px; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAV -->
+    <header class="topnav">
+        <div class="topnav-inner">
+            <a class="nav-logo" href="/">aman<span>vg</span></a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- APP SHELL -->
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <span class="sidebar-section-label">Mariners</span>
+            <button class="sidebar-item active" onclick="showView('upcoming')" id="nav-upcoming">
+                <span class="sidebar-icon">📅</span>
+                <span>Overview</span>
+            </button>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="main">
+
+            <!-- VIEW: Upcoming Game -->
+            <div class="view active" id="view-upcoming">
+                <div class="schedule-view" id="schedule-view">
+                    <div class="loading-view">Loading schedule…</div>
+                </div>
+                <div class="refresh-bar">
+                    <span id="last-updated"></span>
+                    <button id="refresh-btn" onclick="manualRefresh()">Refresh</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ── Config ───────────────────────────────────────────────
+
+        const TEAM = {
+            sport: 'baseball', league: 'mlb',
+            divisionTeams: ['SEA', 'HOU', 'TEX', 'LAA', 'OAK', 'ATH'],
+        };
+
+        const ESPN    = 'https://site.api.espn.com/apis/site/v2/sports';
+        const ESPN_V2 = 'https://site.api.espn.com/apis/v2/sports';
+
+        // ── View switching ───────────────────────────────────────
+
+        function showView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-' + id)?.classList.add('active');
+            document.getElementById('nav-' + id)?.classList.add('active');
+        }
+
+        // ── Init ─────────────────────────────────────────────────
+
+        async function initialize() {
+            await lookupTeam();
+            await refresh();
+            setInterval(refresh, 30000);
+        }
+
+        async function lookupTeam() {
+            try {
+                const res = await fetch(`${ESPN}/${TEAM.sport}/${TEAM.league}/teams`);
+                const data = await res.json();
+                const all = data.sports[0].leagues[0].teams;
+                const match = all.find(t =>
+                    t.team.location?.toLowerCase() === 'seattle' ||
+                    t.team.displayName?.toLowerCase().includes('seattle mariners')
+                );
+                if (match) {
+                    TEAM.id   = match.team.id;
+                    TEAM.logo = match.team.logos?.[0]?.href;
+                    TEAM.abbr = match.team.abbreviation;
+                }
+            } catch (e) { console.error('Team lookup failed:', e); }
+        }
+
+        async function refresh() {
+            await Promise.allSettled([refreshUpcoming()]);
+            document.getElementById('last-updated').textContent =
+                'Updated ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        }
+
+        async function manualRefresh() {
+            const btn = document.getElementById('refresh-btn');
+            btn.textContent = '…';
+            await refresh();
+            btn.textContent = 'Refresh';
+        }
+
+        // ── Fetch schedule ───────────────────────────────────────
+
+        async function fetchSchedule() {
+            if (!TEAM.id) return null;
+
+            const res = await fetch(`${ESPN}/${TEAM.sport}/${TEAM.league}/teams/${TEAM.id}/schedule`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            const events = data.events || [];
+
+            const completed = [];
+            const live = [];
+            const upcoming = [];
+
+            for (const ev of events) {
+                const state = ev.competitions?.[0]?.status?.type?.state;
+                if (state === 'post') completed.push(ev);
+                else if (state === 'in') live.push(ev);
+                else if (state === 'pre') upcoming.push(ev);
+            }
+
+            // Sort completed descending (most recent first), upcoming ascending
+            completed.sort((a, b) => new Date(b.date) - new Date(a.date));
+            upcoming.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            return { completed, live, upcoming };
+        }
+
+        // ── Render: Upcoming view ────────────────────────────────
+
+        async function refreshUpcoming() {
+            const container = document.getElementById('schedule-view');
+            try {
+                const schedule = await fetchSchedule();
+                if (!schedule) { container.innerHTML = '<div class="loading-view">Could not load schedule.</div>'; return; }
+
+                const { completed, live, upcoming } = schedule;
+
+                // Determine featured game: live if active, else next upcoming
+                let featured, slotAbove, slotBelow;
+
+                if (live.length) {
+                    featured  = { event: live[0],      type: 'live' };
+                    slotAbove = upcoming[0] ? { event: upcoming[0], type: 'upcoming' } : null;
+                    slotBelow = completed[0] ? { event: completed[0], type: 'past' } : null;
+                } else {
+                    featured  = upcoming[0]  ? { event: upcoming[0],  type: 'upcoming' } : null;
+                    slotAbove = upcoming[1]  ? { event: upcoming[1],  type: 'upcoming' } : null;
+                    slotBelow = completed[0] ? { event: completed[0], type: 'past' }    : null;
+                }
+
+                // Fetch probable pitchers, lineup, and standings in parallel
+                let pitchers = null, lineup = null, standings = null;
+                const standingsPromise = fetchMLBStandings();
+                if (featured) {
+                    [pitchers, lineup] = await Promise.all([
+                        fetchProbables(featured.event.id),
+                        fetchLineup(featured.event.id),
+                    ]);
+                }
+                standings = await standingsPromise;
+
+                // Build schedule column
+                let schedHtml = '<div class="schedule-column">';
+
+                schedHtml += '<div class="game-slot">';
+                schedHtml += slotAbove ? buildCard(slotAbove, false, null) : '<div class="empty-card">No further upcoming game</div>';
+                schedHtml += '</div>';
+
+                schedHtml += '<div class="game-slot">';
+                schedHtml += featured ? buildCard(featured, true, pitchers) : '<div class="empty-card" style="opacity:1;border-style:solid">No upcoming games scheduled</div>';
+                schedHtml += '</div>';
+
+                schedHtml += '<div class="game-slot">';
+                schedHtml += slotBelow ? buildCard(slotBelow, false, null) : '<div class="empty-card">No previous game found</div>';
+                schedHtml += '</div>';
+
+                schedHtml += '</div>';
+
+                // Build right columns: lineup | [AL West] | Wild Card / Cactus League
+                const wcLabel = standings?.isSpringTraining ? 'Cactus League' : 'AL Wild Card';
+                const wcIsWildCard = !standings?.isSpringTraining;
+                const lineupHtml = `<div class="lineup-column">${buildLineupPanel(lineup)}</div>`
+                    + (standings && standings.alWest ? `<div class="standings-column">${buildStandingsPanel('AL West', standings.alWest, false)}</div>` : '')
+                    + (standings ? `<div class="standings-column">${buildStandingsPanel(wcLabel, standings.wildCard, wcIsWildCard)}</div>` : '');
+
+                container.innerHTML = schedHtml + lineupHtml;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<div class="loading-view" style="color:var(--red)">Failed to load schedule.</div>';
+            }
+        }
+
+        // ── Card builder ─────────────────────────────────────────
+
+        function buildCard({ event, type }, featured, pitchers) {
+            const comp = event.competitions?.[0];
+            if (!comp) return '';
+
+            const us  = comp.competitors?.find(c => String(c.team?.id) === String(TEAM.id));
+            const opp = comp.competitors?.find(c => String(c.team?.id) !== String(TEAM.id));
+
+            const isHome    = us?.homeAway === 'home';
+            const prefix    = isHome ? 'vs' : '@';
+            const oppAbbr   = opp?.team?.abbreviation || opp?.team?.shortDisplayName || 'TBD';
+            const oppLogo   = opp?.team?.logos?.[0]?.href || opp?.team?.logo || '';
+            const ourLogo   = us?.team?.logos?.[0]?.href || us?.team?.logo || TEAM.logo || '';
+            const status    = comp.status?.type?.shortDetail || comp.status?.type?.description || '';
+            const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
+
+            const gd = new Date(event.date);
+            const dateStr = gd.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+            const timeStr = gd.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+
+            if (type === 'past') {
+                // Past game: show score, result
+                const usScore  = getScore(us);
+                const oppScore = getScore(opp);
+                const didWin   = us?.winner;
+
+                const logoSize = featured ? 'lg' : '';
+                const nameClass = featured ? 'featured' : '';
+                const scoreClass = featured ? 'featured' : '';
+
+                const usRow  = `<div class="team-row ${didWin ? 'winner' : 'loser'}">
+                    ${ourLogo ? `<img class="team-logo ${logoSize}" src="${ourLogo}" alt="">` : ''}
+                    <span class="team-name ${nameClass}">SEA</span>
+                    <span class="team-score ${scoreClass}">${esc(usScore)}</span>
+                </div>`;
+                const oppRow = `<div class="team-row ${!didWin ? 'winner' : 'loser'}">
+                    ${oppLogo ? `<img class="team-logo ${logoSize}" src="${oppLogo}" alt="">` : ''}
+                    <span class="team-name ${nameClass}">${esc(oppAbbr)}</span>
+                    <span class="team-score ${scoreClass}">${esc(oppScore)}</span>
+                </div>`;
+
+                const teams = isHome ? (usRow + oppRow) : (oppRow + usRow);
+
+                const meta = `<div class="card-meta">
+                    <span class="${didWin ? 'result-w' : 'result-l'}">${didWin ? 'W' : 'L'}</span>
+                    <span class="meta-secondary">${esc(dateStr)}</span>
+                    <span class="meta-secondary">${esc(status)}</span>
+                </div>`;
+
+                return `<div class="game-card${featured ? ' featured' : ''}">
+                    <div class="card-teams${featured ? ' featured' : ''}">${teams}</div>${meta}</div>`;
+
+            } else if (type === 'live') {
+                const usScore  = getScore(us);
+                const oppScore = getScore(opp);
+
+                const logoSize  = 'lg';
+                const nameClass = 'featured';
+                const scoreClass = 'featured';
+
+                const usRow  = `<div class="team-row">
+                    ${ourLogo ? `<img class="team-logo ${logoSize}" src="${ourLogo}" alt="">` : ''}
+                    <span class="team-name ${nameClass}">SEA</span>
+                    <span class="team-score ${scoreClass}">${esc(usScore)}</span>
+                </div>`;
+                const oppRow = `<div class="team-row">
+                    ${oppLogo ? `<img class="team-logo ${logoSize}" src="${oppLogo}" alt="">` : ''}
+                    <span class="team-name ${nameClass}">${esc(oppAbbr)}</span>
+                    <span class="team-score ${scoreClass}">${esc(oppScore)}</span>
+                </div>`;
+
+                const teams = isHome ? (usRow + oppRow) : (oppRow + usRow);
+
+                const meta = `<div class="card-meta">
+                    <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+                    <span class="meta-secondary" style="margin-top:4px">${esc(status)}</span>
+                    ${broadcast ? `<span class="meta-secondary">${esc(broadcast)}</span>` : ''}
+                </div>`;
+
+                return `<div class="game-card featured">
+                    <div class="featured-scores">
+                        ${teams}
+                    </div>
+                    <div class="card-meta" style="align-self:flex-end">
+                        <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+                        <span class="meta-secondary" style="margin-top:4px">${esc(status)}</span>
+                        ${broadcast ? `<span class="meta-secondary">${esc(broadcast)}</span>` : ''}
+                    </div>
+                    ${buildPitchersStrip(pitchers, isHome)}
+                </div>`;
+
+            } else {
+                // Upcoming game
+                const logoSize  = featured ? 'lg' : '';
+                const nameClass = featured ? 'featured' : '';
+                const metaPrimClass = featured ? 'featured' : '';
+
+                const oppRow = `<div class="team-row">
+                    ${oppLogo ? `<img class="team-logo ${logoSize}" src="${oppLogo}" alt="">` : ''}
+                    <span class="team-name ${nameClass}">${prefix} ${esc(oppAbbr)}</span>
+                </div>`;
+
+                const meta = `<div class="card-meta">
+                    <span class="meta-primary ${metaPrimClass}">${esc(dateStr)}</span>
+                    <span class="meta-secondary">${esc(timeStr)}${broadcast ? ' · ' + esc(broadcast) : ''}</span>
+                </div>`;
+
+                if (featured) {
+                    return `<div class="game-card featured">
+                        <div class="featured-matchup">
+                            ${oppLogo ? `<img class="team-logo lg" src="${oppLogo}" alt="">` : ''}
+                            <div class="featured-matchup-info">
+                                <div class="featured-opp-name">${prefix} ${esc(opp?.team?.displayName || oppAbbr)}</div>
+                                ${broadcast ? `<div class="featured-opp-sub">${esc(broadcast)}</div>` : ''}
+                            </div>
+                            <div class="featured-matchup-meta">
+                                <div class="meta-primary">${esc(dateStr)}</div>
+                                <div class="meta-secondary">${esc(timeStr)}</div>
+                            </div>
+                        </div>
+                        ${buildPitchersStrip(pitchers, isHome)}
+                    </div>`;
+                }
+                return `<div class="game-card">
+                    <div class="card-teams">${oppRow}</div>${meta}</div>`;
+            }
+        }
+
+        // ── Probable pitchers ────────────────────────────────────
+
+        async function fetchProbables(eventId) {
+            if (!eventId) return null;
+            try {
+                const res = await fetch(`${ESPN}/${TEAM.sport}/${TEAM.league}/summary?event=${eventId}`);
+                if (!res.ok) return null;
+                const data = await res.json();
+                const competitors = data.header?.competitions?.[0]?.competitors || [];
+                const result = {};
+                for (const comp of competitors) {
+                    const probable = comp.probables?.[0];
+                    if (!probable) continue;
+                    const cats = probable.statistics?.splits?.categories || [];
+                    const getStat = name => cats.find(c => c.name === name || c.abbreviation === name)?.displayValue ?? null;
+                    const fi = getStat('fullInnings');
+                    const pi = getStat('partInnings');
+                    result[comp.homeAway] = {
+                        name: probable.athlete?.shortName || probable.athlete?.displayName || null,
+                        wins: getStat('wins'),
+                        losses: getStat('losses'),
+                        era: getStat('ERA'),
+                        ip: fi != null ? (pi != null && pi !== '0' ? `${fi}.${pi}` : `${fi}.0`) : null,
+                    };
+                }
+                return Object.keys(result).length ? result : null;
+            } catch (e) {
+                console.error('Probables fetch failed:', e);
+                return null;
+            }
+        }
+
+        async function fetchLineup(eventId) {
+            if (!eventId) return null;
+            try {
+                const res = await fetch(`${ESPN}/${TEAM.sport}/${TEAM.league}/summary?event=${eventId}`);
+                if (!res.ok) return null;
+                const data = await res.json();
+                const rosters = data.rosters;
+                if (!rosters?.length) return null;
+                // Find the Mariners roster
+                const ours = rosters.find(r =>
+                    String(r.team?.id) === String(TEAM.id) ||
+                    r.homeAway === (TEAM.isHome ? 'home' : 'away')
+                ) || rosters.find(r => r.roster?.some(p =>
+                    p.athlete?.team?.id && String(p.athlete.team.id) === String(TEAM.id)
+                ));
+                if (!ours) return null;
+                const starters = (ours.roster || [])
+                    .filter(p => p.starter || p.batOrder)
+                    .sort((a, b) => (a.batOrder ?? 99) - (b.batOrder ?? 99));
+                return starters.length ? starters : null;
+            } catch (e) {
+                console.error('Lineup fetch failed:', e);
+                return null;
+            }
+        }
+
+        function buildLineupPanel(lineup) {
+            const header = `<div class="lineup-panel-header">
+                <div class="lineup-panel-title">Mariners Lineup</div>
+            </div>`;
+
+            if (!lineup) {
+                return `<div class="lineup-panel">
+                    ${header}
+                    <div class="lineup-not-ready">
+                        Lineup not yet posted.<br>
+                        <span style="color:var(--text-tertiary);font-size:0.72rem">Typically available 60 min before first pitch.</span>
+                    </div>
+                </div>`;
+            }
+
+            const rows = lineup.map(p => {
+                const name   = p.athlete?.displayName || p.athlete?.fullName || '—';
+                const pos    = p.position?.abbreviation || '—';
+                const jersey = p.athlete?.jersey || '';
+                const order  = p.batOrder ?? '·';
+                return `<div class="lineup-row">
+                    <span class="lineup-order">${esc(order)}</span>
+                    <span class="lineup-pos">${esc(pos)}</span>
+                    <span class="lineup-name">${esc(name)}</span>
+                    ${jersey ? `<span class="lineup-jersey">#${esc(jersey)}</span>` : ''}
+                </div>`;
+            }).join('');
+
+            return `<div class="lineup-panel">
+                ${header}
+                <div class="lineup-list">${rows}</div>
+            </div>`;
+        }
+
+        function buildPitchersStrip(pitchers, isHome) {
+            const ourSide = isHome ? 'home' : 'away';
+            const oppSide = isHome ? 'away' : 'home';
+            const us  = pitchers?.[ourSide];
+            const opp = pitchers?.[oppSide];
+
+            function pitcherCol(sideLabel, p) {
+                const name  = p?.name || 'TBD';
+                const wl    = (p?.wins != null && p?.losses != null) ? `${p.wins}-${p.losses}` : null;
+                const stats = [wl, p?.era ? `${p.era} ERA` : null, p?.ip ? `${p.ip} IP` : null]
+                    .filter(Boolean).join('  ·  ');
+                return `<div class="pitcher-col">
+                    <span class="pitcher-side-label">${esc(sideLabel)}</span>
+                    <span class="pitcher-name">${esc(name)}</span>
+                    ${stats ? `<span class="pitcher-stats">${esc(stats)}</span>` : ''}
+                </div>`;
+            }
+
+            return `<div class="pitchers-strip">
+                <div style="width:100%">
+                    <div class="pitchers-strip-label">Probable Pitchers</div>
+                    <div style="display:flex">
+                        ${pitcherCol('SEA', us)}
+                        ${pitcherCol('OPP', opp)}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // ── MLB Standings ────────────────────────────────────────
+
+        async function fetchMLBStandings() {
+            try {
+                const res = await fetch(`${ESPN_V2}/baseball/mlb/standings`);
+                if (!res.ok) return null;
+                const data = await res.json();
+
+                const leagues = data.children || [];
+                const abbrs = leagues.map(l => (l.abbreviation || '').toUpperCase());
+
+                // ── Spring training detection ─────────────────────────────
+                const isSpringTraining = abbrs.every(a => a === 'CAC' || a === 'GPF');
+
+                if (isSpringTraining) {
+                    const cac = leagues.find(l => l.abbreviation?.toUpperCase() === 'CAC');
+                    const entries = (cac?.standings?.entries || []).sort((a, b) => {
+                        const aw = parseFloat(getStat(a, 'winPercent')) || 0;
+                        const bw = parseFloat(getStat(b, 'winPercent')) || 0;
+                        return bw - aw;
+                    });
+                    return { alWest: null, wildCard: entries, isSpringTraining: true };
+                }
+
+                // ── Regular season / postseason / offseason ───────────────
+                let alWest = [], allALEntries = [];
+                const divisionLeaderIds = new Set();
+
+                for (const league of leagues) {
+                    const lName = (league.name || league.abbreviation || '').toLowerCase();
+                    if (!lName.includes('american') && lName !== 'al') continue;
+
+                    for (const division of league.children || []) {
+                        const entries = division.standings?.entries || [];
+                        const dName = (division.name || '').toLowerCase();
+
+                        const sorted = [...entries].sort((a, b) => {
+                            const aw = parseFloat(getStat(a, 'winPercent')) || 0;
+                            const bw = parseFloat(getStat(b, 'winPercent')) || 0;
+                            return bw - aw;
+                        });
+
+                        if (sorted.length) divisionLeaderIds.add(sorted[0].team?.id);
+                        if (dName.includes('west')) alWest = sorted;
+                        allALEntries.push(...sorted);
+                    }
+                    break;
+                }
+
+                const wildCard = allALEntries
+                    .filter(e => !divisionLeaderIds.has(e.team?.id))
+                    .sort((a, b) => {
+                        const aw = parseFloat(getStat(a, 'winPercent')) || 0;
+                        const bw = parseFloat(getStat(b, 'winPercent')) || 0;
+                        return bw - aw;
+                    })
+                    .slice(0, 6);
+
+                return { alWest, wildCard, isSpringTraining: false };
+            } catch (e) {
+                console.error('Standings fetch failed:', e);
+                return null;
+            }
+        }
+
+        function getStat(entry, name) {
+            if (!entry?.stats) return null;
+            const s = entry.stats.find(s => s.name === name || s.abbreviation === name);
+            return s ? (s.displayValue ?? String(s.value)) : null;
+        }
+
+        function buildStandingsPanel(title, entries, isWildCard) {
+            const header = `<div class="standings-panel-header">
+                <div class="standings-panel-title">${esc(title)}</div>
+            </div>`;
+
+            if (!entries?.length) {
+                return `<div class="standings-panel">${header}
+                    <div style="padding:16px;font-size:0.8rem;color:var(--text-tertiary)">Standings unavailable</div>
+                </div>`;
+            }
+
+            const headerRow = `<tr>
+                <th>#</th>
+                <th>Team</th>
+                <th>W</th><th>L</th><th>PCT</th><th>GB</th>
+            </tr>`;
+
+            const rows = entries.map((entry, i) => {
+                const isUs  = String(entry.team?.id) === String(TEAM.id);
+                const logo  = entry.team?.logos?.[0]?.href || '';
+                const abbr  = entry.team?.abbreviation || '?';
+                const w     = getStat(entry, 'wins')        || '—';
+                const l     = getStat(entry, 'losses')      || '—';
+                const pct   = getStat(entry, 'winPercent')  || '—';
+                const gb    = getStat(entry, 'gamesBehind') || '—';
+                const wcTag = isWildCard && i < 3 ? '<span class="wc-spot">WC</span>' : '';
+
+                return `<tr class="${isUs ? 'is-us' : ''}">
+                    <td>${i + 1}</td>
+                    <td>${logo ? `<img class="standings-logo" src="${logo}" alt="">` : ''}${esc(abbr)}${wcTag}</td>
+                    <td>${esc(w)}</td><td>${esc(l)}</td><td>${esc(pct)}</td><td>${esc(gb)}</td>
+                </tr>`;
+            }).join('');
+
+            return `<div class="standings-panel">
+                ${header}
+                <table class="standings-table">
+                    <thead>${headerRow}</thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+        }
+
+        // ── Helpers ──────────────────────────────────────────────
+
+        function getScore(competitor) {
+            if (!competitor) return '—';
+            const s = competitor.score;
+            if (s == null) return '—';
+            if (typeof s === 'object') return s.displayValue ?? s.value ?? '—';
+            return String(s);
+        }
+
+        function esc(str) {
+            const d = document.createElement('div');
+            d.textContent = String(str ?? '');
+            return d.innerHTML;
+        }
+
+        initialize();
+    </script>
+</body>
+</html>

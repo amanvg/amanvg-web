@@ -20,7 +20,10 @@
       "Bash(curl -s \"https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=20260401-20260430&limit=100\")",
       "Bash(curl -s \"https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=20260316-20260406&limit=100\")",
       "Bash(curl -s \"https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/teams\")",
-      "Bash(curl -s \"https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/teams/124292/schedule\")"
+      "Bash(curl -s \"https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/teams/124292/schedule\")",
+      "Bash(ls -la /Users/aman.gandhi/Documents/GitHub/amanvg-web/*.js /Users/aman.gandhi/Documents/GitHub/amanvg-web/*.json)",
+      "WebFetch(domain:site.api.espn.com)",
+      "Bash(curl -s \"https://site.api.espn.com/apis/v2/sports/baseball/mlb/standings\")"
     ]
   }
 }
