@@ -17,7 +17,7 @@
       --border-hover: #3d3d3d;
       --text-primary: #ffffff;
       --text-secondary: #b0b0b0;
-      --text-tertiary: #606060;
+      --text-tertiary: #8a8a8a;
       --radius-card: 20px;
       --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
     }
@@ -229,7 +229,7 @@
       padding: 32px 24px 20px;
       max-width: 1100px; width: 100%;
       max-height: calc(100vh - 80px);
-      overflow-y: auto;
+      overflow-y: auto; position: relative;
       transform: scale(0.96); transition: transform 0.2s ease;
     }
     .modal-overlay.active .modal-content { transform: scale(1); }
@@ -240,14 +240,19 @@
       transition: color 0.15s, background 0.15s;
     }
     .modal-close:hover { color: var(--text-primary); background: var(--border); }
-    .modal-content { position: relative; }
 
     /* Make expandable cards show pointer */
-    .chart-card, .annual-card, .stat-card, .forecast-day { cursor: pointer; transition: border-color 0.15s; }
-    .chart-card:hover, .annual-card:hover, .stat-card:hover { border-color: var(--border-hover); }
+    .chart-card, .annual-card { cursor: pointer; transition: border-color 0.15s; }
+    .chart-card:hover, .annual-card:hover { border-color: var(--border-hover); }
 
     @media (max-width: 700px) {
       .modal-overlay { padding: 20px; }
+    }
+
+    /* ── Accessibility ── */
+    :focus-visible {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
     }
 
     /* ── State messages ── */
@@ -278,15 +283,15 @@
 </head>
 <body>
 
-  <nav>
+  <nav aria-label="Main navigation">
     <div class="nav-inner">
       <a class="nav-back" href="/">← amanvg</a>
       <span class="nav-title">Tempest Station</span>
       <div class="nav-dropdown">
-        <button class="nav-dropdown-btn" id="yearMenuBtn">History ▾</button>
-        <div class="nav-dropdown-menu" id="yearMenu">
-          <a href="#year/2026" class="nav-dropdown-item">2026</a>
-          <a href="#year/2025" class="nav-dropdown-item">2025</a>
+        <button class="nav-dropdown-btn" id="yearMenuBtn" aria-haspopup="true" aria-expanded="false">History ▾</button>
+        <div class="nav-dropdown-menu" id="yearMenu" role="menu">
+          <a href="#year/2026" class="nav-dropdown-item" role="menuitem">2026</a>
+          <a href="#year/2025" class="nav-dropdown-item" role="menuitem">2025</a>
         </div>
       </div>
     </div>
@@ -774,7 +779,7 @@
         const daily    = fcData.forecast?.daily?.slice(0, 7) || [];
         const dayNames = daily.map((d, i) => {
           if (i === 0) return 'Today';
-          if (i === 1) return 'Tom';
+          if (i === 1) return 'Tmrw';
           return new Date(d.day_start_local * 1000).toLocaleDateString('en-US', { weekday: 'short' });
         });
 
@@ -805,7 +810,7 @@
 
           <div class="stats">
             ${statCard('Humidity',    cur.relative_humidity,                      '%',    `Dew point ${Math.round(cur.dew_point)}°F`)}
-            ${statCard('Wind',        `${cur.wind_avg} <span class="stat-unit"style="font-size:18px">${windCard}</span>`, 'mph', `Gust ${cur.wind_gust} mph · Lull ${cur.wind_lull} mph`)}
+            ${statCard('Wind',        `${cur.wind_avg} <span class="stat-unit" style="font-size:18px">${windCard}</span>`, 'mph', `Gust ${cur.wind_gust} mph · Lull ${cur.wind_lull} mph`)}
             ${statCard('Pressure',    pressureStr,                                 'inHg', esc(cur.pressure_trend))}
             ${statCard('UV Index',    (cur.uv ?? 0).toFixed(1),                   '',     uvLevel(cur.uv))}
             ${statCard('Solar',       Math.round(cur.solar_radiation ?? 0),       'W/m²', '')}
@@ -920,7 +925,7 @@
       const overlay = document.createElement('div');
       overlay.id = 'chart-modal';
       overlay.className = 'modal-overlay';
-      overlay.innerHTML = '<div class="modal-content"><button class="modal-close">&times;</button><div class="modal-body"></div></div>';
+      overlay.innerHTML = '<div class="modal-content" role="dialog" aria-modal="true"><button class="modal-close" aria-label="Close">&times;</button><div class="modal-body"></div></div>';
       document.body.appendChild(overlay);
 
       const body = overlay.querySelector('.modal-body');
@@ -932,7 +937,7 @@
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 
       document.getElementById('app').addEventListener('click', (e) => {
-        const card = e.target.closest('.chart-card, .annual-card, .stat-card');
+        const card = e.target.closest('.chart-card, .annual-card');
         if (!card) return;
         body.innerHTML = card.innerHTML;
         overlay.classList.add('active');
@@ -944,9 +949,13 @@
     const dropdown = menuBtn.parentElement;
     menuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      dropdown.classList.toggle('open');
+      const open = dropdown.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', open);
     });
-    document.addEventListener('click', () => dropdown.classList.remove('open'));
+    document.addEventListener('click', () => {
+      dropdown.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    });
 
     // ── Year view renderer ──────────────────────────────────────────────────
     async function loadYearView(year) {
@@ -959,7 +968,7 @@
           ${renderAnnualSection(obs, year)}
         `;
       } catch (err) {
-        app.innerHTML = `<div class="state-msg">Couldn't load year data.<br><small style="color:#3a3a3a">${err.message}</small></div>`;
+        app.innerHTML = `<div class="state-msg">Couldn't load year data.<br><small style="color:#3a3a3a">${esc(err.message)}</small></div>`;
       }
     }
 

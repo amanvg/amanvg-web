@@ -861,7 +861,8 @@
             .roster-box.grow { flex: unset; }
             .roster-player-row { padding: 10px 16px; flex: unset; }
         }
-    </style>
+        :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+  </style>
 </head>
 <body>
 
@@ -892,7 +893,7 @@
         </aside>
 
         <!-- MAIN -->
-        <div class="main">
+        <main class="main">
 
             <!-- VIEW: Upcoming Game -->
             <div class="view active" id="view-upcoming">
@@ -912,7 +913,7 @@
                 </div>
             </div>
 
-        </div>
+        </main>
     </div>
 
     <script>

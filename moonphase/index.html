@@ -16,7 +16,7 @@
       --border: #2e2e2e;
       --text-primary: #ffffff;
       --text-secondary: #b0b0b0;
-      --text-tertiary: #606060;
+      --text-tertiary: #8a8a8a;
       --radius-card: 20px;
       --radius-pill: 999px;
       --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
@@ -203,6 +203,7 @@
       .cycle-moon { width: 24px; height: 24px; }
       .cycle-name { font-size: 8px; }
     }
+      :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
   </style>
 </head>
 <body>
@@ -217,7 +218,7 @@
 
 <main class="main">
   <div class="moon-wrap">
-    <canvas id="moon" width="220" height="220"></canvas>
+    <canvas id="moon" width="220" height="220" role="img" aria-label="Current moon phase visualization"></canvas>
     <div>
       <div class="phase-name" id="phaseName"></div>
       <div class="phase-sub" id="phaseSub"></div>
