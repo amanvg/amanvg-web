@@ -303,6 +303,9 @@
     const DEVICE_ID  = 400121;
     const BASE       = 'https://swd.weatherflow.com/swd/rest';
 
+    // ── HTML escape ───────────────────────────────────────────────────────────
+    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
     // ── Unit converters (metric → imperial) ──────────────────────────────────
     const c2f    = c  => +(c * 9/5 + 32).toFixed(1);
     const ms2mph = ms => +(ms * 2.23694).toFixed(1);
@@ -731,7 +734,7 @@
         const cc = fcData.current_conditions;
         if (!cc) throw new Error('No current_conditions in forecast');
 
-        const stationName  = obsData.station_name || 'Tempest Station';
+        const stationName  = esc(obsData.station_name || 'Tempest Station');
         const pressureStr  = cur.sea_level_pressure?.toFixed(2) + trendArrow(cur.pressure_trend);
         const windDir      = cur.wind_direction ?? 0;
         const windCard     = deg2card(windDir);
@@ -789,7 +792,7 @@
             <div class="hero-left">
               <div class="hero-station">${stationName}</div>
               <div class="hero-temp">${Math.round(cc.air_temperature)}°</div>
-              <div class="hero-desc">${cc.conditions} · Feels like ${Math.round(cc.feels_like)}°</div>
+              <div class="hero-desc">${esc(cc.conditions)} · Feels like ${Math.round(cc.feels_like)}°</div>
             </div>
             <div class="hero-right">
               <div class="hero-icon">${iconToEmoji(cc.icon)}</div>
@@ -803,7 +806,7 @@
           <div class="stats">
             ${statCard('Humidity',    cur.relative_humidity,                      '%',    `Dew point ${Math.round(cur.dew_point)}°F`)}
             ${statCard('Wind',        `${cur.wind_avg} <span class="stat-unit"style="font-size:18px">${windCard}</span>`, 'mph', `Gust ${cur.wind_gust} mph · Lull ${cur.wind_lull} mph`)}
-            ${statCard('Pressure',    pressureStr,                                 'inHg', cur.pressure_trend)}
+            ${statCard('Pressure',    pressureStr,                                 'inHg', esc(cur.pressure_trend))}
             ${statCard('UV Index',    (cur.uv ?? 0).toFixed(1),                   '',     uvLevel(cur.uv))}
             ${statCard('Solar',       Math.round(cur.solar_radiation ?? 0),       'W/m²', '')}
             ${statCard('Rain Today',  (cur.precip_accum_local_day ?? 0).toFixed(2), 'in', `Yesterday: ${rainYest} in`)}
@@ -897,7 +900,7 @@
         app.innerHTML = `
           <div class="state-msg">
             Couldn't load station data.<br>
-            <small style="color:#3a3a3a">${err.message}</small>
+            <small style="color:#3a3a3a">${esc(err.message)}</small>
           </div>`;
       }
     }
