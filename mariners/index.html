@@ -862,6 +862,197 @@
             .roster-player-row { padding: 10px 16px; flex: unset; }
         }
         :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+
+        /* ── Box Score view ───────────────────────────────────────── */
+
+        .boxscore-view {
+            flex: 1;
+            padding: 24px 32px;
+            overflow-y: auto;
+        }
+
+        .boxscore-content {
+            max-width: 960px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .boxscore-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 16px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .boxscore-team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .boxscore-team-logo { width: 40px; height: 40px; object-fit: contain; }
+        .boxscore-team-abbr { font-size: 1.1rem; font-weight: 700; }
+        .boxscore-team-score { font-size: 1.8rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+        .boxscore-status {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .boxscore-status.is-live { color: var(--live-red); }
+
+        .linescore-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .linescore-table th,
+        .linescore-table td {
+            padding: 7px 10px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            min-width: 30px;
+        }
+
+        .linescore-table th {
+            font-size: 0.62rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .linescore-table td {
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(100,160,220,0.06);
+        }
+
+        .linescore-table td.ls-team {
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .linescore-table td.ls-team img {
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        .linescore-table td.rhe,
+        .linescore-table th.rhe {
+            font-weight: 700;
+            color: var(--text-primary);
+            border-left: 2px solid var(--border);
+        }
+
+        .boxscore-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .boxscore-section-header {
+            padding: 10px 16px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .boxscore-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+        }
+
+        .boxscore-table th {
+            font-size: 0.62rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-tertiary);
+            padding: 6px 8px;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .boxscore-table th.player-col { text-align: left; min-width: 140px; }
+
+        .boxscore-table td {
+            padding: 7px 8px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(100,160,220,0.06);
+            white-space: nowrap;
+        }
+
+        .boxscore-table td.player-col { text-align: left; }
+        .boxscore-table tr:last-child td { border-bottom: none; }
+
+        .boxscore-table tr.totals-row td {
+            font-weight: 600;
+            color: var(--text-primary);
+            border-top: 1px solid var(--border);
+        }
+
+        .bs-player-name { font-weight: 500; color: var(--text-primary); }
+        .bs-player-pos { font-size: 0.65rem; color: var(--teal); font-weight: 600; margin-left: 4px; }
+
+        .boxscore-footer {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            box-shadow: var(--shadow-md);
+        }
+
+        .boxscore-footer strong { color: var(--text-primary); font-weight: 600; }
+
+        .boxscore-pregame {
+            padding: 40px 24px;
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        .boxscore-pregame .pregame-time {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .boxscore-view { padding: 16px; }
+            .linescore-table { font-size: 0.72rem; }
+            .linescore-table th, .linescore-table td { padding: 5px 6px; min-width: 24px; }
+            .boxscore-table { font-size: 0.72rem; }
+            .boxscore-table th.player-col { min-width: 100px; }
+        }
   </style>
 </head>
 <body>
@@ -886,6 +1077,10 @@
                 <span class="sidebar-icon">📅</span>
                 <span>Overview</span>
             </button>
+            <button class="sidebar-item" onclick="showView('boxscore')" id="nav-boxscore" style="display:none">
+                <span class="sidebar-icon">📊</span>
+                <span>Current Game</span>
+            </button>
             <button class="sidebar-item" onclick="showView('roster')" id="nav-roster">
                 <span class="sidebar-icon">⚾</span>
                 <span>Roster</span>
@@ -903,6 +1098,13 @@
                 <div class="refresh-bar">
                     <span id="last-updated"></span>
                     <button id="refresh-btn" onclick="manualRefresh()">Refresh</button>
+                </div>
+            </div>
+
+            <!-- VIEW: Box Score -->
+            <div class="view" id="view-boxscore">
+                <div class="boxscore-view" id="boxscore-view">
+                    <div class="loading-view">Loading box score…</div>
                 </div>
             </div>
 
@@ -930,6 +1132,7 @@
         // ── View switching ───────────────────────────────────────
 
         const _rosterLoaded = { done: false };
+        const _boxscoreState = { loaded: false, eventId: null, gameState: null };
 
         function showView(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -939,6 +1142,10 @@
             if (id === 'roster' && !_rosterLoaded.done) {
                 _rosterLoaded.done = true;
                 refreshRoster();
+            }
+            if (id === 'boxscore') {
+                _boxscoreState.loaded = false;
+                refreshBoxscore();
             }
         }
 
@@ -971,6 +1178,9 @@
             await Promise.allSettled([refreshUpcoming()]);
             document.getElementById('last-updated').textContent =
                 'Updated ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            if (_boxscoreState.loaded && document.getElementById('view-boxscore')?.classList.contains('active')) {
+                refreshBoxscore();
+            }
         }
 
         async function manualRefresh() {
@@ -1017,6 +1227,24 @@
                 if (!schedule) { container.innerHTML = '<div class="loading-view">Could not load schedule.</div>'; return; }
 
                 const { completed, live, upcoming } = schedule;
+
+                // Detect current game for box score tab
+                const todayStr = new Date().toDateString();
+                const todayCompleted = completed.find(ev => new Date(ev.date).toDateString() === todayStr);
+                const currentGame = live[0] || todayCompleted || upcoming.find(ev => new Date(ev.date).toDateString() === todayStr);
+                const navBtn = document.getElementById('nav-boxscore');
+                if (currentGame) {
+                    _boxscoreState.eventId = currentGame.id;
+                    _boxscoreState.gameState = currentGame.competitions?.[0]?.status?.type?.state || null;
+                    navBtn.style.display = '';
+                } else {
+                    _boxscoreState.eventId = null;
+                    _boxscoreState.gameState = null;
+                    navBtn.style.display = 'none';
+                    if (document.getElementById('view-boxscore')?.classList.contains('active')) {
+                        showView('upcoming');
+                    }
+                }
 
                 // Determine featured game: live if active, else next upcoming
                 let featured, slotAbove, slotBelow;
@@ -1458,6 +1686,301 @@
                     <tbody>${rows}</tbody>
                 </table>
             </div>`;
+        }
+
+        // ── Box Score ─────────────────────────────────────────────
+
+        async function fetchBoxscore(eventId) {
+            if (!eventId) return null;
+            try {
+                const res = await fetch(`${ESPN}/${TEAM.sport}/${TEAM.league}/summary?event=${eventId}`);
+                if (!res.ok) return null;
+                return await res.json();
+            } catch (e) {
+                console.error('Boxscore fetch failed:', e);
+                return null;
+            }
+        }
+
+        async function refreshBoxscore() {
+            const container = document.getElementById('boxscore-view');
+            try {
+                if (!_boxscoreState.eventId) {
+                    container.innerHTML = '<div class="loading-view">No current game available.</div>';
+                    return;
+                }
+                container.innerHTML = '<div class="loading-view">Loading box score…</div>';
+                const summary = await fetchBoxscore(_boxscoreState.eventId);
+                if (!summary) {
+                    container.innerHTML = '<div class="loading-view">Could not load box score.</div>';
+                    return;
+                }
+                container.innerHTML = buildBoxscoreView(summary);
+                _boxscoreState.loaded = true;
+            } catch (e) {
+                console.error('Box score error:', e);
+                container.innerHTML = '<div class="loading-view" style="color:var(--red)">Failed to load box score.</div>';
+            }
+        }
+
+        function buildBoxscoreView(summary) {
+            const comp = summary.header?.competitions?.[0];
+            const competitors = comp?.competitors || [];
+            const away = competitors.find(c => c.homeAway === 'away');
+            const home = competitors.find(c => c.homeAway === 'home');
+            const status = comp?.status;
+            const gameInfo = summary.gameInfo;
+            const boxscore = summary.boxscore;
+
+            const state = status?.type?.state;
+
+            let html = '<div class="boxscore-content">';
+            html += buildGameHeader(away, home, status);
+
+            if (state === 'pre') {
+                const d = new Date(comp.date);
+                const timeStr = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                const dateStr = d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                html += `<div class="boxscore-section"><div class="boxscore-pregame">
+                    <div>Game has not started</div>
+                    <div class="pregame-time">${esc(timeStr)}</div>
+                    <div style="margin-top:4px;font-size:0.78rem;color:var(--text-tertiary)">${esc(dateStr)}</div>
+                </div></div>`;
+            } else {
+                html += buildLinescore(away, home);
+
+                const awayData = findTeamBoxscore(boxscore, away, 'away');
+                const homeData = findTeamBoxscore(boxscore, home, 'home');
+
+                const awayName = away?.team?.displayName || away?.team?.abbreviation || 'Away';
+                const homeName = home?.team?.displayName || home?.team?.abbreviation || 'Home';
+
+                html += buildBattingTable(awayName, awayData);
+                html += buildBattingTable(homeName, homeData);
+                html += buildPitchingTable(awayName, awayData);
+                html += buildPitchingTable(homeName, homeData);
+                html += buildGameInfoFooter(gameInfo, summary);
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function buildGameHeader(away, home, status) {
+            const awayLogo = away?.team?.logos?.[0]?.href || '';
+            const homeLogo = home?.team?.logos?.[0]?.href || '';
+            const awayAbbr = away?.team?.abbreviation || '?';
+            const homeAbbr = home?.team?.abbreviation || '?';
+            const awayScore = away?.score ?? '';
+            const homeScore = home?.score ?? '';
+            const state = status?.type?.state;
+            const detail = status?.type?.shortDetail || '';
+
+            let statusClass = 'boxscore-status';
+            let statusText = esc(detail);
+            if (state === 'in') {
+                statusClass += ' is-live';
+                statusText = `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--live-red);margin-right:4px;vertical-align:middle"></span>${statusText}`;
+            }
+
+            return `<div class="boxscore-header">
+                <div class="boxscore-team">
+                    ${awayLogo ? `<img class="boxscore-team-logo" src="${awayLogo}" alt="">` : ''}
+                    <span class="boxscore-team-abbr">${esc(awayAbbr)}</span>
+                    <span class="boxscore-team-score">${esc(awayScore)}</span>
+                </div>
+                <div class="${statusClass}">${statusText}</div>
+                <div class="boxscore-team">
+                    <span class="boxscore-team-score">${esc(homeScore)}</span>
+                    <span class="boxscore-team-abbr">${esc(homeAbbr)}</span>
+                    ${homeLogo ? `<img class="boxscore-team-logo" src="${homeLogo}" alt="">` : ''}
+                </div>
+            </div>`;
+        }
+
+        function buildLinescore(away, home) {
+            const awayScores = away?.linescores || [];
+            const homeScores = home?.linescores || [];
+            const totalInnings = Math.max(awayScores.length, homeScores.length, 9);
+
+            let headerCells = '<th></th>';
+            for (let i = 1; i <= totalInnings; i++) headerCells += `<th>${i}</th>`;
+            headerCells += '<th class="rhe">R</th><th class="rhe">H</th><th class="rhe">E</th>';
+
+            const getTeamHeaderStat = (team, name) => {
+                const stats = team?.statistics || [];
+                for (const s of stats) {
+                    if (s.name === name || s.abbreviation === name) return s.displayValue ?? '';
+                }
+                return '';
+            };
+
+            const buildRow = (team, scores) => {
+                const abbr = team?.team?.abbreviation || '?';
+                const logo = team?.team?.logos?.[0]?.href || '';
+                let cells = `<td class="ls-team">${logo ? `<img src="${logo}" alt="">` : ''}${esc(abbr)}</td>`;
+                for (let i = 0; i < totalInnings; i++) {
+                    const val = scores[i]?.displayValue ?? scores[i]?.value ?? '';
+                    cells += `<td>${val === '' ? '-' : esc(String(val))}</td>`;
+                }
+                cells += `<td class="rhe">${esc(team?.score || '0')}</td>`;
+                cells += `<td class="rhe">${esc(getTeamHeaderStat(team, 'hits') || '0')}</td>`;
+                cells += `<td class="rhe">${esc(getTeamHeaderStat(team, 'errors') || '0')}</td>`;
+                return `<tr>${cells}</tr>`;
+            };
+
+            return `<div class="boxscore-section">
+                <table class="linescore-table">
+                    <thead><tr>${headerCells}</tr></thead>
+                    <tbody>${buildRow(away, awayScores)}${buildRow(home, homeScores)}</tbody>
+                </table>
+            </div>`;
+        }
+
+        function findTeamBoxscore(boxscore, competitor, homeAway) {
+            if (!boxscore?.players) return null;
+            return boxscore.players.find(p =>
+                String(p.team?.id) === String(competitor?.team?.id) ||
+                p.homeAway === homeAway
+            );
+        }
+
+        function buildBattingTable(teamName, teamData) {
+            const batting = teamData?.statistics?.find(s => s.name === 'batting' || s.type === 'batting');
+            if (!batting) return '';
+
+            const labels = batting.labels || [];
+            const COLS = ['AB', 'R', 'H', 'RBI', 'BB', 'K', 'AVG', 'OPS'];
+            const colIdx = {};
+            for (const c of COLS) {
+                colIdx[c] = labels.indexOf(c);
+                if (c === 'K' && colIdx[c] === -1) colIdx[c] = labels.indexOf('SO');
+            }
+
+            const headerRow = '<tr><th class="player-col">Batters</th>' +
+                COLS.map(c => `<th>${c}</th>`).join('') + '</tr>';
+
+            const playerRows = (batting.athletes || []).map(a => {
+                const name = a.athlete?.shortName || a.athlete?.displayName || '?';
+                const pos = a.athlete?.position?.abbreviation || '';
+                const stats = a.stats || [];
+                return `<tr>
+                    <td class="player-col"><span class="bs-player-name">${esc(name)}</span><span class="bs-player-pos">${esc(pos)}</span></td>
+                    ${COLS.map(c => `<td>${colIdx[c] >= 0 ? esc(stats[colIdx[c]] ?? '0') : '—'}</td>`).join('')}
+                </tr>`;
+            }).join('');
+
+            const totals = batting.totals || [];
+            const totalsRow = totals.length ? `<tr class="totals-row">
+                <td class="player-col"><strong>Totals</strong></td>
+                ${COLS.map(c => `<td>${colIdx[c] >= 0 ? esc(totals[colIdx[c]] ?? '') : ''}</td>`).join('')}
+            </tr>` : '';
+
+            return `<div class="boxscore-section">
+                <div class="boxscore-section-header">${esc(teamName)} — Batting</div>
+                <table class="boxscore-table">
+                    <thead>${headerRow}</thead>
+                    <tbody>${playerRows}${totalsRow}</tbody>
+                </table>
+            </div>`;
+        }
+
+        function buildPitchingTable(teamName, teamData) {
+            const pitching = teamData?.statistics?.find(s => s.name === 'pitching' || s.type === 'pitching');
+            if (!pitching) return '';
+
+            const labels = pitching.labels || [];
+            const COLS = ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'HR', 'ERA', 'WHIP'];
+            const colIdx = {};
+            for (const c of COLS) {
+                colIdx[c] = labels.indexOf(c);
+                if (c === 'SO' && colIdx[c] === -1) colIdx[c] = labels.indexOf('K');
+            }
+
+            const headerRow = '<tr><th class="player-col">Pitchers</th>' +
+                COLS.map(c => `<th>${c}</th>`).join('') + '</tr>';
+
+            const playerRows = (pitching.athletes || []).map(a => {
+                const name = a.athlete?.shortName || a.athlete?.displayName || '?';
+                const stats = a.stats || [];
+                return `<tr>
+                    <td class="player-col"><span class="bs-player-name">${esc(name)}</span></td>
+                    ${COLS.map(c => `<td>${colIdx[c] >= 0 ? esc(stats[colIdx[c]] ?? '0') : '—'}</td>`).join('')}
+                </tr>`;
+            }).join('');
+
+            const totals = pitching.totals || [];
+            const totalsRow = totals.length ? `<tr class="totals-row">
+                <td class="player-col"><strong>Totals</strong></td>
+                ${COLS.map(c => `<td>${colIdx[c] >= 0 ? esc(totals[colIdx[c]] ?? '') : ''}</td>`).join('')}
+            </tr>` : '';
+
+            return `<div class="boxscore-section">
+                <div class="boxscore-section-header">${esc(teamName)} — Pitching</div>
+                <table class="boxscore-table">
+                    <thead>${headerRow}</thead>
+                    <tbody>${playerRows}${totalsRow}</tbody>
+                </table>
+            </div>`;
+        }
+
+        function buildGameInfoFooter(gameInfo, summary) {
+            if (!gameInfo) return '';
+            const lines = [];
+
+            // Umpires
+            const officials = gameInfo.officials || [];
+            if (officials.length) {
+                const umpStr = officials.map(o => {
+                    const pos = o.position?.displayName || o.position?.name || '';
+                    return `${pos}: ${o.displayName || o.fullName || ''}`;
+                }).filter(s => s.includes(':')).join('. ');
+                if (umpStr) lines.push(`<strong>Umpires:</strong> ${esc(umpStr)}`);
+            }
+
+            // Venue
+            const venue = gameInfo.venue;
+            if (venue) {
+                const name = venue.fullName || venue.shortName || '';
+                if (name) lines.push(`<strong>Venue:</strong> ${esc(name)}`);
+            }
+
+            // Weather
+            const weather = gameInfo.weather;
+            if (weather) {
+                const parts = [];
+                if (weather.temperature) parts.push(`${weather.temperature}°`);
+                if (weather.displayValue || weather.conditionId) parts.push(weather.displayValue || '');
+                if (parts.length) lines.push(`<strong>Weather:</strong> ${esc(parts.join(', '))}`);
+            }
+            if (weather?.wind) {
+                const w = weather.wind;
+                const windStr = [w.speed ? `${w.speed} mph` : '', w.direction?.text || ''].filter(Boolean).join(', ');
+                if (windStr) lines.push(`<strong>Wind:</strong> ${esc(windStr)}`);
+            }
+
+            // Attendance
+            if (gameInfo.attendance) {
+                lines.push(`<strong>Attendance:</strong> ${esc(Number(gameInfo.attendance).toLocaleString())}`);
+            }
+
+            // Game date
+            const comp = summary.header?.competitions?.[0];
+            if (comp?.date) {
+                const d = new Date(comp.date);
+                const dateStr = d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                lines.push(`<strong>Date:</strong> ${esc(dateStr)}`);
+            }
+
+            // First pitch time
+            if (comp?.date) {
+                const d = new Date(comp.date);
+                const timeStr = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                lines.push(`<strong>First pitch:</strong> ${esc(timeStr)}`);
+            }
+
+            if (!lines.length) return '';
+            return `<div class="boxscore-footer">${lines.join('<br>')}</div>`;
         }
 
         // ── Roster / Depth Chart ─────────────────────────────────
