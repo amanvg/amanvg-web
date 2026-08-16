@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLB Stadiums Visited — amanvg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #141414;
+      --surface: #1e1e1e;
+      --border: #2e2e2e;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-tertiary: #8a8a8a;
+      --visited: #f59e0b;
+      --toured: #3b82f6;
+      --radius-card: 20px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(20, 20, 20, 0.85);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .nav-logo {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-logo span { opacity: 0.45; }
+    .nav-back {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-back:hover { color: var(--text-primary); }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+    .page-header p { color: var(--text-secondary); font-size: 0.95rem; }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px 28px;
+      min-width: 140px;
+    }
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .stat-card.visited .value { color: var(--visited); }
+    .stat-card.toured .value { color: var(--toured); }
+
+    .legend {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .legend-swatch.visited { background: var(--visited); }
+    .legend-swatch.toured { background: var(--toured); }
+    .legend-swatch.unvisited { background: #333; border-color: #666; }
+    .legend-swatch.former { background: transparent; border: 2px solid var(--toured); }
+
+    .map-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    .region-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .region-tab {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .region-tab:hover {
+      color: var(--text-primary);
+      border-color: #555;
+    }
+    .region-tab.active {
+      background: var(--visited);
+      border-color: var(--visited);
+      color: #141414;
+    }
+
+    #map-container {
+      width: 100%;
+    }
+
+    #mlb-map {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .state-path {
+      fill: #2a2a2a;
+      stroke: #141414;
+      stroke-width: 0.8;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .stadium-dot {
+      cursor: pointer;
+      transition: opacity 0.4s;
+    }
+    .stadium-dot.visited { fill: var(--visited); stroke: #141414; }
+    .stadium-dot.toured { fill: var(--toured); stroke: #141414; }
+    .stadium-dot.unvisited { fill: #4a4a4a; stroke: #8a8a8a; }
+    .stadium-dot.former.visited { fill: rgba(245,158,11,0.15); stroke: var(--visited); }
+    .stadium-dot.former.toured { fill: rgba(59,130,246,0.15); stroke: var(--toured); }
+    .stadium-dot:hover { opacity: 0.75; }
+    .stadium-dot.hidden { opacity: 0; pointer-events: none; }
+
+    #tooltip {
+      position: fixed;
+      background: rgba(30,30,30,0.97);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.1s;
+      z-index: 200;
+      white-space: nowrap;
+    }
+    #tooltip .tip-team {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    #tooltip .tip-status {
+      font-size: 0.75rem;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+    #tooltip .tip-status.visited { color: var(--visited); }
+    #tooltip .tip-status.toured { color: var(--toured); }
+    #tooltip .tip-status.unvisited { color: var(--text-tertiary); }
+
+    .region-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin-top: 24px;
+    }
+    .region-heading .count {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      margin-left: 6px;
+    }
+
+    .stadium-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 8px;
+    }
+    .stadium-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .stadium-chip .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .stadium-chip.visited { border-color: rgba(245,158,11,0.35); }
+    .stadium-chip.visited .dot { background: var(--visited); }
+    .stadium-chip.toured { border-color: rgba(59,130,246,0.35); }
+    .stadium-chip.toured .dot { background: var(--toured); }
+    .stadium-chip.unvisited .dot { background: #3a3a3a; border: 1px solid #666; }
+    .stadium-chip.former.visited .dot { background: transparent; border: 2px solid var(--visited); }
+    .stadium-chip.former.toured .dot { background: transparent; border: 2px solid var(--toured); }
+    .stadium-chip .name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .stadium-chip .team {
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--text-tertiary);
+      margin-top: 1px;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin: 32px 0 12px;
+    }
+
+    @media (max-width: 640px) {
+      .page-header h1 { font-size: 1.5rem; }
+      .map-card { padding: 12px; }
+    }
+    :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">aman<span>vg</span></a>
+    <a href="/" class="nav-back">← Back</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <h1>MLB Stadiums Visited</h1>
+    <p>Every big-league ballpark I've seen a game in, mapped out.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card visited">
+      <div class="value" id="visited-count">—</div>
+      <div class="label">Seen a game</div>
+    </div>
+    <div class="stat-card toured">
+      <div class="value" id="toured-count">—</div>
+      <div class="label">Been to, no game yet</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" id="unvisited-count">—</div>
+      <div class="label">Stadiums remaining</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" id="pct">—</div>
+      <div class="label">of the league</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-swatch visited"></div>
+      <span>Seen a game</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch toured"></div>
+      <span>Been to, no game yet</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch unvisited"></div>
+      <span>Not yet</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch former"></div>
+      <span>Former park</span>
+    </div>
+  </div>
+
+  <div class="map-card">
+    <div class="region-tabs" id="region-tabs"></div>
+    <div id="map-container">
+      <svg id="mlb-map" viewBox="0 0 960 600"></svg>
+    </div>
+  </div>
+
+  <p class="section-label">Stadiums by Division</p>
+  <div id="stadium-list"></div>
+</main>
+
+<div id="tooltip">
+  <div id="tip-name"></div>
+  <div class="tip-team" id="tip-team"></div>
+  <div class="tip-status" id="tip-status"></div>
+</div>
+
+<!-- D3 v7 -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<!-- TopoJSON -->
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+
+<script>
+// ── EDIT THIS LIST ────────────────────────────────────────────────────────
+const VISITED = new Set([
+  "T-Mobile Park",
+  "Oracle Park",
+  "Citizens Bank Park",
+  "PNC Park",
+  "Yankee Stadium",
+  "Nationals Park",
+]);
+
+// Stadiums I've been inside, but haven't seen a game at
+const BEEN_TO = new Set([
+  "Coors Field",
+  "Wrigley Field",
+  "Rate Field",
+  "Progressive Field",
+  "Oriole Park at Camden Yards",
+]);
+
+// Parks that are no longer a team's home, but that I've been to.
+// status: 'visited' = saw a game there, 'toured' = been inside only
+const FORMER_PARKS = [
+  { stadium: "Oakland Coliseum", team: "Oakland Athletics", city: "Oakland, CA",
+    era: "A's home 1968–2024", status: "toured", division: "AL West",
+    coords: [-122.2005, 37.7516] },
+  { stadium: "Rangers Ballpark in Arlington", team: "Texas Rangers", city: "Arlington, TX",
+    era: "Rangers home 1994–2019", status: "toured", division: "AL West",
+    coords: [-97.0832, 32.7512] },
+];
+// ─────────────────────────────────────────────────────────────────────────
+
+function statusOf(s) {
+  if (s.status) return s.status; // former parks carry their own status
+  if (VISITED.has(s.stadium)) return 'visited';
+  if (BEEN_TO.has(s.stadium)) return 'toured';
+  return 'unvisited';
+}
+
+// All 30 current MLB stadiums, grouped by division.
+// coords are [longitude, latitude].
+const DIVISION_GROUPS = {
+  'AL West': [
+    { stadium: "T-Mobile Park",      team: "Seattle Mariners",      city: "Seattle, WA",       coords: [-122.3325, 47.5914] },
+    { stadium: "Sutter Health Park", team: "Athletics",             city: "West Sacramento, CA", coords: [-121.5133, 38.5804] },
+    { stadium: "Angel Stadium",      team: "Los Angeles Angels",    city: "Anaheim, CA",       coords: [-117.8827, 33.8003] },
+    { stadium: "Daikin Park",        team: "Houston Astros",        city: "Houston, TX",       coords: [-95.3555, 29.7573] },
+    { stadium: "Globe Life Field",   team: "Texas Rangers",         city: "Arlington, TX",     coords: [-97.0842, 32.7473] },
+  ],
+  'AL Central': [
+    { stadium: "Rate Field",         team: "Chicago White Sox",     city: "Chicago, IL",       coords: [-87.6338, 41.8299] },
+    { stadium: "Progressive Field",  team: "Cleveland Guardians",   city: "Cleveland, OH",     coords: [-81.6852, 41.4962] },
+    { stadium: "Comerica Park",      team: "Detroit Tigers",        city: "Detroit, MI",       coords: [-83.0485, 42.3390] },
+    { stadium: "Kauffman Stadium",   team: "Kansas City Royals",    city: "Kansas City, MO",   coords: [-94.4803, 39.0517] },
+    { stadium: "Target Field",       team: "Minnesota Twins",       city: "Minneapolis, MN",   coords: [-93.2776, 44.9817] },
+  ],
+  'AL East': [
+    { stadium: "Oriole Park at Camden Yards", team: "Baltimore Orioles", city: "Baltimore, MD", coords: [-76.6217, 39.2838] },
+    { stadium: "Fenway Park",        team: "Boston Red Sox",        city: "Boston, MA",        coords: [-71.0972, 42.3467] },
+    { stadium: "Yankee Stadium",     team: "New York Yankees",      city: "Bronx, NY",         coords: [-73.9262, 40.8296] },
+    { stadium: "Tropicana Field",    team: "Tampa Bay Rays",        city: "St. Petersburg, FL", coords: [-82.6534, 27.7683] },
+    { stadium: "Rogers Centre",      team: "Toronto Blue Jays",     city: "Toronto, ON",       coords: [-79.3894, 43.6414] },
+  ],
+  'NL West': [
+    { stadium: "Chase Field",        team: "Arizona Diamondbacks",  city: "Phoenix, AZ",       coords: [-112.0667, 33.4453] },
+    { stadium: "Coors Field",        team: "Colorado Rockies",      city: "Denver, CO",        coords: [-104.9942, 39.7559] },
+    { stadium: "Dodger Stadium",     team: "Los Angeles Dodgers",   city: "Los Angeles, CA",   coords: [-118.2400, 34.0739] },
+    { stadium: "Petco Park",         team: "San Diego Padres",      city: "San Diego, CA",     coords: [-117.1570, 32.7076] },
+    { stadium: "Oracle Park",        team: "San Francisco Giants",  city: "San Francisco, CA", coords: [-122.3893, 37.7786] },
+  ],
+  'NL Central': [
+    { stadium: "Wrigley Field",      team: "Chicago Cubs",          city: "Chicago, IL",       coords: [-87.6553, 41.9484] },
+    { stadium: "Great American Ball Park", team: "Cincinnati Reds", city: "Cincinnati, OH",    coords: [-84.5066, 39.0975] },
+    { stadium: "American Family Field", team: "Milwaukee Brewers",  city: "Milwaukee, WI",     coords: [-87.9712, 43.0280] },
+    { stadium: "PNC Park",           team: "Pittsburgh Pirates",    city: "Pittsburgh, PA",    coords: [-80.0057, 40.4469] },
+    { stadium: "Busch Stadium",      team: "St. Louis Cardinals",   city: "St. Louis, MO",     coords: [-90.1928, 38.6226] },
+  ],
+  'NL East': [
+    { stadium: "Truist Park",        team: "Atlanta Braves",        city: "Atlanta, GA",       coords: [-84.4678, 33.8908] },
+    { stadium: "loanDepot park",     team: "Miami Marlins",         city: "Miami, FL",         coords: [-80.2196, 25.7781] },
+    { stadium: "Citi Field",         team: "New York Mets",         city: "Queens, NY",        coords: [-73.8458, 40.7571] },
+    { stadium: "Citizens Bank Park", team: "Philadelphia Phillies", city: "Philadelphia, PA",  coords: [-75.1665, 39.9061] },
+    { stadium: "Nationals Park",     team: "Washington Nationals",  city: "Washington, DC",    coords: [-77.0074, 38.8730] },
+  ],
+};
+
+const ALL_STADIUMS = Object.entries(DIVISION_GROUPS)
+  .flatMap(([division, list]) => list.map(s => ({ ...s, division })));
+
+// Stats — the league counts track the 30 current parks; the "been to" count
+// includes former parks I've been inside
+const total = ALL_STADIUMS.length;
+const visitedCount = VISITED.size;
+const touredCount = BEEN_TO.size + FORMER_PARKS.filter(s => s.status === 'toured').length;
+document.getElementById('visited-count').textContent = visitedCount;
+document.getElementById('toured-count').textContent = touredCount;
+document.getElementById('unvisited-count').textContent = total - visitedCount;
+document.getElementById('pct').textContent = Math.round(visitedCount / total * 100) + '%';
+
+// Stadium list: one grid per division — seen a game first, then been-to, then the rest
+const STATUS_RANK = { visited: 0, toured: 1, unvisited: 2 };
+const listContainer = document.getElementById('stadium-list');
+Object.keys(DIVISION_GROUPS).forEach(division => {
+  const sorted = [...DIVISION_GROUPS[division]]
+    .sort((a, b) => STATUS_RANK[statusOf(a)] - STATUS_RANK[statusOf(b)] || a.team.localeCompare(b.team));
+  const visitedInGroup = sorted.filter(s => statusOf(s) === 'visited').length;
+  const touredInGroup = sorted.filter(s => statusOf(s) === 'toured').length;
+
+  const heading = document.createElement('p');
+  heading.className = 'region-heading';
+  const touredNote = touredInGroup ? ` · ${touredInGroup} been to` : '';
+  heading.innerHTML = `${division}<span class="count">${visitedInGroup} / ${sorted.length} visited${touredNote}</span>`;
+  listContainer.appendChild(heading);
+
+  const grid = document.createElement('div');
+  grid.className = 'stadium-grid';
+  sorted.forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = `stadium-chip ${statusOf(s)}`;
+    chip.innerHTML = `<span class="dot"></span><span><span class="name">${s.stadium}</span><br><span class="team">${s.team} · ${s.city}</span></span>`;
+    grid.appendChild(chip);
+  });
+  listContainer.appendChild(grid);
+});
+
+// Former parks section
+{
+  const heading = document.createElement('p');
+  heading.className = 'region-heading';
+  heading.innerHTML = `Former Parks<span class="count">${FORMER_PARKS.length} been to</span>`;
+  listContainer.appendChild(heading);
+
+  const grid = document.createElement('div');
+  grid.className = 'stadium-grid';
+  FORMER_PARKS.forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = `stadium-chip former ${s.status}`;
+    chip.innerHTML = `<span class="dot"></span><span><span class="name">${s.stadium}</span><br><span class="team">${s.era} · ${s.city}</span></span>`;
+    grid.appendChild(chip);
+  });
+  listContainer.appendChild(grid);
+}
+
+// Tooltip
+const tooltip = document.getElementById('tooltip');
+const tipName = document.getElementById('tip-name');
+const tipTeam = document.getElementById('tip-team');
+const tipStatus = document.getElementById('tip-status');
+
+const STATUS_LABEL = {
+  visited: '✓ Seen a game here',
+  toured: 'Been here — no game yet',
+  unvisited: 'Not yet',
+};
+
+function showTip(e, s) {
+  const status = statusOf(s);
+  tipName.textContent = s.stadium;
+  tipTeam.textContent = s.era ? `${s.era} · ${s.city}` : `${s.team} · ${s.city}`;
+  tipStatus.textContent = STATUS_LABEL[status];
+  tipStatus.className = `tip-status ${status}`;
+  tooltip.style.opacity = '1';
+  moveTip(e);
+}
+function moveTip(e) {
+  tooltip.style.left = (e.clientX + 14) + 'px';
+  tooltip.style.top  = (e.clientY - 10) + 'px';
+}
+function hideTip() { tooltip.style.opacity = '0'; }
+
+// Draw map using US Atlas TopoJSON as a neutral basemap, then stadium markers
+const width = 960, height = 600;
+const svg = d3.select('#mlb-map').attr('viewBox', `0 0 ${width} ${height}`);
+const projection = d3.geoAlbersUsa().scale(1280).translate([width / 2, height / 2]);
+const path = d3.geoPath().projection(projection);
+
+// All map layers live in this group so division zoom can transform them together
+const mapLayer = svg.append('g');
+const BASE_R = 7;
+
+// ── Division zoom ─────────────────────────────────────────────────────────
+let currentK = 1;
+
+function focusDivision(name) {
+  let transform;
+  if (name === 'All MLB') {
+    currentK = 1;
+    transform = 'translate(0,0) scale(1)';
+  } else {
+    const pts = DIVISION_GROUPS[name].map(s => projection(s.coords)).filter(Boolean);
+    const x0 = d3.min(pts, p => p[0]), x1 = d3.max(pts, p => p[0]);
+    const y0 = d3.min(pts, p => p[1]), y1 = d3.max(pts, p => p[1]);
+    const pad = 60;
+    const k = Math.min(6, 0.85 / Math.max((x1 - x0 + pad) / width, (y1 - y0 + pad) / height));
+    const tx = width / 2 - k * (x0 + x1) / 2;
+    const ty = height / 2 - k * (y0 + y1) / 2;
+    currentK = k;
+    transform = `translate(${tx},${ty}) scale(${k})`;
+  }
+  mapLayer.transition().duration(750).ease(d3.easeCubicInOut).attr('transform', transform);
+  // Counter-scale markers so dots stay a readable size when zoomed in,
+  // and only show the focused division's stadiums
+  mapLayer.selectAll('.stadium-dot')
+    .classed('hidden', s => name !== 'All MLB' && s.division !== name)
+    .transition().duration(750).ease(d3.easeCubicInOut)
+    .attr('r', BASE_R / Math.sqrt(currentK))
+    .attr('stroke-width', 1.5 / Math.sqrt(currentK));
+}
+
+const tabsEl = document.getElementById('region-tabs');
+['All MLB', ...Object.keys(DIVISION_GROUPS)].forEach(name => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'region-tab' + (name === 'All MLB' ? ' active' : '');
+  btn.textContent = name;
+  btn.addEventListener('click', () => {
+    tabsEl.querySelectorAll('.region-tab').forEach(b => b.classList.toggle('active', b === btn));
+    focusDivision(name);
+  });
+  tabsEl.appendChild(btn);
+});
+// ─────────────────────────────────────────────────────────────────────────
+
+d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(us => {
+  const states = topojson.feature(us, us.objects.states);
+
+  mapLayer.selectAll('.state-path')
+    .data(states.features)
+    .enter()
+    .append('path')
+    .attr('class', 'state-path')
+    .attr('d', path);
+
+  // Stadium markers (current + former parks), colored dots on top so they
+  // never hide under gray ones
+  const sorted = [...ALL_STADIUMS, ...FORMER_PARKS].sort((a, b) =>
+    STATUS_RANK[statusOf(b)] - STATUS_RANK[statusOf(a)]);
+
+  mapLayer.selectAll('.stadium-dot')
+    .data(sorted)
+    .enter()
+    .append('circle')
+    .attr('class', s => `stadium-dot ${statusOf(s)}${s.era ? ' former' : ''}`)
+    .attr('cx', s => { const p = projection(s.coords); return p ? p[0] : -100; })
+    .attr('cy', s => { const p = projection(s.coords); return p ? p[1] : -100; })
+    .attr('r', BASE_R)
+    .attr('stroke-width', 1.5)
+    .on('mousemove', (e, s) => { showTip(e, s); moveTip(e); })
+    .on('mouseleave', hideTip);
+});
+</script>
+</body>
+</html>
