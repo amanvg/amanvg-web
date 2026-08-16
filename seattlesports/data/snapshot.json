@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-16T22:26:24.409Z",
+ "generatedAt": "2026-08-16T22:50:20.177Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -453,17 +453,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "13.5"
+        "displayValue": "14"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "63"
+        "displayValue": "64"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-1.0"
+        "displayValue": "-1.5"
        },
        {
         "name": "ties",
@@ -473,7 +473,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".492"
+        "displayValue": ".488"
        },
        {
         "name": "wins",
@@ -528,6 +528,50 @@
      },
      {
       "team": {
+       "id": "11",
+       "abbreviation": "ATH",
+       "displayName": "Athletics"
+      },
+      "stats": [
+       {
+        "name": "OTLosses",
+        "abbreviation": "OTL",
+        "displayValue": "5"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "25.5"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "75"
+       },
+       {
+        "name": "points",
+        "abbreviation": "GBP",
+        "displayValue": "-13.0"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".395"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "49"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "3",
        "abbreviation": "LAA",
        "displayName": "Los Angeles Angels"
@@ -567,50 +611,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "49"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "11",
-       "abbreviation": "ATH",
-       "displayName": "Athletics"
-      },
-      "stats": [
-       {
-        "name": "OTLosses",
-        "abbreviation": "OTL",
-        "displayValue": "5"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "26"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "75"
-       },
-       {
-        "name": "points",
-        "abbreviation": "GBP",
-        "displayValue": "-13.5"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "T",
-        "displayValue": "0"
-       },
-       {
-        "name": "winPercent",
-        "abbreviation": "PCT",
-        "displayValue": ".390"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "48"
        }
       ]
      }
