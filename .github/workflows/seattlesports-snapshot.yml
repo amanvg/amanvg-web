@@ -1,0 +1,64 @@
+name: Seattle Sports snapshot
+
+# Refreshes seattlesports/data/snapshot.json. The page reads that file
+# same-origin, which is why it can drop the (now 403'd) CORS proxy entirely.
+# Live in-game scores don't come from here — the browser gets those straight
+# from cdn.espn.com, which still sends CORS headers.
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: seattlesports-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build snapshot
+        run: node seattlesports/build-snapshot.mjs
+
+      - name: Commit if the data actually changed
+        run: |
+          set -eu
+          FILE=seattlesports/data/snapshot.json
+
+          # Stage first: plain `git diff` reports nothing for an untracked file,
+          # which would silently skip the very first commit.
+          git add "$FILE"
+
+          if git diff --cached --quiet -- "$FILE"; then
+            echo "No change."
+            exit 0
+          fi
+
+          # Every run rewrites generatedAt. Committing on that alone would add
+          # 48 no-op commits a day, so only commit when real data moved.
+          REAL=$(git diff --cached -U0 -- "$FILE" \
+            | grep -E '^[+-]' \
+            | grep -vE '^(\+\+\+|---)' \
+            | grep -v '"generatedAt"' \
+            | wc -l | tr -d ' ' || true)
+
+          if [ "${REAL:-0}" -eq 0 ]; then
+            echo "Only generatedAt changed — discarding."
+            git restore --staged --worktree "$FILE"
+            exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "seattlesports: refresh data snapshot"
+          git push

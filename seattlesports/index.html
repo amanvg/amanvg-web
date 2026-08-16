@@ -548,206 +548,130 @@
             'usa.1': [{ label: 'W', stat: 'wins' }, { label: 'L', stat: 'losses' }, { label: 'D', stat: 'ties' }, { label: 'PTS', stat: 'points' }],
         };
 
-        const STANDINGS_SORT = {
-            nfl:     { stat: 'winPercent', desc: true },
-            mlb:     { stat: 'winPercent', desc: true },
-            nhl:     { stat: 'points', desc: true },
-            'usa.1': { stat: 'points', desc: true },
+        // Data comes from two places:
+        //   · standings + schedule → data/snapshot.json, rebuilt by CI. site.api.espn.com
+        //     sends no Access-Control-Allow-Origin, and proxying it through a Cloudflare
+        //     Worker gets 403'd by ESPN's edge, so the browser never calls it at all.
+        //   · live in-game scores → cdn.espn.com, which does still send CORS headers.
+        const SNAPSHOT_URL = 'data/snapshot.json';
+        const CDN = 'https://cdn.espn.com/core';
+
+        // Where each league's in-progress games come from on cdn.espn.com.
+        // NHL has no /scoreboard path there (it 404s, and ESPN doesn't put CORS
+        // headers on error responses), but its /schedule payload carries the same
+        // event shape keyed by date.
+        const LIVE_SOURCES = {
+            nfl:     { path: 'nfl/scoreboard?xhr=1' },
+            mlb:     { path: 'mlb/scoreboard?xhr=1' },
+            'usa.1': { path: 'soccer/scoreboard?xhr=1&league=usa.1' },
+            nhl:     { path: 'nhl/schedule?xhr=1', fromSchedule: true },
         };
 
-        const ESPN = 'https://site.api.espn.com/apis/site/v2/sports';
-        const ESPN_V2 = 'https://site.api.espn.com/apis/v2/sports';
-        const ESPN_PROXY = 'https://amanvg-espn-proxy.amanvg.workers.dev/?url=';
-        const espnFetch = (url) => fetch(ESPN_PROXY + encodeURIComponent(url));
         let teamCache = {};
+        let snapshot = null;
+        let snapshotError = null;
 
         // ── Initialization ──────────────────────────────────────
 
         async function initialize() {
             renderSkeletons();
-            await Promise.all(TEAMS.map(lookupTeam));
+            await loadSnapshot();
             await refreshAll();
             setInterval(refreshAll, 30000);
+            // The snapshot only moves when CI commits a new one, so poll it gently.
+            setInterval(loadSnapshot, 5 * 60 * 1000);
         }
 
-        async function lookupTeam(team) {
+        async function loadSnapshot() {
             try {
-                const res = await espnFetch(`${ESPN}/${team.sport}/${team.league}/teams`);
+                const res = await fetch(SNAPSHOT_URL, { cache: 'no-store' });
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                const all = data.sports[0].leagues[0].teams;
-                const match = all.find(t =>
-                    t.team.location?.toLowerCase() === 'seattle'
-                    || t.team.displayName?.toLowerCase().includes('seattle')
-                );
-                if (match) {
-                    team.id = match.team.id;
-                    team.logo = match.team.logos?.[0]?.href;
-                    team.abbreviation = match.team.abbreviation;
-                    team.displayName = match.team.displayName;
+                snapshot = await res.json();
+                snapshotError = null;
+                for (const team of TEAMS) {
+                    const t = snapshot.teams?.[team.name];
+                    if (!t || t.error) continue;
+                    team.id = t.id;
+                    team.logo = t.logo;
+                    team.abbreviation = t.abbreviation;
+                    team.displayName = t.displayName;
                 }
             } catch (e) {
-                console.error(`Lookup failed for ${team.name}:`, e);
+                snapshotError = `Data unavailable (${e.message})`;
+                console.error('Snapshot load failed:', e);
             }
         }
 
         // ── Data Fetching ───────────────────────────────────────
 
         async function refreshAll() {
-            await Promise.allSettled(TEAMS.map(refreshTeam));
-            document.getElementById('last-updated').textContent =
-                'Updated ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            const live = await fetchLiveScores();
+            for (const team of TEAMS) refreshTeam(team, live[team.league]);
+
+            const now = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            const built = snapshot?.generatedAt
+                ? ' · data ' + new Date(snapshot.generatedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+                : '';
+            document.getElementById('last-updated').textContent = `Updated ${now}${built}`;
         }
 
         async function manualRefresh() {
             const btn = document.getElementById('refresh-btn');
             btn.textContent = '...';
+            await loadSnapshot();
             await refreshAll();
             btn.textContent = 'Refresh';
         }
 
-        async function refreshTeam(team) {
-            if (!team.id) {
-                teamCache[team.name] = { error: 'Team not found' };
-                renderCard(team);
-                return;
-            }
-            try {
-                const [schedule, standings, live] = await Promise.all([
-                    fetchSchedule(team),
-                    fetchStandings(team),
-                    fetchLiveScore(team),
-                ]);
-                teamCache[team.name] = { schedule, standings, live };
-            } catch (e) {
-                console.error(`Refresh failed for ${team.name}:`, e);
-                if (!teamCache[team.name]) {
-                    teamCache[team.name] = { error: 'Failed to load' };
-                }
+        function refreshTeam(team, liveEvents) {
+            const entry = snapshot?.teams?.[team.name];
+
+            if (snapshotError) {
+                teamCache[team.name] = { error: snapshotError };
+            } else if (!entry) {
+                teamCache[team.name] = { error: 'Not in data snapshot' };
+            } else if (entry.error) {
+                teamCache[team.name] = { error: entry.error };
+            } else {
+                teamCache[team.name] = {
+                    schedule: entry.schedule,
+                    standings: entry.standings,
+                    live: findLiveGame(team, liveEvents),
+                };
             }
             renderCard(team);
         }
 
-        const SEASON_PHASES = {
-            1: { label: 'Pre-Season',     cls: 'phase-pre' },
-            2: { label: 'Regular Season', cls: 'phase-regular' },
-            3: { label: 'Playoffs',       cls: 'phase-post' },
-            4: { label: 'Offseason',      cls: 'phase-off' },
-        };
-
-        async function fetchSchedule(team) {
-            const res = await espnFetch(`${ESPN}/${team.sport}/${team.league}/teams/${team.id}/schedule`);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            const events = data.events || [];
-
-            const seasonType = data.season?.type ?? data.requestedSeason?.type ?? null;
-            const seasonPhase = SEASON_PHASES[seasonType] ?? { label: 'Offseason', cls: 'phase-off' };
-
-            let lastGame = null, liveGame = null, nextGame = null;
-            for (const ev of events) {
-                const state = ev.competitions?.[0]?.status?.type?.state;
-                if (state === 'post') {
-                    // Always keep the most-recent completed game (leagues vary in sort order)
-                    if (!lastGame || new Date(ev.date) > new Date(lastGame.date)) lastGame = ev;
-                } else if (state === 'in') {
-                    liveGame = ev;
-                } else if (state === 'pre') {
-                    // Always keep the earliest upcoming game
-                    if (!nextGame || new Date(ev.date) < new Date(nextGame.date)) nextGame = ev;
-                }
-            }
-
-            // Some leagues (e.g. MLS) don't include future games in the team schedule endpoint.
-            // Fall back to the scoreboard to find the next upcoming game.
-            if (!nextGame) {
-                const today = new Date();
-                const future = new Date(today);
-                future.setDate(today.getDate() + 21);
-                const fmt = d => d.toISOString().slice(0, 10).replace(/-/g, '');
+        // One request per league, shared by every team in that league.
+        async function fetchLiveScores() {
+            const leagues = [...new Set(TEAMS.map(t => t.league))];
+            const out = {};
+            await Promise.all(leagues.map(async league => {
+                const src = LIVE_SOURCES[league];
+                if (!src) return;
                 try {
-                    const sbRes = await espnFetch(`${ESPN}/${team.sport}/${team.league}/scoreboard?dates=${fmt(today)}-${fmt(future)}&limit=100`);
-                    if (sbRes.ok) {
-                        const sbData = await sbRes.json();
-                        for (const ev of sbData.events || []) {
-                            const comp = ev.competitions?.[0];
-                            if (comp?.competitors?.some(c => String(c.team?.id) === String(team.id))) {
-                                nextGame = ev;
-                                break;
-                            }
-                        }
-                    }
-                } catch (e) { /* non-critical */ }
-            }
-
-            return { lastGame, liveGame, nextGame, seasonPhase };
+                    const res = await fetch(`${CDN}/${src.path}`);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+                    out[league] = src.fromSchedule
+                        ? Object.values(data?.content?.schedule || {}).flatMap(d => d.games || [])
+                        : (data?.content?.sbData?.events || []);
+                } catch (e) {
+                    // Non-critical: the card still renders from the snapshot, just
+                    // without a live line on it.
+                    console.warn(`Live scores unavailable for ${league}:`, e.message);
+                }
+            }));
+            return out;
         }
 
-        async function fetchLiveScore(team) {
-            try {
-                const res = await espnFetch(`${ESPN}/${team.sport}/${team.league}/scoreboard`);
-                if (!res.ok) return null;
-                const data = await res.json();
-                for (const ev of data.events || []) {
-                    const comp = ev.competitions?.[0];
-                    if (comp?.status?.type?.state !== 'in') continue;
-                    if (comp.competitors?.some(c => String(c.team?.id) === String(team.id))) {
-                        return ev;
-                    }
-                }
-            } catch (e) { /* non-critical */ }
+        function findLiveGame(team, events) {
+            for (const ev of events || []) {
+                const comp = ev.competitions?.[0];
+                if (comp?.status?.type?.state !== 'in') continue;
+                if (comp.competitors?.some(c => String(c.team?.id) === String(team.id))) return ev;
+            }
             return null;
-        }
-
-        async function fetchStandings(team) {
-            try {
-                const res = await espnFetch(`${ESPN_V2}/${team.sport}/${team.league}/standings`);
-                if (!res.ok) return null;
-                const data = await res.json();
-
-                // Find the conference/league group that contains our team
-                let teamEntry = null;
-                let conferenceEntries = [];
-
-                for (const conf of data.children || []) {
-                    const entries = conf.standings?.entries || [];
-                    const found = entries.find(e => String(e.team?.id) === String(team.id));
-                    if (found) {
-                        teamEntry = found;
-                        conferenceEntries = entries;
-                        break;
-                    }
-                }
-
-                if (!teamEntry) return null;
-
-                // Filter to division teams, or keep full conference
-                let divEntries;
-                if (team.divisionTeams) {
-                    divEntries = conferenceEntries.filter(e =>
-                        team.divisionTeams.includes(e.team?.abbreviation)
-                    );
-                } else {
-                    divEntries = [...conferenceEntries];
-                }
-
-                // Sort by the league's primary standings stat
-                const sortCfg = STANDINGS_SORT[team.league];
-                if (sortCfg) {
-                    divEntries.sort((a, b) => {
-                        const aVal = parseFloat(stat(a, sortCfg.stat));
-                        const bVal = parseFloat(stat(b, sortCfg.stat));
-                        const aNum = isNaN(aVal) ? -Infinity : aVal;
-                        const bNum = isNaN(bVal) ? -Infinity : bVal;
-                        return sortCfg.desc ? bNum - aNum : aNum - bNum;
-                    });
-                }
-
-                return { teamEntry, divisionEntries: divEntries };
-            } catch (e) {
-                console.error(`Standings fetch failed for ${team.name}:`, e);
-                return null;
-            }
         }
 
         // ── Helpers ─────────────────────────────────────────────

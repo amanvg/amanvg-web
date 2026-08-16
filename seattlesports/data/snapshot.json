@@ -1,0 +1,1590 @@
+{
+ "generatedAt": "2026-08-16T16:04:34.060Z",
+ "teams": {
+  "Seahawks": {
+   "id": "26",
+   "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png",
+   "abbreviation": "SEA",
+   "displayName": "Seattle Seahawks",
+   "schedule": {
+    "seasonPhase": {
+     "label": "Pre-Season",
+     "cls": "phase-pre"
+    },
+    "lastGame": {
+     "date": "2026-08-16T00:00Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "post",
+         "shortDetail": "Final",
+         "description": "Final"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "winner": false,
+         "score": "7",
+         "team": {
+          "id": "26",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seahawks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "winner": true,
+         "score": "17",
+         "team": {
+          "id": "6",
+          "abbreviation": "DAL",
+          "shortDisplayName": "Cowboys",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/dal.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "liveGame": null,
+    "nextGame": {
+     "date": "2026-08-24T00:00Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "8/23 - 8:00 PM EDT",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "10",
+          "abbreviation": "TEN",
+          "shortDisplayName": "Titans",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/ten.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "26",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seahawks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    }
+   },
+   "standings": {
+    "teamEntry": {
+     "team": {
+      "id": "26",
+      "abbreviation": "SEA",
+      "displayName": "Seattle Seahawks"
+     },
+     "stats": [
+      {
+       "name": "gamesBehind",
+       "abbreviation": "GB",
+       "displayValue": "1"
+      },
+      {
+       "name": "losses",
+       "abbreviation": "L",
+       "displayValue": "1"
+      },
+      {
+       "name": "ties",
+       "abbreviation": "T",
+       "displayValue": "0"
+      },
+      {
+       "name": "winPercent",
+       "abbreviation": "PCT",
+       "displayValue": ".000"
+      },
+      {
+       "name": "wins",
+       "abbreviation": "W",
+       "displayValue": "0"
+      }
+     ]
+    },
+    "divisionEntries": [
+     {
+      "team": {
+       "id": "14",
+       "abbreviation": "LAR",
+       "displayName": "Los Angeles Rams"
+      },
+      "stats": [
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "-"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "0"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": "1.000"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "22",
+       "abbreviation": "ARI",
+       "displayName": "Arizona Cardinals"
+      },
+      "stats": [
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "0.5"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "1"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".500"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "26",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Seahawks"
+      },
+      "stats": [
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "1"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "1"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".000"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "25",
+       "abbreviation": "SF",
+       "displayName": "San Francisco 49ers"
+      },
+      "stats": [
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "1"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "1"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".000"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "0"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "Mariners": {
+   "id": "12",
+   "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png",
+   "abbreviation": "SEA",
+   "displayName": "Seattle Mariners",
+   "schedule": {
+    "seasonPhase": {
+     "label": "Regular Season",
+     "cls": "phase-regular"
+    },
+    "lastGame": {
+     "date": "2026-08-15T23:10Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "post",
+         "shortDetail": "Final",
+         "description": "Final"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "winner": false,
+         "score": "5",
+         "team": {
+          "id": "18",
+          "abbreviation": "HOU",
+          "shortDisplayName": "Astros",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "winner": true,
+         "score": "10",
+         "team": {
+          "id": "12",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Mariners",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "liveGame": null,
+    "nextGame": {
+     "date": "2026-08-16T23:20Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "8/16 - 7:20 PM EDT",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "18",
+          "abbreviation": "HOU",
+          "shortDisplayName": "Astros",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "12",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Mariners",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    }
+   },
+   "standings": {
+    "teamEntry": {
+     "team": {
+      "id": "12",
+      "abbreviation": "SEA",
+      "displayName": "Seattle Mariners"
+     },
+     "stats": [
+      {
+       "name": "OTLosses",
+       "abbreviation": "OTL",
+       "displayValue": "6"
+      },
+      {
+       "name": "gamesBehind",
+       "abbreviation": "GB",
+       "displayValue": "17"
+      },
+      {
+       "name": "losses",
+       "abbreviation": "L",
+       "displayValue": "66"
+      },
+      {
+       "name": "points",
+       "abbreviation": "GBP",
+       "displayValue": "-4.0"
+      },
+      {
+       "name": "ties",
+       "abbreviation": "T",
+       "displayValue": "0"
+      },
+      {
+       "name": "winPercent",
+       "abbreviation": "PCT",
+       "displayValue": ".468"
+      },
+      {
+       "name": "wins",
+       "abbreviation": "W",
+       "displayValue": "58"
+      }
+     ]
+    },
+    "divisionEntries": [
+     {
+      "team": {
+       "id": "18",
+       "abbreviation": "HOU",
+       "displayName": "Houston Astros"
+      },
+      "stats": [
+       {
+        "name": "OTLosses",
+        "abbreviation": "OTL",
+        "displayValue": "6"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "12"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "61"
+       },
+       {
+        "name": "points",
+        "abbreviation": "GBP",
+        "displayValue": "1.0"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".508"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "63"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "13",
+       "abbreviation": "TEX",
+       "displayName": "Texas Rangers"
+      },
+      "stats": [
+       {
+        "name": "OTLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "14"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "63"
+       },
+       {
+        "name": "points",
+        "abbreviation": "GBP",
+        "displayValue": "-1.0"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".492"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "61"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "12",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Mariners"
+      },
+      "stats": [
+       {
+        "name": "OTLosses",
+        "abbreviation": "OTL",
+        "displayValue": "6"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "17"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "66"
+       },
+       {
+        "name": "points",
+        "abbreviation": "GBP",
+        "displayValue": "-4.0"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".468"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "58"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "3",
+       "abbreviation": "LAA",
+       "displayName": "Los Angeles Angels"
+      },
+      "stats": [
+       {
+        "name": "OTLosses",
+        "abbreviation": "OTL",
+        "displayValue": "9"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "26"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "75"
+       },
+       {
+        "name": "points",
+        "abbreviation": "GBP",
+        "displayValue": "-13.0"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".395"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "49"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "11",
+       "abbreviation": "ATH",
+       "displayName": "Athletics"
+      },
+      "stats": [
+       {
+        "name": "OTLosses",
+        "abbreviation": "OTL",
+        "displayValue": "5"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "26.5"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "75"
+       },
+       {
+        "name": "points",
+        "abbreviation": "GBP",
+        "displayValue": "-13.5"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".390"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "48"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "Kraken": {
+   "id": "124292",
+   "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png",
+   "abbreviation": "SEA",
+   "displayName": "Seattle Kraken",
+   "schedule": {
+    "seasonPhase": {
+     "label": "Offseason",
+     "cls": "phase-off"
+    },
+    "lastGame": null,
+    "liveGame": null,
+    "nextGame": {
+     "date": "2026-10-02T01:00Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "10/1 - 9:00 PM EDT",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "3",
+          "abbreviation": "CGY",
+          "shortDisplayName": "Flames",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/cgy.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "124292",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Kraken",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    }
+   },
+   "standings": {
+    "teamEntry": {
+     "team": {
+      "id": "124292",
+      "abbreviation": "SEA",
+      "displayName": "Seattle Kraken"
+     },
+     "stats": [
+      {
+       "name": "otLosses",
+       "abbreviation": "OTL",
+       "displayValue": "11"
+      },
+      {
+       "name": "gamesBehind",
+       "abbreviation": "GB",
+       "displayValue": "42"
+      },
+      {
+       "name": "losses",
+       "abbreviation": "L",
+       "displayValue": "37"
+      },
+      {
+       "name": "points",
+       "abbreviation": "PTS",
+       "displayValue": "79"
+      },
+      {
+       "name": "wins",
+       "abbreviation": "W",
+       "displayValue": "34"
+      },
+      {
+       "name": "overtimeLosses",
+       "abbreviation": "OTL",
+       "displayValue": "11"
+      }
+     ]
+    },
+    "divisionEntries": [
+     {
+      "team": {
+       "id": "37",
+       "abbreviation": "VGK",
+       "displayName": "Vegas Golden Knights"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "17"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "26"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "26"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "95"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "39"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "17"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "6",
+       "abbreviation": "EDM",
+       "displayName": "Edmonton Oilers"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "11"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "28"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "30"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "93"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "41"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "11"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "6"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "29"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "33"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "92"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "43"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "6"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "8",
+       "abbreviation": "LA",
+       "displayName": "Los Angeles Kings"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "20"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "31"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "27"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "90"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "35"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "20"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "18",
+       "abbreviation": "SJ",
+       "displayName": "San Jose Sharks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "8"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "35"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "35"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "86"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "39"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "8"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "124292",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Kraken"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "11"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "42"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "37"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "79"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "34"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "11"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "3",
+       "abbreviation": "CGY",
+       "displayName": "Calgary Flames"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "9"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "44"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "39"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "77"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "34"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "9"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "22",
+       "abbreviation": "VAN",
+       "displayName": "Vancouver Canucks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "8"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "63"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "49"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "58"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "25"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "8"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "Sounders": {
+   "id": "9726",
+   "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png",
+   "abbreviation": "SEA",
+   "displayName": "Seattle Sounders FC",
+   "schedule": {
+    "seasonPhase": {
+     "label": "Regular Season",
+     "cls": "phase-regular"
+    },
+    "lastGame": {
+     "date": "2026-08-02T02:45Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "post",
+         "shortDetail": "FT",
+         "description": "Full Time"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "winner": true,
+         "score": "2",
+         "team": {
+          "id": "9723",
+          "abbreviation": "POR",
+          "shortDisplayName": "Portland",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9723.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "winner": false,
+         "score": "1",
+         "team": {
+          "id": "9726",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seattle",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "liveGame": null,
+    "nextGame": {
+     "date": "2026-08-17T02:30Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "Scheduled",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "winner": false,
+         "score": "0",
+         "team": {
+          "id": "9726",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seattle",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "winner": false,
+         "score": "0",
+         "team": {
+          "id": "9727",
+          "abbreviation": "VAN",
+          "shortDisplayName": "Vancouver",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9727.png"
+         }
+        }
+       ],
+       "broadcasts": [
+        {
+         "names": [
+          "Apple TV"
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "standings": {
+    "teamEntry": {
+     "team": {
+      "id": "9726",
+      "abbreviation": "SEA",
+      "displayName": "Seattle Sounders FC"
+     },
+     "stats": [
+      {
+       "name": "losses",
+       "abbreviation": "L",
+       "displayValue": "7"
+      },
+      {
+       "name": "points",
+       "abbreviation": "P",
+       "displayValue": "24"
+      },
+      {
+       "name": "ties",
+       "abbreviation": "D",
+       "displayValue": "3"
+      },
+      {
+       "name": "wins",
+       "abbreviation": "W",
+       "displayValue": "7"
+      }
+     ]
+    },
+    "divisionEntries": [
+     {
+      "team": {
+       "id": "6077",
+       "abbreviation": "HOU",
+       "displayName": "Houston Dynamo FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "35"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "2"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "11"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "9727",
+       "abbreviation": "VAN",
+       "displayName": "Vancouver Whitecaps"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "3"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "34"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "10"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "18966",
+       "abbreviation": "LAFC",
+       "displayName": "LAFC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "34"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "10"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "191",
+       "abbreviation": "SJ",
+       "displayName": "San Jose Earthquakes"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "33"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "3"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "10"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "21812",
+       "abbreviation": "STL",
+       "displayName": "St. Louis CITY SC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "29"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "5"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "8"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "4771",
+       "abbreviation": "RSL",
+       "displayName": "Real Salt Lake"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "28"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "8"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "185",
+       "abbreviation": "DAL",
+       "displayName": "FC Dallas"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "5"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "27"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "6"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "184",
+       "abbreviation": "COL",
+       "displayName": "Colorado Rapids"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "10"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "25"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "1"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "8"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "17362",
+       "abbreviation": "MIN",
+       "displayName": "Minnesota United FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "25"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "7"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "6"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "9723",
+       "abbreviation": "POR",
+       "displayName": "Portland Timbers"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "8"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "24"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "3"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "9726",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Sounders FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "7"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "24"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "3"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "22529",
+       "abbreviation": "SD",
+       "displayName": "San Diego FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "7"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "24"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "6"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "6"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "187",
+       "abbreviation": "LA",
+       "displayName": "LA Galaxy"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "8"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "22"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "7"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "5"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "20906",
+       "abbreviation": "ATX",
+       "displayName": "Austin FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "9"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "17"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "5"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "4"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "186",
+       "abbreviation": "SKC",
+       "displayName": "Sporting Kansas City"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "13"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "14"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "2"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "4"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ }
+}
