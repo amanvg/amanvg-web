@@ -1,2 +1,5 @@
 Icon
 Icon?
+.env
+agent.log
+.DS_Store
