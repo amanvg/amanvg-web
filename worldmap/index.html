@@ -134,6 +134,34 @@
       box-shadow: 0 4px 24px rgba(0,0,0,0.4);
     }
 
+    .continent-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .continent-tab {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .continent-tab:hover {
+      color: var(--text-primary);
+      border-color: #555;
+    }
+    .continent-tab.active {
+      background: var(--visited);
+      border-color: var(--visited);
+      color: #fff;
+    }
+
     #world-map {
       width: 100%;
       height: auto;
@@ -146,6 +174,7 @@
       stroke-linejoin: round;
       cursor: pointer;
       transition: opacity 0.15s;
+      vector-effect: non-scaling-stroke;
     }
     .country-path.visited { fill: var(--visited); }
     .country-path.unvisited { fill: #3a3a3a; }
@@ -174,8 +203,22 @@
     #tooltip .tip-status.visited { color: var(--visited); }
     #tooltip .tip-status.unvisited { color: var(--text-tertiary); }
 
+    .continent-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin-top: 24px;
+    }
+    .continent-heading .count {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      margin-left: 6px;
+    }
+
     .country-grid {
-      margin-top: 16px;
+      margin-top: 12px;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 8px;
@@ -260,14 +303,12 @@
   </div>
 
   <div class="map-card">
+    <div class="continent-tabs" id="continent-tabs"></div>
     <svg id="world-map" viewBox="0 0 960 500"></svg>
   </div>
 
-  <p class="section-label">Visited</p>
-  <div class="country-grid" id="visited-list"></div>
-
-  <p class="section-label">Not Yet Visited</p>
-  <div class="country-grid" id="unvisited-list"></div>
+  <p class="section-label">Countries by Continent</p>
+  <div id="country-list"></div>
 </main>
 
 <div id="tooltip">
@@ -293,6 +334,7 @@ const VISITED = new Set([
   "Switzerland",
   "Austria",
   "Italy",
+  "Greece",
   "United Arab Emirates",
   "India",
   "Kenya",
@@ -348,6 +390,60 @@ const ID_TO_NAME = {
   388:"Jamaica",780:"Trinidad and Tobago",
 };
 
+// Country → continent grouping. Judgment calls: Russia → Europe, Turkey → Asia,
+// Caucasus (Georgia/Armenia/Azerbaijan) → Asia, Cyprus → Europe, Egypt → Africa,
+// Central America & Caribbean → North America.
+const CONTINENT_GROUPS = {
+  'North America': [
+    "Antigua and Barbuda","Bahamas","Barbados","Canada","Costa Rica","Cuba",
+    "Dominica","Dominican Republic","El Salvador","Grenada","Guatemala","Haiti",
+    "Honduras","Jamaica","Mexico","Nicaragua","Panama","Saint Kitts and Nevis",
+    "Saint Lucia","Saint Vincent and the Grenadines","Trinidad and Tobago",
+    "United States of America",
+  ],
+  'South America': [
+    "Argentina","Bolivia","Brazil","Chile","Colombia","Ecuador","Falkland Islands",
+    "Guyana","Paraguay","Peru","Suriname","Uruguay","Venezuela",
+  ],
+  'Europe': [
+    "Albania","Andorra","Austria","Belgium","Bosnia and Herzegovina","Bulgaria",
+    "Croatia","Cyprus","Czechia","Denmark","Estonia","Finland","France","Germany",
+    "Greece","Hungary","Ireland","Italy","Lithuania","Luxembourg","Malta","Moldova",
+    "Netherlands","North Macedonia","Norway","Poland","Portugal","Romania","Russia",
+    "San Marino","Serbia","Slovakia","Slovenia","Spain","Sweden","Switzerland",
+    "Ukraine","United Kingdom",
+  ],
+  'Africa': [
+    "Algeria","Angola","Botswana","Burkina Faso","Burundi","Cameroon","Cape Verde",
+    "Central African Republic","Chad","Comoros","Congo","Dem. Rep. Congo","Djibouti",
+    "Egypt","Equatorial Guinea","Eritrea","Eswatini","Ethiopia","Gabon","Ghana",
+    "Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar",
+    "Malawi","Mali","Mauritania","Mauritius","Morocco","Mozambique","Namibia",
+    "Niger","Nigeria","Rwanda","São Tomé and Príncipe","Senegal","Seychelles",
+    "Sierra Leone","Somalia","South Africa","South Sudan","Sudan","Togo","Tunisia",
+    "Uganda","Zambia","Zimbabwe",
+  ],
+  'Asia': [
+    "Afghanistan","Armenia","Azerbaijan","Bahrain","Bangladesh","Bhutan","Cambodia",
+    "China","East Timor","Georgia","India","Indonesia","Iran","Iraq","Israel",
+    "Japan","Jordan","Kazakhstan","Kuwait","Kyrgyzstan","Laos","Lebanon","Malaysia",
+    "Maldives","Mongolia","Nepal","North Korea","Oman","Pakistan","Palestine",
+    "Philippines","Qatar","Saudi Arabia","South Korea","Sri Lanka","Syria",
+    "Tajikistan","Thailand","Turkey","Turkmenistan","United Arab Emirates",
+    "Uzbekistan","Vietnam","Yemen",
+  ],
+  'Oceania': [
+    "Australia","Fiji","Kiribati","Marshall Islands","Micronesia","New Zealand",
+    "Palau","Papua New Guinea","Samoa","Solomon Islands","Tonga","Tuvalu","Vanuatu",
+  ],
+};
+
+const CONTINENT_OF = {};
+for (const [continent, names] of Object.entries(CONTINENT_GROUPS)) {
+  names.forEach(n => { CONTINENT_OF[n] = continent; });
+}
+const CONTINENT_ORDER = [...Object.keys(CONTINENT_GROUPS), 'Other'];
+
 const tooltip   = document.getElementById('tooltip');
 const tipName   = document.getElementById('tip-name');
 const tipStatus = document.getElementById('tip-status');
@@ -372,26 +468,89 @@ const svg = d3.select('#world-map').attr('viewBox', `0 0 ${W} ${H}`);
 const projection = d3.geoNaturalEarth1().scale(153).translate([W / 2, H / 2]);
 const pathGen = d3.geoPath().projection(projection);
 
+// All map layers live in this group so continent zoom can transform them together
+const mapLayer = svg.append('g');
+
 // Ocean background
-svg.append('path')
+mapLayer.append('path')
   .datum({type: 'Sphere'})
   .attr('fill', '#1a1a1a')
   .attr('stroke', '#333')
   .attr('stroke-width', 0.5)
+  .attr('vector-effect', 'non-scaling-stroke')
   .attr('d', pathGen);
 
 // Graticule
-svg.append('path')
+mapLayer.append('path')
   .datum(d3.geoGraticule()())
   .attr('fill', 'none')
   .attr('stroke', '#252525')
   .attr('stroke-width', 0.4)
+  .attr('vector-effect', 'non-scaling-stroke')
   .attr('d', pathGen);
+
+// ── Continent zoom ────────────────────────────────────────────────────────
+// Geographic bounding boxes: [[lonMin, latMin], [lonMax, latMax]]
+const CONTINENTS = {
+  'World':         null,
+  'North America': [[-168, 6],   [-52, 83]],
+  'South America': [[-82, -56],  [-34, 13]],
+  'Europe':        [[-25, 34],   [45, 72]],
+  'Africa':        [[-18, -35],  [52, 38]],
+  'Asia':          [[26, -11],   [179, 78]],
+  'Oceania':       [[110, -48],  [180, -6]],
+};
+
+// Project a geographic box to a pixel-space bounding box by sampling its edges
+function pixelBounds([[lon0, lat0], [lon1, lat1]]) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  const N = 24;
+  for (let i = 0; i <= N; i++) {
+    const lon = lon0 + (lon1 - lon0) * i / N;
+    const lat = lat0 + (lat1 - lat0) * i / N;
+    for (const pt of [[lon, lat0], [lon, lat1], [lon0, lat], [lon1, lat]]) {
+      const p = projection(pt);
+      if (!p) continue;
+      x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]);
+      x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]);
+    }
+  }
+  return [[x0, y0], [x1, y1]];
+}
+
+function focusContinent(name) {
+  const box = CONTINENTS[name];
+  let transform;
+  if (!box) {
+    transform = 'translate(0,0) scale(1)';
+  } else {
+    const [[x0, y0], [x1, y1]] = pixelBounds(box);
+    const k = Math.min(10, 0.92 / Math.max((x1 - x0) / W, (y1 - y0) / H));
+    const tx = W / 2 - k * (x0 + x1) / 2;
+    const ty = H / 2 - k * (y0 + y1) / 2;
+    transform = `translate(${tx},${ty}) scale(${k})`;
+  }
+  mapLayer.transition().duration(750).ease(d3.easeCubicInOut).attr('transform', transform);
+}
+
+const tabsEl = document.getElementById('continent-tabs');
+Object.keys(CONTINENTS).forEach(name => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'continent-tab' + (name === 'World' ? ' active' : '');
+  btn.textContent = name;
+  btn.addEventListener('click', () => {
+    tabsEl.querySelectorAll('.continent-tab').forEach(b => b.classList.toggle('active', b === btn));
+    focusContinent(name);
+  });
+  tabsEl.appendChild(btn);
+});
+// ─────────────────────────────────────────────────────────────────────────
 
 d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(world => {
   const countries = topojson.feature(world, world.objects.countries);
 
-  svg.selectAll('.country-path')
+  mapLayer.selectAll('.country-path')
     .data(countries.features)
     .enter()
     .append('path')
@@ -407,11 +566,12 @@ d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(w
     .on('mouseleave', hideTip);
 
   // Borders
-  svg.append('path')
+  mapLayer.append('path')
     .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
     .attr('fill', 'none')
     .attr('stroke', '#141414')
     .attr('stroke-width', 0.5)
+    .attr('vector-effect', 'non-scaling-stroke')
     .attr('d', pathGen);
 
   // Build unique sorted country name list from what's actually in the map
@@ -426,15 +586,30 @@ d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(w
   document.getElementById('unvisited-count').textContent = total - visitedCount;
   document.getElementById('pct').textContent = Math.round(visitedCount / total * 100) + '%';
 
-  const visitedList   = document.getElementById('visited-list');
-  const unvisitedList = document.getElementById('unvisited-list');
+  const container = document.getElementById('country-list');
+  CONTINENT_ORDER.forEach(continent => {
+    const group = allNames.filter(n => (CONTINENT_OF[n] || 'Other') === continent);
+    if (!group.length) return;
 
-  allNames.forEach(name => {
-    const isV = VISITED.has(name);
-    const chip = document.createElement('div');
-    chip.className = `country-chip ${isV ? 'visited' : 'unvisited'}`;
-    chip.innerHTML = `<span class="dot"></span>${name}`;
-    (isV ? visitedList : unvisitedList).appendChild(chip);
+    // Visited first, then alphabetical (allNames is already sorted)
+    const sorted = [...group.filter(n => VISITED.has(n)), ...group.filter(n => !VISITED.has(n))];
+    const visitedInGroup = sorted.filter(n => VISITED.has(n)).length;
+
+    const heading = document.createElement('p');
+    heading.className = 'continent-heading';
+    heading.innerHTML = `${continent}<span class="count">${visitedInGroup} / ${group.length} visited</span>`;
+    container.appendChild(heading);
+
+    const grid = document.createElement('div');
+    grid.className = 'country-grid';
+    sorted.forEach(name => {
+      const isV = VISITED.has(name);
+      const chip = document.createElement('div');
+      chip.className = `country-chip ${isV ? 'visited' : 'unvisited'}`;
+      chip.innerHTML = `<span class="dot"></span>${name}`;
+      grid.appendChild(chip);
+    });
+    container.appendChild(grid);
   });
 });
 </script>
