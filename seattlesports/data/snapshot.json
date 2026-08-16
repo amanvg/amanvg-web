@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-16T23:24:44.343Z",
+ "generatedAt": "2026-08-16T23:46:55.240Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -318,7 +318,7 @@
        "status": {
         "type": {
          "state": "in",
-         "shortDetail": "Top 1st",
+         "shortDetail": "Bot 2nd",
          "description": "In Progress"
         }
        },
