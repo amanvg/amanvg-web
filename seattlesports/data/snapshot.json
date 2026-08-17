@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-16T23:46:55.240Z",
+ "generatedAt": "2026-08-17T01:38:44.590Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -318,7 +318,7 @@
        "status": {
         "type": {
          "state": "in",
-         "shortDetail": "Bot 2nd",
+         "shortDetail": "End 7th",
          "description": "In Progress"
         }
        },
@@ -1106,7 +1106,7 @@
     },
     "liveGame": null,
     "nextGame": {
-     "date": "2026-08-17T02:30Z",
+     "date": "2026-08-20T01:30Z",
      "competitions": [
       {
        "status": {
@@ -1133,10 +1133,10 @@
          "winner": false,
          "score": "0",
          "team": {
-          "id": "9727",
-          "abbreviation": "VAN",
-          "shortDisplayName": "Vancouver",
-          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9727.png"
+          "id": "20906",
+          "abbreviation": "ATX",
+          "shortDisplayName": "Austin",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/20906.png"
          }
         }
        ],
@@ -1453,7 +1453,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "8"
+        "displayValue": "9"
        },
        {
         "name": "points",
