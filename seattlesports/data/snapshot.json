@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-17T05:10:24.182Z",
+ "generatedAt": "2026-08-18T01:34:31.422Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -364,7 +364,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "16"
+       "displayValue": "16.5"
       },
       {
        "name": "losses",
@@ -409,7 +409,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12"
+        "displayValue": "12.5"
        },
        {
         "name": "losses",
@@ -453,7 +453,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "14"
+        "displayValue": "14.5"
        },
        {
         "name": "losses",
@@ -497,7 +497,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "16"
+        "displayValue": "16.5"
        },
        {
         "name": "losses",
@@ -541,7 +541,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "25.5"
+        "displayValue": "26"
        },
        {
         "name": "losses",
@@ -585,7 +585,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "26"
+        "displayValue": "26.5"
        },
        {
         "name": "losses",
