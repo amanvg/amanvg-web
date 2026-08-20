@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-20T04:09:13.109Z",
+ "generatedAt": "2026-08-20T05:05:08.019Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -1150,35 +1150,6 @@
     "divisionEntries": [
      {
       "team": {
-       "id": "9727",
-       "abbreviation": "VAN",
-       "displayName": "Vancouver Whitecaps"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "3"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "37"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "4"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "11"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "6077",
        "abbreviation": "HOU",
        "displayName": "Houston Dynamo FC"
@@ -1192,12 +1163,41 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "35"
+        "displayValue": "38"
        },
        {
         "name": "ties",
         "abbreviation": "D",
         "displayValue": "2"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "12"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "9727",
+       "abbreviation": "VAN",
+       "displayName": "Vancouver Whitecaps"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "4"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "37"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "4"
        },
        {
         "name": "wins",
@@ -1274,7 +1274,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "points",
@@ -1382,6 +1382,64 @@
      },
      {
       "team": {
+       "id": "9723",
+       "abbreviation": "POR",
+       "displayName": "Portland Timbers"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "9"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "27"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "3"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "8"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "187",
+       "abbreviation": "LA",
+       "displayName": "LA Galaxy"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "8"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "25"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "7"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "6"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "17362",
        "abbreviation": "MIN",
        "displayName": "Minnesota United FC"
@@ -1406,35 +1464,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "6"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "9723",
-       "abbreviation": "POR",
-       "displayName": "Portland Timbers"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "9"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "24"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "3"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "7"
        }
       ]
      },
@@ -1477,7 +1506,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "points",
@@ -1493,35 +1522,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "6"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "187",
-       "abbreviation": "LA",
-       "displayName": "LA Galaxy"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "8"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "22"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "7"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "5"
        }
       ]
      },
