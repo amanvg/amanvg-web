@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-20T21:32:32.555Z",
+ "generatedAt": "2026-08-21T03:08:11.559Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -409,17 +409,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12"
+        "displayValue": "12.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "63"
+        "displayValue": "64"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "0.5"
+        "displayValue": "0.0"
        },
        {
         "name": "ties",
@@ -429,7 +429,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".504"
+        "displayValue": ".500"
        },
        {
         "name": "wins",
@@ -453,7 +453,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "14"
+        "displayValue": "13.5"
        },
        {
         "name": "losses",
@@ -463,7 +463,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-1.5"
+        "displayValue": "-1.0"
        },
        {
         "name": "ties",
@@ -473,12 +473,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".488"
+        "displayValue": ".492"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "62"
+        "displayValue": "63"
        }
       ]
      },
@@ -541,7 +541,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "26"
+        "displayValue": "25.5"
        },
        {
         "name": "losses",
@@ -551,7 +551,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-13.5"
+        "displayValue": "-13.0"
        },
        {
         "name": "ties",
@@ -561,12 +561,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".394"
+        "displayValue": ".398"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "50"
+        "displayValue": "51"
        }
       ]
      },
