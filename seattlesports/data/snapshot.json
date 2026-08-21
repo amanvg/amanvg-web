@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-21T03:08:11.559Z",
+ "generatedAt": "2026-08-21T05:59:29.005Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -159,6 +159,40 @@
      },
      {
       "team": {
+       "id": "25",
+       "abbreviation": "SF",
+       "displayName": "San Francisco 49ers"
+      },
+      "stats": [
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "0.5"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "1"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".500"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "22",
        "abbreviation": "ARI",
        "displayName": "Arizona Cardinals"
@@ -196,40 +230,6 @@
        "id": "26",
        "abbreviation": "SEA",
        "displayName": "Seattle Seahawks"
-      },
-      "stats": [
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "1"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "1"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "T",
-        "displayValue": "0"
-       },
-       {
-        "name": "winPercent",
-        "abbreviation": "PCT",
-        "displayValue": ".000"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "0"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "25",
-       "abbreviation": "SF",
-       "displayName": "San Francisco 49ers"
       },
       "stats": [
        {
