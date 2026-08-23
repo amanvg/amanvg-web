@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-23T03:07:35.360Z",
+ "generatedAt": "2026-08-23T04:10:07.962Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -1150,6 +1150,35 @@
     "divisionEntries": [
      {
       "team": {
+       "id": "9727",
+       "abbreviation": "VAN",
+       "displayName": "Vancouver Whitecaps"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "4"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "40"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "12"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "6077",
        "abbreviation": "HOU",
        "displayName": "Houston Dynamo FC"
@@ -1174,35 +1203,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "12"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "9727",
-       "abbreviation": "VAN",
-       "displayName": "Vancouver Whitecaps"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "4"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "37"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "4"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "11"
        }
       ]
      },
@@ -1245,7 +1245,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "5"
+        "displayValue": "6"
        },
        {
         "name": "points",
@@ -1540,12 +1540,12 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "20"
+        "displayValue": "21"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "5"
+        "displayValue": "6"
        },
        {
         "name": "wins",
