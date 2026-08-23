@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-22T23:48:22.237Z",
+ "generatedAt": "2026-08-23T01:42:51.829Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -318,7 +318,7 @@
        "status": {
         "type": {
          "state": "in",
-         "shortDetail": "End 2nd",
+         "shortDetail": "Top 9th",
          "description": "In Progress"
         }
        },
@@ -487,17 +487,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12.5"
+        "displayValue": "13"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "65"
+        "displayValue": "66"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-0.5"
+        "displayValue": "-1.0"
        },
        {
         "name": "ties",
@@ -507,7 +507,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".496"
+        "displayValue": ".492"
        },
        {
         "name": "wins",
@@ -575,7 +575,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "25.5"
+        "displayValue": "25"
        },
        {
         "name": "losses",
@@ -585,7 +585,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-13.5"
+        "displayValue": "-13.0"
        },
        {
         "name": "ties",
@@ -595,12 +595,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".395"
+        "displayValue": ".400"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "51"
+        "displayValue": "52"
        }
       ]
      },
@@ -1106,7 +1106,7 @@
     },
     "liveGame": null,
     "nextGame": {
-     "date": "2026-08-22T23:30Z",
+     "date": "2026-08-29T20:30Z",
      "competitions": [
       {
        "status": {
@@ -1122,10 +1122,10 @@
          "winner": false,
          "score": "0",
          "team": {
-          "id": "18267",
-          "abbreviation": "CIN",
-          "shortDisplayName": "Cincinnati",
-          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/18267.png"
+          "id": "9726",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seattle",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png"
          }
         },
         {
@@ -1133,10 +1133,10 @@
          "winner": false,
          "score": "0",
          "team": {
-          "id": "9726",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Seattle",
-          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png"
+          "id": "182",
+          "abbreviation": "CHI",
+          "shortDisplayName": "Chicago",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/182.png"
          }
         }
        ],
@@ -1167,12 +1167,12 @@
       {
        "name": "points",
        "abbreviation": "P",
-       "displayValue": "24"
+       "displayValue": "25"
       },
       {
        "name": "ties",
        "abbreviation": "D",
-       "displayValue": "3"
+       "displayValue": "4"
       },
       {
        "name": "wins",
@@ -1395,7 +1395,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "points",
@@ -1458,17 +1458,46 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "25"
+        "displayValue": "26"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "6"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "9726",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Sounders FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "9"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "25"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
        }
       ]
      },
@@ -1498,35 +1527,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "6"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "9726",
-       "abbreviation": "SEA",
-       "displayName": "Seattle Sounders FC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "9"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "24"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "3"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "7"
        }
       ]
      },
