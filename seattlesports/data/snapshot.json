@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-23T04:10:07.962Z",
+ "generatedAt": "2026-08-23T05:03:19.906Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -201,12 +201,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "1"
+        "displayValue": "1.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "1"
+        "displayValue": "2"
        },
        {
         "name": "ties",
@@ -216,7 +216,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".500"
+        "displayValue": ".333"
        },
        {
         "name": "wins",
@@ -1221,12 +1221,12 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "34"
+        "displayValue": "35"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "4"
+        "displayValue": "5"
        },
        {
         "name": "wins",
@@ -1274,7 +1274,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "points",
@@ -1332,7 +1332,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "points",
@@ -1395,17 +1395,75 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "27"
+        "displayValue": "28"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "3"
+        "displayValue": "4"
        },
        {
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "8"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "17362",
+       "abbreviation": "MIN",
+       "displayName": "Minnesota United FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "7"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "28"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "7"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "22529",
+       "abbreviation": "SD",
+       "displayName": "San Diego FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "8"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "27"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "6"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
        }
       ]
      },
@@ -1464,64 +1522,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "7"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "17362",
-       "abbreviation": "MIN",
-       "displayName": "Minnesota United FC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "7"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "25"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "7"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "6"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "22529",
-       "abbreviation": "SD",
-       "displayName": "San Diego FC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "8"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "24"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "6"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "6"
        }
       ]
      },
