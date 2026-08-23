@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-23T21:26:06.837Z",
+ "generatedAt": "2026-08-23T21:48:57.208Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -318,7 +318,7 @@
        "status": {
         "type": {
          "state": "in",
-         "shortDetail": "Bot 3rd",
+         "shortDetail": "Top 5th",
          "description": "In Progress"
         }
        },
@@ -443,17 +443,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12"
+        "displayValue": "12.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "65"
+        "displayValue": "66"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "0.0"
+        "displayValue": "-0.5"
        },
        {
         "name": "ties",
@@ -463,7 +463,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".500"
+        "displayValue": ".496"
        },
        {
         "name": "wins",
@@ -619,7 +619,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "27"
+        "displayValue": "26.5"
        },
        {
         "name": "losses",
@@ -629,7 +629,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-15.0"
+        "displayValue": "-14.5"
        },
        {
         "name": "ties",
@@ -639,12 +639,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".385"
+        "displayValue": ".389"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "50"
+        "displayValue": "51"
        }
       ]
      }
