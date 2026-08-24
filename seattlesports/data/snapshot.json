@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-24T01:40:42.069Z",
+ "generatedAt": "2026-08-24T03:08:14.320Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -57,14 +57,13 @@
        "status": {
         "type": {
          "state": "in",
-         "shortDetail": "Halftime",
-         "description": "Halftime"
+         "shortDetail": "2:00 - 4th",
+         "description": "In Progress"
         }
        },
        "competitors": [
         {
          "homeAway": "home",
-         "score": "9",
          "team": {
           "id": "10",
           "abbreviation": "TEN",
@@ -74,7 +73,6 @@
         },
         {
          "homeAway": "away",
-         "score": "16",
          "team": {
           "id": "26",
           "abbreviation": "SEA",
