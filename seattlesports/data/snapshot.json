@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-24T03:08:14.320Z",
+ "generatedAt": "2026-08-24T04:22:28.175Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -12,7 +12,7 @@
      "cls": "phase-pre"
     },
     "lastGame": {
-     "date": "2026-08-16T00:00Z",
+     "date": "2026-08-24T00:00Z",
      "competitions": [
       {
        "status": {
@@ -25,45 +25,8 @@
        "competitors": [
         {
          "homeAway": "home",
-         "winner": false,
-         "score": "7",
-         "team": {
-          "id": "26",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Seahawks",
-          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
          "winner": true,
-         "score": "17",
-         "team": {
-          "id": "6",
-          "abbreviation": "DAL",
-          "shortDisplayName": "Cowboys",
-          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/dal.png"
-         }
-        }
-       ],
-       "broadcasts": []
-      }
-     ]
-    },
-    "liveGame": {
-     "date": "2026-08-24T00:00Z",
-     "competitions": [
-      {
-       "status": {
-        "type": {
-         "state": "in",
-         "shortDetail": "2:00 - 4th",
-         "description": "In Progress"
-        }
-       },
-       "competitors": [
-        {
-         "homeAway": "home",
+         "score": "19",
          "team": {
           "id": "10",
           "abbreviation": "TEN",
@@ -73,6 +36,8 @@
         },
         {
          "homeAway": "away",
+         "winner": false,
+         "score": "16",
          "team": {
           "id": "26",
           "abbreviation": "SEA",
@@ -85,6 +50,7 @@
       }
      ]
     },
+    "liveGame": null,
     "nextGame": {
      "date": "2026-08-29T00:00Z",
      "competitions": [
@@ -132,12 +98,12 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "1.5"
+       "displayValue": "2"
       },
       {
        "name": "losses",
        "abbreviation": "L",
-       "displayValue": "1"
+       "displayValue": "2"
       },
       {
        "name": "ties",
@@ -269,12 +235,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "1.5"
+        "displayValue": "2"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "1"
+        "displayValue": "2"
        },
        {
         "name": "ties",
