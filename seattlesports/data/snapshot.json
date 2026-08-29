@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-28T05:33:40.338Z",
+ "generatedAt": "2026-08-29T01:51:44.087Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -50,16 +50,15 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-08-29T00:00Z",
      "competitions": [
       {
        "status": {
         "type": {
-         "state": "pre",
-         "shortDetail": "8/28 - 8:00 PM EDT",
-         "description": "Scheduled"
+         "state": "in",
+         "shortDetail": "11:43 - 3rd",
+         "description": "In Progress"
         }
        },
        "competitors": [
@@ -83,6 +82,49 @@
         }
        ],
        "broadcasts": []
+      }
+     ]
+    },
+    "nextGame": {
+     "date": "2026-09-10T00:20Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "9/9 - 8:20 PM EDT",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "score": "0",
+         "team": {
+          "id": "26",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seahawks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/sea.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "score": "0",
+         "team": {
+          "id": "17",
+          "abbreviation": "NE",
+          "shortDisplayName": "Patriots",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/ne.png"
+         }
+        }
+       ],
+       "broadcasts": [
+        {
+         "names": [
+          "NBC"
+         ]
+        }
+       ]
       }
      ]
     }
@@ -273,7 +315,7 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-08-26T20:10Z",
+     "date": "2026-08-28T23:15Z",
      "competitions": [
       {
        "status": {
@@ -286,24 +328,24 @@
        "competitors": [
         {
          "homeAway": "home",
+         "winner": true,
+         "score": "8",
+         "team": {
+          "id": "14",
+          "abbreviation": "TOR",
+          "shortDisplayName": "Blue Jays",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/tor.png"
+         }
+        },
+        {
+         "homeAway": "away",
          "winner": false,
-         "score": "0",
+         "score": "1",
          "team": {
           "id": "12",
           "abbreviation": "SEA",
           "shortDisplayName": "Mariners",
           "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
-         "winner": true,
-         "score": "6",
-         "team": {
-          "id": "22",
-          "abbreviation": "PHI",
-          "shortDisplayName": "Phillies",
-          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/phi.png"
          }
         }
        ],
@@ -313,13 +355,13 @@
     },
     "liveGame": null,
     "nextGame": {
-     "date": "2026-08-28T23:15Z",
+     "date": "2026-08-29T19:07Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "pre",
-         "shortDetail": "8/28 - 7:15 PM EDT",
+         "shortDetail": "8/29 - 3:07 PM EDT",
          "description": "Scheduled"
         }
        },
@@ -364,17 +406,17 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "15.5"
+       "displayValue": "16.5"
       },
       {
        "name": "losses",
        "abbreviation": "L",
-       "displayValue": "70"
+       "displayValue": "71"
       },
       {
        "name": "points",
        "abbreviation": "GBP",
-       "displayValue": "-3.0"
+       "displayValue": "-3.5"
       },
       {
        "name": "ties",
@@ -384,7 +426,7 @@
       {
        "name": "winPercent",
        "abbreviation": "PCT",
-       "displayValue": ".478"
+       "displayValue": ".474"
       },
       {
        "name": "wins",
@@ -409,7 +451,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12.5"
+        "displayValue": "13"
        },
        {
         "name": "losses",
@@ -453,7 +495,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "13.5"
+        "displayValue": "14"
        },
        {
         "name": "losses",
@@ -497,17 +539,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "15.5"
+        "displayValue": "16.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "70"
+        "displayValue": "71"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-3.0"
+        "displayValue": "-3.5"
        },
        {
         "name": "ties",
@@ -517,7 +559,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".478"
+        "displayValue": ".474"
        },
        {
         "name": "wins",
@@ -541,7 +583,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "26.5"
+        "displayValue": "27"
        },
        {
         "name": "losses",
@@ -585,7 +627,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "27.5"
+        "displayValue": "28"
        },
        {
         "name": "losses",
