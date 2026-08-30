@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T21:25:04.069Z",
+ "generatedAt": "2026-08-30T23:44:15.716Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -417,7 +417,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "14"
+        "displayValue": "13.5"
        },
        {
         "name": "losses",
@@ -427,7 +427,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "0.0"
+        "displayValue": "0.5"
        },
        {
         "name": "ties",
@@ -437,12 +437,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".500"
+        "displayValue": ".504"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "68"
+        "displayValue": "69"
        }
       ]
      },
@@ -461,7 +461,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "16"
+        "displayValue": "15.5"
        },
        {
         "name": "losses",
@@ -471,7 +471,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-2.0"
+        "displayValue": "-1.5"
        },
        {
         "name": "ties",
@@ -481,12 +481,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".485"
+        "displayValue": ".489"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "66"
+        "displayValue": "67"
        }
       ]
      },
@@ -549,17 +549,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "29"
+        "displayValue": "29.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "83"
+        "displayValue": "84"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-15.0"
+        "displayValue": "-15.5"
        },
        {
         "name": "ties",
@@ -569,7 +569,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".390"
+        "displayValue": ".387"
        },
        {
         "name": "wins",
@@ -593,17 +593,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "30"
+        "displayValue": "30.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "84"
+        "displayValue": "85"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-16.0"
+        "displayValue": "-16.5"
        },
        {
         "name": "ties",
@@ -613,7 +613,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".382"
+        "displayValue": ".380"
        },
        {
         "name": "wins",
