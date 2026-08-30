@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T01:32:46.920Z",
+ "generatedAt": "2026-08-30T08:07:48.923Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -461,17 +461,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "15"
+        "displayValue": "15.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "69"
+        "displayValue": "70"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-1.5"
+        "displayValue": "-2.0"
        },
        {
         "name": "ties",
@@ -481,7 +481,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".489"
+        "displayValue": ".485"
        },
        {
         "name": "wins",
@@ -549,17 +549,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "28"
+        "displayValue": "28.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "82"
+        "displayValue": "83"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-14.5"
+        "displayValue": "-15.0"
        },
        {
         "name": "ties",
@@ -569,7 +569,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".393"
+        "displayValue": ".390"
        },
        {
         "name": "wins",
@@ -588,22 +588,22 @@
        {
         "name": "OTLosses",
         "abbreviation": "OTL",
-        "displayValue": "11"
+        "displayValue": "12"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "29"
+        "displayValue": "29.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "83"
+        "displayValue": "84"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-15.5"
+        "displayValue": "-16.0"
        },
        {
         "name": "ties",
@@ -613,7 +613,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".385"
+        "displayValue": ".382"
        },
        {
         "name": "wins",
@@ -1171,7 +1171,7 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "40"
+        "displayValue": "43"
        },
        {
         "name": "ties",
@@ -1181,7 +1181,7 @@
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "12"
+        "displayValue": "13"
        }
       ]
      },
@@ -1200,12 +1200,12 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "38"
+        "displayValue": "39"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "wins",
@@ -1229,12 +1229,41 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "35"
+        "displayValue": "36"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "5"
+        "displayValue": "6"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "10"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "191",
+       "abbreviation": "SJ",
+       "displayName": "San Jose Earthquakes"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "8"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "34"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "4"
        },
        {
         "name": "wins",
@@ -1269,35 +1298,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "9"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "191",
-       "abbreviation": "SJ",
-       "displayName": "San Jose Earthquakes"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "8"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "33"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "3"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "10"
        }
       ]
      },
@@ -1345,7 +1345,7 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "28"
+        "displayValue": "31"
        },
        {
         "name": "ties",
@@ -1355,7 +1355,65 @@
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "9"
+        "displayValue": "10"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "22529",
+       "abbreviation": "SD",
+       "displayName": "San Diego FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "8"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "30"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "6"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "8"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "17362",
+       "abbreviation": "MIN",
+       "displayName": "Minnesota United FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "7"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "29"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "8"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
        }
       ]
      },
@@ -1369,7 +1427,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "8"
+        "displayValue": "9"
        },
        {
         "name": "points",
@@ -1398,7 +1456,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "points",
@@ -1419,64 +1477,6 @@
      },
      {
       "team": {
-       "id": "17362",
-       "abbreviation": "MIN",
-       "displayName": "Minnesota United FC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "7"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "28"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "7"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "7"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "22529",
-       "abbreviation": "SD",
-       "displayName": "San Diego FC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "8"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "27"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "6"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "7"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "187",
        "abbreviation": "LA",
        "displayName": "LA Galaxy"
@@ -1485,7 +1485,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "8"
+        "displayValue": "9"
        },
        {
         "name": "points",
@@ -1548,7 +1548,7 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "21"
+        "displayValue": "24"
        },
        {
         "name": "ties",
@@ -1558,7 +1558,7 @@
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "5"
+        "displayValue": "6"
        }
       ]
      },
@@ -1572,7 +1572,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "14"
+        "displayValue": "15"
        },
        {
         "name": "points",
