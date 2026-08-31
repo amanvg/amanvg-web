@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-30T23:44:15.716Z",
+ "generatedAt": "2026-08-31T04:51:18.113Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -1245,6 +1245,35 @@
      },
      {
       "team": {
+       "id": "185",
+       "abbreviation": "DAL",
+       "displayName": "FC Dallas"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "34"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "7"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "9"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "191",
        "abbreviation": "SJ",
        "displayName": "San Jose Earthquakes"
@@ -1274,35 +1303,6 @@
      },
      {
       "team": {
-       "id": "185",
-       "abbreviation": "DAL",
-       "displayName": "FC Dallas"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "6"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "33"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "6"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "9"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "21812",
        "abbreviation": "STL",
        "displayName": "St. Louis CITY SC"
@@ -1316,12 +1316,12 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "33"
+        "displayValue": "34"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "wins",
