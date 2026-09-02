@@ -256,34 +256,10 @@
       'Minivan': ['Minivan - 2WD', 'Minivan - 4WD'],
       'Van': ['Vans', 'Vans Passenger', 'Vans, Cargo Type', 'Vans, Passenger Type'],
     };
-    // Styles with EPA size sub-classes get a follow-up size question.
-    // String values match the derived sizeClass column (see build_data.py),
-    // which also sizes pre-2013 SUVs and pre-1998 vans.
-    const SIZES = {
-      'Minicompact': ['Minicompact Cars'],
-      'Subcompact': ['Subcompact Cars'],
-      'Compact': ['Compact Cars'],
-      'Small wagon': ['Small Station Wagons'],
-      'Midsize wagon': ['Midsize Station Wagons'],
-      'Large wagon': ['Midsize-Large Station Wagons'],
-      'Small SUV': 'small',
-      'Standard SUV': 'standard',
-      'Small pickup': ['Small Pickup Trucks', 'Small Pickup Trucks 2WD', 'Small Pickup Trucks 4WD'],
-      'Full-size pickup': ['Standard Pickup Trucks', 'Standard Pickup Trucks 2WD', 'Standard Pickup Trucks 4WD', 'Standard Pickup Trucks/2wd'],
-      'Cargo van': 'cargo',
-      'Passenger van': 'passenger',
-    };
-    const HAS_SIZES = new Set(['Small car', 'Wagon', 'SUV', 'Pickup', 'Van']);
     const styleOptions = Object.entries(STYLES).map(([label, classes]) => {
-      const set = new Set(classes);
-      return { label, chip: label, filter: r => set.has(col(r, 'VClass')), next: HAS_SIZES.has(label) ? 'size' : 'power' };
-    });
-    const sizeOptions = Object.entries(SIZES).map(([label, classes]) => {
-      if (typeof classes === 'string') return { label, chip: label, filter: r => col(r, 'sizeClass') === classes, next: 'power' };
       const set = new Set(classes);
       return { label, chip: label, filter: r => set.has(col(r, 'VClass')), next: 'power' };
     });
-    sizeOptions.push({ label: 'No preference', chip: 'Any size', filter: () => true, next: 'power' });
 
     const dscr = r => col(r, 'eng_dscr') || '';
     const isPHEV = r => col(r, 'atvType') === 'Plug-in Hybrid' || /PHEV/i.test(dscr(r));
@@ -377,10 +353,6 @@
       style: {
         prompt: 'What style of car do you want?',
         options: [...styleOptions, { label: 'No preference', chip: 'Any style', filter: () => true, next: 'power' }],
-      },
-      size: {
-        prompt: 'Size',
-        options: sizeOptions,
       },
       power: {
         prompt: 'Powertrain',
