@@ -377,7 +377,7 @@
 
     <section class="card">
       <h2>3. Fuel Prices <span class="badge" id="price-source" hidden></span></h2>
-      <div class="grid grid-2">
+      <div class="grid grid-3">
         <div class="field">
           <label for="price-regular">Regular ($/gal)</label>
           <input type="number" id="price-regular" min="0" step="0.01" placeholder="—">
@@ -385,6 +385,10 @@
         <div class="field">
           <label for="price-premium">Premium ($/gal)</label>
           <input type="number" id="price-premium" min="0" step="0.01" placeholder="—">
+        </div>
+        <div class="field">
+          <label for="price-diesel">Diesel ($/gal)</label>
+          <input type="number" id="price-diesel" min="0" step="0.01" placeholder="—">
         </div>
       </div>
       <p class="hint">Auto-filled with your state's daily AAA average from your home address. Edit to match your local station.</p>
@@ -412,6 +416,10 @@
           <span class="stat-label">Fuel Cost (Premium)</span>
           <span class="stat-value" id="stat-premium">—</span>
         </div>
+        <div class="stat" id="stat-diesel-wrap" hidden>
+          <span class="stat-label">Fuel Cost (Diesel)</span>
+          <span class="stat-value" id="stat-diesel">—</span>
+        </div>
         <div class="stat stat-total">
           <span class="stat-label">Fuel + Wear + Depreciation</span>
           <span class="stat-value" id="stat-total">—</span>
@@ -425,6 +433,7 @@
         <div class="basis-toggle" id="basis-toggle">
           <button data-basis="regular" class="active">Regular Fuel</button>
           <button data-basis="premium">Premium Fuel</button>
+          <button data-basis="diesel" hidden>Diesel Fuel</button>
           <button data-basis="total">Fuel + Wear + Depreciation</button>
         </div>
       </div>
@@ -523,7 +532,13 @@
       WV: { regular: 3.05, premium: 3.80 }, WI: { regular: 2.95, premium: 3.70 },
       WY: { regular: 3.05, premium: 3.70 },
     };
-    const NATIONAL_AVG = { regular: 3.15, premium: 3.95 };
+    const NATIONAL_AVG = { regular: 3.15, premium: 3.95, diesel: 3.85 };
+
+    // The baseline table only carries regular/premium; diesel tracks regular
+    // closely enough state to state that scaling by the national ratio is a
+    // fair last-resort estimate.
+    const withDiesel = (prices, ratio) =>
+      prices.diesel > 0 ? prices : { ...prices, diesel: prices.regular * ratio };
 
     // Live price data, resolved by loadPrices() at startup.
     let aaaPrices = null;    // { asOf, states: {PA: {regular, premium}, ...} }
@@ -549,15 +564,20 @@
           const n = await res.json();
           const regular = parseFloat(n.regular);
           const premium = parseFloat(n.premium);
-          if (regular > 0 && premium > 0) liveNational = { regular, premium };
+          const diesel = parseFloat(n.diesel);
+          if (regular > 0 && premium > 0) {
+            liveNational = withDiesel({ regular, premium, diesel }, NATIONAL_AVG.diesel / NATIONAL_AVG.regular);
+          }
         }
       } catch { /* offline — baselines used as-is */ }
     }
 
     function pricesForState(state) {
+      const national = liveNational || NATIONAL_AVG;
+      const dieselRatio = national.diesel / national.regular;
       if (aaaPrices && aaaPrices.states[state]) {
         return {
-          prices: aaaPrices.states[state],
+          prices: withDiesel(aaaPrices.states[state], dieselRatio),
           label: `${state} AAA average · ${aaaPrices.asOf || 'date unknown'}`,
         };
       }
@@ -565,17 +585,17 @@
       if (liveNational) {
         if (base) {
           return {
-            prices: {
+            prices: withDiesel({
               regular: base.regular * (liveNational.regular / NATIONAL_AVG.regular),
               premium: base.premium * (liveNational.premium / NATIONAL_AVG.premium),
-            },
+            }, dieselRatio),
             label: `${state} estimate, scaled to today's national average`,
           };
         }
         return { prices: liveNational, label: "today's national average" };
       }
       return {
-        prices: base || NATIONAL_AVG,
+        prices: withDiesel(base || NATIONAL_AVG, dieselRatio),
         label: base ? `${state} estimated average (offline)` : 'national estimated average (offline)',
       };
     }
@@ -600,12 +620,19 @@
     const carErrorRow = $('car-error-row');
     const priceRegularInput = $('price-regular');
     const pricePremiumInput = $('price-premium');
+    const priceDieselInput = $('price-diesel');
+    const priceInputs = { regular: priceRegularInput, premium: pricePremiumInput, diesel: priceDieselInput };
     const priceSourceBadge = $('price-source');
     const calcBtn = $('calc-btn');
     const resultsSection = $('results');
 
     let vehicleFuelType = '';
     let epaRatings = null; // { city, highway, combined } from fueleconomy.gov, or null
+
+    // Which pump prices matter for this car: diesel cars only see diesel,
+    // everything else sees regular and premium side by side.
+    const isDieselCar = () => /diesel/i.test(vehicleFuelType);
+    const fuelKinds = () => (isDieselCar() ? ['diesel'] : ['regular', 'premium']);
     let costBasis = 'regular';
     let basisPinned = false; // true once the user clicks a basis button; auto-default stops
     let lastResults = null;
@@ -808,6 +835,8 @@
         vehicleFuelType = v.fuelType1 || v.fuelType || '';
         if (/premium/i.test(vehicleFuelType)) {
           fuelTypeNote.innerHTML = `Fuel: <span class="fuel-note-premium">${vehicleFuelType}</span> — this car recommends premium, so watch the premium fuel cost below.`;
+        } else if (isDieselCar()) {
+          fuelTypeNote.textContent = `Fuel: ${vehicleFuelType} — costs below use the diesel price.`;
         } else if (/electricity/i.test(vehicleFuelType)) {
           fuelTypeNote.textContent = `Fuel: ${vehicleFuelType} — note: this calculator estimates gasoline costs, so fuel figures won't apply to a pure EV. The MPG shown is MPGe.`;
         } else {
@@ -984,6 +1013,7 @@
       const { prices, label } = pricesForState(state);
       priceRegularInput.value = prices.regular.toFixed(2);
       pricePremiumInput.value = prices.premium.toFixed(2);
+      priceDieselInput.value = prices.diesel.toFixed(2);
       priceSourceBadge.textContent = label;
       priceSourceBadge.hidden = false;
       return place;
@@ -1014,8 +1044,7 @@
     function inputsValid() {
       return mpgRatings() !== null &&
         commuteMiles > 0 &&
-        parseFloat(priceRegularInput.value) >= 0 &&
-        parseFloat(pricePremiumInput.value) >= 0;
+        fuelKinds().every((kind) => parseFloat(priceInputs[kind].value) >= 0);
     }
 
     function updateCalcButton() {
@@ -1025,8 +1054,6 @@
     function calculate() {
       const ratings = mpgRatings();
       if (!ratings) return;
-      const regular = parseFloat(priceRegularInput.value);
-      const premium = parseFloat(pricePremiumInput.value);
       const dailyMiles = commuteMiles * 2; // round trip, always
 
       // Highway miles burn at the highway rating, everything else at the city
@@ -1039,21 +1066,26 @@
         gallons = dailyMiles / ratings.combined;
       }
       const effectiveMpg = dailyMiles / gallons;      // what the blend works out to
-      const fuelCost = gallons * regular;             // daily fuel cost, regular
-      const premiumFuelCost = gallons * premium;      // daily fuel cost, premium
-      const totalCost = dailyMiles * IRS_RATE;        // daily all-in cost, IRS rate
+      const daily = { total: dailyMiles * IRS_RATE }; // daily all-in cost, IRS rate
+      for (const kind of ['regular', 'premium', 'diesel']) {
+        daily[kind] = gallons * parseFloat(priceInputs[kind].value); // daily pump cost per fuel
+      }
 
       lastResults = {
         gallons,
-        daily: { regular: fuelCost, premium: premiumFuelCost, total: totalCost },
+        daily,
         dailyMiles,
         dailySplit,
         dailyMinutes: commuteMinutes * 2,
         effectiveMpg,
         ratings,
         premiumCar: /premium/i.test(vehicleFuelType),
+        kinds: fuelKinds(),
       };
-      if (!basisPinned) setBasis(lastResults.premiumCar ? 'premium' : 'regular');
+      if (!basisPinned) {
+        setBasis(lastResults.kinds.includes('diesel') ? 'diesel'
+          : lastResults.premiumCar ? 'premium' : 'regular');
+      }
       renderResults();
     }
 
@@ -1085,7 +1117,14 @@
       $('stat-gallons').textContent = `${r.gallons.toFixed(2)} gal`;
       $('stat-fuel').textContent = usd.format(r.daily.regular);
       $('stat-premium').textContent = usd.format(r.daily.premium);
+      $('stat-diesel').textContent = usd.format(r.daily.diesel);
       $('stat-total').textContent = usd.format(r.daily.total);
+      $('stat-fuel-wrap').hidden = !r.kinds.includes('regular');
+      $('stat-premium-wrap').hidden = !r.kinds.includes('premium');
+      $('stat-diesel-wrap').hidden = !r.kinds.includes('diesel');
+      for (const b of $('basis-toggle').querySelectorAll('button')) {
+        b.hidden = b.dataset.basis !== 'total' && !r.kinds.includes(b.dataset.basis);
+      }
       const adjNote = r.ratings.adjustment
         ? ` EPA ratings adjusted by ${r.ratings.adjustment > 0 ? '+' : ''}${r.ratings.adjustment} MPG.`
         : '';
@@ -1124,7 +1163,7 @@
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') findDistance(); });
     }
 
-    for (const el of [mpgManualInput, priceRegularInput, pricePremiumInput]) {
+    for (const el of [mpgManualInput, priceRegularInput, pricePremiumInput, priceDieselInput]) {
       el.addEventListener('input', updateCalcButton);
     }
     mpgAdjustInput.addEventListener('input', () => { renderRating(); updateCalcButton(); });

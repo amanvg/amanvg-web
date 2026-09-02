@@ -37,23 +37,30 @@ def parse_as_of(html):
     return f"{year:04d}-{month:02d}-{day:02d}"
 
 
+GRADES = ("regular", "premium", "diesel")  # AAA also lists mid_grade; the page doesn't use it
+
+
 def parse_states(html):
     states = {}
     for row in re.findall(r"<tr>(.*?)</tr>", html, re.S):
         code = re.search(r"\?state=([A-Z]{2})", row)
-        regular = re.search(r'class="regular"[^>]*>\s*\$([\d.]+)', row)
-        premium = re.search(r'class="premium"[^>]*>\s*\$([\d.]+)', row)
-        if code and regular and premium:
-            states[code.group(1)] = {
-                "regular": round(float(regular.group(1)), 2),
-                "premium": round(float(premium.group(1)), 2),
-            }
+        if not code:
+            continue
+        prices = {}
+        for grade in GRADES:
+            m = re.search(rf'class="{grade}"[^>]*>\s*\$([\d.]+)', row)
+            if m:
+                prices[grade] = round(float(m.group(1)), 2)
+        # Regular and premium are required; diesel is kept whenever AAA lists it.
+        if "regular" in prices and "premium" in prices:
+            states[code.group(1)] = prices
     return states
 
 
 def main():
     try:
-        html = fetch_html()
+        # Optional: parse a saved copy of the page instead of fetching (debugging).
+        html = Path(sys.argv[1]).read_text() if len(sys.argv) > 1 else fetch_html()
         states = parse_states(html)
         if len(states) < 40:  # sanity check: expect 50 states + DC
             raise ValueError(f"only parsed {len(states)} states — page layout may have changed")
@@ -65,8 +72,9 @@ def main():
         }
         OUT.parent.mkdir(parents=True, exist_ok=True)
         OUT.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+        with_diesel = sum("diesel" in v for v in states.values())
         print(f"Wrote {OUT.relative_to(Path.cwd()) if OUT.is_relative_to(Path.cwd()) else OUT}: "
-              f"{len(states)} states, prices as of {data['asOf']}")
+              f"{len(states)} states ({with_diesel} with diesel), prices as of {data['asOf']}")
     except Exception as err:
         print(f"update_prices: failed ({err}) — page will fall back to live "
               f"national-average scaling", file=sys.stderr)
