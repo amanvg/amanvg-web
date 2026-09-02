@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commute Cost Calculator — amanvg</title>
+  <meta name="description" content="What your drive to work really costs — fuel, IRS mileage rate, miles, and hours, from your car and your addresses.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: dark;
+      --bg: #141414;
+      --surface: #1e1e1e;
+      --surface-2: #232323;
+      --surface-hover: #2a2a2a;
+      --border: #2e2e2e;
+      --border-hover: #3d3d3d;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-tertiary: #8a8a8a;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --accent-border: rgba(59, 130, 246, 0.35);
+      --accent-text: #93c5fd;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --radius-card: 20px;
+      --radius-btn: 12px;
+      --radius-input: 10px;
+      --radius-pill: 999px;
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,13,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 980px; margin: 0 auto;
+      padding: 0 32px; height: 56px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    }
+    .nav-back {
+      justify-self: start;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-back:hover { color: var(--text-primary); background: var(--border); }
+    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
+
+    /* ── Page ── */
+    .page { max-width: 760px; margin: 0 auto; padding: 40px 32px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; }
+    .page-header p { font-size: 16px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+
+    .grid { display: grid; gap: 14px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+    .field-inline { max-width: 220px; }
+
+    select, input[type="number"], input[type="text"] {
+      font: inherit; font-size: 14px;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 10px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    select:focus, input:focus { outline: none; border-color: var(--accent); }
+    select:disabled { color: var(--text-tertiary); }
+    input::placeholder { color: var(--text-tertiary); }
+
+    .hint { font-size: 13px; color: var(--text-tertiary); margin-top: 10px; line-height: 1.5; }
+    .error { font-size: 13px; color: var(--red); line-height: 1.5; }
+
+    .badge {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+      text-transform: none;
+      padding: 4px 10px; border-radius: var(--radius-pill);
+      background: var(--accent-soft); color: var(--accent-text);
+      border: 1px solid var(--accent-border);
+    }
+
+    .vehicle-info { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border); }
+    .vehicle-info .hint { margin-top: 8px; }
+    .fuel-note-premium { color: var(--amber); font-weight: 600; }
+
+    /* ── Buttons ── */
+    .btn-secondary {
+      font: inherit; font-size: 13px; font-weight: 600;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 14px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-secondary:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--border-hover); }
+    .btn-secondary:disabled { opacity: 0.6; cursor: wait; }
+
+    .btn-primary {
+      display: block; width: 100%;
+      font: inherit; font-size: 15px; font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      border: none; border-radius: var(--radius-btn);
+      padding: 15px;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-primary:active:not(:disabled) { transform: scale(0.99); }
+    .btn-primary:disabled {
+      background: var(--surface-2); color: var(--text-tertiary);
+      border: 1px solid var(--border); cursor: not-allowed;
+    }
+
+    .lookup-row, .error-row {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .lookup-row { margin-top: 16px; }
+    .lookup-row .hint, .error-row .error { margin: 0; }
+    .error-row { margin-top: 14px; }
+
+    /* ── Results ── */
+    .results-context { font-size: 14px; color: var(--text-secondary); margin: -8px 0 18px; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .stat {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .stat-label {
+      display: block;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+    }
+    .stat-value { display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin-top: 6px; }
+    .stat-total { background: var(--accent-soft); border-color: var(--accent-border); }
+    .stat-total .stat-value { color: var(--accent-text); }
+    .stat-recommended { border-color: var(--amber); }
+
+    .table-heading {
+      font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin: 28px 0 12px;
+    }
+
+    .basis-row {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      font-size: 13px; color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .basis-toggle { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .basis-toggle button {
+      font: inherit; font-size: 13px; font-weight: 500;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .basis-toggle button:hover { border-color: var(--border-hover); color: var(--text-primary); }
+    .basis-toggle button.active { background: #f0f0f0; color: #0d0d0d; border-color: #f0f0f0; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; }
+    th, td { text-align: right; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    th:first-child, td:first-child { text-align: left; }
+    thead th {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--surface-2); }
+
+    .footer { text-align: center; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; margin-top: 24px; }
+    .footer a { color: var(--text-secondary); }
+
+    @media (max-width: 640px) {
+      .nav-inner { padding: 0 20px; }
+      .nav-title { font-size: 15px; }
+      .page { padding: 28px 20px 60px; }
+      .page-header h1 { font-size: 26px; }
+      .card { padding: 22px; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+
+  <nav aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="nav-back" href="/">← amanvg</a>
+      <span class="nav-title">Commute Cost Calculator</span>
+      <span></span>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>🚗 Commute Cost Calculator</h1>
+      <p>Find out what your drive to work really costs.</p>
+    </header>
+
+    <section class="card">
+      <h2>1. Your Car</h2>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="year">Year</label>
+          <select id="year" autocomplete="off">
+            <option value="">Loading…</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="make">Make</label>
+          <select id="make" disabled autocomplete="off">
+            <option value="">Select year first</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="model">Model</label>
+          <select id="model" disabled autocomplete="off">
+            <option value="">Select make first</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="trim-field" style="margin-top: 14px;" hidden>
+        <label for="trim">Engine / Trim</label>
+        <select id="trim" autocomplete="off"></select>
+      </div>
+      <div class="vehicle-info" id="vehicle-info" hidden>
+        <div class="field field-inline">
+          <label for="mpg">EPA Combined MPG</label>
+          <input type="number" id="mpg" min="1" max="200" step="0.1">
+        </div>
+        <p class="hint" id="fuel-type-note"></p>
+      </div>
+      <div class="error-row" id="car-error-row" hidden>
+        <p class="error" id="car-error"></p>
+        <button class="btn-secondary" id="car-retry" type="button">Retry</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Your Commute</h2>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="home-address">Home Address</label>
+          <input type="text" id="home-address" placeholder="e.g. 1250 1st Ave S, Seattle, WA" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="work-address">Work Address</label>
+          <input type="text" id="work-address" placeholder="e.g. Jackson Visitor Center, Paradise, WA" autocomplete="off">
+        </div>
+      </div>
+      <div class="lookup-row">
+        <button class="btn-secondary" id="lookup-btn" type="button">Find Driving Distance</button>
+        <span class="hint" id="lookup-status"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Fuel Prices <span class="badge" id="price-source" hidden></span></h2>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="price-regular">Regular ($/gal)</label>
+          <input type="number" id="price-regular" min="0" step="0.01" placeholder="—">
+        </div>
+        <div class="field">
+          <label for="price-premium">Premium ($/gal)</label>
+          <input type="number" id="price-premium" min="0" step="0.01" placeholder="—">
+        </div>
+      </div>
+      <p class="hint">Auto-filled with your state's daily AAA average from your home address. Edit to match your local station.</p>
+    </section>
+
+    <button class="btn-primary" id="calc-btn" disabled>Calculate My Commute Cost</button>
+
+    <section class="card results" id="results" hidden>
+      <h2>Your Daily Commute</h2>
+      <p class="results-context" id="results-context"></p>
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat-label">Gallons Used</span>
+          <span class="stat-value" id="stat-gallons">—</span>
+        </div>
+        <div class="stat" id="stat-fuel-wrap">
+          <span class="stat-label">Fuel Cost (Regular)</span>
+          <span class="stat-value" id="stat-fuel">—</span>
+        </div>
+        <div class="stat" id="stat-premium-wrap">
+          <span class="stat-label">Fuel Cost (Premium)</span>
+          <span class="stat-value" id="stat-premium">—</span>
+        </div>
+        <div class="stat stat-total">
+          <span class="stat-label">Total Cost (IRS rate $0.76/mi)</span>
+          <span class="stat-value" id="stat-total">—</span>
+        </div>
+      </div>
+      <p class="hint" style="margin-top: 0;">Total Cost uses the IRS standard mileage rate of $0.76/mile, which covers fuel <em>plus</em> depreciation, insurance, and maintenance. The fuel costs show just what you'll spend at the pump.</p>
+
+      <h3 class="table-heading">Weekly · Monthly · Yearly</h3>
+      <div class="basis-row">
+        <span>Show costs based on:</span>
+        <div class="basis-toggle" id="basis-toggle">
+          <button data-basis="total" class="active">Total (IRS)</button>
+          <button data-basis="regular">Regular Fuel</button>
+          <button data-basis="premium">Premium Fuel</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="cost-table">
+          <thead>
+            <tr>
+              <th>Days in Office / Week</th>
+              <th>Weekly</th>
+              <th>Monthly</th>
+              <th>Yearly</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <h3 class="table-heading">Miles Driven</h3>
+      <div class="table-wrap">
+        <table id="miles-table">
+          <thead>
+            <tr>
+              <th>Days in Office / Week</th>
+              <th>Weekly</th>
+              <th>Monthly</th>
+              <th>Yearly</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <h3 class="table-heading">Hours of Your Life Spent Commuting</h3>
+      <div class="table-wrap">
+        <table id="time-table">
+          <thead>
+            <tr>
+              <th>Days in Office / Week</th>
+              <th>Weekly</th>
+              <th>Monthly</th>
+              <th>Yearly</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>MPG data from <a href="https://www.fueleconomy.gov" target="_blank" rel="noopener">fueleconomy.gov</a> (EPA). Fuel prices from <a href="https://gasprices.aaa.com/state-gas-price-averages/" target="_blank" rel="noopener">AAA daily state averages</a>. Address lookup © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors; routing by <a href="https://project-osrm.org" target="_blank" rel="noopener">OSRM</a>.</p>
+    </footer>
+  </main>
+
+  <script>
+    'use strict';
+
+    // ---------------------------------------------------------------------------
+    // Constants & data
+    // ---------------------------------------------------------------------------
+
+    const EPA_API = 'https://www.fueleconomy.gov/ws/rest';
+    const ZIP_API = 'https://api.zippopotam.us/us';
+    const IRS_RATE = 0.76; // $/mile, standard mileage rate
+    const WEEKS_PER_MONTH = 52 / 12;
+    const WEEKS_PER_YEAR = 52;
+
+    // Baseline state-average pump prices in $/gal (regular / premium) — the
+    // last-resort fallback. Live data is preferred: data/gas-prices.json (daily
+    // AAA state averages, committed by the commute-gas-prices workflow) or,
+    // failing that, these baselines scaled to today's national average.
+    const STATE_GAS_PRICES = {
+      AL: { regular: 2.85, premium: 3.65 }, AK: { regular: 3.65, premium: 4.35 },
+      AZ: { regular: 3.30, premium: 4.05 }, AR: { regular: 2.80, premium: 3.55 },
+      CA: { regular: 4.55, premium: 4.95 }, CO: { regular: 3.05, premium: 3.80 },
+      CT: { regular: 3.20, premium: 4.05 }, DE: { regular: 3.00, premium: 3.80 },
+      DC: { regular: 3.35, premium: 4.20 }, FL: { regular: 3.05, premium: 3.85 },
+      GA: { regular: 2.90, premium: 3.70 }, HI: { regular: 4.45, premium: 4.85 },
+      ID: { regular: 3.25, premium: 3.90 }, IL: { regular: 3.40, premium: 4.25 },
+      IN: { regular: 3.10, premium: 3.90 }, IA: { regular: 2.95, premium: 3.65 },
+      KS: { regular: 2.85, premium: 3.55 }, KY: { regular: 2.95, premium: 3.70 },
+      LA: { regular: 2.80, premium: 3.55 }, ME: { regular: 3.10, premium: 3.95 },
+      MD: { regular: 3.15, premium: 4.00 }, MA: { regular: 3.10, premium: 3.95 },
+      MI: { regular: 3.15, premium: 4.00 }, MN: { regular: 3.00, premium: 3.70 },
+      MS: { regular: 2.75, premium: 3.50 }, MO: { regular: 2.85, premium: 3.55 },
+      MT: { regular: 3.15, premium: 3.85 }, NE: { regular: 2.95, premium: 3.60 },
+      NV: { regular: 3.80, premium: 4.30 }, NH: { regular: 3.05, premium: 3.90 },
+      NJ: { regular: 3.05, premium: 3.90 }, NM: { regular: 2.95, premium: 3.65 },
+      NY: { regular: 3.25, premium: 4.10 }, NC: { regular: 2.95, premium: 3.75 },
+      ND: { regular: 2.95, premium: 3.60 }, OH: { regular: 3.05, premium: 3.85 },
+      OK: { regular: 2.75, premium: 3.45 }, OR: { regular: 3.90, premium: 4.35 },
+      PA: { regular: 3.30, premium: 4.10 }, RI: { regular: 3.05, premium: 3.90 },
+      SC: { regular: 2.85, premium: 3.65 }, SD: { regular: 3.00, premium: 3.65 },
+      TN: { regular: 2.85, premium: 3.60 }, TX: { regular: 2.80, premium: 3.55 },
+      UT: { regular: 3.30, premium: 3.90 }, VT: { regular: 3.15, premium: 4.00 },
+      VA: { regular: 3.00, premium: 3.85 }, WA: { regular: 4.30, premium: 4.75 },
+      WV: { regular: 3.05, premium: 3.80 }, WI: { regular: 2.95, premium: 3.70 },
+      WY: { regular: 3.05, premium: 3.70 },
+    };
+    const NATIONAL_AVG = { regular: 3.15, premium: 3.95 };
+
+    // Live price data, resolved by loadPrices() at startup.
+    let aaaPrices = null;    // { asOf, states: {PA: {regular, premium}, ...} }
+    let liveNational = null; // today's national {regular, premium}
+
+    async function loadPrices() {
+      // Preferred: daily AAA state averages committed to data/gas-prices.json.
+      try {
+        const res = await fetch('data/gas-prices.json', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.states && Object.keys(data.states).length) {
+            aaaPrices = data;
+          }
+        }
+      } catch { /* file not present — fall through */ }
+
+      // Also grab today's national average (CORS-friendly EPA endpoint) so the
+      // baseline table can be scaled to current price levels if needed.
+      try {
+        const res = await fetch(`${EPA_API}/fuelprices`, { headers: { Accept: 'application/json' } });
+        if (res.ok) {
+          const n = await res.json();
+          const regular = parseFloat(n.regular);
+          const premium = parseFloat(n.premium);
+          if (regular > 0 && premium > 0) liveNational = { regular, premium };
+        }
+      } catch { /* offline — baselines used as-is */ }
+    }
+
+    function pricesForState(state) {
+      if (aaaPrices && aaaPrices.states[state]) {
+        return {
+          prices: aaaPrices.states[state],
+          label: `${state} AAA average · ${aaaPrices.asOf || 'date unknown'}`,
+        };
+      }
+      const base = STATE_GAS_PRICES[state];
+      if (liveNational) {
+        if (base) {
+          return {
+            prices: {
+              regular: base.regular * (liveNational.regular / NATIONAL_AVG.regular),
+              premium: base.premium * (liveNational.premium / NATIONAL_AVG.premium),
+            },
+            label: `${state} estimate, scaled to today's national average`,
+          };
+        }
+        return { prices: liveNational, label: "today's national average" };
+      }
+      return {
+        prices: base || NATIONAL_AVG,
+        label: base ? `${state} estimated average (offline)` : 'national estimated average (offline)',
+      };
+    }
+
+    // ---------------------------------------------------------------------------
+    // DOM references
+    // ---------------------------------------------------------------------------
+
+    const $ = (id) => document.getElementById(id);
+    const yearSel = $('year');
+    const makeSel = $('make');
+    const modelSel = $('model');
+    const trimSel = $('trim');
+    const trimField = $('trim-field');
+    const vehicleInfo = $('vehicle-info');
+    const mpgInput = $('mpg');
+    const fuelTypeNote = $('fuel-type-note');
+    const carError = $('car-error');
+    const carErrorRow = $('car-error-row');
+    const priceRegularInput = $('price-regular');
+    const pricePremiumInput = $('price-premium');
+    const priceSourceBadge = $('price-source');
+    const calcBtn = $('calc-btn');
+    const resultsSection = $('results');
+
+    let vehicleFuelType = '';
+    let costBasis = 'total';
+    let lastResults = null;
+    let commuteMiles = 0; // one-way driving distance from the address lookup
+    let commuteMinutes = 0;
+
+    const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    // ---------------------------------------------------------------------------
+    // EPA fueleconomy.gov API
+    // ---------------------------------------------------------------------------
+
+    // EPA data changes rarely, so successful responses are cached in localStorage.
+    // A fresh hit skips the network; a stale hit is still used if fueleconomy.gov
+    // is down (better a months-old MPG rating than none — they never change).
+    const EPA_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+
+    function epaCacheGet(path) {
+      try {
+        const hit = JSON.parse(localStorage.getItem(`epa:${path}`));
+        if (hit && hit.d) return hit;
+      } catch { /* corrupt or unavailable storage */ }
+      return null;
+    }
+
+    async function epaFetch(path) {
+      const cached = epaCacheGet(path);
+      if (cached && Date.now() - cached.t < EPA_CACHE_TTL) return cached.d;
+
+      let lastErr;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        if (attempt) await sleep(1000 * attempt);
+        try {
+          const res = await fetch(`${EPA_API}${path}`, {
+            headers: { Accept: 'application/json' },
+            signal: AbortSignal.timeout(6000), // a flapping server can hang, not just fail
+          });
+          if (res.status >= 500) { // transient server trouble — retry
+            lastErr = new Error(`EPA API error (${res.status})`);
+            continue;
+          }
+          if (!res.ok) throw new Error(`EPA API error (${res.status})`);
+          const data = await res.json();
+          try { localStorage.setItem(`epa:${path}`, JSON.stringify({ t: Date.now(), d: data })); } catch { /* storage full */ }
+          return data;
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+      if (cached) return cached.d; // expired but real data beats an error page
+      throw lastErr;
+    }
+
+    // Menu endpoints return {menuItem: [...]} for many results but {menuItem: {...}}
+    // for a single result, and {} for none.
+    function menuItems(data) {
+      const items = data && data.menuItem;
+      if (!items) return [];
+      return Array.isArray(items) ? items : [items];
+    }
+
+    function fillSelect(select, items, placeholder) {
+      select.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = placeholder;
+      select.appendChild(opt);
+      for (const item of items) {
+        const o = document.createElement('option');
+        o.value = item.value;
+        o.textContent = item.text;
+        select.appendChild(o);
+      }
+      select.disabled = items.length === 0;
+    }
+
+    function resetSelect(select, placeholder) {
+      select.innerHTML = `<option value="">${placeholder}</option>`;
+      select.disabled = true;
+    }
+
+    function resetVehicle() {
+      vehicleInfo.hidden = true;
+      mpgInput.value = '';
+      fuelTypeNote.textContent = '';
+      vehicleFuelType = '';
+      updateCalcButton();
+    }
+
+    async function loadYears() {
+      try {
+        const items = menuItems(await epaFetch('/vehicle/menu/year'));
+        fillSelect(yearSel, items, 'Select year');
+        hideCarError();
+      } catch (err) {
+        // EPA model years are just a range — synthesize it so the form still works
+        // and the makes call (with its own retry) gets a chance once the API is back.
+        const latest = new Date().getFullYear() + 1;
+        const items = [];
+        for (let y = latest; y >= 1984; y--) items.push({ text: String(y), value: String(y) });
+        fillSelect(yearSel, items, 'Select year');
+        showCarError(err);
+      }
+    }
+
+    async function onYearChange() {
+      resetSelect(makeSel, 'Select year first');
+      resetSelect(modelSel, 'Select make first');
+      trimField.hidden = true;
+      resetVehicle();
+      if (!yearSel.value) return;
+      resetSelect(makeSel, 'Loading makes…');
+      try {
+        const items = menuItems(await epaFetch(`/vehicle/menu/make?year=${yearSel.value}`));
+        fillSelect(makeSel, items, 'Select make');
+        hideCarError();
+      } catch (err) {
+        resetSelect(makeSel, "Couldn't load — hit Retry");
+        showCarError(err);
+      }
+    }
+
+    async function onMakeChange() {
+      resetSelect(modelSel, 'Select make first');
+      trimField.hidden = true;
+      resetVehicle();
+      if (!makeSel.value) return;
+      resetSelect(modelSel, 'Loading models…');
+      try {
+        const items = menuItems(await epaFetch(
+          `/vehicle/menu/model?year=${yearSel.value}&make=${encodeURIComponent(makeSel.value)}`));
+        fillSelect(modelSel, items, 'Select model');
+        hideCarError();
+      } catch (err) {
+        resetSelect(modelSel, "Couldn't load — hit Retry");
+        showCarError(err);
+      }
+    }
+
+    async function onModelChange() {
+      trimField.hidden = true;
+      resetVehicle();
+      if (!modelSel.value) return;
+      try {
+        const items = menuItems(await epaFetch(
+          `/vehicle/menu/options?year=${yearSel.value}&make=${encodeURIComponent(makeSel.value)}&model=${encodeURIComponent(modelSel.value)}`));
+        hideCarError();
+        if (items.length === 1) {
+          await loadVehicle(items[0].value);
+        } else if (items.length > 1) {
+          fillSelect(trimSel, items, 'Select engine / trim');
+          trimField.hidden = false;
+        }
+      } catch (err) {
+        showCarError(err);
+      }
+    }
+
+    async function onTrimChange() {
+      resetVehicle();
+      if (trimSel.value) await loadVehicle(trimSel.value);
+    }
+
+    async function loadVehicle(id) {
+      try {
+        const v = await epaFetch(`/vehicle/${id}`);
+        const mpg = parseFloat(v.comb08);
+        mpgInput.value = Number.isFinite(mpg) ? mpg : '';
+        vehicleFuelType = v.fuelType1 || v.fuelType || '';
+        if (/premium/i.test(vehicleFuelType)) {
+          fuelTypeNote.innerHTML = `Fuel: <span class="fuel-note-premium">${vehicleFuelType}</span> — this car recommends premium, so watch the premium fuel cost below.`;
+        } else if (/electricity/i.test(vehicleFuelType)) {
+          fuelTypeNote.textContent = `Fuel: ${vehicleFuelType} — note: this calculator estimates gasoline costs, so fuel figures won't apply to a pure EV. The MPG shown is MPGe.`;
+        } else {
+          fuelTypeNote.textContent = vehicleFuelType ? `Fuel: ${vehicleFuelType}` : '';
+        }
+        vehicleInfo.hidden = false;
+        hideCarError();
+      } catch (err) {
+        showCarError(err);
+      }
+      updateCalcButton();
+    }
+
+    function showCarError(err) {
+      const reason = err.name === 'TimeoutError' ? 'timed out' : err.message;
+      carError.textContent = `fueleconomy.gov isn't responding (${reason}). ` +
+        `It's usually back within minutes — hit Retry, or enter your MPG manually below.`;
+      carErrorRow.hidden = false;
+      vehicleInfo.hidden = false; // expose manual MPG entry as a fallback
+    }
+
+    function hideCarError() {
+      carErrorRow.hidden = true;
+    }
+
+    // Re-run whichever loading step the user is stuck on.
+    function retryCarLoad() {
+      hideCarError();
+      if (!yearSel.value) return loadYears();
+      if (!makeSel.value) return onYearChange();
+      if (!modelSel.value) return onMakeChange();
+      if (!trimField.hidden && trimSel.value) return onTrimChange();
+      return onModelChange();
+    }
+
+    // ---------------------------------------------------------------------------
+    // Address → driving distance (Nominatim geocoding + OSRM routing)
+    // ---------------------------------------------------------------------------
+
+    const NOMINATIM_API = 'https://nominatim.openstreetmap.org/search';
+    const OSRM_API = 'https://router.project-osrm.org/route/v1/driving';
+
+    async function geocode(address) {
+      const url = `${NOMINATIM_API}?q=${encodeURIComponent(address)}&format=json&limit=1&countrycodes=us&addressdetails=1`;
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(`geocoder error (${res.status})`);
+      const results = await res.json();
+      if (!results.length) return null;
+      const addr = results[0].address || {};
+      const iso = addr['ISO3166-2-lvl4'] || ''; // e.g. "US-PA"
+      return {
+        lat: results[0].lat,
+        lon: results[0].lon,
+        zip: (addr.postcode || '').slice(0, 5),
+        stateCode: iso.startsWith('US-') ? iso.slice(3) : null,
+        city: addr.city || addr.town || addr.village || addr.municipality || '',
+        name: results[0].display_name,
+      };
+    }
+
+    async function drivingRoute(from, to) {
+      const url = `${OSRM_API}/${from.lon},${from.lat};${to.lon},${to.lat}?overview=false`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`routing error (${res.status})`);
+      const data = await res.json();
+      if (data.code !== 'Ok' || !data.routes || !data.routes.length) {
+        throw new Error('no drivable route found');
+      }
+      return {
+        miles: data.routes[0].distance / 1609.344,
+        minutes: data.routes[0].duration / 60,
+      };
+    }
+
+    async function findDistance() {
+      const homeAddr = $('home-address').value.trim();
+      const workAddr = $('work-address').value.trim();
+      const status = $('lookup-status');
+      if (!homeAddr || !workAddr) {
+        status.textContent = 'Enter both addresses first.';
+        return;
+      }
+      const btn = $('lookup-btn');
+      btn.disabled = true;
+      try {
+        status.textContent = 'Finding home address…';
+        const home = await geocode(homeAddr);
+        if (!home) throw new Error(`couldn't find the home address — try adding city and state`);
+        await sleep(1100); // Nominatim usage policy: max 1 request/second
+        status.textContent = 'Finding work address…';
+        const work = await geocode(workAddr);
+        if (!work) throw new Error(`couldn't find the work address — try adding city and state`);
+        status.textContent = 'Calculating driving route…';
+        const route = await drivingRoute(home, work);
+        commuteMiles = route.miles;
+        commuteMinutes = route.minutes;
+        const place = await setPricesFromHome(home);
+        status.textContent =
+          `${place ? place + ': ' : ''}${route.miles.toFixed(1)} mi one way ` +
+          `(about ${Math.round(route.minutes)} min) · ${(route.miles * 2).toFixed(1)} mi round trip.`;
+      } catch (err) {
+        commuteMiles = 0;
+        status.textContent = `Lookup failed: ${err.message}.`;
+      } finally {
+        btn.disabled = false;
+        updateCalcButton();
+      }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Home location → state → fuel prices
+    // ---------------------------------------------------------------------------
+
+    async function setPricesFromHome(home) {
+      let state = home.stateCode;
+      let place = home.city ? `${home.city}${state ? ', ' + state : ''}` : state || '';
+      if (!state && /^\d{5}$/.test(home.zip)) {
+        // Nominatim result had no usable state — resolve it from the zip instead.
+        try {
+          const res = await fetch(`${ZIP_API}/${home.zip}`);
+          if (res.ok) {
+            const data = await res.json();
+            const p = data.places && data.places[0];
+            if (p) {
+              state = p['state abbreviation'];
+              place = `${p['place name']}, ${state}`;
+            }
+          }
+        } catch { /* pricesForState falls back to national */ }
+      }
+      const { prices, label } = pricesForState(state);
+      priceRegularInput.value = prices.regular.toFixed(2);
+      pricePremiumInput.value = prices.premium.toFixed(2);
+      priceSourceBadge.textContent = label;
+      priceSourceBadge.hidden = false;
+      return place;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Calculation
+    // ---------------------------------------------------------------------------
+
+    function inputsValid() {
+      return parseFloat(mpgInput.value) > 0 &&
+        commuteMiles > 0 &&
+        parseFloat(priceRegularInput.value) >= 0 &&
+        parseFloat(pricePremiumInput.value) >= 0;
+    }
+
+    function updateCalcButton() {
+      calcBtn.disabled = !inputsValid();
+    }
+
+    function calculate() {
+      const mpg = parseFloat(mpgInput.value);
+      const regular = parseFloat(priceRegularInput.value);
+      const premium = parseFloat(pricePremiumInput.value);
+      const dailyMiles = commuteMiles * 2; // round trip, always
+
+      const gallonsPerMile = 1 / mpg;                 // EPA combined → gallons per mile
+      const gallons = gallonsPerMile * dailyMiles;    // gallons used per day
+      const fuelCost = gallons * regular;             // daily fuel cost, regular
+      const premiumFuelCost = gallons * premium;      // daily fuel cost, premium
+      const totalCost = dailyMiles * IRS_RATE;        // daily all-in cost, IRS rate
+
+      lastResults = {
+        gallons,
+        daily: { regular: fuelCost, premium: premiumFuelCost, total: totalCost },
+        dailyMiles,
+        dailyMinutes: commuteMinutes * 2,
+        mpg,
+        premiumCar: /premium/i.test(vehicleFuelType),
+      };
+      renderResults();
+    }
+
+    function fillTable(id, cellFn) {
+      const tbody = document.querySelector(`#${id} tbody`);
+      tbody.innerHTML = '';
+      for (let days = 1; days <= 5; days++) {
+        const row = document.createElement('tr');
+        row.innerHTML =
+          `<td>${days} day${days > 1 ? 's' : ''}</td>` +
+          [days, days * WEEKS_PER_MONTH, days * WEEKS_PER_YEAR]
+            .map((trips) => `<td>${cellFn(trips)}</td>`).join('');
+        tbody.appendChild(row);
+      }
+    }
+
+    function renderResults() {
+      const r = lastResults;
+      if (!r) return;
+
+      $('stat-gallons').textContent = `${r.gallons.toFixed(2)} gal`;
+      $('stat-fuel').textContent = usd.format(r.daily.regular);
+      $('stat-premium').textContent = usd.format(r.daily.premium);
+      $('stat-total').textContent = usd.format(r.daily.total);
+      $('results-context').textContent =
+        `Based on a ${r.dailyMiles.toFixed(1)}-mile round trip each day at ${r.mpg} MPG combined.`;
+
+      $('stat-premium-wrap').classList.toggle('stat-recommended', r.premiumCar);
+
+      // Each table shows 1-5 office days/week; `trips` is the number of commute
+      // days in the period (week, month, year).
+      const num = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+      fillTable('cost-table', (trips) => usd.format(r.daily[costBasis] * trips));
+      fillTable('miles-table', (trips) => `${num.format(r.dailyMiles * trips)} mi`);
+      fillTable('time-table', (trips) => `${num.format(r.dailyMinutes * trips / 60)} hr`);
+
+      resultsSection.hidden = false;
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Wiring
+    // ---------------------------------------------------------------------------
+
+    yearSel.addEventListener('change', onYearChange);
+    makeSel.addEventListener('change', onMakeChange);
+    modelSel.addEventListener('change', onModelChange);
+    trimSel.addEventListener('change', onTrimChange);
+    calcBtn.addEventListener('click', calculate);
+    $('lookup-btn').addEventListener('click', findDistance);
+    $('car-retry').addEventListener('click', retryCarLoad);
+    for (const id of ['home-address', 'work-address']) {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') findDistance(); });
+    }
+
+    for (const el of [mpgInput, priceRegularInput, pricePremiumInput]) {
+      el.addEventListener('input', updateCalcButton);
+    }
+
+    $('basis-toggle').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-basis]');
+      if (!btn) return;
+      costBasis = btn.dataset.basis;
+      for (const b of $('basis-toggle').querySelectorAll('button')) {
+        b.classList.toggle('active', b === btn);
+      }
+      renderResults();
+    });
+
+    loadPrices();
+    loadYears();
+  </script>
+</body>
+</html>

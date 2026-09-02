@@ -1,0 +1,64 @@
+name: Commute gas prices
+
+# Refreshes commute/data/gas-prices.json from AAA's daily state averages.
+# The commute page reads that file same-origin; gasprices.aaa.com sends no
+# CORS headers, so the browser can't fetch it directly. If this ever fails,
+# the page falls back to scaling its baseline table by today's national
+# average from fueleconomy.gov.
+
+on:
+  schedule:
+    - cron: '0 12 * * *'   # daily, after AAA's early-morning ET update
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: commute-gas-prices
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch AAA prices
+        run: python3 commute/update_prices.py
+
+      - name: Commit if prices actually changed
+        run: |
+          set -eu
+          FILE=commute/data/gas-prices.json
+
+          # Stage first: plain `git diff` reports nothing for an untracked file,
+          # which would silently skip the very first commit.
+          git add "$FILE"
+
+          if git diff --cached --quiet -- "$FILE"; then
+            echo "No change."
+            exit 0
+          fi
+
+          # Every run rewrites fetchedAt. Only commit when a price moved.
+          REAL=$(git diff --cached -U0 -- "$FILE" \
+            | grep -E '^[+-]' \
+            | grep -vE '^(\+\+\+|---)' \
+            | grep -v '"fetchedAt"' \
+            | wc -l | tr -d ' ' || true)
+
+          if [ "${REAL:-0}" -eq 0 ]; then
+            echo "Only fetchedAt changed — discarding."
+            git restore --staged --worktree "$FILE"
+            exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "commute: refresh gas prices"
+          git push

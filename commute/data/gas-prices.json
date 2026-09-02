@@ -1,0 +1,211 @@
+{
+  "asOf": "2026-09-02",
+  "fetchedAt": "2026-09-02T13:59:02Z",
+  "source": "AAA Gas Prices (gasprices.aaa.com)",
+  "states": {
+    "AK": {
+      "premium": 5.37,
+      "regular": 4.94
+    },
+    "AL": {
+      "premium": 4.66,
+      "regular": 3.76
+    },
+    "AR": {
+      "premium": 4.6,
+      "regular": 3.76
+    },
+    "AZ": {
+      "premium": 5.23,
+      "regular": 4.53
+    },
+    "CA": {
+      "premium": 6.16,
+      "regular": 5.74
+    },
+    "CO": {
+      "premium": 4.99,
+      "regular": 4.27
+    },
+    "CT": {
+      "premium": 5.24,
+      "regular": 4.26
+    },
+    "DC": {
+      "premium": 5.2,
+      "regular": 4.19
+    },
+    "DE": {
+      "premium": 4.89,
+      "regular": 3.97
+    },
+    "FL": {
+      "premium": 4.78,
+      "regular": 3.98
+    },
+    "GA": {
+      "premium": 4.77,
+      "regular": 3.85
+    },
+    "HI": {
+      "premium": 5.9,
+      "regular": 5.42
+    },
+    "IA": {
+      "premium": 4.72,
+      "regular": 3.89
+    },
+    "ID": {
+      "premium": 5.17,
+      "regular": 4.62
+    },
+    "IL": {
+      "premium": 5.44,
+      "regular": 4.31
+    },
+    "IN": {
+      "premium": 4.54,
+      "regular": 3.43
+    },
+    "KS": {
+      "premium": 4.5,
+      "regular": 3.79
+    },
+    "KY": {
+      "premium": 4.78,
+      "regular": 3.79
+    },
+    "LA": {
+      "premium": 4.58,
+      "regular": 3.72
+    },
+    "MA": {
+      "premium": 5.17,
+      "regular": 4.16
+    },
+    "MD": {
+      "premium": 4.88,
+      "regular": 3.94
+    },
+    "ME": {
+      "premium": 5.15,
+      "regular": 4.14
+    },
+    "MI": {
+      "premium": 5.33,
+      "regular": 4.09
+    },
+    "MN": {
+      "premium": 4.91,
+      "regular": 3.98
+    },
+    "MO": {
+      "premium": 4.52,
+      "regular": 3.8
+    },
+    "MS": {
+      "premium": 4.52,
+      "regular": 3.69
+    },
+    "MT": {
+      "premium": 5.06,
+      "regular": 4.38
+    },
+    "NC": {
+      "premium": 4.7,
+      "regular": 3.84
+    },
+    "ND": {
+      "premium": 4.69,
+      "regular": 3.97
+    },
+    "NE": {
+      "premium": 4.63,
+      "regular": 3.92
+    },
+    "NH": {
+      "premium": 5.1,
+      "regular": 4.09
+    },
+    "NJ": {
+      "premium": 5.06,
+      "regular": 4.21
+    },
+    "NM": {
+      "premium": 4.79,
+      "regular": 4.05
+    },
+    "NV": {
+      "premium": 5.48,
+      "regular": 4.88
+    },
+    "NY": {
+      "premium": 5.17,
+      "regular": 4.26
+    },
+    "OH": {
+      "premium": 4.88,
+      "regular": 3.8
+    },
+    "OK": {
+      "premium": 4.4,
+      "regular": 3.69
+    },
+    "OR": {
+      "premium": 5.47,
+      "regular": 4.95
+    },
+    "PA": {
+      "premium": 5.12,
+      "regular": 4.28
+    },
+    "RI": {
+      "premium": 5.3,
+      "regular": 4.17
+    },
+    "SC": {
+      "premium": 4.62,
+      "regular": 3.76
+    },
+    "SD": {
+      "premium": 4.69,
+      "regular": 4.01
+    },
+    "TN": {
+      "premium": 4.65,
+      "regular": 3.77
+    },
+    "TX": {
+      "premium": 4.56,
+      "regular": 3.68
+    },
+    "UT": {
+      "premium": 4.95,
+      "regular": 4.42
+    },
+    "VA": {
+      "premium": 4.75,
+      "regular": 3.87
+    },
+    "VT": {
+      "premium": 5.24,
+      "regular": 4.26
+    },
+    "WA": {
+      "premium": 5.92,
+      "regular": 5.44
+    },
+    "WI": {
+      "premium": 4.97,
+      "regular": 3.81
+    },
+    "WV": {
+      "premium": 4.81,
+      "regular": 3.93
+    },
+    "WY": {
+      "premium": 4.96,
+      "regular": 4.36
+    }
+  }
+}
