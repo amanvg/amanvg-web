@@ -668,7 +668,8 @@
       }
       const span = (lo, hi) => lo === hi ? String(lo) : `${lo}–${hi}`;
       const mpg = ([lo, hi]) => lo === Infinity ? '' : span(lo, hi);
-      runs.sort((a, b) => b.hi - a.hi || b.lo - a.lo || a.name.localeCompare(b.name));
+      // Newest model year first; ties go to the longest-running (oldest start).
+      runs.sort((a, b) => b.hi - a.hi || a.lo - b.lo || a.name.localeCompare(b.name));
       $stage.innerHTML = `
         <div class="actions">
           <button class="btn" id="restart">Start over</button>
