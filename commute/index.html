@@ -128,7 +128,45 @@
     }
 
     .vehicle-info { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border); }
-    .vehicle-info .hint { margin-top: 8px; }
+    .vehicle-info .hint { margin-top: 10px; }
+
+    .rating-row { display: grid; grid-template-columns: 1fr auto; gap: 14px 24px; align-items: end; }
+    .rating-label {
+      display: block;
+      font-size: 12px; font-weight: 600; color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .rating-value {
+      display: block;
+      font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      line-height: 42px; /* matches the stepper height so the row sits on one baseline */
+    }
+    .rating-value small { font-size: 12px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0; margin: 0 2px; }
+    .rating-value .adjusted { color: var(--accent-text); }
+    .rating-value .sep { color: var(--text-tertiary); font-weight: 500; margin: 0 4px; }
+    .rating-manual { max-width: 200px; }
+
+    .stepper { display: inline-flex; align-items: stretch; }
+    .stepper button {
+      font: inherit; font-size: 18px; font-weight: 600; line-height: 1;
+      width: 40px; height: 42px;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .stepper button:hover { background: var(--surface-hover); border-color: var(--border-hover); }
+    .stepper button:first-child { border-radius: var(--radius-input) 0 0 var(--radius-input); }
+    .stepper button:last-child { border-radius: 0 var(--radius-input) var(--radius-input) 0; }
+    .stepper input[type="number"] {
+      width: 72px; height: 42px;
+      text-align: center;
+      border-radius: 0; border-left: none; border-right: none;
+      -moz-appearance: textfield;
+    }
+    .stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .fuel-note-premium { color: var(--amber); font-weight: 600; }
 
     /* ── Buttons ── */
@@ -176,7 +214,7 @@
 
     .stat-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
       gap: 12px;
       margin-bottom: 14px;
     }
@@ -193,7 +231,7 @@
       color: var(--text-tertiary);
     }
     .stat-value { display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin-top: 6px; }
-    .stat-total { background: var(--accent-soft); border-color: var(--accent-border); }
+    .stat-total { background: var(--accent-soft); border-color: var(--accent-border); grid-column: 1 / -1; }
     .stat-total .stat-value { color: var(--accent-text); }
     .stat-recommended { border-color: var(--amber); }
 
@@ -244,6 +282,7 @@
       .page-header h1 { font-size: 26px; }
       .card { padding: 22px; }
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .rating-row { grid-template-columns: 1fr; }
     }
 
     :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
@@ -292,9 +331,23 @@
         <select id="trim" autocomplete="off"></select>
       </div>
       <div class="vehicle-info" id="vehicle-info" hidden>
-        <div class="field field-inline">
-          <label for="mpg">EPA Combined MPG</label>
-          <input type="number" id="mpg" min="1" max="200" step="0.1">
+        <div class="rating-row">
+          <div>
+            <span class="rating-label" id="rating-label">EPA Fuel Economy Rating</span>
+            <span class="rating-value" id="rating-text">—</span>
+            <div class="field rating-manual" id="manual-mpg-field" hidden>
+              <label for="mpg-manual">Your combined MPG</label>
+              <input type="number" id="mpg-manual" min="1" max="200" step="0.1" placeholder="e.g. 24">
+            </div>
+          </div>
+          <div class="field">
+            <label for="mpg-adjust">Adjustment (MPG)</label>
+            <div class="stepper">
+              <button type="button" id="adjust-minus" aria-label="Lower MPG by 1">−</button>
+              <input type="number" id="mpg-adjust" value="0" step="0.1" aria-label="MPG adjustment">
+              <button type="button" id="adjust-plus" aria-label="Raise MPG by 1">+</button>
+            </div>
+          </div>
         </div>
         <p class="hint" id="fuel-type-note"></p>
       </div>
@@ -343,6 +396,10 @@
       <h2>Your Daily Commute</h2>
       <p class="results-context" id="results-context"></p>
       <div class="stat-row">
+        <div class="stat">
+          <span class="stat-label">Effective MPG</span>
+          <span class="stat-value" id="stat-mpg">—</span>
+        </div>
         <div class="stat">
           <span class="stat-label">Gallons Used</span>
           <span class="stat-value" id="stat-gallons">—</span>
@@ -417,7 +474,7 @@
     </section>
 
     <footer class="footer">
-      <p>MPG data from <a href="https://www.fueleconomy.gov" target="_blank" rel="noopener">fueleconomy.gov</a> (EPA). Fuel prices from <a href="https://gasprices.aaa.com/state-gas-price-averages/" target="_blank" rel="noopener">AAA daily state averages</a>. Address lookup © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors; routing by <a href="https://project-osrm.org" target="_blank" rel="noopener">OSRM</a>.</p>
+      <p>MPG data from <a href="https://www.fueleconomy.gov" target="_blank" rel="noopener">fueleconomy.gov</a> (EPA). Fuel prices from <a href="https://gasprices.aaa.com/state-gas-price-averages/" target="_blank" rel="noopener">AAA daily state averages</a>. Address lookup © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors; routing by <a href="https://project-osrm.org" target="_blank" rel="noopener">OSRM</a>. Highway miles are road segments the router models at freeway speed or on an Interstate; no live traffic is used.</p>
     </footer>
   </main>
 
@@ -534,7 +591,10 @@
     const trimSel = $('trim');
     const trimField = $('trim-field');
     const vehicleInfo = $('vehicle-info');
-    const mpgInput = $('mpg');
+    const ratingText = $('rating-text');
+    const manualMpgField = $('manual-mpg-field');
+    const mpgManualInput = $('mpg-manual');
+    const mpgAdjustInput = $('mpg-adjust');
     const fuelTypeNote = $('fuel-type-note');
     const carError = $('car-error');
     const carErrorRow = $('car-error-row');
@@ -545,10 +605,12 @@
     const resultsSection = $('results');
 
     let vehicleFuelType = '';
+    let epaRatings = null; // { city, highway, combined } from fueleconomy.gov, or null
     let costBasis = 'total';
     let lastResults = null;
     let commuteMiles = 0; // one-way driving distance from the address lookup
     let commuteMinutes = 0;
+    let commuteSplit = null; // one-way { highway, city } miles, or null if the router gave no breakdown
 
     const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -628,10 +690,35 @@
 
     function resetVehicle() {
       vehicleInfo.hidden = true;
-      mpgInput.value = '';
+      epaRatings = null;
+      mpgManualInput.value = '';
+      manualMpgField.hidden = true;
+      mpgAdjustInput.value = '0';
+      renderRating();
       fuelTypeNote.textContent = '';
       vehicleFuelType = '';
       updateCalcButton();
+    }
+
+    function mpgAdjustment() {
+      const n = parseFloat(mpgAdjustInput.value);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    // Plain-text "16 city / 18 combined / 20 hwy"; when an adjustment is in
+    // play the adjusted figures are shown with the EPA sticker after them.
+    function renderRating() {
+      if (!epaRatings) { ratingText.textContent = '—'; return; }
+      const adj = mpgAdjustment();
+      const fmt = (n) => (Math.round(n * 10) / 10).toString();
+      const triple = (r, cls) =>
+        `<span class="${cls}">${fmt(r.city)}</span><small>city</small><span class="sep">/</span>` +
+        `<span class="${cls}">${fmt(r.combined)}</span><small>combined</small><span class="sep">/</span>` +
+        `<span class="${cls}">${fmt(r.highway)}</span><small>hwy</small>`;
+      if (!adj) { ratingText.innerHTML = triple(epaRatings, ''); return; }
+      const adjusted = mpgRatings() || epaRatings;
+      ratingText.innerHTML = triple(adjusted, 'adjusted') +
+        `<small style="margin-left:8px">EPA ${fmt(epaRatings.city)}/${fmt(epaRatings.combined)}/${fmt(epaRatings.highway)}</small>`;
     }
 
     async function loadYears() {
@@ -711,8 +798,11 @@
     async function loadVehicle(id) {
       try {
         const v = await epaFetch(`/vehicle/${id}`);
-        const mpg = parseFloat(v.comb08);
-        mpgInput.value = Number.isFinite(mpg) ? mpg : '';
+        const asMpg = (x) => { const n = parseFloat(x); return Number.isFinite(n) && n > 0 ? n : null; };
+        const city = asMpg(v.city08), highway = asMpg(v.highway08), combined = asMpg(v.comb08);
+        epaRatings = combined ? { city: city || combined, highway: highway || combined, combined } : null;
+        manualMpgField.hidden = !!epaRatings; // no usable rating → let them type one
+        renderRating();
         vehicleFuelType = v.fuelType1 || v.fuelType || '';
         if (/premium/i.test(vehicleFuelType)) {
           fuelTypeNote.innerHTML = `Fuel: <span class="fuel-note-premium">${vehicleFuelType}</span> — this car recommends premium, so watch the premium fuel cost below.`;
@@ -732,9 +822,10 @@
     function showCarError(err) {
       const reason = err.name === 'TimeoutError' ? 'timed out' : err.message;
       carError.textContent = `fueleconomy.gov isn't responding (${reason}). ` +
-        `It's usually back within minutes — hit Retry, or enter your MPG manually below.`;
+        `It's usually back within minutes — hit Retry, or enter your MPG ratings manually below.`;
       carErrorRow.hidden = false;
       vehicleInfo.hidden = false; // expose manual MPG entry as a fallback
+      if (!epaRatings) manualMpgField.hidden = false;
     }
 
     function hideCarError() {
@@ -776,17 +867,54 @@
       };
     }
 
+    // OSRM models each road segment at roughly 0.8 × its posted speed limit (no
+    // live traffic), so a 55 mph freeway comes back near 44 mph and a 45 mph
+    // arterial near 36. EPA's highway cycle is free-flowing driving averaging
+    // ~48 mph, so anything modeled at 42 mph or more (posted ≥ ~52) is treated
+    // as highway. Interstates and named freeways count regardless of speed —
+    // urban stretches are often posted at 50 or 55.
+    const HIGHWAY_MODEL_MPH = 42;
+    const MPS_TO_MPH = 2.23694;
+    const isFreewayStep = (step) =>
+      /\bI[ -]?\d/.test(step.ref || '') ||
+      /\b(Freeway|Expressway|Turnpike|Interstate)\b/i.test(step.name || '');
+
+    // Walk the leg's per-segment annotation alongside its steps. Each step's
+    // geometry has (points − 1) segments; the final "arrive" step repeats its
+    // point and has none, which is why the index is clamped.
+    function splitHighwayCity(leg) {
+      const ann = leg.annotation;
+      if (!ann || !ann.distance || !ann.speed || !leg.steps) return null;
+      let highway = 0, city = 0, i = 0;
+      for (const step of leg.steps) {
+        const coords = step.geometry && step.geometry.coordinates;
+        const n = coords ? coords.length - 1 : 0;
+        const freeway = isFreewayStep(step);
+        for (let k = 0; k < n && i < ann.distance.length; k++, i++) {
+          const dist = ann.distance[i];
+          const mph = ann.speed[i] * MPS_TO_MPH;
+          if (freeway || mph >= HIGHWAY_MODEL_MPH) highway += dist; else city += dist;
+        }
+      }
+      if (highway + city <= 0) return null;
+      return { highway: highway / 1609.344, city: city / 1609.344 };
+    }
+
     async function drivingRoute(from, to) {
-      const url = `${OSRM_API}/${from.lon},${from.lat};${to.lon},${to.lat}?overview=false`;
+      const url = `${OSRM_API}/${from.lon},${from.lat};${to.lon},${to.lat}` +
+        '?overview=false&steps=true&geometries=geojson&annotations=speed,distance';
       const res = await fetch(url);
       if (!res.ok) throw new Error(`routing error (${res.status})`);
       const data = await res.json();
       if (data.code !== 'Ok' || !data.routes || !data.routes.length) {
         throw new Error('no drivable route found');
       }
+      const route = data.routes[0];
+      const leg = route.legs && route.legs[0];
       return {
-        miles: data.routes[0].distance / 1609.344,
-        minutes: data.routes[0].duration / 60,
+        miles: route.distance / 1609.344,
+        minutes: route.duration / 60,
+        split: leg ? splitHighwayCity(leg) : null,
       };
     }
 
@@ -812,12 +940,17 @@
         const route = await drivingRoute(home, work);
         commuteMiles = route.miles;
         commuteMinutes = route.minutes;
+        commuteSplit = route.split;
         const place = await setPricesFromHome(home);
+        const splitNote = route.split
+          ? ` · ${route.split.highway.toFixed(1)} mi highway, ${route.split.city.toFixed(1)} mi city`
+          : '';
         status.textContent =
           `${place ? place + ': ' : ''}${route.miles.toFixed(1)} mi one way ` +
-          `(about ${Math.round(route.minutes)} min) · ${(route.miles * 2).toFixed(1)} mi round trip.`;
+          `(about ${Math.round(route.minutes)} min) · ${(route.miles * 2).toFixed(1)} mi round trip${splitNote}.`;
       } catch (err) {
         commuteMiles = 0;
+        commuteSplit = null;
         status.textContent = `Lookup failed: ${err.message}.`;
       } finally {
         btn.disabled = false;
@@ -858,8 +991,26 @@
     // Calculation
     // ---------------------------------------------------------------------------
 
+    // MPG ratings the calculation can use: the EPA city/highway/combined set
+    // shifted by the user's adjustment, or a manually typed combined figure
+    // when fueleconomy.gov gave us nothing. Null when there's nothing usable.
+    function mpgRatings() {
+      const adj = mpgAdjustment();
+      if (epaRatings) {
+        const r = {
+          city: epaRatings.city + adj,
+          highway: epaRatings.highway + adj,
+          combined: epaRatings.combined + adj,
+          adjustment: adj,
+        };
+        return r.city > 0 && r.highway > 0 && r.combined > 0 ? r : null;
+      }
+      const manual = parseFloat(mpgManualInput.value);
+      return manual > 0 ? { combined: manual, adjustment: 0 } : null;
+    }
+
     function inputsValid() {
-      return parseFloat(mpgInput.value) > 0 &&
+      return mpgRatings() !== null &&
         commuteMiles > 0 &&
         parseFloat(priceRegularInput.value) >= 0 &&
         parseFloat(pricePremiumInput.value) >= 0;
@@ -870,13 +1021,22 @@
     }
 
     function calculate() {
-      const mpg = parseFloat(mpgInput.value);
+      const ratings = mpgRatings();
+      if (!ratings) return;
       const regular = parseFloat(priceRegularInput.value);
       const premium = parseFloat(pricePremiumInput.value);
       const dailyMiles = commuteMiles * 2; // round trip, always
 
-      const gallonsPerMile = 1 / mpg;                 // EPA combined → gallons per mile
-      const gallons = gallonsPerMile * dailyMiles;    // gallons used per day
+      // Highway miles burn at the highway rating, everything else at the city
+      // rating; without a split (or ratings) fall back to EPA combined.
+      let gallons, dailySplit = null;
+      if (ratings.city && commuteSplit) {
+        dailySplit = { highway: commuteSplit.highway * 2, city: commuteSplit.city * 2 };
+        gallons = dailySplit.highway / ratings.highway + dailySplit.city / ratings.city;
+      } else {
+        gallons = dailyMiles / ratings.combined;
+      }
+      const effectiveMpg = dailyMiles / gallons;      // what the blend works out to
       const fuelCost = gallons * regular;             // daily fuel cost, regular
       const premiumFuelCost = gallons * premium;      // daily fuel cost, premium
       const totalCost = dailyMiles * IRS_RATE;        // daily all-in cost, IRS rate
@@ -885,8 +1045,10 @@
         gallons,
         daily: { regular: fuelCost, premium: premiumFuelCost, total: totalCost },
         dailyMiles,
+        dailySplit,
         dailyMinutes: commuteMinutes * 2,
-        mpg,
+        effectiveMpg,
+        ratings,
         premiumCar: /premium/i.test(vehicleFuelType),
       };
       renderResults();
@@ -909,12 +1071,20 @@
       const r = lastResults;
       if (!r) return;
 
+      $('stat-mpg').textContent = `${r.effectiveMpg.toFixed(1)} MPG`;
       $('stat-gallons').textContent = `${r.gallons.toFixed(2)} gal`;
       $('stat-fuel').textContent = usd.format(r.daily.regular);
       $('stat-premium').textContent = usd.format(r.daily.premium);
       $('stat-total').textContent = usd.format(r.daily.total);
-      $('results-context').textContent =
-        `Based on a ${r.dailyMiles.toFixed(1)}-mile round trip each day at ${r.mpg} MPG combined.`;
+      const adjNote = r.ratings.adjustment
+        ? ` EPA ratings adjusted by ${r.ratings.adjustment > 0 ? '+' : ''}${r.ratings.adjustment} MPG.`
+        : '';
+      const fmt = (n) => (Math.round(n * 10) / 10).toString();
+      $('results-context').textContent = (r.dailySplit
+        ? `Based on a ${r.dailyMiles.toFixed(1)}-mile round trip each day — ` +
+          `${r.dailySplit.highway.toFixed(1)} mi highway at ${fmt(r.ratings.highway)} MPG, ` +
+          `${r.dailySplit.city.toFixed(1)} mi city at ${fmt(r.ratings.city)} MPG.`
+        : `Based on a ${r.dailyMiles.toFixed(1)}-mile round trip each day at ${fmt(r.ratings.combined)} MPG combined.`) + adjNote;
 
       $('stat-premium-wrap').classList.toggle('stat-recommended', r.premiumCar);
 
@@ -944,9 +1114,17 @@
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') findDistance(); });
     }
 
-    for (const el of [mpgInput, priceRegularInput, pricePremiumInput]) {
+    for (const el of [mpgManualInput, priceRegularInput, pricePremiumInput]) {
       el.addEventListener('input', updateCalcButton);
     }
+    mpgAdjustInput.addEventListener('input', () => { renderRating(); updateCalcButton(); });
+    const stepAdjust = (delta) => {
+      const next = Math.round((mpgAdjustment() + delta) * 10) / 10;
+      mpgAdjustInput.value = String(next);
+      mpgAdjustInput.dispatchEvent(new Event('input'));
+    };
+    $('adjust-minus').addEventListener('click', () => stepAdjust(-1));
+    $('adjust-plus').addEventListener('click', () => stepAdjust(1));
 
     $('basis-toggle').addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-basis]');
