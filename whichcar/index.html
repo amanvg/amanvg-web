@@ -96,8 +96,11 @@
     .chip:hover { background: rgba(59,130,246,0.25); border-color: var(--accent); }
     .chip .x { color: var(--text-tertiary); font-weight: 600; }
     .chip:hover .x { color: var(--text-primary); }
+    .chip.editing { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .chip.editing .x { color: #fff; }
 
     /* ── Question ── */
+    .q-left { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 10px; }
     .q-prompt { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; }
 
     .options { display: grid; gap: 12px; margin-top: 22px; }
@@ -252,10 +255,34 @@
       'Minivan': ['Minivan - 2WD', 'Minivan - 4WD'],
       'Van': ['Vans', 'Vans Passenger', 'Vans, Cargo Type', 'Vans, Passenger Type'],
     };
+    // Styles with EPA size sub-classes get a follow-up size question.
+    // String values match the derived sizeClass column (see build_data.py),
+    // which also sizes pre-2013 SUVs and pre-1998 vans.
+    const SIZES = {
+      'Minicompact': ['Minicompact Cars'],
+      'Subcompact': ['Subcompact Cars'],
+      'Compact': ['Compact Cars'],
+      'Small wagon': ['Small Station Wagons'],
+      'Midsize wagon': ['Midsize Station Wagons'],
+      'Large wagon': ['Midsize-Large Station Wagons'],
+      'Small SUV': 'small',
+      'Standard SUV': 'standard',
+      'Small pickup': ['Small Pickup Trucks', 'Small Pickup Trucks 2WD', 'Small Pickup Trucks 4WD'],
+      'Full-size pickup': ['Standard Pickup Trucks', 'Standard Pickup Trucks 2WD', 'Standard Pickup Trucks 4WD', 'Standard Pickup Trucks/2wd'],
+      'Cargo van': 'cargo',
+      'Passenger van': 'passenger',
+    };
+    const HAS_SIZES = new Set(['Small car', 'Wagon', 'SUV', 'Pickup', 'Van']);
     const styleOptions = Object.entries(STYLES).map(([label, classes]) => {
+      const set = new Set(classes);
+      return { label, chip: label, filter: r => set.has(col(r, 'VClass')), next: HAS_SIZES.has(label) ? 'size' : 'power' };
+    });
+    const sizeOptions = Object.entries(SIZES).map(([label, classes]) => {
+      if (typeof classes === 'string') return { label, chip: label, filter: r => col(r, 'sizeClass') === classes, next: 'power' };
       const set = new Set(classes);
       return { label, chip: label, filter: r => set.has(col(r, 'VClass')), next: 'power' };
     });
+    sizeOptions.push({ label: 'No preference', chip: 'Any size', filter: () => true, next: 'power' });
 
     const dscr = r => col(r, 'eng_dscr') || '';
     const isPHEV = r => col(r, 'atvType') === 'Plug-in Hybrid' || /PHEV/i.test(dscr(r));
@@ -283,24 +310,10 @@
 
     const isTurbo = r => col(r, 'tCharger') === 'T' || /TRBO|TURBO/.test(dscr(r));
     const isSuper = r => col(r, 'sCharger') === 'S' || /S-CHARGE/.test(dscr(r));
-    // Diesels are all direct injected, so skip the injection question for them.
-    const afterAspiration = ans => pickedPower(ans, 'Diesel') ? 'transmission' : 'injection';
     const aspirationOptions = [
       { label: 'Turbocharger', chip: 'Turbo', filter: isTurbo },
       { label: 'Supercharger', chip: 'Supercharged', filter: isSuper },
       { label: 'Naturally aspirated', chip: 'Naturally aspirated', filter: r => !isTurbo(r) && !isSuper(r) },
-    ];
-
-    // EPA only labels direct injection (SIDI), and only from 2010 on. Anything
-    // without that label is treated as port injected, except carbureted cars.
-    const isDual = r => /SIDI/.test(dscr(r)) && /PFI/.test(dscr(r));
-    const isDirect = r => /SIDI/.test(dscr(r)) && !isDual(r);
-    const isPort = r => !!col(r, 'cylinders') && !/SIDI/.test(dscr(r)) && !/carb/i.test(dscr(r));
-    const injectionOptions = [
-      { label: 'Direct injection', chip: 'Direct injection', filter: isDirect, next: 'transmission' },
-      { label: 'Port injection', chip: 'Port injection', filter: isPort, next: 'transmission' },
-      { label: 'Dual injection', chip: 'Dual injection', filter: isDual, next: 'transmission' },
-      { label: 'No preference', chip: 'Any injection', filter: () => true, next: 'transmission' },
     ];
 
     // EPA codes a CVT as "variable gear ratios" or "(AV...)". Hybrids with
@@ -315,12 +328,6 @@
       { label: 'CVT', chip: 'CVT', filter: r => isCVTType(r) && !isHybrid(r) },
       { label: 'eCVT', chip: 'eCVT', filter: r => isCVTType(r) && isHybrid(r) },
     ];
-
-    // Gear count from the transmission code, e.g. "Manual 6-spd" or "Automatic (S8)".
-    const gearCount = r => { const m = /(\d+)/.exec(trany(r)); return m ? +m[1] : null; };
-    const gearOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => ({
-      label: String(n), chip: String(n), filter: r => gearCount(r) === n,
-    }));
 
     // Fuel economy. Cost uses EPA's five-year savings vs the average new
     // vehicle. Environmental uses tailpipe CO2 at or under 350 g/mi, roughly
@@ -370,6 +377,10 @@
         prompt: 'What style of car do you want?',
         options: [...styleOptions, { label: 'No preference', chip: 'Any style', filter: () => true, next: 'power' }],
       },
+      size: {
+        prompt: 'Size',
+        options: sizeOptions,
+      },
       power: {
         prompt: 'Powertrain',
         options: powerOptions,
@@ -382,24 +393,12 @@
         prompt: 'Aspiration',
         multi: true,
         options: aspirationOptions,
-        next: afterAspiration,
-      },
-      injection: {
-        prompt: 'Fuel injection',
-        options: injectionOptions,
+        next: 'transmission',
       },
       transmission: {
         prompt: 'Transmission',
         multi: true,
         options: transmissionOptions,
-        next: 'gears',
-      },
-      gears: {
-        prompt: 'Gears',
-        multi: true,
-        options: gearOptions,
-        chip: labels => labels.join(' or ') + ' gears',
-        anyChip: 'Any gear count',
         next: 'cylinders',
       },
       cylinders: {
@@ -466,6 +465,45 @@
     // answers: single-select -> { qid, optionIndex }
     //          multi-select  -> { qid, optionIndexes: [...] }  (empty = no preference)
     let answers = [];
+    let editing = null;   // index into answers while changing an earlier answer
+
+    // Rows in scope before answer index `i` (or all answers when i is null).
+    function rowsBefore(i) {
+      let rows = ROWS;
+      const upto = i === null ? answers.length : i;
+      for (let k = 0; k < upto; k++) rows = rows.filter(answerFilter(answers[k]));
+      return rows;
+    }
+
+    // Does an earlier answer still make sense for the current rows?
+    function answerStillValid(a, rows) {
+      const q = QUESTIONS[a.qid];
+      if (a.skipped) return false;               // recomputed by skipEmptyQuestions
+      if (q.multi) {
+        if (a.optionIndexes.length === 0) return true;
+        return a.optionIndexes.some(i => rows.some(q.options[i].filter));
+      }
+      const o = q.options[a.optionIndex];
+      return isCatchAll(o) || rows.some(o.filter);
+    }
+
+    // Record an answer. When editing, replace it in place and keep every
+    // later answer that still fits the new path.
+    function commit(answer) {
+      if (editing === null) { answers.push(answer); render(); return; }
+      const tail = answers.slice(editing + 1).filter(a => !a.skipped);
+      answers = answers.slice(0, editing);
+      answers.push(answer);
+      editing = null;
+      for (;;) {
+        const qid = skipEmptyQuestions(currentRows());
+        if (!qid) break;
+        const old = tail.find(a => a.qid === qid);
+        if (!old || !answerStillValid(old, currentRows())) break;
+        answers.push(old);
+      }
+      render();
+    }
 
     function answerFilter(a) {
       const q = QUESTIONS[a.qid];
@@ -498,8 +536,8 @@
       return typeof next === 'function' ? next(answers) : next;
     }
 
-    // Skip questions none of whose options match anything, e.g. Gears after
-    // picking only a CVT, or Fuel grade on a diesel or EV. A skipped question
+    // Skip questions none of whose options match anything, e.g. Cylinders
+    // on an EV, or Fuel grade on a diesel. A skipped question
     // is recorded so `next` routing still works, but shows no chip.
     // Questions marked `alwaysAsk` are never skipped; their empty options
     // render disabled instead.
@@ -518,6 +556,27 @@
 
     // A "model" is one model year of one base model, e.g. "1994 Honda Civic".
     const modelKey = r => col(r, 'year') + ' ' + col(r, 'make') + ' ' + (col(r, 'baseModel') || col(r, 'model'));
+    // Longest remaining path from `qid`, counting only questions that would
+    // not be skipped for the current rows. Shown as "N questions left".
+    function questionsLeft(qid, rows) {
+      const memo = new Map();
+      const walk = (id, depth) => {
+        if (!id || depth > 40) return 0;
+        if (memo.has(id)) return memo.get(id);
+        const q = QUESTIONS[id];
+        const asked = q.alwaysAsk || q.options.some(o => !isCatchAll(o) && rows.some(o.filter)) ? 1 : 0;
+        const nexts = q.multi ? [q.next] : q.options.map(o => o.next);
+        let best = 0;
+        for (const n of nexts) {
+          const target = typeof n === 'function' ? n(answers) : n;
+          best = Math.max(best, walk(target, depth + 1));
+        }
+        memo.set(id, asked + best);
+        return asked + best;
+      };
+      return walk(qid, 0);
+    }
+
     function countModels(rows) {
       const s = new Set();
       for (const r of rows) s.add(modelKey(r));
@@ -535,20 +594,22 @@
 
     function renderPath() {
       $path.innerHTML = answers.map((a, i) => a.skipped ? '' :
-        `<button class="chip" data-i="${i}" title="Change this answer">${esc(answerChip(a))} <span class="x">×</span></button>`
+        `<button class="chip${i === editing ? ' editing' : ''}" data-i="${i}" title="Change this answer">${esc(answerChip(a))} <span class="x">✎</span></button>`
       ).join('');
       $path.querySelectorAll('.chip').forEach(btn => {
-        btn.addEventListener('click', () => { answers = answers.slice(0, +btn.dataset.i); render(); });
+        btn.addEventListener('click', () => { editing = +btn.dataset.i; render(); });
       });
     }
 
     function renderQuestion(qid, rows) {
       const q = QUESTIONS[qid];
-      const selected = new Set();
+      const current = editing === null ? null : answers[editing];
+      const selected = new Set(current && q.multi ? current.optionIndexes : []);
       // "No preference" style answers render first.
       const isAny = o => /^(No preference|Not a big factor)$/.test(o.label);
       const order = q.options.map((o, i) => i).sort((a, b) => isAny(q.options[b]) - isAny(q.options[a]));
       $stage.innerHTML = `
+        <div class="q-left">${plural(questionsLeft(qid, rows), 'question')} left</div>
         <div class="q-prompt">${esc(q.prompt)}</div>
         <div class="options">
           ${q.multi ? `<button class="option" id="any">
@@ -559,22 +620,23 @@
             const o = q.options[i];
             const n = countModels(rows.filter(o.filter));
             if (n === 0 && !q.alwaysAsk) return '';
-            return `<button class="option" data-i="${i}" ${n === 0 ? 'disabled' : ''} ${q.multi ? 'aria-pressed="false"' : ''}>
+            const on = q.multi ? selected.has(i) : (current && current.optionIndex === i);
+            return `<button class="option" data-i="${i}" ${n === 0 ? 'disabled' : ''} aria-pressed="${!!on}">
               <span class="option-label">${esc(o.label)}</span>
               <span class="option-count">${plural(n, 'model')}</span>
             </button>`;
           }).join('')}
         </div>
-        ${q.multi ? `<div class="actions">
-          <button class="btn btn-primary" id="continue" disabled>Continue</button>
+        ${q.multi || current ? `<div class="actions">
+          ${q.multi ? `<button class="btn btn-primary" id="continue" ${selected.size ? '' : 'disabled'}>Continue</button>` : ''}
+          ${current ? `<button class="btn" id="cancel">Cancel</button>` : ''}
         </div>` : ''}`;
+
+      if (current) document.getElementById('cancel').addEventListener('click', () => { editing = null; render(); });
 
       if (!q.multi) {
         $stage.querySelectorAll('.option').forEach(btn => {
-          btn.addEventListener('click', () => {
-            answers.push({ qid, optionIndex: +btn.dataset.i });
-            render();
-          });
+          btn.addEventListener('click', () => commit({ qid, optionIndex: +btn.dataset.i }));
         });
         return;
       }
@@ -588,14 +650,8 @@
           $continue.disabled = selected.size === 0;
         });
       });
-      $continue.addEventListener('click', () => {
-        answers.push({ qid, optionIndexes: [...selected].sort((a, b) => a - b) });
-        render();
-      });
-      document.getElementById('any').addEventListener('click', () => {
-        answers.push({ qid, optionIndexes: [] });
-        render();
-      });
+      $continue.addEventListener('click', () => commit({ qid, optionIndexes: [...selected].sort((a, b) => a - b) }));
+      document.getElementById('any').addEventListener('click', () => commit({ qid, optionIndexes: [] }));
     }
 
     function renderEnd(rows) {
@@ -667,6 +723,11 @@
 
     function render() {
       renderPath();
+      if (editing !== null) {
+        renderQuestion(answers[editing].qid, rowsBefore(editing));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
       const qid = skipEmptyQuestions(currentRows());
       const rows = currentRows();
       if (qid) renderQuestion(qid, rows);
