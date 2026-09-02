@@ -262,7 +262,7 @@
     const isHybrid = r => {
       const t = col(r, 'atvType');
       if (t === 'Hybrid' || t === 'Plug-in Hybrid') return true;
-      return /hybrid|hev/i.test(dscr(r));
+      return /\bhybrid\b|\bP?HEV\b/i.test(dscr(r));   // word-bounded: "GM-CHEV" must not match
     };
     const isEV = r => col(r, 'atvType') === 'EV';
     const powerOptions = [
@@ -351,16 +351,16 @@
     const Y = CURRENT_YEAR;
     const yr = r => col(r, 'year');
     const ageOptions = [
-      { label: 'New', chip: 'New', filter: r => yr(r) >= Y },
-      { label: 'CPO', chip: 'CPO', filter: r => yr(r) >= Y - 3 && yr(r) < Y },
-      { label: 'Within warranty', chip: 'Within warranty', filter: r => yr(r) >= Y - 5 && yr(r) < Y - 3 },
-      { label: 'Used with OEM support', chip: 'Used, OEM support', filter: r => yr(r) >= Y - 10 && yr(r) < Y - 5 },
-      { label: 'Used with no support', chip: 'Used, no support', filter: r => yr(r) < Y - 10 },
+      { label: `New (${Y}+)`, chip: 'New', filter: r => yr(r) >= Y },
+      { label: `CPO (${Y - 3}–${Y - 1})`, chip: 'CPO', filter: r => yr(r) >= Y - 3 && yr(r) < Y },
+      { label: `Within warranty (${Y - 5}–${Y - 4})`, chip: 'Within warranty', filter: r => yr(r) >= Y - 5 && yr(r) < Y - 3 },
+      { label: `Used with OEM support (${Y - 10}–${Y - 6})`, chip: 'Used, OEM support', filter: r => yr(r) >= Y - 10 && yr(r) < Y - 5 },
+      { label: `Used with no support (${Y - 11} and older)`, chip: 'Used, no support', filter: r => yr(r) < Y - 10 },
     ];
 
     const QUESTIONS = {
       age: {
-        prompt: 'Age',
+        prompt: 'How used are you willing to go?',
         multi: true,
         options: ageOptions,
         anyChip: 'Any age',
