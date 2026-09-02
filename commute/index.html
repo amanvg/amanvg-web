@@ -413,19 +413,19 @@
           <span class="stat-value" id="stat-premium">—</span>
         </div>
         <div class="stat stat-total">
-          <span class="stat-label">Total Cost (IRS rate $0.76/mi)</span>
+          <span class="stat-label">Fuel + Wear + Depreciation</span>
           <span class="stat-value" id="stat-total">—</span>
         </div>
       </div>
-      <p class="hint" style="margin-top: 0;">Total Cost uses the IRS standard mileage rate of $0.76/mile, which covers fuel <em>plus</em> depreciation, insurance, and maintenance. The fuel costs show just what you'll spend at the pump.</p>
+      <p class="hint" style="margin-top: 0;">Fuel + Wear + Depreciation uses the IRS standard mileage rate of $0.76/mile, which covers fuel plus depreciation, insurance, and maintenance. The fuel costs show just what you'll spend at the pump.</p>
 
-      <h3 class="table-heading">Weekly · Monthly · Yearly</h3>
+      <h3 class="table-heading">Cost to Commute</h3>
       <div class="basis-row">
         <span>Show costs based on:</span>
         <div class="basis-toggle" id="basis-toggle">
-          <button data-basis="total" class="active">Total (IRS)</button>
-          <button data-basis="regular">Regular Fuel</button>
+          <button data-basis="regular" class="active">Regular Fuel</button>
           <button data-basis="premium">Premium Fuel</button>
+          <button data-basis="total">Fuel + Wear + Depreciation</button>
         </div>
       </div>
       <div class="table-wrap">
@@ -606,7 +606,8 @@
 
     let vehicleFuelType = '';
     let epaRatings = null; // { city, highway, combined } from fueleconomy.gov, or null
-    let costBasis = 'total';
+    let costBasis = 'regular';
+    let basisPinned = false; // true once the user clicks a basis button; auto-default stops
     let lastResults = null;
     let commuteMiles = 0; // one-way driving distance from the address lookup
     let commuteMinutes = 0;
@@ -697,6 +698,7 @@
       renderRating();
       fuelTypeNote.textContent = '';
       vehicleFuelType = '';
+      basisPinned = false; // a new car may need a different fuel
       updateCalcButton();
     }
 
@@ -1051,7 +1053,15 @@
         ratings,
         premiumCar: /premium/i.test(vehicleFuelType),
       };
+      if (!basisPinned) setBasis(lastResults.premiumCar ? 'premium' : 'regular');
       renderResults();
+    }
+
+    function setBasis(basis) {
+      costBasis = basis;
+      for (const b of $('basis-toggle').querySelectorAll('button')) {
+        b.classList.toggle('active', b.dataset.basis === basis);
+      }
     }
 
     function fillTable(id, cellFn) {
@@ -1129,10 +1139,8 @@
     $('basis-toggle').addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-basis]');
       if (!btn) return;
-      costBasis = btn.dataset.basis;
-      for (const b of $('basis-toggle').querySelectorAll('button')) {
-        b.classList.toggle('active', b === btn);
-      }
+      basisPinned = true;
+      setBasis(btn.dataset.basis);
       renderResults();
     });
 
