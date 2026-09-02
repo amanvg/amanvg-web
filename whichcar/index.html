@@ -150,8 +150,14 @@
     .results .name { font-weight: 600; }
     .results .eng { color: var(--text-secondary); font-size: 14px; }
     .results .n { margin-left: auto; font-size: 12px; color: var(--text-tertiary); white-space: nowrap; }
-    .results .variants { list-style: none; font-size: 13px; color: var(--text-secondary); padding: 0 0 12px 0; }
-    .results .variants li { padding: 3px 0 3px 16px; border-left: 2px solid var(--border); margin-left: 4px; }
+    .results .table-wrap { overflow-x: auto; padding: 0 0 14px 0; }
+    .results table.variants { width: 100%; border-collapse: collapse; font-size: 13px; color: var(--text-secondary); }
+    .results table.variants th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); padding: 6px 10px 6px 0; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .results table.variants td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .results table.variants tr:last-child td { border-bottom: none; }
+    .results table.variants .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .results table.variants th.num { text-align: right; }
+    .results table.variants td:first-child, .results table.variants th:first-child { padding-left: 8px; }
 
     .status { font-size: 14px; color: var(--text-secondary); }
     .status.error { color: var(--red); }
@@ -605,7 +611,7 @@
         const g = name + '|' + engine;
         let run = byGroup.get(g);
         if (!run) {
-          run = { lo: col(r, 'year'), hi: col(r, 'year'), name, engine, models: new Set() };
+          run = { lo: col(r, 'year'), hi: col(r, 'year'), name, engine, models: new Set(), variants: new Map() };
           byGroup.set(g, run);
           runs.push(run);
         }
@@ -613,7 +619,25 @@
         if (y < run.lo) run.lo = y;
         if (y > run.hi) run.hi = y;
         run.models.add(col(r, 'model'));
+        // One table row per model variant + transmission + fuel, with year and MPG ranges.
+        const vk = [col(r, 'model'), col(r, 'trany'), col(r, 'fuelType')].join('|');
+        let v = run.variants.get(vk);
+        if (!v) {
+          v = { model: col(r, 'model'), trany: col(r, 'trany') || '', fuel: col(r, 'fuelType') || '', lo: y, hi: y,
+                city: [Infinity, -Infinity], hwy: [Infinity, -Infinity], comb: [Infinity, -Infinity] };
+          run.variants.set(vk, v);
+        }
+        if (y < v.lo) v.lo = y;
+        if (y > v.hi) v.hi = y;
+        for (const [k, c] of [['city', 'city08'], ['hwy', 'highway08'], ['comb', 'comb08']]) {
+          const n = col(r, c);
+          if (n == null) continue;
+          if (n < v[k][0]) v[k][0] = n;
+          if (n > v[k][1]) v[k][1] = n;
+        }
       }
+      const span = (lo, hi) => lo === hi ? String(lo) : `${lo}–${hi}`;
+      const mpg = ([lo, hi]) => lo === Infinity ? '' : span(lo, hi);
       runs.sort((a, b) => b.hi - a.hi || b.lo - a.lo || a.name.localeCompare(b.name));
       $stage.innerHTML = `
         <div class="actions">
@@ -623,12 +647,18 @@
           ${runs.map(it => `<li>
             <details>
               <summary>
-                <span class="yr">${it.lo === it.hi ? it.lo : `${it.lo}–${it.hi}`}</span>
+                <span class="yr">${span(it.lo, it.hi)}</span>
                 <span class="name">${esc(it.name)}</span>
                 ${it.engine ? `<span class="eng">${esc(it.engine)}</span>` : ''}
                 <span class="n">${plural(it.models.size, 'variant')}</span>
               </summary>
-              <ul class="variants">${[...it.models].sort().map(m => `<li>${esc(m)}</li>`).join('')}</ul>
+              <div class="table-wrap"><table class="variants">
+                <thead><tr><th>Years</th><th>Model</th><th>Transmission</th><th>Fuel</th><th class="num">City</th><th class="num">Hwy</th><th class="num">Comb</th></tr></thead>
+                <tbody>${[...it.variants.values()]
+                  .sort((a, b) => a.model.localeCompare(b.model) || b.hi - a.hi || a.trany.localeCompare(b.trany))
+                  .map(v => `<tr><td class="num">${span(v.lo, v.hi)}</td><td>${esc(v.model)}</td><td>${esc(v.trany)}</td><td>${esc(v.fuel)}</td><td class="num">${mpg(v.city)}</td><td class="num">${mpg(v.hwy)}</td><td class="num">${mpg(v.comb)}</td></tr>`).join('')}
+                </tbody>
+              </table></div>
             </details>
           </li>`).join('')}
         </ul>`;
