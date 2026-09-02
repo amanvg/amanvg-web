@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What car should I buy? — amanvg</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: dark;
+      --bg: #141414;
+      --surface: #1e1e1e;
+      --surface-2: #232323;
+      --surface-hover: #2a2a2a;
+      --border: #2e2e2e;
+      --border-hover: #3d3d3d;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-tertiary: #8a8a8a;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --accent-border: rgba(59, 130, 246, 0.35);
+      --accent-text: #93c5fd;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --radius-card: 20px;
+      --radius-btn: 12px;
+      --radius-pill: 999px;
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,13,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 980px; margin: 0 auto;
+      padding: 0 32px; height: 56px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    }
+    .nav-back {
+      justify-self: start;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-back:hover { color: var(--text-primary); background: var(--border); }
+    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
+
+    /* ── Page ── */
+    .page { max-width: 720px; margin: 0 auto; padding: 40px 32px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    /* ── Path (answers so far) ── */
+    .path { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .path:empty { display: none; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      font: inherit; font-size: 13px; font-weight: 500;
+      color: var(--accent-text); background: var(--accent-soft);
+      border: 1px solid var(--accent-border); border-radius: var(--radius-pill);
+      padding: 6px 12px; cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .chip:hover { background: rgba(59,130,246,0.25); border-color: var(--accent); }
+    .chip .x { color: var(--text-tertiary); font-weight: 600; }
+    .chip:hover .x { color: var(--text-primary); }
+
+    /* ── Question ── */
+    .q-prompt { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; }
+
+    .options { display: grid; gap: 12px; margin-top: 22px; }
+    .option {
+      font: inherit; text-align: left; color: var(--text-primary);
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-btn); padding: 16px 18px; cursor: pointer;
+      display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: center;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    .option:hover { border-color: var(--accent); background: var(--surface-hover); }
+    .option:active { transform: scale(0.99); }
+    .option:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .option:disabled { opacity: 0.4; cursor: default; }
+    .option:disabled:hover { border-color: var(--border); background: var(--surface-2); }
+    .option[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+    .option[aria-pressed="true"] .option-count { color: var(--accent-text); }
+    .option-label { grid-column: 1; font-size: 16px; font-weight: 600; }
+    .option-count {
+      grid-column: 2;
+      font-size: 12px; font-weight: 600; color: var(--text-tertiary); white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn {
+      font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+      color: var(--text-primary); background: var(--surface-2);
+      border: 1px solid var(--border); border-radius: var(--radius-btn);
+      padding: 10px 16px; transition: border-color 0.15s, background 0.15s;
+    }
+    .btn:hover { border-color: var(--border-hover); background: var(--surface-hover); }
+    .btn:disabled { opacity: 0.4; cursor: default; }
+    .btn:disabled:hover { border-color: var(--border); background: var(--surface-2); }
+    .btn-primary { background: var(--accent); border-color: var(--accent); }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .options + .actions { margin-top: 22px; }
+    .actions + .results { margin-top: 22px; }
+
+    .results { list-style: none; }
+    .results li { border-bottom: 1px solid var(--border); }
+    .results summary {
+      list-style: none; cursor: pointer; padding: 10px 0;
+      display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+      font-size: 15px;
+    }
+    .results summary::-webkit-details-marker { display: none; }
+    .results summary:hover .name { color: var(--accent-text); }
+    .results .yr { color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+    .results .name { font-weight: 600; }
+    .results .eng { color: var(--text-secondary); font-size: 14px; }
+    .results .n { margin-left: auto; font-size: 12px; color: var(--text-tertiary); white-space: nowrap; }
+    .results .variants { list-style: none; font-size: 13px; color: var(--text-secondary); padding: 0 0 12px 0; }
+    .results .variants li { padding: 3px 0 3px 16px; border-left: 2px solid var(--border); margin-left: 4px; }
+
+    .status { font-size: 14px; color: var(--text-secondary); }
+    .status.error { color: var(--red); }
+
+    footer.source { margin-top: 32px; font-size: 12px; color: var(--text-tertiary); line-height: 1.6; }
+    footer.source a { color: var(--text-secondary); }
+
+    @media (max-width: 600px) {
+      .nav-inner { padding: 0 16px; }
+      .page { padding: 28px 16px 60px; }
+      .page-header h1 { font-size: 26px; }
+      .card { padding: 20px; }
+      .q-prompt { font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="nav-back" href="/">← amanvg</a>
+      <span class="nav-title">What car should I buy?</span>
+      <span></span>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>What car should I buy?</h1>
+    </header>
+
+    <div class="path" id="path" aria-label="Your answers so far"></div>
+
+    <section class="card" id="stage">
+      <p class="status" id="status">Loading the vehicle database…</p>
+    </section>
+
+    <footer class="source">
+      Data: <a href="https://www.fueleconomy.gov/feg/download.shtml" target="_blank" rel="noopener">fueleconomy.gov</a>
+    </footer>
+  </main>
+
+  <script>
+    'use strict';
+
+    // ═══════════════════════════════════════════════════════════
+    // DATA
+    // ═══════════════════════════════════════════════════════════
+    const CURRENT_YEAR = new Date().getFullYear();
+    let COL = {};           // column name -> index
+    let ROWS = [];          // array of arrays, see build_data.py
+    const col = (row, name) => row[COL[name]];
+
+    async function loadData() {
+      const res = await fetch('data/vehicles.json');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      data.columns.forEach((c, i) => { COL[c] = i; });
+      ROWS = data.rows;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // QUESTIONS
+    // Each question has: prompt, options[]. Each option has a label, a
+    // chip label for the answer trail, and a `filter(row) -> bool` applied
+    // to the running set. `next` is a question id, or a function of the
+    // answers so far returning one; null ends the questionnaire.
+    // Single-select questions put `next` on each option. Multi-select
+    // questions (`multi: true`) put `next` on the question, keep rows
+    // matching any selected option, and offer a No preference button
+    // that applies no filter.
+    // ═══════════════════════════════════════════════════════════
+    // EPA vehicle classes grouped into body styles. Options with no rows
+    // left in the current set are not shown.
+    const STYLES = {
+      'Two-seater': ['Two Seaters'],
+      'Small car': ['Minicompact Cars', 'Subcompact Cars', 'Compact Cars'],
+      'Midsize car': ['Midsize Cars'],
+      'Large car': ['Large Cars'],
+      'Wagon': ['Small Station Wagons', 'Midsize Station Wagons', 'Midsize-Large Station Wagons'],
+      'SUV': [
+        'Small Sport Utility Vehicle 2WD', 'Small Sport Utility Vehicle 4WD',
+        'Standard Sport Utility Vehicle 2WD', 'Standard Sport Utility Vehicle 4WD',
+        'Sport Utility Vehicle - 2WD', 'Sport Utility Vehicle - 4WD',
+        'Special Purpose Vehicle', 'Special Purpose Vehicle 2WD', 'Special Purpose Vehicle 4WD',
+        'Special Purpose Vehicles', 'Special Purpose Vehicles/2wd', 'Special Purpose Vehicles/4wd',
+      ],
+      'Pickup': [
+        'Small Pickup Trucks', 'Small Pickup Trucks 2WD', 'Small Pickup Trucks 4WD',
+        'Standard Pickup Trucks', 'Standard Pickup Trucks 2WD', 'Standard Pickup Trucks 4WD', 'Standard Pickup Trucks/2wd',
+      ],
+      'Minivan': ['Minivan - 2WD', 'Minivan - 4WD'],
+      'Van': ['Vans', 'Vans Passenger', 'Vans, Cargo Type', 'Vans, Passenger Type'],
+    };
+    const styleOptions = Object.entries(STYLES).map(([label, classes]) => {
+      const set = new Set(classes);
+      return { label, chip: label, filter: r => set.has(col(r, 'VClass')), next: 'power' };
+    });
+
+    const dscr = r => col(r, 'eng_dscr') || '';
+    const isPHEV = r => col(r, 'atvType') === 'Plug-in Hybrid' || /PHEV/i.test(dscr(r));
+    const isHybrid = r => {
+      const t = col(r, 'atvType');
+      if (t === 'Hybrid' || t === 'Plug-in Hybrid') return true;
+      return /hybrid|hev/i.test(dscr(r));
+    };
+    const isEV = r => col(r, 'atvType') === 'EV';
+    const powerOptions = [
+      { label: 'Hybrid', chip: 'Hybrid', filter: isHybrid, next: 'hybridType' },
+      { label: 'EV', chip: 'EV', filter: isEV, next: 'drivenWheels' },
+      { label: 'Gas', chip: 'Gas', filter: r => !isHybrid(r) && !isEV(r) && /^(Regular|Midgrade|Premium|Gasoline)/.test(col(r, 'fuelType') || ''), next: 'aspiration' },
+      { label: 'Diesel', chip: 'Diesel', filter: r => !isHybrid(r) && col(r, 'fuelType') === 'Diesel', next: 'aspiration' },
+      { label: 'Hydrogen fuel cell', chip: 'Hydrogen', filter: r => col(r, 'fuelType') === 'Hydrogen' || col(r, 'fuelType') === 'Electricity and Hydrogen', next: 'drivenWheels' },
+      { label: 'Natural gas', chip: 'Natural gas', filter: r => col(r, 'fuelType') === 'CNG' || col(r, 'fuelType') === 'Gasoline or natural gas', next: 'aspiration' },
+      { label: 'No preference', chip: 'Any powertrain', filter: () => true, next: 'aspiration' },
+    ];
+
+    const hybridTypeOptions = [
+      { label: 'Hybrid', chip: 'Standard hybrid', filter: r => !isPHEV(r), next: 'aspiration' },
+      { label: 'Plug-in hybrid', chip: 'Plug-in hybrid', filter: isPHEV, next: 'aspiration' },
+      { label: 'No preference', chip: 'Any hybrid', filter: () => true, next: 'aspiration' },
+    ];
+
+    const isTurbo = r => col(r, 'tCharger') === 'T' || /TRBO|TURBO/.test(dscr(r));
+    const isSuper = r => col(r, 'sCharger') === 'S' || /S-CHARGE/.test(dscr(r));
+    // Diesels are all direct injected, so skip the injection question for them.
+    const afterAspiration = ans => pickedPower(ans, 'Diesel') ? 'transmission' : 'injection';
+    const aspirationOptions = [
+      { label: 'Turbocharger', chip: 'Turbo', filter: isTurbo },
+      { label: 'Supercharger', chip: 'Supercharged', filter: isSuper },
+      { label: 'Naturally aspirated', chip: 'Naturally aspirated', filter: r => !isTurbo(r) && !isSuper(r) },
+    ];
+
+    // EPA only labels direct injection (SIDI), and only from 2010 on. Anything
+    // without that label is treated as port injected, except carbureted cars.
+    const isDual = r => /SIDI/.test(dscr(r)) && /PFI/.test(dscr(r));
+    const isDirect = r => /SIDI/.test(dscr(r)) && !isDual(r);
+    const isPort = r => !!col(r, 'cylinders') && !/SIDI/.test(dscr(r)) && !/carb/i.test(dscr(r));
+    const injectionOptions = [
+      { label: 'Direct injection', chip: 'Direct injection', filter: isDirect, next: 'transmission' },
+      { label: 'Port injection', chip: 'Port injection', filter: isPort, next: 'transmission' },
+      { label: 'Dual injection', chip: 'Dual injection', filter: isDual, next: 'transmission' },
+      { label: 'No preference', chip: 'Any injection', filter: () => true, next: 'transmission' },
+    ];
+
+    // EPA codes a CVT as "variable gear ratios" or "(AV...)". Hybrids with
+    // that code are treated as eCVT, everything else with it as a belt CVT.
+    const trany = r => col(r, 'trany') || '';
+    const isCVTType = r => /variable gear ratios|\(AV/.test(trany(r));
+    const isDCT = r => /\(AM/.test(trany(r));
+    const transmissionOptions = [
+      { label: 'Automatic', chip: 'Automatic', filter: r => /^Automatic/.test(trany(r)) && !isCVTType(r) && !isDCT(r) },
+      { label: 'Manual', chip: 'Manual', filter: r => /^Manual/.test(trany(r)) },
+      { label: 'Dual-clutch', chip: 'Dual-clutch', filter: isDCT },
+      { label: 'CVT', chip: 'CVT', filter: r => isCVTType(r) && !isHybrid(r) },
+      { label: 'eCVT', chip: 'eCVT', filter: r => isCVTType(r) && isHybrid(r) },
+    ];
+
+    // Gear count from the transmission code, e.g. "Manual 6-spd" or "Automatic (S8)".
+    const gearCount = r => { const m = /(\d+)/.exec(trany(r)); return m ? +m[1] : null; };
+    const gearOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => ({
+      label: String(n), chip: String(n), filter: r => gearCount(r) === n,
+    }));
+
+    // Fuel economy. Cost uses EPA's five-year savings vs the average new
+    // vehicle. Environmental uses tailpipe CO2 at or under 350 g/mi, roughly
+    // an EPA greenhouse gas score of 6 or better; recent-year medians run
+    // about 390 to 410 g/mi.
+    const savesFuel = r => (col(r, 'youSaveSpend') ?? -1) >= 0;
+    const isLowCO2 = r => { const c = col(r, 'co2TailpipeGpm'); return c !== null && c !== undefined && c <= 350; };
+
+    // EVs and hydrogen cars get a minimum-range question instead of fuel efficiency.
+    const pickedPower = (ans, label) => ans.some(a => a.qid === 'power' && QUESTIONS.power.options[a.optionIndex].label === label);
+    const afterFuelGrade = ans => pickedPower(ans, 'EV') || pickedPower(ans, 'Hydrogen fuel cell') ? 'range' : 'efficiency';
+    const rangeOptions = [100, 150, 200, 250, 300, 350, 400, 450, 500].map(n => ({
+      label: `${n} miles`, chip: `${n}+ mile range`, filter: r => (col(r, 'range') || 0) >= n, next: null,
+    }));
+    rangeOptions.push({ label: 'No preference', chip: 'Any range', filter: () => true, next: null });
+
+    // EPA drive codes. "4-Wheel or All-Wheel Drive" is an older catch-all,
+    // so it counts as both AWD and 4x4.
+    const TWO_WD = new Set(['Front-Wheel Drive', 'Rear-Wheel Drive', '2-Wheel Drive']);
+    const FOUR_WD = new Set(['All-Wheel Drive', '4-Wheel or All-Wheel Drive', '4-Wheel Drive', 'Part-time 4-Wheel Drive']);
+
+    const cylinderOptions = [2, 3, 4, 5, 6, 8, 10, 12, 16].map(n => ({
+      label: String(n), chip: String(n), filter: r => col(r, 'cylinders') === n,
+    }));
+
+    // Age bands, measured from the current calendar year. They partition the
+    // data, so the counts add up to No preference.
+    const Y = CURRENT_YEAR;
+    const yr = r => col(r, 'year');
+    const ageOptions = [
+      { label: 'New', chip: 'New', filter: r => yr(r) >= Y },
+      { label: 'CPO', chip: 'CPO', filter: r => yr(r) >= Y - 3 && yr(r) < Y },
+      { label: 'Within warranty', chip: 'Within warranty', filter: r => yr(r) >= Y - 5 && yr(r) < Y - 3 },
+      { label: 'Used with OEM support', chip: 'Used, OEM support', filter: r => yr(r) >= Y - 10 && yr(r) < Y - 5 },
+      { label: 'Used with no support', chip: 'Used, no support', filter: r => yr(r) < Y - 10 },
+    ];
+
+    const QUESTIONS = {
+      age: {
+        prompt: 'Age',
+        multi: true,
+        options: ageOptions,
+        anyChip: 'Any age',
+        next: 'style',
+      },
+      style: {
+        prompt: 'What style of car do you want?',
+        options: [...styleOptions, { label: 'No preference', chip: 'Any style', filter: () => true, next: 'power' }],
+      },
+      power: {
+        prompt: 'Powertrain',
+        options: powerOptions,
+      },
+      hybridType: {
+        prompt: 'Hybrid type',
+        options: hybridTypeOptions,
+      },
+      aspiration: {
+        prompt: 'Aspiration',
+        multi: true,
+        options: aspirationOptions,
+        next: afterAspiration,
+      },
+      injection: {
+        prompt: 'Fuel injection',
+        options: injectionOptions,
+      },
+      transmission: {
+        prompt: 'Transmission',
+        multi: true,
+        options: transmissionOptions,
+        next: 'gears',
+      },
+      gears: {
+        prompt: 'Gears',
+        multi: true,
+        options: gearOptions,
+        chip: labels => labels.join(' or ') + ' gears',
+        anyChip: 'Any gear count',
+        next: 'cylinders',
+      },
+      cylinders: {
+        prompt: 'Cylinders',
+        multi: true,
+        options: cylinderOptions,
+        chip: labels => labels.join(' or ') + ' cylinders',
+        anyChip: 'Any cylinder count',
+        next: 'drivenWheels',
+      },
+      drivenWheels: {
+        prompt: 'Driven wheels',
+        options: [
+          { label: '2', chip: '2 driven wheels', filter: r => TWO_WD.has(col(r, 'drive')), next: 'twoWheel' },
+          { label: '4', chip: '4 driven wheels', filter: r => FOUR_WD.has(col(r, 'drive')), next: 'fourWheel' },
+          { label: 'No preference', chip: 'Any drivetrain', filter: () => true, next: 'fuelGrade' },
+        ],
+      },
+      twoWheel: {
+        prompt: 'Drivetrain',
+        options: [
+          { label: 'FWD', chip: 'FWD', filter: r => col(r, 'drive') === 'Front-Wheel Drive', next: 'fuelGrade' },
+          { label: 'RWD', chip: 'RWD', filter: r => col(r, 'drive') === 'Rear-Wheel Drive', next: 'fuelGrade' },
+          { label: 'No preference', chip: 'FWD or RWD', filter: () => true, next: 'fuelGrade' },
+        ],
+      },
+      fourWheel: {
+        prompt: 'Drivetrain',
+        options: [
+          { label: 'AWD', chip: 'AWD', filter: r => col(r, 'drive') === 'All-Wheel Drive' || col(r, 'drive') === '4-Wheel or All-Wheel Drive', next: 'fuelGrade' },
+          { label: '4x4', chip: '4x4', filter: r => /^(Part-time )?4-Wheel Drive$/.test(col(r, 'drive') || '') || col(r, 'drive') === '4-Wheel or All-Wheel Drive', next: 'fuelGrade' },
+          { label: 'No preference', chip: 'AWD or 4x4', filter: () => true, next: 'fuelGrade' },
+        ],
+      },
+      fuelGrade: {
+        prompt: 'Fuel grade',
+        options: [
+          { label: 'Regular', chip: 'Regular gas', filter: r => /^Regular/.test(col(r, 'fuelType') || ''), next: afterFuelGrade },
+          { label: 'Midgrade', chip: 'Midgrade gas', filter: r => /^Midgrade/.test(col(r, 'fuelType') || ''), next: afterFuelGrade },
+          { label: 'Premium', chip: 'Premium gas', filter: r => /^Premium/.test(col(r, 'fuelType') || ''), next: afterFuelGrade },
+          { label: 'No preference', chip: 'Any fuel grade', filter: () => true, next: afterFuelGrade },
+        ],
+      },
+      range: {
+        prompt: 'Minimum range',
+        options: rangeOptions,
+      },
+      efficiency: {
+        prompt: 'How big a factor is fuel economy?',
+        alwaysAsk: true,
+        options: [
+          { label: 'Big factor (environmental)', chip: 'Low emissions', filter: isLowCO2, next: null },
+          { label: 'Big factor (cost)', chip: 'Saves on fuel', filter: savesFuel, next: null },
+          { label: 'Big factor (both)', chip: 'Low emissions, saves on fuel', filter: r => isLowCO2(r) && savesFuel(r), next: null },
+          { label: 'Not a big factor', chip: 'Fuel economy not a factor', filter: () => true, next: null },
+        ],
+      },
+    };
+    const FIRST_QUESTION = 'age';
+
+    // ═══════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════
+    // answers: single-select -> { qid, optionIndex }
+    //          multi-select  -> { qid, optionIndexes: [...] }  (empty = no preference)
+    let answers = [];
+
+    function answerFilter(a) {
+      const q = QUESTIONS[a.qid];
+      if (a.skipped) return () => true;
+      if (!q.multi) return q.options[a.optionIndex].filter;
+      if (a.optionIndexes.length === 0) return () => true;
+      const fs = a.optionIndexes.map(i => q.options[i].filter);
+      return r => fs.some(f => f(r));
+    }
+
+    function answerChip(a) {
+      const q = QUESTIONS[a.qid];
+      if (!q.multi) return q.options[a.optionIndex].chip;
+      if (a.optionIndexes.length === 0) return q.anyChip || `Any ${q.prompt.toLowerCase()}`;
+      const chips = a.optionIndexes.map(i => q.options[i].chip);
+      return q.chip ? q.chip(chips) : chips.join(' or ');
+    }
+
+    function currentRows() {
+      let rows = ROWS;
+      for (const a of answers) rows = rows.filter(answerFilter(a));
+      return rows;
+    }
+
+    function nextQuestionId() {
+      if (answers.length === 0) return FIRST_QUESTION;
+      const last = answers[answers.length - 1];
+      const q = QUESTIONS[last.qid];
+      const next = q.multi ? q.next : q.options[last.optionIndex].next;
+      return typeof next === 'function' ? next(answers) : next;
+    }
+
+    // Skip questions none of whose options match anything, e.g. Gears after
+    // picking only a CVT, or Fuel grade on a diesel or EV. A skipped question
+    // is recorded so `next` routing still works, but shows no chip.
+    // Questions marked `alwaysAsk` are never skipped; their empty options
+    // render disabled instead.
+    const isCatchAll = o => o.filter.length === 0;
+    function skipEmptyQuestions(rows) {
+      for (;;) {
+        const qid = nextQuestionId();
+        if (!qid) return null;
+        const q = QUESTIONS[qid];
+        const live = q.options.filter(o => !isCatchAll(o) && rows.some(o.filter));
+        if (q.alwaysAsk || live.length > 0) return qid;
+        answers.push(q.multi ? { qid, optionIndexes: [], skipped: true }
+                             : { qid, optionIndex: Math.max(0, q.options.findIndex(isCatchAll)), skipped: true });
+      }
+    }
+
+    // A "model" is one model year of one base model, e.g. "1994 Honda Civic".
+    const modelKey = r => col(r, 'year') + ' ' + col(r, 'make') + ' ' + (col(r, 'baseModel') || col(r, 'model'));
+    function countModels(rows) {
+      const s = new Set();
+      for (const r of rows) s.add(modelKey(r));
+      return s.size;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // RENDER
+    // ═══════════════════════════════════════════════════════════
+    const $stage = document.getElementById('stage');
+    const $path = document.getElementById('path');
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const fmt = n => n.toLocaleString('en-US');
+    const plural = (n, one, many = one + 's') => `${fmt(n)} ${n === 1 ? one : many}`;
+
+    function renderPath() {
+      $path.innerHTML = answers.map((a, i) => a.skipped ? '' :
+        `<button class="chip" data-i="${i}" title="Change this answer">${esc(answerChip(a))} <span class="x">×</span></button>`
+      ).join('');
+      $path.querySelectorAll('.chip').forEach(btn => {
+        btn.addEventListener('click', () => { answers = answers.slice(0, +btn.dataset.i); render(); });
+      });
+    }
+
+    function renderQuestion(qid, rows) {
+      const q = QUESTIONS[qid];
+      const selected = new Set();
+      // "No preference" style answers render first.
+      const isAny = o => /^(No preference|Not a big factor)$/.test(o.label);
+      const order = q.options.map((o, i) => i).sort((a, b) => isAny(q.options[b]) - isAny(q.options[a]));
+      $stage.innerHTML = `
+        <div class="q-prompt">${esc(q.prompt)}</div>
+        <div class="options">
+          ${q.multi ? `<button class="option" id="any">
+              <span class="option-label">No preference</span>
+              <span class="option-count">${plural(countModels(rows), 'model')}</span>
+            </button>` : ''}
+          ${order.map(i => {
+            const o = q.options[i];
+            const n = countModels(rows.filter(o.filter));
+            if (n === 0 && !q.alwaysAsk) return '';
+            return `<button class="option" data-i="${i}" ${n === 0 ? 'disabled' : ''} ${q.multi ? 'aria-pressed="false"' : ''}>
+              <span class="option-label">${esc(o.label)}</span>
+              <span class="option-count">${plural(n, 'model')}</span>
+            </button>`;
+          }).join('')}
+        </div>
+        ${q.multi ? `<div class="actions">
+          <button class="btn btn-primary" id="continue" disabled>Continue</button>
+        </div>` : ''}`;
+
+      if (!q.multi) {
+        $stage.querySelectorAll('.option').forEach(btn => {
+          btn.addEventListener('click', () => {
+            answers.push({ qid, optionIndex: +btn.dataset.i });
+            render();
+          });
+        });
+        return;
+      }
+
+      const $continue = document.getElementById('continue');
+      $stage.querySelectorAll('.option[data-i]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = +btn.dataset.i;
+          if (selected.has(i)) selected.delete(i); else selected.add(i);
+          btn.setAttribute('aria-pressed', selected.has(i));
+          $continue.disabled = selected.size === 0;
+        });
+      });
+      $continue.addEventListener('click', () => {
+        answers.push({ qid, optionIndexes: [...selected].sort((a, b) => a - b) });
+        render();
+      });
+      document.getElementById('any').addEventListener('click', () => {
+        answers.push({ qid, optionIndexes: [] });
+        render();
+      });
+    }
+
+    function renderEnd(rows) {
+      // One entry per make + base model + engine, spanning the earliest to
+      // latest model year that passed every filter, with the EPA model
+      // variants listed inside.
+      const runs = [];
+      const byGroup = new Map();
+      for (const r of rows) {
+        const name = col(r, 'make') + ' ' + (col(r, 'baseModel') || col(r, 'model'));
+        const d = col(r, 'displ'), c = col(r, 'cylinders');
+        const engine = [d ? `${d.toFixed(1)} L` : '', c ? `${c} cyl` : ''].filter(Boolean).join(' ');
+        const g = name + '|' + engine;
+        let run = byGroup.get(g);
+        if (!run) {
+          run = { lo: col(r, 'year'), hi: col(r, 'year'), name, engine, models: new Set() };
+          byGroup.set(g, run);
+          runs.push(run);
+        }
+        const y = col(r, 'year');
+        if (y < run.lo) run.lo = y;
+        if (y > run.hi) run.hi = y;
+        run.models.add(col(r, 'model'));
+      }
+      runs.sort((a, b) => b.hi - a.hi || b.lo - a.lo || a.name.localeCompare(b.name));
+      $stage.innerHTML = `
+        <div class="actions">
+          <button class="btn" id="restart">Start over</button>
+        </div>
+        <ul class="results">
+          ${runs.map(it => `<li>
+            <details>
+              <summary>
+                <span class="yr">${it.lo === it.hi ? it.lo : `${it.lo}–${it.hi}`}</span>
+                <span class="name">${esc(it.name)}</span>
+                ${it.engine ? `<span class="eng">${esc(it.engine)}</span>` : ''}
+                <span class="n">${plural(it.models.size, 'variant')}</span>
+              </summary>
+              <ul class="variants">${[...it.models].sort().map(m => `<li>${esc(m)}</li>`).join('')}</ul>
+            </details>
+          </li>`).join('')}
+        </ul>`;
+      document.getElementById('restart').addEventListener('click', () => { answers = []; render(); });
+    }
+
+    function render() {
+      renderPath();
+      const qid = skipEmptyQuestions(currentRows());
+      const rows = currentRows();
+      if (qid) renderQuestion(qid, rows);
+      else renderEnd(rows);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // BOOT
+    // ═══════════════════════════════════════════════════════════
+    (async () => {
+      try {
+        await loadData();
+        render();
+      } catch (err) {
+        const s = document.getElementById('status');
+        s.className = 'status error';
+        s.textContent = `Couldn’t load the vehicle database (${err.message}). Run whichcar/build_data.py to regenerate data/vehicles.json.`;
+      }
+    })();
+  </script>
+</body>
+</html>
