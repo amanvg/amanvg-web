@@ -102,6 +102,7 @@
     /* ── Question ── */
     .q-left { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 10px; }
     .q-prompt { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; }
+    .q-multi { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
 
     .options { display: grid; gap: 12px; margin-top: 22px; }
     .option {
@@ -611,6 +612,7 @@
       $stage.innerHTML = `
         <div class="q-left">${plural(questionsLeft(qid, rows), 'question')} left</div>
         <div class="q-prompt">${esc(q.prompt)}</div>
+        ${q.multi ? `<div class="q-multi">Select all that apply</div>` : ''}
         <div class="options">
           ${q.multi ? `<button class="option" id="any">
               <span class="option-label">No preference</span>
