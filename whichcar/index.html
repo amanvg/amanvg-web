@@ -126,6 +126,35 @@
       font-variant-numeric: tabular-nums;
     }
 
+    /* ── Year range slider ── */
+    .range { position: relative; margin-top: 26px; padding: 0 0 8px; height: 64px; }
+    .range-years { display: flex; justify-content: space-between; align-items: baseline; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; margin-bottom: 14px; }
+    .range-count { font-size: 12px; font-weight: 600; color: var(--text-tertiary); }
+    .range-track { position: absolute; left: 0; right: 0; top: 47px; height: 8px; border-radius: 4px; overflow: hidden; }
+    .range-mask { position: absolute; top: 0; height: 100%; background: rgba(20,20,20,0.82); }
+    #mask-l { left: 0; } #mask-r { right: 0; }
+    .range input[type="range"] {
+      position: absolute; left: 0; right: 0; top: 37px; width: 100%; height: 28px; margin: 0;
+      -webkit-appearance: none; appearance: none; background: transparent; pointer-events: none;
+    }
+    .range input[type="range"]::-webkit-slider-runnable-track { background: transparent; height: 28px; }
+    .range input[type="range"]::-moz-range-track { background: transparent; height: 28px; }
+    .range input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; pointer-events: auto; cursor: grab;
+      width: 22px; height: 22px; margin-top: 3px; border-radius: 50%;
+      background: #fff; border: 3px solid #141414; box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    .range input[type="range"]::-moz-range-thumb {
+      pointer-events: auto; cursor: grab;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff; border: 3px solid #141414; box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    .range input[type="range"]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+    .range input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; }
+
+    .range-bands { margin-top: 14px; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; min-height: 22px; }
+    .range-bands + .actions { margin-top: 22px; }
+
     .btn {
       font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
       color: var(--text-primary); background: var(--surface-2);
@@ -221,6 +250,8 @@
       const data = await res.json();
       data.columns.forEach((c, i) => { COL[c] = i; });
       ROWS = data.rows;
+      MIN_YEAR = Infinity; MAX_YEAR = -Infinity;
+      for (const r of ROWS) { const y = col(r, 'year'); if (y < MIN_YEAR) MIN_YEAR = y; if (y > MAX_YEAR) MAX_YEAR = y; }
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -334,20 +365,24 @@
     // data, so the counts add up to No preference.
     const Y = CURRENT_YEAR;
     const yr = r => col(r, 'year');
-    const ageOptions = [
-      { label: `New (${Y}+)`, chip: 'New', filter: r => yr(r) >= Y },
-      { label: `CPO (${Y - 3}–${Y - 1})`, chip: 'CPO', filter: r => yr(r) >= Y - 3 && yr(r) < Y },
-      { label: `Within warranty (${Y - 5}–${Y - 4})`, chip: 'Within warranty', filter: r => yr(r) >= Y - 5 && yr(r) < Y - 3 },
-      { label: `Used with OEM support (${Y - 10}–${Y - 6})`, chip: 'Used, OEM support', filter: r => yr(r) >= Y - 10 && yr(r) < Y - 5 },
-      { label: `Used with no support (${Y - 11} and older)`, chip: 'Used, no support', filter: r => yr(r) < Y - 10 },
+    let MIN_YEAR = 1984, MAX_YEAR = Y + 1;   // refined from the data on load
+    // Age bands shown under the year slider; they light up when the chosen
+    // range covers them (in full or in part).
+    // Newest to oldest, colored red → orange → yellow → green → blue.
+    const AGE_BANDS = [
+      { label: 'New', color: '#ef4444', lo: () => Y, hi: () => MAX_YEAR },
+      { label: 'Within standard warranty', color: '#f97316', lo: () => Y - 3, hi: () => Y - 1 },
+      { label: 'Within standard powertrain warranty', color: '#eab308', lo: () => Y - 5, hi: () => Y - 4 },
+      { label: 'Parts still made by manufacturer', color: '#22c55e', lo: () => Y - 10, hi: () => Y - 6 },
+      { label: 'Used with no manufacturer support', color: '#3b82f6', lo: () => MIN_YEAR, hi: () => Y - 11 },
     ];
 
     const QUESTIONS = {
       age: {
         prompt: 'How used are you willing to go?',
-        multi: true,
-        options: ageOptions,
-        anyChip: 'Any age',
+        kind: 'range',
+        options: [],
+        anyChip: 'Any year',
         next: 'style',
       },
       style: {
@@ -452,6 +487,7 @@
     function answerStillValid(a, rows) {
       const q = QUESTIONS[a.qid];
       if (a.skipped) return false;               // recomputed by skipEmptyQuestions
+      if (q.kind === 'range') return rows.some(answerFilter(a));
       if (q.multi) {
         if (a.optionIndexes.length === 0) return true;
         return a.optionIndexes.some(i => rows.some(q.options[i].filter));
@@ -481,6 +517,7 @@
     function answerFilter(a) {
       const q = QUESTIONS[a.qid];
       if (a.skipped) return () => true;
+      if (q.kind === 'range') return r => yr(r) >= a.lo && yr(r) <= a.hi;
       if (!q.multi) return q.options[a.optionIndex].filter;
       if (a.optionIndexes.length === 0) return () => true;
       const fs = a.optionIndexes.map(i => q.options[i].filter);
@@ -489,6 +526,7 @@
 
     function answerChip(a) {
       const q = QUESTIONS[a.qid];
+      if (q.kind === 'range') return a.lo <= MIN_YEAR && a.hi >= MAX_YEAR ? q.anyChip : `${a.lo}–${a.hi}`;
       if (!q.multi) return q.options[a.optionIndex].chip;
       if (a.optionIndexes.length === 0) return q.anyChip || `Any ${q.prompt.toLowerCase()}`;
       const chips = a.optionIndexes.map(i => q.options[i].chip);
@@ -505,7 +543,7 @@
       if (answers.length === 0) return FIRST_QUESTION;
       const last = answers[answers.length - 1];
       const q = QUESTIONS[last.qid];
-      const next = q.multi ? q.next : q.options[last.optionIndex].next;
+      const next = q.multi || q.kind === 'range' ? q.next : q.options[last.optionIndex].next;
       return typeof next === 'function' ? next(answers) : next;
     }
 
@@ -521,7 +559,7 @@
         if (!qid) return null;
         const q = QUESTIONS[qid];
         const live = q.options.filter(o => !isCatchAll(o) && rows.some(o.filter));
-        if (q.alwaysAsk || live.length > 0) return qid;
+        if (q.alwaysAsk || q.kind === 'range' || live.length > 0) return qid;
         answers.push(q.multi ? { qid, optionIndexes: [], skipped: true }
                              : { qid, optionIndex: Math.max(0, q.options.findIndex(isCatchAll)), skipped: true });
       }
@@ -537,8 +575,8 @@
         if (!id || depth > 40) return 0;
         if (memo.has(id)) return memo.get(id);
         const q = QUESTIONS[id];
-        const asked = q.alwaysAsk || q.options.some(o => !isCatchAll(o) && rows.some(o.filter)) ? 1 : 0;
-        const nexts = q.multi ? [q.next] : q.options.map(o => o.next);
+        const asked = q.alwaysAsk || q.kind === 'range' || q.options.some(o => !isCatchAll(o) && rows.some(o.filter)) ? 1 : 0;
+        const nexts = q.multi || q.kind === 'range' ? [q.next] : q.options.map(o => o.next);
         let best = 0;
         for (const n of nexts) {
           const target = typeof n === 'function' ? n(answers) : n;
@@ -574,8 +612,63 @@
       });
     }
 
+    function renderRangeQuestion(qid, rows) {
+      const q = QUESTIONS[qid];
+      const current = editing === null ? null : answers[editing];
+      let lo = current ? current.lo : MIN_YEAR, hi = current ? current.hi : MAX_YEAR;
+      const pct = y => ((y - MIN_YEAR) / (MAX_YEAR - MIN_YEAR)) * 100;
+
+      // Track painted as one colored segment per band, boundaries at the half-years between them.
+      const edge = y => Math.max(0, Math.min(100, pct(y)));
+      const stops = [...AGE_BANDS].reverse()   // gradient stops must run left to right, oldest first
+        .map(b => `${b.color} ${edge(b.lo() - 0.5)}% ${edge(b.hi() + 0.5)}%`).join(', ');
+
+      $stage.innerHTML = `
+        <div class="q-left">${plural(questionsLeft(qid, rows), 'question')} left</div>
+        <div class="q-prompt">${esc(q.prompt)}</div>
+        <div class="range">
+          <div class="range-years"><span id="range-lo"></span><span class="range-count" id="range-count"></span><span id="range-hi"></span></div>
+          <div class="range-track" style="background: linear-gradient(to right, ${stops})">
+            <div class="range-mask" id="mask-l"></div><div class="range-mask" id="mask-r"></div>
+          </div>
+          <input type="range" id="range-min" min="${MIN_YEAR}" max="${MAX_YEAR}" step="1" value="${lo}" aria-label="Oldest model year">
+          <input type="range" id="range-max" min="${MIN_YEAR}" max="${MAX_YEAR}" step="1" value="${hi}" aria-label="Newest model year">
+        </div>
+        <div class="range-bands" id="range-bands"></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="continue">Continue</button>
+          <button class="btn" id="any">No preference</button>
+          ${current ? `<button class="btn" id="cancel">Cancel</button>` : ''}
+        </div>`;
+
+      const $min = document.getElementById('range-min'), $max = document.getElementById('range-max');
+      const $lo = document.getElementById('range-lo'), $hi = document.getElementById('range-hi');
+      const $count = document.getElementById('range-count'), $bands = document.getElementById('range-bands');
+      const $maskL = document.getElementById('mask-l'), $maskR = document.getElementById('mask-r');
+
+      const update = () => {
+        lo = Math.min(+$min.value, +$max.value); hi = Math.max(+$min.value, +$max.value);
+        $lo.textContent = lo; $hi.textContent = hi;
+        $maskL.style.width = edge(lo - 0.5) + '%';
+        $maskR.style.width = (100 - edge(hi + 0.5)) + '%';
+        $count.textContent = plural(countModels(rows.filter(r => yr(r) >= lo && yr(r) <= hi)), 'model');
+        // Bands the range touches, newest to oldest.
+        const hit = AGE_BANDS.filter(b => lo <= b.hi() && hi >= b.lo());
+        const tag = b => `<span style="color:${b.color}">${esc(b.label)}</span>`;
+        $bands.innerHTML = hit.length === 0 ? '' : hit.length === 1 ? tag(hit[0]) : `${tag(hit[0])} to ${tag(hit[hit.length - 1])}`;
+      };
+      $min.addEventListener('input', update);
+      $max.addEventListener('input', update);
+      update();
+
+      document.getElementById('continue').addEventListener('click', () => commit({ qid, lo, hi }));
+      document.getElementById('any').addEventListener('click', () => commit({ qid, lo: MIN_YEAR, hi: MAX_YEAR }));
+      if (current) document.getElementById('cancel').addEventListener('click', () => { editing = null; render(); });
+    }
+
     function renderQuestion(qid, rows) {
       const q = QUESTIONS[qid];
+      if (q.kind === 'range') return renderRangeQuestion(qid, rows);
       const current = editing === null ? null : answers[editing];
       const selected = new Set(current && q.multi ? current.optionIndexes : []);
       // "No preference" style answers render first.
