@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-06T23:02:33.483Z",
+ "generatedAt": "2026-09-07T21:43:13.661Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -547,17 +547,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "31"
+        "displayValue": "31.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "89"
+        "displayValue": "90"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-17.5"
+        "displayValue": "-18.0"
        },
        {
         "name": "ties",
@@ -567,7 +567,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".378"
+        "displayValue": ".375"
        },
        {
         "name": "wins",
