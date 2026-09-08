@@ -69,11 +69,12 @@ A Reject means make no changes and ask what to adjust.
   tables for a car and two addresses.
 - `/roadtrip/` Road Trip Cost Calculator: multi-state fuel pricing along a route.
 - `/whichcar/` What car should I buy: questionnaire over the EPA vehicle data.
-- `/commuteplanner/` Commute Planner: map, blue driving route, round-trip
-  distance and cost, each-way drive time. Cars are assessed by type: gas by
-  MPG and AAA price, EVs by kWh/100 mi and EIA electricity (never show MPGe),
-  PHEVs split each leg between battery and gas using the charge-at-home /
-  charge-at-destination checkboxes. Its purpose is to grow, one small step at
+- `/commuteplanner/` Commute Planner: map, blue driving route, one-way
+  distance, drive time, and cost. Cars are assessed by type: gas by MPG and
+  AAA price, EVs by kWh/100 mi and EIA electricity (never show MPGe), PHEVs
+  split each leg of the round trip between battery and gas using the
+  charge-at-home / charge-at-destination checkboxes, and the tile shows half
+  of that as the one-way cost. Its purpose is to grow, one small step at
   a time, into a comparison of the modes of transport available for a commute;
   blue is reserved for driving. Turn-by-turn directions exist behind
   `SHOW_DIRECTIONS = false`.

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Commute Planner — amanvg</title>
-  <meta name="description" content="Map your commute: home and destination on a map with round-trip driving mileage, drive time, and fuel or charging cost for your car.">
+  <meta name="description" content="Map your commute: home and destination on a map with one-way driving mileage, drive time, and fuel or charging cost for your car.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
@@ -224,12 +224,6 @@
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
-    .stat-basis {
-      display: block;
-      font-size: 11px; color: var(--text-tertiary);
-      margin-top: 4px;
-      white-space: nowrap;
-    }
     .stat-note { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-top: 12px; }
 
     .steps-heading {
@@ -432,17 +426,14 @@
           <div class="stat">
             <span class="stat-label">Distance</span>
             <span class="stat-value" id="stat-miles">—</span>
-            <span class="stat-basis">round trip</span>
           </div>
           <div class="stat">
             <span class="stat-label">Drive Time</span>
             <span class="stat-value" id="stat-time">—</span>
-            <span class="stat-basis">each way</span>
           </div>
           <div class="stat">
             <span class="stat-label" id="stat-cost-label">Fuel Cost</span>
             <span class="stat-value" id="stat-cost">—</span>
-            <span class="stat-basis">round trip</span>
           </div>
         </div>
         <p class="stat-note" id="cost-note"></p>
@@ -1088,9 +1079,9 @@
       const to = route.dest.city || route.dest.stateCode || 'Destination';
       $('route-title').textContent = from === to ? `${from}: Home → Destination` : `${from} → ${to}`;
       const split = route.split
-        ? ` · ${num1.format(route.split.highway * 2)} mi highway, ${num1.format(route.split.city * 2)} mi city`
+        ? ` · ${num1.format(route.split.highway)} mi highway, ${num1.format(route.split.city)} mi city`
         : '';
-      $('route-via').textContent = `${route.summary ? `via ${route.summary} · ` : ''}round trip${split}`;
+      $('route-via').textContent = `${route.summary ? `via ${route.summary} · ` : ''}one way${split}`;
 
       const list = $('steps');
       list.innerHTML = '';
@@ -1140,10 +1131,13 @@
 
     function renderStats() {
       if (!route) return;
-      const miles = route.miles * 2; // distance and cost cover the round trip: home → destination → home
-      $('stat-miles').textContent = `${num1.format(miles)} mi`;
-      $('stat-time').textContent = formatTime(route.minutes); // drive time is the trip from here to there
+      $('stat-miles').textContent = `${num1.format(route.miles)} mi`;
+      $('stat-time').textContent = formatTime(route.minutes);
 
+      // Everything shown is one way. A plug-in hybrid's two legs can differ
+      // (charge at one end but not the other), so its miles are split over the
+      // round trip and halved: the tile is the average cost of one trip.
+      const miles = route.miles * 2;
       let electricMiles = 0;
       if (isElectric()) {
         electricMiles = miles;
@@ -1169,8 +1163,8 @@
       }
       $('stat-cost-label').textContent =
         gasMiles > 0 && electricMiles > 0 ? 'Energy Cost' : electricMiles > 0 ? 'Charging' : 'Fuel Cost';
-      $('stat-cost').textContent = usd.format(cost);
-      const phevSplit = isPhev() ? `${num1.format(electricMiles)} mi electric, ${num1.format(gasMiles)} mi gas · ` : '';
+      $('stat-cost').textContent = usd.format(cost / 2);
+      const phevSplit = isPhev() ? `${num1.format(electricMiles)} mi electric, ${num1.format(gasMiles)} mi gas round trip · ` : '';
       $('cost-note').textContent = phevSplit + sources.join(' · ');
     }
 
