@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commute Planner — amanvg</title>
+  <meta name="description" content="Map your commute: home and destination on a map with round-trip driving mileage, drive time, and fuel or charging cost for your car.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+        integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: dark;
+      --bg: #141414;
+      --surface: #1e1e1e;
+      --surface-2: #232323;
+      --surface-hover: #2a2a2a;
+      --border: #2e2e2e;
+      --border-hover: #3d3d3d;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-tertiary: #8a8a8a;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --accent-border: rgba(59, 130, 246, 0.35);
+      --accent-text: #93c5fd;
+      --red: #f87171;
+      --radius-card: 20px;
+      --radius-btn: 12px;
+      --radius-input: 10px;
+      --radius-pill: 999px;
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+      --map-height: 560px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(13,13,13,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      padding: 0 32px; height: 56px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    }
+    .nav-back {
+      justify-self: start;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-back:hover { color: var(--text-primary); background: var(--border); }
+    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
+
+    /* ── Page ── */
+    .page { max-width: 1120px; margin: 0 auto; padding: 40px 32px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .card h2 .optional { text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--text-tertiary); }
+
+    .grid { display: grid; gap: 14px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+
+    select, input[type="text"] {
+      font: inherit; font-size: 14px;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 10px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    select:focus, input:focus { outline: none; border-color: var(--accent); }
+    select:disabled { color: var(--text-tertiary); }
+    input::placeholder { color: var(--text-tertiary); }
+
+    .status { font-size: 13px; color: var(--text-tertiary); line-height: 1.5; }
+    .error { font-size: 13px; color: var(--red); line-height: 1.5; }
+
+    .vehicle-info { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border); }
+    .rating-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    .rating-value { display: block; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .rating-value small { font-size: 12px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0; margin: 0 2px; }
+    .rating-value .sep { color: var(--text-tertiary); font-weight: 500; margin: 0 4px; }
+    .rating-block + .rating-block { margin-top: 14px; }
+    .rating-fuel { font-size: 13px; color: var(--text-secondary); margin-top: 10px; }
+
+    .charge-options { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 14px; }
+    .check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-primary); cursor: pointer; }
+    .check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+
+    /* ── Buttons ── */
+    .btn-secondary {
+      font: inherit; font-size: 13px; font-weight: 600;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 14px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-secondary:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--border-hover); }
+
+    .btn-primary {
+      display: block; width: 100%;
+      font: inherit; font-size: 15px; font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      border: none; border-radius: var(--radius-btn);
+      padding: 15px;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-primary:active:not(:disabled) { transform: scale(0.99); }
+    .btn-primary:disabled {
+      background: var(--surface-2); color: var(--text-tertiary);
+      border: 1px solid var(--border); cursor: wait;
+    }
+
+    .status-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; min-height: 20px; }
+    .error-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+
+    /* ── Results: map + directions panel ── */
+    .results-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .map-card { padding: 0; overflow: hidden; margin-bottom: 0; position: relative; }
+    #map { width: 100%; height: var(--map-height); background: #0f0f0f; }
+
+    .panel {
+      margin-bottom: 0;
+      display: flex; flex-direction: column;
+      max-height: var(--map-height);
+      padding: 24px 0 22px;
+    }
+    .panel > * { padding-left: 24px; padding-right: 24px; }
+
+    .route-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+    .legend-line {
+      flex-shrink: 0;
+      width: 22px; height: 6px; border-radius: 3px;
+      background: var(--accent);
+      margin-top: 7px;
+      box-shadow: 0 0 0 2px rgba(59,130,246,0.25);
+    }
+    .route-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+    .route-via { font-size: 13px; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat {
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      border-radius: 14px;
+      padding: 12px;
+      min-width: 0;
+    }
+    .stat-label {
+      display: block;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+    }
+    .stat-value {
+      display: block;
+      font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
+      color: var(--accent-text);
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .stat-note { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-top: 12px; }
+
+    .steps-heading {
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      padding-top: 18px; padding-bottom: 10px;
+    }
+
+    .steps {
+      list-style: none;
+      overflow-y: auto;
+      flex: 1;
+      padding-bottom: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-hover) transparent;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-icon {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      color: var(--accent-text);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-icon svg { width: 18px; height: 18px; display: block; }
+    .step-text { font-size: 14px; line-height: 1.5; color: var(--text-primary); padding-top: 6px; }
+    .step-dist {
+      font-size: 13px; color: var(--accent-text); font-weight: 600;
+      font-variant-numeric: tabular-nums; white-space: nowrap;
+      padding-top: 7px;
+    }
+
+    /* ── Leaflet dark theme ── */
+    .leaflet-container { font-family: inherit; }
+    /* Invert the light OSM raster into a dark basemap; hue-rotate keeps water blue. */
+    .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.82) contrast(0.92) saturate(0.6); }
+    .leaflet-control-zoom a {
+      background: var(--surface) !important; color: var(--text-primary) !important;
+      border-color: var(--border) !important;
+    }
+    .leaflet-control-zoom a:hover { background: var(--surface-hover) !important; }
+    .leaflet-bar { border: 1px solid var(--border) !important; box-shadow: var(--shadow-md) !important; }
+    .leaflet-control-attribution {
+      background: rgba(20,20,20,0.85) !important; color: var(--text-tertiary) !important;
+      font-size: 10px !important;
+    }
+    .leaflet-control-attribution a { color: var(--text-secondary) !important; }
+
+    .pin {
+      position: relative;
+      width: 30px; height: 30px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      border: 3px solid #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    }
+    .pin span {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      transform: rotate(45deg);
+      font-size: 12px; font-weight: 800; letter-spacing: 0;
+    }
+    .pin-home { background: #f5f5f5; color: #0d0d0d; }
+    .pin-dest { background: var(--accent); color: #fff; }
+    .pin-label {
+      background: rgba(20,20,20,0.92) !important;
+      color: var(--text-primary) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px !important;
+      font-size: 12px; font-weight: 600;
+      padding: 4px 8px !important;
+      box-shadow: var(--shadow-md) !important;
+    }
+    .pin-label::before { display: none !important; }
+
+    @media (max-width: 860px) {
+      :root { --map-height: 380px; }
+      .results-grid { grid-template-columns: 1fr; }
+      .panel { max-height: none; }
+      .steps { overflow: visible; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-inner { padding: 0 20px; }
+      .nav-title { font-size: 15px; }
+      .page { padding: 28px 20px 60px; }
+      .page-header h1 { font-size: 26px; }
+      .card { padding: 22px; }
+      .panel { padding: 22px 0 20px; }
+      .panel > * { padding-left: 22px; padding-right: 22px; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .stat-row { grid-template-columns: 1fr; }
+    }
+
+    :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+
+  <nav aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="nav-back" href="/">← amanvg</a>
+      <span class="nav-title">Commute Planner</span>
+      <span></span>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>🧭 Commute Planner</h1>
+    </header>
+
+    <section class="card">
+      <h2>1. Your Commute</h2>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="home-address">Home</label>
+          <input type="text" id="home-address" placeholder="e.g. 1250 1st Ave S, Seattle, WA" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="dest-address">Destination</label>
+          <input type="text" id="dest-address" placeholder="e.g. 400 Broad St, Seattle, WA" autocomplete="off">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Your Car <span class="optional">(optional)</span></h2>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="year">Year</label>
+          <select id="year" autocomplete="off">
+            <option value="">Loading…</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="make">Make</label>
+          <select id="make" disabled autocomplete="off">
+            <option value="">Select year first</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="model">Model</label>
+          <select id="model" disabled autocomplete="off">
+            <option value="">Select make first</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="trim-field" style="margin-top: 14px;" hidden>
+        <label for="trim">Engine / Trim</label>
+        <select id="trim" autocomplete="off"></select>
+      </div>
+      <div class="vehicle-info" id="vehicle-info" hidden>
+        <div class="rating-block">
+          <span class="rating-label" id="rating-label">EPA Fuel Economy Rating</span>
+          <span class="rating-value" id="rating-text">—</span>
+        </div>
+        <div class="rating-block" id="rating-block-2" hidden>
+          <span class="rating-label" id="rating-label-2"></span>
+          <span class="rating-value" id="rating-text-2"></span>
+        </div>
+        <p class="rating-fuel" id="fuel-type-note"></p>
+        <div class="charge-options" id="charge-options" hidden>
+          <label class="check"><input type="checkbox" id="charge-home"> Charge at home</label>
+          <label class="check"><input type="checkbox" id="charge-dest"> Charge at destination</label>
+        </div>
+      </div>
+      <div class="error-row" id="car-error-row" hidden>
+        <p class="error" id="car-error"></p>
+        <button class="btn-secondary" id="car-retry" type="button">Retry</button>
+      </div>
+    </section>
+
+    <button class="btn-primary" id="go-btn" type="button">Show My Commute</button>
+    <div class="status-row"><span class="status" id="lookup-status"></span></div>
+
+    <section class="results-grid" id="results" hidden>
+      <div class="card map-card">
+        <div id="map" role="img" aria-label="Map of the driving route from home to destination"></div>
+      </div>
+      <aside class="card panel">
+        <div class="route-head">
+          <span class="legend-line" aria-hidden="true"></span>
+          <div>
+            <div class="route-title" id="route-title">Home → Destination</div>
+            <div class="route-via" id="route-via"></div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat">
+            <span class="stat-label">Distance</span>
+            <span class="stat-value" id="stat-miles">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Drive Time</span>
+            <span class="stat-value" id="stat-time">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label" id="stat-cost-label">Fuel Cost</span>
+            <span class="stat-value" id="stat-cost">—</span>
+          </div>
+        </div>
+        <p class="stat-note" id="cost-note"></p>
+        <h3 class="steps-heading" id="steps-heading" hidden>Driving Directions</h3>
+        <ol class="steps" id="steps" hidden></ol>
+      </aside>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+          integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    'use strict';
+
+    // ---------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------
+
+    const EPA_API = 'https://www.fueleconomy.gov/ws/rest';
+    const ZIP_API = 'https://api.zippopotam.us/us';
+    const NOMINATIM_API = 'https://nominatim.openstreetmap.org/search';
+    const OSRM_API = 'https://router.project-osrm.org/route/v1/driving';
+    // Daily AAA state averages, committed by the commute-gas-prices workflow for /commute/.
+    const GAS_PRICES_URL = '/commute/data/gas-prices.json';
+    // Monthly EIA state residential electricity averages, written by update_electricity.py.
+    const ELECTRICITY_PRICES_URL = 'data/electricity-prices.json';
+    const METERS_PER_MILE = 1609.344;
+    const MPS_TO_MPH = 2.23694;
+    // Turn-by-turn list under the stats. Off for now: the page is heading toward
+    // comparing modes of transport, not navigating one of them.
+    const SHOW_DIRECTIONS = false;
+
+    // Used when no car is selected: roughly the on-road US light-duty fleet average.
+    const DEFAULT_MPG = 25;
+    // Last-resort residential electricity price ($/kWh) if the EIA file is unreachable.
+    const DEFAULT_KWH_PRICE = 0.17;
+    // EPA's MPGe basis: one gallon of gasoline holds 33.7 kWh. Used only when an
+    // EV record lacks its kWh/100 mi fields.
+    const KWH_PER_GALLON = 33.7;
+    // Last-resort national pump prices ($/gal) if both price sources are unreachable.
+    const NATIONAL_AVG = { regular: 3.15, premium: 3.95, diesel: 3.85 };
+
+    const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    const num1 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const $ = (id) => document.getElementById(id);
+
+    // ---------------------------------------------------------------------------
+    // State
+    // ---------------------------------------------------------------------------
+
+    let vehicle = null;   // { label, fuelType, city, highway, combined } MPG; EVs/PHEVs add electric|phev, cityE/highwayE/combE kWh per 100 mi, range, rangeElectric
+    let route = null;     // { miles, minutes, split, steps, coords, summary, home, dest }
+    let aaaPrices = null; // { asOf, states: {WA: {regular, premium, diesel}} }
+    let eiaPrices = null; // { asOf, national, states: {WA: 0.12} } in $/kWh
+    let liveNational = null;
+
+    // ---------------------------------------------------------------------------
+    // Fuel prices
+    // ---------------------------------------------------------------------------
+
+    async function loadPrices() {
+      try {
+        const res = await fetch(GAS_PRICES_URL, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.states && Object.keys(data.states).length) aaaPrices = data;
+        }
+      } catch { /* fall through to national */ }
+      try {
+        const res = await fetch(ELECTRICITY_PRICES_URL, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.states && Object.keys(data.states).length) eiaPrices = data;
+        }
+      } catch { /* DEFAULT_KWH_PRICE used */ }
+      try {
+        const res = await fetch(`${EPA_API}/fuelprices`, { headers: { Accept: 'application/json' } });
+        if (res.ok) {
+          const n = await res.json();
+          const regular = parseFloat(n.regular), premium = parseFloat(n.premium), diesel = parseFloat(n.diesel);
+          if (regular > 0 && premium > 0) {
+            liveNational = { regular, premium, diesel: diesel > 0 ? diesel : regular * (NATIONAL_AVG.diesel / NATIONAL_AVG.regular) };
+          }
+        }
+      } catch { /* offline */ }
+    }
+
+    // Price per gallon of one fuel kind for a state, with a short source label.
+    function priceFor(state, kind) {
+      const Kind = kind[0].toUpperCase() + kind.slice(1);
+      const s = state && aaaPrices && aaaPrices.states[state];
+      if (s && s[kind] > 0) return { price: s[kind], label: `${state} ${Kind} ${usd.format(s[kind])}/gal · AAA ${aaaPrices.asOf || ''}`.trim() };
+      const n = liveNational || NATIONAL_AVG;
+      return { price: n[kind], label: `US ${Kind} ${usd.format(n[kind])}/gal${liveNational ? '' : ' (offline estimate)'}` };
+    }
+
+    // Residential electricity price for a state ($/kWh), with a short source label.
+    function electricityPriceFor(state) {
+      const perKwh = (p) => `${usd.format(p)}/kWh`;
+      if (eiaPrices) {
+        const p = state && eiaPrices.states[state];
+        if (p > 0) return { price: p, label: `${state} Residential ${perKwh(p)} · EIA ${eiaPrices.asOf || ''}`.trim() };
+        if (eiaPrices.national > 0) return { price: eiaPrices.national, label: `US Residential ${perKwh(eiaPrices.national)} · EIA ${eiaPrices.asOf || ''}`.trim() };
+      }
+      return { price: DEFAULT_KWH_PRICE, label: `US Residential ${perKwh(DEFAULT_KWH_PRICE)} (offline estimate)` };
+    }
+
+    // ---------------------------------------------------------------------------
+    // EPA fueleconomy.gov API (year → make → model → trim)
+    // ---------------------------------------------------------------------------
+
+    const yearSel = $('year'), makeSel = $('make'), modelSel = $('model'), trimSel = $('trim');
+    const trimField = $('trim-field');
+    const vehicleInfo = $('vehicle-info');
+    const ratingLabel = $('rating-label');
+    const ratingText = $('rating-text');
+    const ratingBlock2 = $('rating-block-2');
+    const ratingLabel2 = $('rating-label-2');
+    const ratingText2 = $('rating-text-2');
+    const chargeOptions = $('charge-options');
+    const fuelTypeNote = $('fuel-type-note');
+    const carError = $('car-error');
+    const carErrorRow = $('car-error-row');
+
+    // EPA data changes rarely, so successful responses are cached in localStorage.
+    const EPA_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+
+    function epaCacheGet(path) {
+      try {
+        const hit = JSON.parse(localStorage.getItem(`epa:${path}`));
+        if (hit && hit.d) return hit;
+      } catch { /* corrupt or unavailable storage */ }
+      return null;
+    }
+
+    async function epaFetch(path) {
+      const cached = epaCacheGet(path);
+      if (cached && Date.now() - cached.t < EPA_CACHE_TTL) return cached.d;
+
+      let lastErr;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        if (attempt) await sleep(1000 * attempt);
+        try {
+          const res = await fetch(`${EPA_API}${path}`, {
+            headers: { Accept: 'application/json' },
+            signal: AbortSignal.timeout(6000),
+          });
+          if (res.status >= 500) { lastErr = new Error(`EPA API error (${res.status})`); continue; }
+          if (!res.ok) throw new Error(`EPA API error (${res.status})`);
+          const data = await res.json();
+          try { localStorage.setItem(`epa:${path}`, JSON.stringify({ t: Date.now(), d: data })); } catch { /* storage full */ }
+          return data;
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+      if (cached) return cached.d;
+      throw lastErr;
+    }
+
+    // Menu endpoints return {menuItem: [...]} for many results, {menuItem: {...}} for one.
+    function menuItems(data) {
+      const items = data && data.menuItem;
+      if (!items) return [];
+      return Array.isArray(items) ? items : [items];
+    }
+
+    function fillSelect(select, items, placeholder) {
+      select.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = placeholder;
+      select.appendChild(opt);
+      for (const item of items) {
+        const o = document.createElement('option');
+        o.value = item.value;
+        o.textContent = item.text;
+        select.appendChild(o);
+      }
+      select.disabled = items.length === 0;
+    }
+
+    function resetSelect(select, placeholder) {
+      select.innerHTML = `<option value="">${placeholder}</option>`;
+      select.disabled = true;
+    }
+
+    function resetVehicle() {
+      vehicle = null;
+      vehicleInfo.hidden = true;
+      ratingText.textContent = '—';
+      ratingBlock2.hidden = true;
+      chargeOptions.hidden = true;
+      fuelTypeNote.textContent = '';
+      renderStats();
+    }
+
+    async function loadYears() {
+      try {
+        fillSelect(yearSel, menuItems(await epaFetch('/vehicle/menu/year')), 'Select year');
+        hideCarError();
+      } catch (err) {
+        const latest = new Date().getFullYear() + 1;
+        const items = [];
+        for (let y = latest; y >= 1984; y--) items.push({ text: String(y), value: String(y) });
+        fillSelect(yearSel, items, 'Select year');
+        showCarError(err);
+      }
+    }
+
+    async function onYearChange() {
+      resetSelect(makeSel, 'Select year first');
+      resetSelect(modelSel, 'Select make first');
+      trimField.hidden = true;
+      resetVehicle();
+      if (!yearSel.value) return;
+      resetSelect(makeSel, 'Loading makes…');
+      try {
+        fillSelect(makeSel, menuItems(await epaFetch(`/vehicle/menu/make?year=${yearSel.value}`)), 'Select make');
+        hideCarError();
+      } catch (err) {
+        resetSelect(makeSel, "Couldn't load — hit Retry");
+        showCarError(err);
+      }
+    }
+
+    async function onMakeChange() {
+      resetSelect(modelSel, 'Select make first');
+      trimField.hidden = true;
+      resetVehicle();
+      if (!makeSel.value) return;
+      resetSelect(modelSel, 'Loading models…');
+      try {
+        fillSelect(modelSel, menuItems(await epaFetch(
+          `/vehicle/menu/model?year=${yearSel.value}&make=${encodeURIComponent(makeSel.value)}`)), 'Select model');
+        hideCarError();
+      } catch (err) {
+        resetSelect(modelSel, "Couldn't load — hit Retry");
+        showCarError(err);
+      }
+    }
+
+    async function onModelChange() {
+      trimField.hidden = true;
+      resetVehicle();
+      if (!modelSel.value) return;
+      try {
+        const items = menuItems(await epaFetch(
+          `/vehicle/menu/options?year=${yearSel.value}&make=${encodeURIComponent(makeSel.value)}&model=${encodeURIComponent(modelSel.value)}`));
+        hideCarError();
+        if (items.length === 1) {
+          await loadVehicle(items[0].value);
+        } else if (items.length > 1) {
+          fillSelect(trimSel, items, 'Select engine / trim');
+          trimField.hidden = false;
+        }
+      } catch (err) {
+        showCarError(err);
+      }
+    }
+
+    async function onTrimChange() {
+      resetVehicle();
+      if (trimSel.value) await loadVehicle(trimSel.value);
+    }
+
+    async function loadVehicle(id) {
+      try {
+        const v = await epaFetch(`/vehicle/${id}`);
+        const num = (x) => { const n = parseFloat(x); return Number.isFinite(n) && n > 0 ? n : null; };
+        const combined = num(v.comb08);
+        if (!combined) throw new Error('no fuel economy rating for this vehicle');
+        const fuelType = v.fuelType1 || v.fuelType || '';
+        const electric = /^electricity$/i.test(fuelType);
+        // Plug-in hybrid: gasoline primary, electricity secondary, with an EPA
+        // all-electric range (rangeA) and kWh/100 mi ratings for battery driving.
+        const rangeElectric = num(String(v.rangeA || '').split(/[^\d.]+/)[0]);
+        const phev = !electric && /^electricity$/i.test(v.fuelType2 || '') && rangeElectric > 0 && num(v.combE) > 0;
+        // EVs are rated in kWh per 100 miles (cityE/highwayE/combE). EPA derives
+        // MPGe from the same numbers, so fall back to that when a field is blank.
+        // (Not for PHEVs: their MPG fields describe gasoline driving.)
+        const kwhPer100 = (e, mpge) => num(e) || (electric && mpge ? KWH_PER_GALLON * 100 / mpge : null);
+        const city = num(v.city08) || combined, highway = num(v.highway08) || combined;
+        const usesBattery = electric || phev;
+        vehicle = {
+          label: `${v.year} ${v.make} ${v.model}`,
+          fuelType,
+          electric,
+          phev,
+          city, highway, combined,
+          cityE: usesBattery ? kwhPer100(v.cityE, city) : null,
+          highwayE: usesBattery ? kwhPer100(v.highwayE, highway) : null,
+          combE: usesBattery ? kwhPer100(v.combE, combined) : null,
+          range: num(v.range),
+          rangeElectric: phev ? rangeElectric : null,
+        };
+        const fmt = (n) => (Math.round(n * 10) / 10).toString();
+        const triple = (c, comb, h, unit) =>
+          `${fmt(c)}<small>city</small><span class="sep">/</span>` +
+          `${fmt(comb)}<small>combined</small><span class="sep">/</span>` +
+          `${fmt(h)}<small>hwy</small><small style="margin-left:8px">${unit}</small>`;
+        if (electric) {
+          ratingLabel.textContent = 'EPA Efficiency Rating';
+          ratingText.innerHTML = triple(vehicle.cityE, vehicle.combE, vehicle.highwayE, 'kWh / 100 mi');
+          fuelTypeNote.textContent = `Electric${vehicle.range ? ` · EPA range ${Math.round(vehicle.range)} mi` : ''}`;
+        } else if (phev) {
+          ratingLabel.textContent = 'EPA Fuel Economy Rating · Gas';
+          ratingText.innerHTML = triple(city, combined, highway, 'MPG');
+          ratingLabel2.textContent = 'EPA Efficiency Rating · Electric';
+          ratingText2.innerHTML = triple(vehicle.cityE, vehicle.combE, vehicle.highwayE, 'kWh / 100 mi');
+          ratingBlock2.hidden = false;
+          fuelTypeNote.textContent = `Plug-in Hybrid · ${fuelType} · EPA electric range ${Math.round(rangeElectric)} mi`;
+          chargeOptions.hidden = false;
+        } else {
+          ratingLabel.textContent = 'EPA Fuel Economy Rating';
+          ratingText.innerHTML = triple(city, combined, highway, 'MPG');
+          fuelTypeNote.textContent = fuelType ? `Fuel: ${fuelType}` : '';
+        }
+        vehicleInfo.hidden = false;
+        hideCarError();
+      } catch (err) {
+        showCarError(err);
+      }
+      renderStats();
+    }
+
+    const isElectric = () => !!vehicle && vehicle.electric && vehicle.combE > 0;
+    const isPhev = () => !!vehicle && vehicle.phev;
+    const fuelKind = () => {
+      if (!vehicle) return 'regular';
+      if (/diesel/i.test(vehicle.fuelType)) return 'diesel';
+      if (/premium/i.test(vehicle.fuelType)) return 'premium';
+      return 'regular';
+    };
+
+    function showCarError(err) {
+      const reason = err.name === 'TimeoutError' ? 'timed out' : err.message;
+      carError.textContent = `fueleconomy.gov isn't responding (${reason}). Hit Retry, or continue without a car.`;
+      carErrorRow.hidden = false;
+    }
+
+    function hideCarError() { carErrorRow.hidden = true; }
+
+    function retryCarLoad() {
+      hideCarError();
+      if (!yearSel.value) return loadYears();
+      if (!makeSel.value) return onYearChange();
+      if (!modelSel.value) return onMakeChange();
+      if (!trimField.hidden && trimSel.value) return onTrimChange();
+      return onModelChange();
+    }
+
+    // ---------------------------------------------------------------------------
+    // Geocoding (Nominatim) + routing (OSRM)
+    // ---------------------------------------------------------------------------
+
+    async function geocode(address) {
+      const url = `${NOMINATIM_API}?q=${encodeURIComponent(address)}&format=json&limit=1&countrycodes=us&addressdetails=1`;
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(`geocoder error (${res.status})`);
+      const results = await res.json();
+      if (!results.length) return null;
+      const r = results[0];
+      const addr = r.address || {};
+      const iso = addr['ISO3166-2-lvl4'] || ''; // e.g. "US-WA"
+      return {
+        lat: parseFloat(r.lat),
+        lon: parseFloat(r.lon),
+        zip: (addr.postcode || '').slice(0, 5),
+        stateCode: iso.startsWith('US-') ? iso.slice(3) : null,
+        city: addr.city || addr.town || addr.village || addr.municipality || '',
+        name: r.display_name,
+      };
+    }
+
+    // Nominatim occasionally returns no usable state; the zip resolves it.
+    async function resolveState(place) {
+      if (place.stateCode || !/^\d{5}$/.test(place.zip)) return place.stateCode;
+      try {
+        const res = await fetch(`${ZIP_API}/${place.zip}`);
+        if (res.ok) {
+          const data = await res.json();
+          const p = data.places && data.places[0];
+          if (p) return p['state abbreviation'];
+        }
+      } catch { /* national price used instead */ }
+      return null;
+    }
+
+    // OSRM models each road segment at roughly 0.8 × its posted speed limit (no
+    // live traffic). EPA's highway cycle averages ~48 mph free-flowing, so segments
+    // modeled at 42 mph or more (posted ≥ ~52) count as highway, as do Interstates
+    // and named freeways regardless of speed.
+    const HIGHWAY_MODEL_MPH = 42;
+    const isFreewayStep = (step) =>
+      /\bI[ -]?\d/.test(step.ref || '') ||
+      /\b(Freeway|Expressway|Turnpike|Interstate)\b/i.test(step.name || '');
+
+    // Walk the leg's per-segment annotation alongside its steps. Each step's
+    // geometry has (points − 1) segments; the final "arrive" step has none.
+    function splitHighwayCity(leg) {
+      const ann = leg.annotation;
+      if (!ann || !ann.distance || !ann.speed || !leg.steps) return null;
+      let highway = 0, city = 0, i = 0;
+      for (const step of leg.steps) {
+        const coords = step.geometry && step.geometry.coordinates;
+        const n = coords ? coords.length - 1 : 0;
+        const freeway = isFreewayStep(step);
+        for (let k = 0; k < n && i < ann.distance.length; k++, i++) {
+          const mph = ann.speed[i] * MPS_TO_MPH;
+          if (freeway || mph >= HIGHWAY_MODEL_MPH) highway += ann.distance[i]; else city += ann.distance[i];
+        }
+      }
+      if (highway + city <= 0) return null;
+      // Scale so the split sums exactly to the route's own distance.
+      const scale = leg.distance / (highway + city) / METERS_PER_MILE;
+      return { highway: highway * scale, city: city * scale };
+    }
+
+    async function drivingRoute(from, to) {
+      const url = `${OSRM_API}/${from.lon},${from.lat};${to.lon},${to.lat}` +
+        '?overview=full&steps=true&geometries=geojson&annotations=speed,distance';
+      const res = await fetch(url, { signal: AbortSignal.timeout(30000) });
+      if (!res.ok) throw new Error(`routing error (${res.status})`);
+      const data = await res.json();
+      if (data.code !== 'Ok' || !data.routes || !data.routes.length) {
+        throw new Error('no drivable route found');
+      }
+      const r = data.routes[0];
+      const leg = r.legs && r.legs[0];
+      return {
+        miles: r.distance / METERS_PER_MILE,
+        minutes: r.duration / 60,
+        split: leg ? splitHighwayCity(leg) : null,
+        steps: leg ? mergeSteps(leg.steps || []) : [],
+        summary: leg ? leg.summary : '',
+        coords: (r.geometry && r.geometry.coordinates || []).map(([lon, lat]) => [lat, lon]),
+      };
+    }
+
+    // ---------------------------------------------------------------------------
+    // Turn-by-turn text
+    // ---------------------------------------------------------------------------
+
+    const ORDINALS = ['', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th'];
+    const CARDINALS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
+    const cardinal = (bearing) => CARDINALS[Math.round(((bearing || 0) % 360) / 45) % 8];
+
+    function roadLabel(step) {
+      const name = step.name || '', ref = step.ref || '';
+      if (name && ref) return `${name} (${ref})`;
+      return name || ref;
+    }
+
+    const sideWord = (mod) => /left/.test(mod) ? 'on the left' : /right/.test(mod) ? 'on the right' : '';
+
+    function turnWord(mod) {
+      switch (mod) {
+        case 'sharp left': return 'Turn sharp left';
+        case 'left': return 'Turn left';
+        case 'slight left': return 'Bear left';
+        case 'straight': return 'Continue straight';
+        case 'slight right': return 'Bear right';
+        case 'right': return 'Turn right';
+        case 'sharp right': return 'Turn sharp right';
+        case 'uturn': return 'Make a U-turn';
+        default: return 'Turn';
+      }
+    }
+
+    // A roundabout is two OSRM steps (enter, exit); show it as one instruction
+    // covering both distances. Zero-length notifications are dropped.
+    function mergeSteps(steps) {
+      const out = [];
+      for (let i = 0; i < steps.length; i++) {
+        const s = steps[i];
+        const type = s.maneuver.type;
+        if (/^(roundabout|rotary|roundabout turn)$/.test(type)) {
+          const next = steps[i + 1];
+          if (next && /^exit (roundabout|rotary)$/.test(next.maneuver.type)) {
+            out.push({ ...s, distance: s.distance + next.distance, name: next.name, ref: next.ref });
+            i++;
+            continue;
+          }
+        }
+        if (type === 'notification' && !(s.distance > 0)) continue;
+        out.push(s);
+      }
+      return out;
+    }
+
+    function instruction(step) {
+      const m = step.maneuver, mod = m.modifier || '', type = m.type;
+      const road = roadLabel(step);
+      const dest = step.destinations ? ` toward ${step.destinations}` : '';
+      // Skip "onto SR 520" when the sign text already names the road.
+      const onto = road && !(step.destinations || '').includes(road) ? ` onto ${road}` : '';
+      const side = sideWord(mod) ? ` ${sideWord(mod)}` : '';
+      switch (type) {
+        case 'depart':
+          return `Head ${cardinal(m.bearing_after)}${road ? ` on ${road}` : ''}`;
+        case 'arrive':
+          return `Arrive at your destination${side ? `,${side}` : ''}`;
+        case 'continue':
+          if (mod && mod !== 'straight' && road) return `${turnWord(mod)} to stay on ${road}`;
+          return road ? `Continue on ${road}` : 'Continue';
+        case 'new name': case 'use lane': case 'notification':
+          return road ? `Continue${onto}` : 'Continue';
+        case 'merge':
+          return `Merge${side}${onto}${dest}`;
+        case 'on ramp':
+          return `Take the ramp${side}${onto}${dest}`;
+        case 'off ramp':
+          return `Take ${step.exits ? `exit ${step.exits}` : 'the exit'}${side}${onto}${dest}`;
+        case 'fork':
+          return `Keep ${/left/.test(mod) ? 'left' : /right/.test(mod) ? 'right' : 'straight'}${onto}${dest}`;
+        case 'roundabout': case 'rotary': case 'roundabout turn':
+          if (!m.exit) return `At the roundabout, exit${onto}`;
+          return `At the roundabout, take the ${ORDINALS[m.exit] || `${m.exit}th`} exit${onto}`;
+        case 'exit roundabout': case 'exit rotary':
+          return `Exit the roundabout${onto}`;
+        default:
+          return `${turnWord(mod)}${onto}`;
+      }
+    }
+
+    // One arrow, rotated to the turn angle; special glyphs for start, end, roundabout.
+    const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(ROTdeg)"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>';
+    const DOT = '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>';
+    const FLAG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h12l-2 4 2 4H5"/></svg>';
+    const LOOP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-3-6.2"/><path d="M20 4v5h-5"/></svg>';
+    const ROTATION = { 'sharp left': -135, left: -90, 'slight left': -45, straight: 0, 'slight right': 45, right: 90, 'sharp right': 135, uturn: 180 };
+
+    function stepIcon(step) {
+      const type = step.maneuver.type;
+      if (type === 'depart') return DOT;
+      if (type === 'arrive') return FLAG;
+      if (/roundabout|rotary/.test(type)) return LOOP;
+      return ARROW.replace('ROT', ROTATION[step.maneuver.modifier] || 0);
+    }
+
+    function formatStepDistance(meters) {
+      const miles = meters / METERS_PER_MILE;
+      if (miles >= 0.1) return `${num1.format(miles)} mi`;
+      const feet = Math.round(meters * 3.28084 / 10) * 10;
+      return feet > 0 ? `${feet} ft` : '';
+    }
+
+    function formatTime(minutes) {
+      const h = Math.floor(minutes / 60), mm = Math.round(minutes % 60);
+      if (h === 0) return `${mm} min`;
+      return mm ? `${h} hr ${mm} min` : `${h} hr`;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Map (Leaflet + OpenStreetMap tiles)
+    // ---------------------------------------------------------------------------
+
+    let map = null, routeLayer = null;
+
+    function ensureMap() {
+      if (map) return map;
+      map = L.map('map', { zoomControl: true, attributionControl: true, scrollWheelZoom: false });
+      // Standard OSM tiles, darkened in CSS (.leaflet-tile-pane) to match the site.
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors · routing <a href="https://project-osrm.org" target="_blank" rel="noopener">OSRM</a>',
+      }).addTo(map);
+      map.on('focus', () => map.scrollWheelZoom.enable());
+      map.on('blur', () => map.scrollWheelZoom.disable());
+      return map;
+    }
+
+    const pin = (cls, letter) => L.divIcon({
+      className: '',
+      html: `<div class="pin ${cls}"><span>${letter}</span></div>`,
+      iconSize: [30, 30],
+      iconAnchor: [15, 30],
+      tooltipAnchor: [0, -32],
+    });
+
+    function drawRoute() {
+      const m = ensureMap();
+      if (routeLayer) routeLayer.remove();
+      const line = L.polyline(route.coords, { color: '#0f2a5c', weight: 9, opacity: 0.9, lineJoin: 'round' });
+      const lineTop = L.polyline(route.coords, { color: '#3b82f6', weight: 5, opacity: 1, lineJoin: 'round' });
+      const home = L.marker([route.home.lat, route.home.lon], { icon: pin('pin-home', 'H'), zIndexOffset: 1000 })
+        .bindTooltip('Home', { permanent: true, direction: 'top', className: 'pin-label' });
+      const dest = L.marker([route.dest.lat, route.dest.lon], { icon: pin('pin-dest', 'D'), zIndexOffset: 1000 })
+        .bindTooltip('Destination', { permanent: true, direction: 'top', className: 'pin-label' });
+      routeLayer = L.featureGroup([line, lineTop, home, dest]).addTo(m);
+      m.invalidateSize();
+      m.fitBounds(routeLayer.getBounds(), { padding: [48, 48] });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Lookup + render
+    // ---------------------------------------------------------------------------
+
+    const goBtn = $('go-btn');
+    const statusEl = $('lookup-status');
+    const resultsEl = $('results');
+
+    async function getDirections() {
+      const homeAddr = $('home-address').value.trim();
+      const destAddr = $('dest-address').value.trim();
+      if (!homeAddr || !destAddr) {
+        statusEl.textContent = 'Enter both addresses first.';
+        return;
+      }
+      goBtn.disabled = true;
+      try {
+        statusEl.textContent = 'Finding home…';
+        const home = await geocode(homeAddr);
+        if (!home) throw new Error(`couldn't find the home address — try adding city and state`);
+        await sleep(1100); // Nominatim usage policy: max 1 request/second
+        statusEl.textContent = 'Finding destination…';
+        const dest = await geocode(destAddr);
+        if (!dest) throw new Error(`couldn't find the destination — try adding city and state`);
+        statusEl.textContent = 'Calculating driving route…';
+        const r = await drivingRoute(home, dest);
+        home.stateCode = await resolveState(home);
+        route = { ...r, home, dest };
+        try { localStorage.setItem('commuteplanner:addresses', JSON.stringify({ home: homeAddr, dest: destAddr })); } catch { /* ignore */ }
+        statusEl.textContent = '';
+        resultsEl.hidden = false;
+        drawRoute();
+        renderRoute();
+        renderStats();
+        resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        route = null;
+        resultsEl.hidden = true;
+        statusEl.textContent = `Lookup failed: ${err.message}.`;
+      } finally {
+        goBtn.disabled = false;
+      }
+    }
+
+    function renderRoute() {
+      const from = route.home.city || route.home.stateCode || 'Home';
+      const to = route.dest.city || route.dest.stateCode || 'Destination';
+      $('route-title').textContent = from === to ? `${from}: Home → Destination` : `${from} → ${to}`;
+      const split = route.split
+        ? ` · ${num1.format(route.split.highway * 2)} mi highway, ${num1.format(route.split.city * 2)} mi city`
+        : '';
+      $('route-via').textContent = `${route.summary ? `via ${route.summary} · ` : ''}round trip${split}`;
+
+      const list = $('steps');
+      list.innerHTML = '';
+      if (!SHOW_DIRECTIONS) return;
+      $('steps-heading').hidden = false;
+      list.hidden = false;
+      route.steps.forEach((step) => {
+        const li = document.createElement('li');
+        li.className = 'step';
+        const dist = step.maneuver.type === 'arrive' ? '' : formatStepDistance(step.distance);
+        li.innerHTML =
+          `<span class="step-icon" aria-hidden="true">${stepIcon(step)}</span>` +
+          `<span class="step-text"></span>` +
+          `<span class="step-dist">${dist}</span>`;
+        li.querySelector('.step-text').textContent = instruction(step);
+        list.appendChild(li);
+      });
+      list.scrollTop = 0;
+    }
+
+    // Per-mile consumption over the route's highway/city mix, so any stretch of
+    // the round trip (battery or gas) can be costed by its length alone. Without
+    // a split from the router, the combined rating is used.
+    function gallonsPerMile(mpg) {
+      if (route.split && mpg.city && mpg.highway) {
+        return (route.split.highway / mpg.highway + route.split.city / mpg.city) / route.miles;
+      }
+      return 1 / mpg.combined;
+    }
+    function kwhPerMile(v) {
+      if (route.split && v.cityE && v.highwayE) {
+        return (route.split.highway * v.highwayE + route.split.city * v.cityE) / 100 / route.miles;
+      }
+      return v.combE / 100;
+    }
+
+    // Battery miles over a plug-in hybrid's round trip. Each leg starts with a
+    // full battery if there's a charger at that end, otherwise with whatever the
+    // previous leg left over; the rest of the leg runs on gas. Nothing checked
+    // means the whole commute is on gas.
+    function phevElectricMiles(oneWay, range, chargeHome, chargeDest) {
+      const out = chargeHome ? Math.min(oneWay, range) : 0;
+      const leftover = chargeHome ? Math.max(0, range - oneWay) : 0;
+      const back = Math.min(oneWay, chargeDest ? range : leftover);
+      return out + back;
+    }
+
+    function renderStats() {
+      if (!route) return;
+      const miles = route.miles * 2; // round trip: home → destination → home
+      $('stat-miles').textContent = `${num1.format(miles)} mi`;
+      $('stat-time').textContent = formatTime(route.minutes * 2);
+
+      let electricMiles = 0;
+      if (isElectric()) {
+        electricMiles = miles;
+      } else if (isPhev()) {
+        electricMiles = phevElectricMiles(route.miles, vehicle.rangeElectric, $('charge-home').checked, $('charge-dest').checked);
+      }
+      const gasMiles = miles - electricMiles;
+
+      const state = route.home.stateCode;
+      let cost = 0;
+      const sources = [];
+      if (gasMiles > 0) {
+        const { price, label } = priceFor(state, fuelKind());
+        cost += gasMiles * gallonsPerMile(vehicle || { combined: DEFAULT_MPG }) * price;
+        // The car and its MPG already show in the car card; only the assumed MPG
+        // needs stating when no car is selected.
+        sources.push(vehicle ? label : `Average car (${DEFAULT_MPG} MPG) · ${label}`);
+      }
+      if (electricMiles > 0) {
+        const { price, label } = electricityPriceFor(state);
+        cost += electricMiles * kwhPerMile(vehicle) * price;
+        sources.push(label);
+      }
+      $('stat-cost-label').textContent =
+        gasMiles > 0 && electricMiles > 0 ? 'Energy Cost' : electricMiles > 0 ? 'Charging' : 'Fuel Cost';
+      $('stat-cost').textContent = usd.format(cost);
+      const phevSplit = isPhev() ? `${num1.format(electricMiles)} mi electric, ${num1.format(gasMiles)} mi gas · ` : '';
+      $('cost-note').textContent = phevSplit + sources.join(' · ');
+    }
+
+    // ---------------------------------------------------------------------------
+    // Wiring
+    // ---------------------------------------------------------------------------
+
+    yearSel.addEventListener('change', onYearChange);
+    makeSel.addEventListener('change', onMakeChange);
+    modelSel.addEventListener('change', onModelChange);
+    trimSel.addEventListener('change', onTrimChange);
+    $('car-retry').addEventListener('click', retryCarLoad);
+    $('charge-home').addEventListener('change', renderStats);
+    $('charge-dest').addEventListener('change', renderStats);
+    goBtn.addEventListener('click', getDirections);
+    for (const id of ['home-address', 'dest-address']) {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') getDirections(); });
+    }
+
+    try {
+      const saved = JSON.parse(localStorage.getItem('commuteplanner:addresses'));
+      if (saved) {
+        $('home-address').value = saved.home || '';
+        $('dest-address').value = saved.dest || '';
+      }
+    } catch { /* nothing saved */ }
+
+    loadPrices();
+    loadYears();
+  </script>
+</body>
+</html>
