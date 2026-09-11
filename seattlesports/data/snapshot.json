@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-10T23:53:10.117Z",
+ "generatedAt": "2026-09-11T03:59:30.130Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -125,9 +125,9 @@
     "divisionEntries": [
      {
       "team": {
-       "id": "26",
-       "abbreviation": "SEA",
-       "displayName": "Seattle Seahawks"
+       "id": "25",
+       "abbreviation": "SF",
+       "displayName": "San Francisco 49ers"
       },
       "stats": [
        {
@@ -159,15 +159,15 @@
      },
      {
       "team": {
-       "id": "14",
-       "abbreviation": "LAR",
-       "displayName": "Los Angeles Rams"
+       "id": "26",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Seahawks"
       },
       "stats": [
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "0.5"
+        "displayValue": "-"
        },
        {
         "name": "losses",
@@ -182,12 +182,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".000"
+        "displayValue": "1.000"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "0"
+        "displayValue": "1"
        }
       ]
      },
@@ -227,20 +227,20 @@
      },
      {
       "team": {
-       "id": "25",
-       "abbreviation": "SF",
-       "displayName": "San Francisco 49ers"
+       "id": "14",
+       "abbreviation": "LAR",
+       "displayName": "Los Angeles Rams"
       },
       "stats": [
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "0.5"
+        "displayValue": "1"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "0"
+        "displayValue": "1"
        },
        {
         "name": "ties",
