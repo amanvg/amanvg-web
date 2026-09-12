@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-11T03:59:30.130Z",
+ "generatedAt": "2026-09-12T05:30:58.464Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -273,13 +273,13 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-09-10T20:10Z",
+     "date": "2026-09-12T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "post",
-         "shortDetail": "Final",
+         "shortDetail": "Final/10",
          "description": "Final"
         }
        },
@@ -287,23 +287,23 @@
         {
          "homeAway": "home",
          "winner": true,
-         "score": "4",
+         "score": "6",
          "team": {
-          "id": "12",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Mariners",
-          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
+          "id": "11",
+          "abbreviation": "ATH",
+          "shortDisplayName": "Athletics",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/ath.png"
          }
         },
         {
          "homeAway": "away",
          "winner": false,
-         "score": "3",
+         "score": "5",
          "team": {
-          "id": "13",
-          "abbreviation": "TEX",
-          "shortDisplayName": "Rangers",
-          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png"
+          "id": "12",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Mariners",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
          }
         }
        ],
@@ -313,13 +313,13 @@
     },
     "liveGame": null,
     "nextGame": {
-     "date": "2026-09-12T01:40Z",
+     "date": "2026-09-13T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "pre",
-         "shortDetail": "9/11 - 9:40 PM EDT",
+         "shortDetail": "9/12 - 9:40 PM EDT",
          "description": "Scheduled"
         }
        },
@@ -359,22 +359,22 @@
       {
        "name": "OTLosses",
        "abbreviation": "OTL",
-       "displayValue": "7"
+       "displayValue": "8"
       },
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "18.5"
+       "displayValue": "19.5"
       },
       {
        "name": "losses",
        "abbreviation": "L",
-       "displayValue": "78"
+       "displayValue": "79"
       },
       {
        "name": "points",
        "abbreviation": "GBP",
-       "displayValue": "-4.5"
+       "displayValue": "-5.0"
       },
       {
        "name": "ties",
@@ -384,7 +384,7 @@
       {
        "name": "winPercent",
        "abbreviation": "PCT",
-       "displayValue": ".469"
+       "displayValue": ".466"
       },
       {
        "name": "wins",
@@ -409,17 +409,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12.5"
+        "displayValue": "13.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "72"
+        "displayValue": "73"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "1.5"
+        "displayValue": "1.0"
        },
        {
         "name": "ties",
@@ -429,7 +429,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".510"
+        "displayValue": ".507"
        },
        {
         "name": "wins",
@@ -453,17 +453,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "15.5"
+        "displayValue": "16.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "75"
+        "displayValue": "76"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-1.5"
+        "displayValue": "-2.0"
        },
        {
         "name": "ties",
@@ -473,7 +473,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".490"
+        "displayValue": ".486"
        },
        {
         "name": "wins",
@@ -492,22 +492,22 @@
        {
         "name": "OTLosses",
         "abbreviation": "OTL",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "18.5"
+        "displayValue": "19.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "78"
+        "displayValue": "79"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-4.5"
+        "displayValue": "-5.0"
        },
        {
         "name": "ties",
@@ -517,7 +517,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".469"
+        "displayValue": ".466"
        },
        {
         "name": "wins",
@@ -551,7 +551,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-14.5"
+        "displayValue": "-14.0"
        },
        {
         "name": "ties",
@@ -561,12 +561,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".401"
+        "displayValue": ".405"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "59"
+        "displayValue": "60"
        }
       ]
      },
@@ -585,17 +585,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "31"
+        "displayValue": "32"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "90"
+        "displayValue": "91"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-17.0"
+        "displayValue": "-17.5"
        },
        {
         "name": "ties",
@@ -605,7 +605,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".384"
+        "displayValue": ".381"
        },
        {
         "name": "wins",
