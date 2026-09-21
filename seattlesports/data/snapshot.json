@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-20T23:27:13.120Z",
+ "generatedAt": "2026-09-21T01:31:54.774Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -666,16 +666,15 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-09-21T00:00Z",
      "competitions": [
       {
        "status": {
         "type": {
-         "state": "pre",
-         "shortDetail": "9/20 - 8:00 PM EDT",
-         "description": "Scheduled"
+         "state": "in",
+         "shortDetail": "5:57 - 2nd",
+         "description": "In Progress"
         }
        },
        "competitors": [
@@ -695,6 +694,41 @@
           "abbreviation": "SEA",
           "shortDisplayName": "Kraken",
           "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "nextGame": {
+     "date": "2026-09-25T01:40Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "9/24 - 9:40 PM EDT",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "124292",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Kraken",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "3",
+          "abbreviation": "CGY",
+          "shortDisplayName": "Flames",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/cgy.png"
          }
         }
        ],
@@ -1405,6 +1439,35 @@
      },
      {
       "team": {
+       "id": "22529",
+       "abbreviation": "SD",
+       "displayName": "San Diego FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "11"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "31"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "7"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "8"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "20906",
        "abbreviation": "ATX",
        "displayName": "Austin FC"
@@ -1429,35 +1492,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "7"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "22529",
-       "abbreviation": "SD",
-       "displayName": "San Diego FC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "11"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "30"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "6"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "8"
        }
       ]
      },
