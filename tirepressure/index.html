@@ -97,7 +97,7 @@
     .field { display: flex; flex-direction: column; gap: 6px; }
     .field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
 
-    input[type="text"], input[type="number"] {
+    select, input[type="text"] {
       font: inherit; font-size: 14px;
       color: var(--text-primary);
       background: var(--surface-2);
@@ -108,11 +108,9 @@
       transition: border-color 0.15s;
       font-variant-numeric: tabular-nums;
     }
-    input:focus { outline: none; border-color: var(--accent); }
+    select:focus, input:focus { outline: none; border-color: var(--accent); }
+    select { cursor: pointer; }
     input::placeholder { color: var(--text-tertiary); }
-    input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
     .location-row { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: end; }
 
@@ -229,11 +227,11 @@
       <div class="grid grid-2">
         <div class="field">
           <label for="spec-front">Front (psi)</label>
-          <input type="number" id="spec-front" inputmode="decimal" min="10" max="80" step="0.5" placeholder="35">
+          <select id="spec-front"></select>
         </div>
         <div class="field">
           <label for="spec-rear">Rear (psi)</label>
-          <input type="number" id="spec-rear" inputmode="decimal" min="10" max="80" step="0.5" placeholder="35">
+          <select id="spec-rear"></select>
         </div>
       </div>
     </section>
@@ -266,6 +264,7 @@
     const $ = id => document.getElementById(id);
     const PSI_PER_DEG_F = 0.1;
     const HISTORY_YEARS = 10;
+    const SPEC_MIN = 20, SPEC_MAX = 80;
     const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
     const zipInput = $('zip');
@@ -443,7 +442,10 @@
     });
     btnLocate.addEventListener('click', useGeolocation);
     AXLES.forEach(({ id }) => {
-      $(id).addEventListener('input', () => { saveInputs(); render(); });
+      const sel = $(id);
+      sel.appendChild(new Option('—', ''));
+      for (let psi = SPEC_MIN; psi <= SPEC_MAX; psi += 0.5) sel.appendChild(new Option(fmtPsi(psi), fmtPsi(psi)));
+      sel.addEventListener('change', () => { saveInputs(); render(); });
     });
 
     loadInputs();
