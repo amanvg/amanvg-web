@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tire Pressure — amanvg</title>
+  <meta name="description" content="Per-corner tire pressure adjustment from your TPMS readings, the door jamb cold spec, today's temperature, and the month's average temperature for your location.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: dark;
+      --bg: #141414;
+      --surface: #1e1e1e;
+      --surface-2: #232323;
+      --surface-hover: #2a2a2a;
+      --border: #2e2e2e;
+      --border-hover: #3d3d3d;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-tertiary: #8a8a8a;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --accent-border: rgba(59, 130, 246, 0.35);
+      --accent-text: #93c5fd;
+      --red: #f87171;
+      --green: #4ade80;
+      --radius-card: 20px;
+      --radius-btn: 12px;
+      --radius-input: 10px;
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(13,13,13,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      padding: 0 32px; height: 56px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    }
+    .nav-back {
+      justify-self: start;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-back:hover { color: var(--text-primary); background: var(--border); }
+    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
+
+    /* ── Page ── */
+    .page { max-width: 760px; margin: 0 auto; padding: 40px 32px 80px; }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+
+    .grid { display: grid; gap: 14px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+
+    input[type="text"], input[type="number"] {
+      font: inherit; font-size: 14px;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 10px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+      font-variant-numeric: tabular-nums;
+    }
+    input:focus { outline: none; border-color: var(--accent); }
+    input::placeholder { color: var(--text-tertiary); }
+    input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+    .location-row { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: end; }
+
+    .status { font-size: 13px; color: var(--text-tertiary); line-height: 1.5; }
+    .error { font-size: 13px; color: var(--red); line-height: 1.5; }
+    .status-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; min-height: 20px; }
+
+    .btn-secondary {
+      font: inherit; font-size: 13px; font-weight: 600;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-secondary:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--border-hover); }
+    .btn-secondary:disabled { color: var(--text-tertiary); cursor: wait; }
+
+    /* ── Tire grid ── */
+    .tires {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 40px;
+      max-width: 420px;
+    }
+    .tire label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+    .tire input { margin-top: 6px; }
+
+    /* ── Results ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+    .stat {
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      border-radius: 14px;
+      padding: 12px;
+      min-width: 0;
+    }
+    .stat-label {
+      display: block;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+    }
+    .stat-value {
+      display: block;
+      font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
+      color: var(--accent-text);
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .stat-value small { font-size: 12px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0; margin-left: 2px; }
+
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border); font-size: 14px; }
+    th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
+    th:first-child, td:first-child { text-align: left; }
+    tr:last-child td { border-bottom: none; }
+    td.corner { font-weight: 600; }
+    td.adjust { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
+    td.adjust.up { color: var(--accent-text); }
+    td.adjust.down { color: var(--red); }
+    td.adjust.ok { color: var(--green); }
+    td.muted { color: var(--text-tertiary); }
+
+    .footer { text-align: center; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; margin-top: 24px; }
+    .footer a { color: var(--text-secondary); }
+
+    @media (max-width: 640px) {
+      .nav-inner { padding: 0 20px; }
+      .nav-title { font-size: 15px; }
+      .page { padding: 28px 20px 60px; }
+      .page-header h1 { font-size: 26px; }
+      .card { padding: 22px; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .location-row { grid-template-columns: 1fr; }
+      .tires { gap: 14px 20px; }
+      .stat-row { grid-template-columns: 1fr 1fr; }
+      th, td { padding: 10px 6px; }
+    }
+
+    :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+
+  <nav aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="nav-back" href="/">← amanvg</a>
+      <span class="nav-title">Tire Pressure</span>
+      <span></span>
+    </div>
+  </nav>
+
+  <main class="page">
+    <header class="page-header">
+      <h1>🛞 Tire Pressure</h1>
+    </header>
+
+    <section class="card">
+      <h2>1. Location</h2>
+      <div class="location-row">
+        <div class="field">
+          <label for="zip">Zip Code</label>
+          <input type="text" id="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="98101">
+        </div>
+        <button type="button" class="btn-secondary" id="btn-locate">Use my location</button>
+      </div>
+      <div class="status-row">
+        <span class="status" id="loc-status"></span>
+        <span class="error" id="loc-error" hidden></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Door Jamb Cold Pressure</h2>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="spec-front">Front (psi)</label>
+          <input type="number" id="spec-front" inputmode="decimal" min="10" max="80" step="0.5" placeholder="35">
+        </div>
+        <div class="field">
+          <label for="spec-rear">Rear (psi)</label>
+          <input type="number" id="spec-rear" inputmode="decimal" min="10" max="80" step="0.5" placeholder="35">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. TPMS Readings</h2>
+      <div class="tires">
+        <div class="tire"><label for="tpms-fl">Front Left (psi)</label><input type="number" id="tpms-fl" inputmode="decimal" min="0" max="99" step="0.5" placeholder="33"></div>
+        <div class="tire"><label for="tpms-fr">Front Right (psi)</label><input type="number" id="tpms-fr" inputmode="decimal" min="0" max="99" step="0.5" placeholder="33"></div>
+        <div class="tire"><label for="tpms-rl">Rear Left (psi)</label><input type="number" id="tpms-rl" inputmode="decimal" min="0" max="99" step="0.5" placeholder="33"></div>
+        <div class="tire"><label for="tpms-rr">Rear Right (psi)</label><input type="number" id="tpms-rr" inputmode="decimal" min="0" max="99" step="0.5" placeholder="33"></div>
+      </div>
+    </section>
+
+    <section class="card" id="results" hidden>
+      <h2>4. Adjustment</h2>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-label">Now</span><span class="stat-value" id="stat-now">—</span></div>
+        <div class="stat"><span class="stat-label" id="stat-month-label">Month Avg</span><span class="stat-value" id="stat-avg">—</span></div>
+        <div class="stat"><span class="stat-label">Avg Low</span><span class="stat-value" id="stat-low">—</span></div>
+        <div class="stat"><span class="stat-label">Avg High</span><span class="stat-value" id="stat-high">—</span></div>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Corner</th><th>Spec</th><th>TPMS</th><th>Target</th><th>Adjust</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </section>
+
+    <footer class="footer">
+      <p>Current temperature and 10-year monthly history from <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (ERA5). Zip code lookup by <a href="https://www.zippopotam.us/" target="_blank" rel="noopener">Zippopotam.us</a>. Place names © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.</p>
+    </footer>
+  </main>
+
+  <script>
+    'use strict';
+
+    const $ = id => document.getElementById(id);
+    const PSI_PER_DEG_F = 0.1;
+    const HISTORY_YEARS = 10;
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    const zipInput = $('zip');
+    const locStatus = $('loc-status');
+    const locError = $('loc-error');
+    const btnLocate = $('btn-locate');
+    const results = $('results');
+
+    const CORNERS = [
+      { id: 'tpms-fl', name: 'Front Left', axle: 'front' },
+      { id: 'tpms-fr', name: 'Front Right', axle: 'front' },
+      { id: 'tpms-rl', name: 'Rear Left', axle: 'rear' },
+      { id: 'tpms-rr', name: 'Rear Right', axle: 'rear' },
+    ];
+
+    let weather = null;   // { nowF, avgF, lowF, highF, month }
+    let requestSeq = 0;
+
+    // ── Persistence ──
+    const STORE_KEY = 'tirepressure.inputs';
+    function saveInputs() {
+      const data = { zip: zipInput.value, specFront: $('spec-front').value, specRear: $('spec-rear').value };
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+    function loadInputs() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+        if (data.zip) zipInput.value = data.zip;
+        if (data.specFront) $('spec-front').value = data.specFront;
+        if (data.specRear) $('spec-rear').value = data.specRear;
+      } catch (e) {}
+    }
+
+    // ── Location ──
+    function setStatus(text) { locStatus.textContent = text; locError.hidden = true; }
+    function setError(text) { locError.textContent = text; locError.hidden = false; locStatus.textContent = ''; }
+
+    async function fetchJson(url) {
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      return res.json();
+    }
+
+    async function geocodeZip(zip) {
+      const data = await fetchJson(`https://api.zippopotam.us/us/${zip}`);
+      const place = data.places && data.places[0];
+      if (!place) throw new Error('Zip code not found');
+      return {
+        lat: parseFloat(place.latitude),
+        lon: parseFloat(place.longitude),
+        label: `${place['place name']}, ${place['state abbreviation']} ${zip}`,
+      };
+    }
+
+    async function reverseGeocode(lat, lon) {
+      try {
+        const data = await fetchJson(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10`);
+        const a = data.address || {};
+        const city = a.city || a.town || a.village || a.county || '';
+        const parts = [city, a.state, a.postcode].filter(Boolean);
+        return parts.length ? parts.join(', ') : `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+      } catch (e) {
+        return `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+      }
+    }
+
+    // ── Weather ──
+    function isoDate(d) { return d.toISOString().slice(0, 10); }
+
+    async function fetchCurrentF(lat, lon) {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m&temperature_unit=fahrenheit&timezone=auto`;
+      const data = await fetchJson(url);
+      return data.current.temperature_2m;
+    }
+
+    async function fetchMonthHistory(lat, lon, month) {
+      const now = new Date();
+      const cacheKey = `tirepressure.hist.${lat.toFixed(2)}.${lon.toFixed(2)}.${now.getFullYear()}.${month}`;
+      try {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) return JSON.parse(cached);
+      } catch (e) {}
+
+      const startYear = now.getFullYear() - HISTORY_YEARS;
+      const endYear = now.getFullYear() - 1;
+      const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}`
+        + `&start_date=${startYear}-01-01&end_date=${endYear}-12-31`
+        + `&daily=temperature_2m_mean,temperature_2m_min,temperature_2m_max&temperature_unit=fahrenheit&timezone=auto`;
+      const data = await fetchJson(url);
+      const d = data.daily;
+      let n = 0, sumMean = 0, sumMin = 0, sumMax = 0;
+      for (let i = 0; i < d.time.length; i++) {
+        if (parseInt(d.time[i].slice(5, 7), 10) !== month + 1) continue;
+        const mean = d.temperature_2m_mean[i], min = d.temperature_2m_min[i], max = d.temperature_2m_max[i];
+        if (mean == null || min == null || max == null) continue;
+        n++; sumMean += mean; sumMin += min; sumMax += max;
+      }
+      if (!n) throw new Error('No history for this month');
+      const result = { avgF: sumMean / n, lowF: sumMin / n, highF: sumMax / n, days: n, years: `${startYear}–${endYear}` };
+      try { localStorage.setItem(cacheKey, JSON.stringify(result)); } catch (e) {}
+      return result;
+    }
+
+    async function loadWeather(lat, lon, label) {
+      const seq = ++requestSeq;
+      weather = null;
+      render();
+      setStatus(`${label} · loading weather…`);
+      try {
+        const month = new Date().getMonth();
+        const [nowF, hist] = await Promise.all([fetchCurrentF(lat, lon), fetchMonthHistory(lat, lon, month)]);
+        if (seq !== requestSeq) return;
+        weather = { nowF, avgF: hist.avgF, lowF: hist.lowF, highF: hist.highF, month, years: hist.years };
+        setStatus(label);
+        render();
+      } catch (e) {
+        if (seq !== requestSeq) return;
+        setError(`Weather unavailable: ${e.message}`);
+      }
+    }
+
+    async function useZip(zip) {
+      setStatus('Looking up zip code…');
+      try {
+        const loc = await geocodeZip(zip);
+        saveInputs();
+        await loadWeather(loc.lat, loc.lon, loc.label);
+      } catch (e) {
+        setError(`Zip code lookup failed: ${e.message}`);
+      }
+    }
+
+    function useGeolocation() {
+      if (!navigator.geolocation) { setError('Geolocation not available'); return; }
+      btnLocate.disabled = true;
+      setStatus('Locating…');
+      navigator.geolocation.getCurrentPosition(async pos => {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        const label = await reverseGeocode(lat, lon);
+        btnLocate.disabled = false;
+        await loadWeather(lat, lon, label);
+      }, err => {
+        btnLocate.disabled = false;
+        setError(`Location ${err.code === 1 ? 'denied' : 'unavailable'}`);
+      }, { timeout: 15000, maximumAge: 600000 });
+    }
+
+    // ── Calculation ──
+    function roundHalf(x) { return Math.round(x * 2) / 2; }
+    function fmtPsi(x) { return Number.isInteger(x) ? String(x) : x.toFixed(1); }
+    function fmtDeg(x) { return `${Math.round(x)}<small>°F</small>`; }
+    function fmtAdjust(x) {
+      if (Math.abs(x) < 0.25) return '0';
+      return (x > 0 ? '+' : '−') + fmtPsi(Math.abs(x));
+    }
+
+    function render() {
+      const specs = { front: parseFloat($('spec-front').value), rear: parseFloat($('spec-rear').value) };
+      const readings = CORNERS.map(c => parseFloat($(c.id).value));
+      const haveAny = CORNERS.some((c, i) => Number.isFinite(readings[i]) && Number.isFinite(specs[c.axle]));
+
+      if (!weather || !haveAny) { results.hidden = true; return; }
+
+      const offset = (weather.nowF - weather.avgF) * PSI_PER_DEG_F;
+
+      $('stat-now').innerHTML = fmtDeg(weather.nowF);
+      $('stat-month-label').textContent = `${MONTHS[weather.month]} Avg`;
+      $('stat-avg').innerHTML = fmtDeg(weather.avgF);
+      $('stat-low').innerHTML = fmtDeg(weather.lowF);
+      $('stat-high').innerHTML = fmtDeg(weather.highF);
+
+      const rows = CORNERS.map((c, i) => {
+        const spec = specs[c.axle], reading = readings[i];
+        if (!Number.isFinite(spec) || !Number.isFinite(reading)) {
+          return `<tr><td class="corner">${c.name}</td><td class="muted">${Number.isFinite(spec) ? fmtPsi(spec) : '—'}</td><td class="muted">${Number.isFinite(reading) ? fmtPsi(reading) : '—'}</td><td class="muted">—</td><td class="adjust muted">—</td></tr>`;
+        }
+        const target = roundHalf(spec + offset);
+        const adjust = roundHalf(target - reading);
+        const cls = Math.abs(adjust) < 0.25 ? 'ok' : adjust > 0 ? 'up' : 'down';
+        return `<tr><td class="corner">${c.name}</td><td>${fmtPsi(spec)}</td><td>${fmtPsi(reading)}</td><td>${fmtPsi(target)}</td><td class="adjust ${cls}">${fmtAdjust(adjust)}</td></tr>`;
+      });
+      $('rows').innerHTML = rows.join('');
+      results.hidden = false;
+    }
+
+    // ── Events ──
+    zipInput.addEventListener('input', () => {
+      zipInput.value = zipInput.value.replace(/\D/g, '').slice(0, 5);
+      if (zipInput.value.length === 5) useZip(zipInput.value);
+    });
+    btnLocate.addEventListener('click', useGeolocation);
+    ['spec-front', 'spec-rear', ...CORNERS.map(c => c.id)].forEach(id => {
+      $(id).addEventListener('input', () => { saveInputs(); render(); });
+    });
+
+    loadInputs();
+    if (zipInput.value.length === 5) useZip(zipInput.value);
+  </script>
+</body>
+</html>
