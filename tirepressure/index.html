@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tire Pressure — amanvg</title>
-  <meta name="description" content="Per-corner tire pressure adjustment from your TPMS readings, the door jamb cold spec, today's temperature, and the month's average temperature for your location.">
+  <meta name="description" content="Target tire pressure from the door jamb cold spec, today's temperature, and the month's average temperature for your location.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -27,7 +27,6 @@
       --accent-border: rgba(59, 130, 246, 0.35);
       --accent-text: #93c5fd;
       --red: #f87171;
-      --green: #4ade80;
       --radius-card: 20px;
       --radius-btn: 12px;
       --radius-input: 10px;
@@ -135,15 +134,6 @@
     .btn-secondary:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--border-hover); }
     .btn-secondary:disabled { color: var(--text-tertiary); cursor: wait; }
 
-    /* ── Tire grid ── */
-    .tires {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 40px;
-      max-width: 420px;
-    }
-    .tire label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-    .tire input { margin-top: 6px; }
 
     /* ── Results ── */
     .stat-row {
@@ -182,11 +172,8 @@
     th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
     th:first-child, td:first-child { text-align: left; }
     tr:last-child td { border-bottom: none; }
-    td.corner { font-weight: 600; }
-    td.adjust { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
-    td.adjust.up { color: var(--accent-text); }
-    td.adjust.down { color: var(--red); }
-    td.adjust.ok { color: var(--green); }
+    td.axle { font-weight: 600; }
+    td.target { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: var(--accent-text); }
     td.muted { color: var(--text-tertiary); }
 
     .footer { text-align: center; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; margin-top: 24px; }
@@ -200,7 +187,6 @@
       .card { padding: 22px; }
       .grid-2 { grid-template-columns: 1fr; }
       .location-row { grid-template-columns: 1fr; }
-      .tires { gap: 14px 20px; }
       .stat-row { grid-template-columns: 1fr 1fr; }
       th, td { padding: 10px 6px; }
     }
@@ -252,18 +238,9 @@
       </div>
     </section>
 
-    <section class="card">
-      <h2>3. TPMS Readings</h2>
-      <div class="tires">
-        <div class="tire"><label for="tpms-fl">Front Left (psi)</label><input type="number" id="tpms-fl" inputmode="decimal" min="0" max="99" step="0.5" placeholder="33"></div>
-        <div class="tire"><label for="tpms-fr">Front Right (psi)</label><input type="number" id="tpms-fr" inputmode="decimal" min="0" max="99" step="0.5" placeholder="33"></div>
-        <div class="tire"><label for="tpms-rl">Rear Left (psi)</label><input type="number" id="tpms-rl" inputmode="decimal" min="0" max="99" step="0.5" placeholder="33"></div>
-        <div class="tire"><label for="tpms-rr">Rear Right (psi)</label><input type="number" id="tpms-rr" inputmode="decimal" min="0" max="99" step="0.5" placeholder="33"></div>
-      </div>
-    </section>
 
     <section class="card" id="results" hidden>
-      <h2>4. Adjustment</h2>
+      <h2>3. Target Pressure</h2>
       <div class="stat-row">
         <div class="stat"><span class="stat-label">Now</span><span class="stat-value" id="stat-now">—</span></div>
         <div class="stat"><span class="stat-label" id="stat-month-label">Month Avg</span><span class="stat-value" id="stat-avg">—</span></div>
@@ -272,7 +249,7 @@
       </div>
       <table>
         <thead>
-          <tr><th>Corner</th><th>Spec</th><th>TPMS</th><th>Target</th><th>Adjust</th></tr>
+          <tr><th>Axle</th><th>Spec</th><th>Target</th></tr>
         </thead>
         <tbody id="rows"></tbody>
       </table>
@@ -297,11 +274,9 @@
     const btnLocate = $('btn-locate');
     const results = $('results');
 
-    const CORNERS = [
-      { id: 'tpms-fl', name: 'Front Left', axle: 'front' },
-      { id: 'tpms-fr', name: 'Front Right', axle: 'front' },
-      { id: 'tpms-rl', name: 'Rear Left', axle: 'rear' },
-      { id: 'tpms-rr', name: 'Rear Right', axle: 'rear' },
+    const AXLES = [
+      { id: 'spec-front', name: 'Front' },
+      { id: 'spec-rear', name: 'Rear' },
     ];
 
     let weather = null;   // { nowF, avgF, lowF, highF, month }
@@ -440,17 +415,10 @@
     function roundHalf(x) { return Math.round(x * 2) / 2; }
     function fmtPsi(x) { return Number.isInteger(x) ? String(x) : x.toFixed(1); }
     function fmtDeg(x) { return `${Math.round(x)}<small>°F</small>`; }
-    function fmtAdjust(x) {
-      if (Math.abs(x) < 0.25) return '0';
-      return (x > 0 ? '+' : '−') + fmtPsi(Math.abs(x));
-    }
 
     function render() {
-      const specs = { front: parseFloat($('spec-front').value), rear: parseFloat($('spec-rear').value) };
-      const readings = CORNERS.map(c => parseFloat($(c.id).value));
-      const haveAny = CORNERS.some((c, i) => Number.isFinite(readings[i]) && Number.isFinite(specs[c.axle]));
-
-      if (!weather || !haveAny) { results.hidden = true; return; }
+      const specs = AXLES.map(a => parseFloat($(a.id).value));
+      if (!weather || !specs.some(Number.isFinite)) { results.hidden = true; return; }
 
       const offset = (weather.nowF - weather.avgF) * PSI_PER_DEG_F;
 
@@ -460,17 +428,11 @@
       $('stat-low').innerHTML = fmtDeg(weather.lowF);
       $('stat-high').innerHTML = fmtDeg(weather.highF);
 
-      const rows = CORNERS.map((c, i) => {
-        const spec = specs[c.axle], reading = readings[i];
-        if (!Number.isFinite(spec) || !Number.isFinite(reading)) {
-          return `<tr><td class="corner">${c.name}</td><td class="muted">${Number.isFinite(spec) ? fmtPsi(spec) : '—'}</td><td class="muted">${Number.isFinite(reading) ? fmtPsi(reading) : '—'}</td><td class="muted">—</td><td class="adjust muted">—</td></tr>`;
-        }
-        const target = roundHalf(spec + offset);
-        const adjust = roundHalf(target - reading);
-        const cls = Math.abs(adjust) < 0.25 ? 'ok' : adjust > 0 ? 'up' : 'down';
-        return `<tr><td class="corner">${c.name}</td><td>${fmtPsi(spec)}</td><td>${fmtPsi(reading)}</td><td>${fmtPsi(target)}</td><td class="adjust ${cls}">${fmtAdjust(adjust)}</td></tr>`;
-      });
-      $('rows').innerHTML = rows.join('');
+      $('rows').innerHTML = AXLES.map((a, i) => {
+        const spec = specs[i];
+        if (!Number.isFinite(spec)) return `<tr><td class="axle">${a.name}</td><td class="muted">—</td><td class="target muted">—</td></tr>`;
+        return `<tr><td class="axle">${a.name}</td><td>${fmtPsi(spec)}</td><td class="target">${fmtPsi(roundHalf(spec + offset))}</td></tr>`;
+      }).join('');
       results.hidden = false;
     }
 
@@ -480,7 +442,7 @@
       if (zipInput.value.length === 5) useZip(zipInput.value);
     });
     btnLocate.addEventListener('click', useGeolocation);
-    ['spec-front', 'spec-rear', ...CORNERS.map(c => c.id)].forEach(id => {
+    AXLES.forEach(({ id }) => {
       $(id).addEventListener('input', () => { saveInputs(); render(); });
     });
 
