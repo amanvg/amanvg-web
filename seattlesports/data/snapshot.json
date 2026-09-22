@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-21T07:49:01.491Z",
+ "generatedAt": "2026-09-22T07:33:02.901Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -193,9 +193,9 @@
      },
      {
       "team": {
-       "id": "22",
-       "abbreviation": "ARI",
-       "displayName": "Arizona Cardinals"
+       "id": "14",
+       "abbreviation": "LAR",
+       "displayName": "Los Angeles Rams"
       },
       "stats": [
        {
@@ -227,15 +227,15 @@
      },
      {
       "team": {
-       "id": "14",
-       "abbreviation": "LAR",
-       "displayName": "Los Angeles Rams"
+       "id": "22",
+       "abbreviation": "ARI",
+       "displayName": "Arizona Cardinals"
       },
       "stats": [
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "1.5"
+        "displayValue": "1"
        },
        {
         "name": "losses",
@@ -250,12 +250,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".000"
+        "displayValue": ".500"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "0"
+        "displayValue": "1"
        }
       ]
      }
