@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-22T21:05:38.586Z",
+ "generatedAt": "2026-09-23T04:12:54.226Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -311,15 +311,49 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-09-23T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
+         "state": "in",
+         "shortDetail": "Bot 7th",
+         "description": "In Progress"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "12",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Mariners",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "18",
+          "abbreviation": "HOU",
+          "shortDisplayName": "Astros",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "nextGame": {
+     "date": "2026-09-24T02:00Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
          "state": "pre",
-         "shortDetail": "9/22 - 9:40 PM EDT",
+         "shortDetail": "9/23 - 10:00 PM EDT",
          "description": "Scheduled"
         }
        },
@@ -364,7 +398,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "22"
+       "displayValue": "22.5"
       },
       {
        "name": "losses",
@@ -409,17 +443,17 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "17"
+        "displayValue": "18"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "78"
+        "displayValue": "79"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "0.0"
+        "displayValue": "-0.5"
        },
        {
         "name": "ties",
@@ -429,7 +463,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".500"
+        "displayValue": ".497"
        },
        {
         "name": "wins",
@@ -453,7 +487,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "18"
+        "displayValue": "18.5"
        },
        {
         "name": "losses",
@@ -497,7 +531,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "22"
+        "displayValue": "22.5"
        },
        {
         "name": "losses",
@@ -541,7 +575,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "34"
+        "displayValue": "34.5"
        },
        {
         "name": "losses",
@@ -585,7 +619,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "35"
+        "displayValue": "35.5"
        },
        {
         "name": "losses",
@@ -785,9 +819,9 @@
      },
      {
       "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
+       "id": "6",
+       "abbreviation": "EDM",
+       "displayName": "Edmonton Oilers"
       },
       "stats": [
        {
@@ -798,7 +832,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2"
+        "displayValue": "-"
        },
        {
         "name": "losses",
@@ -808,12 +842,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "2"
+        "displayValue": "4"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "1"
+        "displayValue": "2"
        },
        {
         "name": "overtimeLosses",
@@ -824,9 +858,9 @@
      },
      {
       "team": {
-       "id": "6",
-       "abbreviation": "EDM",
-       "displayName": "Edmonton Oilers"
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
       },
       "stats": [
        {
@@ -902,45 +936,6 @@
      },
      {
       "team": {
-       "id": "22",
-       "abbreviation": "VAN",
-       "displayName": "Vancouver Canucks"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "4"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "1"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "0"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "0"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "3",
        "abbreviation": "CGY",
        "displayName": "Calgary Flames"
@@ -954,7 +949,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "4"
+        "displayValue": "2"
        },
        {
         "name": "losses",
@@ -964,12 +959,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "0"
+        "displayValue": "2"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "0"
+        "displayValue": "1"
        },
        {
         "name": "overtimeLosses",
@@ -1038,6 +1033,45 @@
         "name": "losses",
         "abbreviation": "L",
         "displayValue": "1"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "0"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "0"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "22",
+       "abbreviation": "VAN",
+       "displayName": "Vancouver Canucks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "4"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "2"
        },
        {
         "name": "points",
