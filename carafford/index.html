@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Affordability — amanvg</title>
+  <meta name="description" content="Max monthly car payment and suggested down payment from income, commute fuel cost, and list price.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: dark;
+      --bg: #141414;
+      --surface: #1e1e1e;
+      --surface-2: #232323;
+      --surface-hover: #2a2a2a;
+      --border: #2e2e2e;
+      --border-hover: #3d3d3d;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-tertiary: #8a8a8a;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --accent-border: rgba(59, 130, 246, 0.35);
+      --accent-text: #93c5fd;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --radius-card: 20px;
+      --radius-btn: 12px;
+      --radius-input: 10px;
+      --radius-pill: 999px;
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    [hidden] { display: none !important; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,13,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 980px; margin: 0 auto;
+      padding: 0 32px; height: 56px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    }
+    .nav-back {
+      justify-self: start;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-back:hover { color: var(--text-primary); background: var(--border); }
+    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
+
+    /* ── Page ── */
+    .page { max-width: 760px; margin: 0 auto; padding: 40px 32px 80px; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+
+    .grid { display: grid; gap: 14px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .mt { margin-top: 14px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+
+    select, input[type="number"], input[type="text"] {
+      font: inherit; font-size: 14px;
+      color: var(--text-primary);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-input);
+      padding: 10px 12px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+    select:focus, input:focus { outline: none; border-color: var(--accent); }
+    select:disabled { color: var(--text-tertiary); }
+    input::placeholder { color: var(--text-tertiary); }
+
+    .error { font-size: 13px; color: var(--red); line-height: 1.5; margin-top: 12px; }
+
+    .badge {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+      text-transform: none;
+      padding: 4px 10px; border-radius: var(--radius-pill);
+      background: var(--accent-soft); color: var(--accent-text);
+      border: 1px solid var(--accent-border);
+    }
+    .badge.premium { background: rgba(251,191,36,0.12); color: var(--amber); border-color: rgba(251,191,36,0.35); }
+
+    /* ── Results ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    .stat {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .stat-label {
+      display: block;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+    }
+    .stat-value {
+      display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin-top: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-total { background: var(--accent-soft); border-color: var(--accent-border); }
+    .stat-total .stat-value { color: var(--accent-text); font-size: 30px; }
+    .stat-value.negative { color: var(--red); }
+
+    .footer { text-align: center; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; margin-top: 24px; }
+    .footer a { color: var(--text-secondary); }
+
+    @media (max-width: 640px) {
+      .nav-inner { padding: 0 20px; }
+      .nav-title { font-size: 15px; }
+      .page { padding: 28px 20px 60px; }
+      .card { padding: 22px; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+
+  <nav aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="nav-back" href="/">← amanvg</a>
+      <span class="nav-title">Car Affordability</span>
+      <span></span>
+    </div>
+  </nav>
+
+  <main class="page">
+
+    <section class="card">
+      <h2>Income</h2>
+      <div class="field">
+        <label for="income">Annual income ($)</label>
+        <input type="number" id="income" min="0" step="1000" value="100000">
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Desired Car <span class="badge" id="fuel-badge" hidden></span></h2>
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="year">Year</label>
+          <select id="year" autocomplete="off"><option value="">Loading…</option></select>
+        </div>
+        <div class="field">
+          <label for="make">Make</label>
+          <select id="make" disabled autocomplete="off"><option value="">Select year first</option></select>
+        </div>
+        <div class="field">
+          <label for="model">Model</label>
+          <select id="model" disabled autocomplete="off"><option value="">Select make first</option></select>
+        </div>
+      </div>
+      <div class="field mt" id="trim-field" hidden>
+        <label for="trim">Engine / Trim</label>
+        <select id="trim" autocomplete="off"></select>
+      </div>
+      <div class="grid grid-2 mt">
+        <div class="field">
+          <label for="price">List price ($)</label>
+          <input type="number" id="price" min="0" step="100" value="43900">
+        </div>
+        <div class="field">
+          <label for="mpg">EPA combined MPG</label>
+          <input type="number" id="mpg" min="1" step="0.1" value="18">
+        </div>
+      </div>
+      <p class="error" id="car-error" hidden></p>
+    </section>
+
+    <section class="card">
+      <h2>Commute &amp; Fuel <span class="badge" id="price-badge" hidden></span></h2>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="miles">Commute distance one way (mi)</label>
+          <input type="number" id="miles" min="0" step="0.1" value="16.7">
+        </div>
+        <div class="field">
+          <label for="days">Days per week in office</label>
+          <input type="number" id="days" min="0" max="7" step="1" value="5">
+        </div>
+        <div class="field">
+          <label for="zip">Zip code</label>
+          <input type="text" id="zip" inputmode="numeric" maxlength="5" placeholder="e.g. 98101" autocomplete="postal-code">
+        </div>
+        <div class="field">
+          <label for="fuel-price" id="fuel-price-label">Fuel price ($/gal)</label>
+          <input type="number" id="fuel-price" min="0" step="0.01" value="4.47">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Monthly</h2>
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat-label">Min monthly miles</span>
+          <span class="stat-value" id="out-miles">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Est. fuel cost</span>
+          <span class="stat-value" id="out-fuel">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Max monthly payment</span>
+          <span class="stat-value" id="out-payment">—</span>
+        </div>
+      </div>
+      <div class="stat-row mt">
+        <div class="stat stat-total">
+          <span class="stat-label">Suggested down payment · 48 months</span>
+          <span class="stat-value" id="out-down">—</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>MPG data from <a href="https://www.fueleconomy.gov" target="_blank" rel="noopener">fueleconomy.gov</a> (EPA). Fuel prices from <a href="https://gasprices.aaa.com/state-gas-price-averages/" target="_blank" rel="noopener">AAA daily state averages</a>. Zip lookup by <a href="https://www.zippopotam.us" target="_blank" rel="noopener">Zippopotam.us</a>.</p>
+    </footer>
+  </main>
+
+  <script>
+    'use strict';
+
+    const EPA_API = 'https://www.fueleconomy.gov/ws/rest';
+    const ZIP_API = 'https://api.zippopotam.us/us';
+    const PRICES_URL = '/commute/data/gas-prices.json';
+    const BUDGET_SHARE = 0.1; // share of gross monthly income for car + fuel
+    const LOAN_MONTHS = 48;
+
+    const $ = (id) => document.getElementById(id);
+    const yearSel = $('year'), makeSel = $('make'), modelSel = $('model'), trimSel = $('trim');
+    const trimField = $('trim-field'), carError = $('car-error');
+    const inputs = ['income', 'price', 'mpg', 'miles', 'days', 'fuel-price'].map($);
+    const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    const num1 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    let fuelKind = 'regular'; // regular | premium | diesel, from the EPA fuel type
+    let aaaPrices = null;     // { asOf, states: {WA: {regular, premium, diesel}} }
+    let stateCode = null;
+
+    // ── Calculation (mirrors the spreadsheet) ──
+    function calculate() {
+      const v = (id) => parseFloat($(id).value);
+      const income = v('income'), price = v('price'), mpg = v('mpg');
+      const miles = v('miles'), days = v('days'), fuel = v('fuel-price');
+
+      const monthlyMiles = miles * 2 * days * 52 / 12;
+      const fuelCost = monthlyMiles / mpg * fuel;
+      const maxPayment = income / 12 * BUDGET_SHARE - fuelCost;
+      const down = Math.max(0, price - maxPayment * LOAN_MONTHS);
+
+      const show = (id, n, fmt) => {
+        const el = $(id);
+        el.textContent = Number.isFinite(n) ? fmt(n) : '—';
+        el.classList.toggle('negative', Number.isFinite(n) && n < 0);
+      };
+      show('out-miles', monthlyMiles, (n) => `${num1.format(n)} mi`);
+      show('out-fuel', fuelCost, usd.format);
+      show('out-payment', maxPayment, usd.format);
+      show('out-down', down, usd.format);
+    }
+
+    // ── AAA fuel prices by state ──
+    async function loadPrices() {
+      try {
+        const res = await fetch(PRICES_URL, { cache: 'no-store' });
+        if (res.ok) aaaPrices = await res.json();
+      } catch { /* manual fuel price still works */ }
+    }
+
+    function applyFuelPrice() {
+      $('fuel-price-label').textContent = `Fuel price, ${fuelKind} ($/gal)`;
+      const p = aaaPrices && stateCode && aaaPrices.states[stateCode];
+      const badge = $('price-badge');
+      if (!p || !(p[fuelKind] > 0)) { badge.hidden = true; return; }
+      $('fuel-price').value = p[fuelKind].toFixed(2);
+      badge.textContent = `${stateCode} AAA ${fuelKind} · ${aaaPrices.asOf}`;
+      badge.hidden = false;
+      calculate();
+    }
+
+    async function onZipInput() {
+      const zip = $('zip').value.trim();
+      if (!/^\d{5}$/.test(zip)) return;
+      try {
+        const res = await fetch(`${ZIP_API}/${zip}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        stateCode = data.places?.[0]?.['state abbreviation'] || null;
+      } catch {
+        stateCode = null;
+      }
+      applyFuelPrice();
+    }
+
+    // ── EPA fueleconomy.gov, cached in localStorage (ratings never change) ──
+    const EPA_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
+
+    async function epaFetch(path) {
+      let cached = null;
+      try { cached = JSON.parse(localStorage.getItem(`epa:${path}`)); } catch { /* unavailable */ }
+      if (cached && cached.d && Date.now() - cached.t < EPA_CACHE_TTL) return cached.d;
+
+      let lastErr;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        if (attempt) await sleep(1000 * attempt);
+        try {
+          const res = await fetch(`${EPA_API}${path}`, {
+            headers: { Accept: 'application/json' },
+            signal: AbortSignal.timeout(6000),
+          });
+          if (!res.ok) throw new Error(`EPA API error (${res.status})`);
+          const data = await res.json();
+          try { localStorage.setItem(`epa:${path}`, JSON.stringify({ t: Date.now(), d: data })); } catch { /* full */ }
+          return data;
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+      if (cached && cached.d) return cached.d;
+      throw lastErr;
+    }
+
+    // Menu endpoints return an array, a single object, or {} for none.
+    function menuItems(data) {
+      const items = data && data.menuItem;
+      if (!items) return [];
+      return Array.isArray(items) ? items : [items];
+    }
+
+    function fillSelect(select, items, placeholder) {
+      select.innerHTML = '';
+      select.append(new Option(placeholder, ''));
+      for (const item of items) select.append(new Option(item.text, item.value));
+      select.disabled = items.length === 0;
+    }
+
+    function resetSelect(select, placeholder) {
+      select.innerHTML = '';
+      select.append(new Option(placeholder, ''));
+      select.disabled = true;
+    }
+
+    function showCarError(err) {
+      if (!err) { carError.hidden = true; return; }
+      carError.textContent = `fueleconomy.gov: ${err.name === 'TimeoutError' ? 'timed out' : err.message}`;
+      carError.hidden = false;
+    }
+
+    async function loadYears() {
+      try {
+        fillSelect(yearSel, menuItems(await epaFetch('/vehicle/menu/year')), 'Select year');
+        showCarError(null);
+      } catch (err) {
+        const items = [];
+        for (let y = new Date().getFullYear() + 1; y >= 1984; y--) items.push({ text: String(y), value: String(y) });
+        fillSelect(yearSel, items, 'Select year');
+        showCarError(err);
+      }
+    }
+
+    async function loadMenu(select, path, placeholder) {
+      resetSelect(select, 'Loading…');
+      try {
+        fillSelect(select, menuItems(await epaFetch(path)), placeholder);
+        showCarError(null);
+      } catch (err) {
+        resetSelect(select, 'Unavailable');
+        showCarError(err);
+      }
+    }
+
+    async function onYearChange() {
+      resetSelect(modelSel, 'Select make first');
+      trimField.hidden = true;
+      if (!yearSel.value) return resetSelect(makeSel, 'Select year first');
+      await loadMenu(makeSel, `/vehicle/menu/make?year=${yearSel.value}`, 'Select make');
+    }
+
+    async function onMakeChange() {
+      trimField.hidden = true;
+      if (!makeSel.value) return resetSelect(modelSel, 'Select make first');
+      await loadMenu(modelSel,
+        `/vehicle/menu/model?year=${yearSel.value}&make=${encodeURIComponent(makeSel.value)}`, 'Select model');
+    }
+
+    async function onModelChange() {
+      trimField.hidden = true;
+      if (!modelSel.value) return;
+      try {
+        const items = menuItems(await epaFetch(
+          `/vehicle/menu/options?year=${yearSel.value}&make=${encodeURIComponent(makeSel.value)}&model=${encodeURIComponent(modelSel.value)}`));
+        showCarError(null);
+        if (items.length === 1) return loadVehicle(items[0].value);
+        fillSelect(trimSel, items, 'Select engine / trim');
+        trimField.hidden = items.length === 0;
+      } catch (err) {
+        showCarError(err);
+      }
+    }
+
+    async function loadVehicle(id) {
+      if (!id) return;
+      try {
+        const v = await epaFetch(`/vehicle/${id}`);
+        const fuelType = v.fuelType1 || v.fuelType || '';
+        const combined = parseFloat(v.comb08);
+        const badge = $('fuel-badge');
+        badge.textContent = fuelType;
+        badge.classList.toggle('premium', /premium/i.test(fuelType));
+        badge.hidden = !fuelType;
+        // MPGe is not MPG; leave EVs for manual entry.
+        $('mpg').value = combined > 0 && !/electricity/i.test(fuelType) ? combined : '';
+        fuelKind = /diesel/i.test(fuelType) ? 'diesel' : /premium/i.test(fuelType) ? 'premium' : 'regular';
+        showCarError(null);
+        applyFuelPrice();
+        calculate();
+      } catch (err) {
+        showCarError(err);
+      }
+    }
+
+    yearSel.addEventListener('change', onYearChange);
+    makeSel.addEventListener('change', onMakeChange);
+    modelSel.addEventListener('change', onModelChange);
+    trimSel.addEventListener('change', () => loadVehicle(trimSel.value));
+    $('zip').addEventListener('input', onZipInput);
+    for (const el of inputs) el.addEventListener('input', calculate);
+
+    calculate();
+    loadYears();
+    loadPrices().then(applyFuelPrice);
+  </script>
+</body>
+</html>
