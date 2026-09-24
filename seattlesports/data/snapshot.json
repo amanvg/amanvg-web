@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T05:57:59.336Z",
+ "generatedAt": "2026-09-24T23:19:54.910Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -396,50 +396,6 @@
     "divisionEntries": [
      {
       "team": {
-       "id": "18",
-       "abbreviation": "HOU",
-       "displayName": "Houston Astros"
-      },
-      "stats": [
-       {
-        "name": "OTLosses",
-        "abbreviation": "OTL",
-        "displayValue": "8"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "18"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "80"
-       },
-       {
-        "name": "points",
-        "abbreviation": "GBP",
-        "displayValue": "-1.0"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "T",
-        "displayValue": "0"
-       },
-       {
-        "name": "winPercent",
-        "abbreviation": "PCT",
-        "displayValue": ".494"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "78"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "13",
        "abbreviation": "TEX",
        "displayName": "Texas Rangers"
@@ -449,6 +405,50 @@
         "name": "OTLosses",
         "abbreviation": "OTL",
         "displayValue": "2"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "17.5"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "80"
+       },
+       {
+        "name": "points",
+        "abbreviation": "GBP",
+        "displayValue": "-0.5"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "T",
+        "displayValue": "0"
+       },
+       {
+        "name": "winPercent",
+        "abbreviation": "PCT",
+        "displayValue": ".497"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "79"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "18",
+       "abbreviation": "HOU",
+       "displayName": "Houston Astros"
+      },
+      "stats": [
+       {
+        "name": "OTLosses",
+        "abbreviation": "OTL",
+        "displayValue": "8"
        },
        {
         "name": "gamesBehind",
