@@ -3,3 +3,4 @@ Icon?
 .env
 agent.log
 .DS_Store
+.playwright-mcp/
