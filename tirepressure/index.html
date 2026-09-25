@@ -33,6 +33,7 @@
       --radius-input: 12px;
       --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
       --step-px: 14px;
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     body {
@@ -121,8 +122,22 @@
       font-weight: 600; color: var(--accent-text); background: var(--accent-soft);
     }
 
-    /* Temperature range */
-    .temps { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--border); }
+    /* Loading: keep the last values, dimmed, until new weather lands */
+    .targets, .temps-wrap { transition: opacity 150ms var(--ease-out); }
+    .hero.loading .targets, .hero.loading .temps-wrap { opacity: 0.35; }
+
+    /* Temperature range: opens its own height instead of shoving the page */
+    .temps-wrap {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 280ms var(--ease-out), opacity 150ms var(--ease-out);
+    }
+    .temps-wrap.open { grid-template-rows: 1fr; }
+    .temps-clip { min-height: 0; overflow: hidden; }
+    .temps {
+      margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--border);
+      opacity: 0; transition: opacity 200ms 80ms var(--ease-out);
+    }
+    .temps-wrap.open .temps { opacity: 1; }
     .range { position: relative; height: 28px; margin: 0 7px; }
     .range-rail { position: absolute; left: 0; right: 0; top: 11px; height: 6px; border-radius: 3px; background: var(--surface-2); }
     .range-fill {
@@ -273,6 +288,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition-duration: 1ms !important; animation: none !important; }
+      .temps { transition: opacity 150ms var(--ease-out) !important; }
     }
     @media (prefers-reduced-transparency: reduce) {
       nav { background: #141414; backdrop-filter: none; -webkit-backdrop-filter: none; }
@@ -296,7 +312,7 @@
   <main class="page">
     <h1 class="large-title" id="large-title">🛞 Tire Pressure</h1>
 
-    <section class="card hero" aria-live="polite">
+    <section class="card hero" id="hero" aria-live="polite">
       <div class="targets">
         <div>
           <span class="target-label">Front</span>
@@ -310,7 +326,7 @@
         </div>
       </div>
 
-      <div class="temps" id="temps" hidden>
+      <div class="temps-wrap" id="temps"><div class="temps-clip"><div class="temps">
         <div class="range" aria-hidden="true">
           <div class="range-rail"></div>
           <div class="range-fill" id="r-fill"></div>
@@ -323,7 +339,7 @@
           <div class="temp-stat"><span><i class="key key-low"></i>Avg Low</span><b id="s-low">—</b></div>
           <div class="temp-stat"><span><i class="key key-high"></i>Avg High</span><b id="s-high">—</b></div>
         </div>
-      </div>
+      </div></div></div>
     </section>
 
     <section class="card">
@@ -587,7 +603,13 @@
       s.onUpdate = x => { el.textContent = s.running ? x.toFixed(1) : fmtPsi(x); };
       return (v) => {
         if (v === null) { shown = false; s.stop(); el.textContent = '—'; return; }
-        if (!shown) { shown = true; s.set(v); return; }
+        if (!shown) {
+          shown = true; s.set(v);
+          if (!REDUCED.matches) el.animate(
+            [{ opacity: 0, transform: 'translateY(4px)' }, { opacity: 1, transform: 'none' }],
+            { duration: 200, easing: 'cubic-bezier(0.23, 1, 0.32, 1)' });
+          return;
+        }
         s.to(v, { response: 0.35, damping: 1 });
       };
     }
@@ -688,19 +710,23 @@
 
     async function loadWeather(lat, lon, label) {
       const seq = ++requestSeq;
-      weather = null;
-      render();
+      $('hero').classList.add('loading');
       setStatus(`${label} · loading weather…`);
       try {
         const month = new Date().getMonth();
         const [nowF, hist] = await Promise.all([fetchCurrentF(lat, lon), fetchMonthHistory(lat, lon, month)]);
         if (seq !== requestSeq) return;
         weather = { nowF, avgF: hist.avgF, lowF: hist.lowF, highF: hist.highF, month, years: hist.years };
+        $('hero').classList.remove('loading');
         setStatus(label);
         render();
         renderTemps();
       } catch (e) {
         if (seq !== requestSeq) return;
+        $('hero').classList.remove('loading');
+        weather = null;
+        render();
+        renderTemps();
         setError(`Weather unavailable: ${e.message}`);
       }
     }
@@ -760,7 +786,7 @@
     const nowSpring = new Spring(0, 0.05);
     nowSpring.onUpdate = x => { $('r-now').style.left = `${x}%`; };
     function renderTemps() {
-      if (!weather) { $('temps').hidden = true; return; }
+      if (!weather) { $('temps').classList.remove('open'); return; }
       const { nowF, avgF, lowF, highF, month } = weather;
       const lo = Math.min(lowF, nowF) - 4, hi = Math.max(highF, nowF) + 4;
       const pct = f => (f - lo) / (hi - lo) * 100;
@@ -772,7 +798,7 @@
       $('s-avg').innerHTML = fmtDeg(avgF);
       $('s-low').innerHTML = fmtDeg(lowF);
       $('s-high').innerHTML = fmtDeg(highF);
-      $('temps').hidden = false;
+      $('temps').classList.add('open');
       nowSpring.set(pct(avgF));
       nowSpring.to(pct(nowF), { response: 0.7, damping: 1 });
     }
