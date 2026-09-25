@@ -98,6 +98,12 @@
       margin-bottom: 16px;
     }
 
+    /* ── Instructions ── */
+    .instructions p, .instructions ol { font-size: 15px; line-height: 1.55; color: var(--text-secondary); }
+    .instructions ol { margin-top: 12px; padding-left: 22px; }
+    .instructions li + li { margin-top: 4px; }
+    .instructions li::marker { color: var(--text-tertiary); font-weight: 600; font-variant-numeric: tabular-nums; }
+
     /* ── Hero result ── */
     .hero { padding: 28px 24px 24px; }
     .targets { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -311,6 +317,16 @@
 
   <main class="page">
     <h1 class="large-title" id="large-title">🛞 Tire Pressure</h1>
+
+    <section class="card instructions">
+      <h2>Instructions</h2>
+      <p>This dashboard lets you know what to inflate or deflate your tire pressures to so that it matches the OEM spec for an average day in the current month at your location. A temperature swing of 10 degrees typically equates to 1 PSI difference.</p>
+      <ol>
+        <li>Look at the door jamb to find the recommended pressures.</li>
+        <li>Enter your zip code to find your current and typical weather.</li>
+        <li>Inflate or deflate to the pressures presented.</li>
+      </ol>
+    </section>
 
     <section class="card hero" id="hero" aria-live="polite">
       <div class="targets">
