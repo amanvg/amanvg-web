@@ -27,13 +27,13 @@
       --accent-border: rgba(59, 130, 246, 0.35);
       --accent-text: #93c5fd;
       --red: #f87171;
+      --cold: #60a5fa;
+      --warm: #fb923c;
       --radius-card: 20px;
-      --radius-btn: 12px;
-      --radius-input: 10px;
+      --radius-input: 12px;
       --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+      --step-px: 14px;
     }
-
-    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', system-ui, sans-serif;
@@ -41,18 +41,24 @@
       color: var(--text-primary);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
     }
 
     [hidden] { display: none !important; }
 
-    /* ── Nav ── */
+    /* ── Nav: translucent material, scroll-edge fade instead of a divider ── */
     nav {
       position: sticky; top: 0; z-index: 1000;
-      background: rgba(13,13,13,0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
+      background: rgba(20,20,20,0.72);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
     }
+    nav::after {
+      content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 18px;
+      background: linear-gradient(rgba(20,20,20,0.55), transparent);
+      opacity: 0; transition: opacity 200ms ease; pointer-events: none;
+    }
+    nav.scrolled::after { opacity: 1; }
     .nav-inner {
       max-width: 1120px; margin: 0 auto;
       padding: 0 32px; height: 56px;
@@ -65,156 +71,269 @@
       transition: color 0.15s, background 0.15s;
     }
     .nav-back:hover { color: var(--text-primary); background: var(--border); }
-    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
+    .nav-title {
+      font-size: 17px; font-weight: 700; letter-spacing: -0.02em; text-align: center;
+      opacity: 0; transform: translateY(4px);
+      transition: opacity 200ms ease, transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    nav.scrolled .nav-title { opacity: 1; transform: none; }
 
     /* ── Page ── */
-    .page { max-width: 760px; margin: 0 auto; padding: 40px 32px 80px; }
+    .page { max-width: 640px; margin: 0 auto; padding: 20px 32px 80px; }
+    .large-title { font-size: 34px; font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; margin: 8px 0 24px; }
 
-    .page-header { margin-bottom: 28px; }
-    .page-header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; }
-
-    /* ── Cards ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
       box-shadow: var(--shadow-md);
-      padding: 28px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      font-size: 12px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-tertiary);
       margin-bottom: 16px;
     }
 
-    .card h2 {
-      font-size: 13px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--text-tertiary);
-      margin-bottom: 18px;
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    /* ── Hero result ── */
+    .hero { padding: 28px 24px 24px; }
+    .targets { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .target-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0; }
+    .target-value {
+      display: flex; align-items: baseline; gap: 6px;
+      margin-top: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .target-value b {
+      font-size: clamp(56px, 15vw, 84px); font-weight: 700;
+      line-height: 0.95; letter-spacing: -0.045em;
+      color: var(--text-primary);
+    }
+    .target-value small { font-size: 15px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0.01em; }
+    .target-meta {
+      margin-top: 10px; font-size: 13px; font-weight: 500; color: var(--text-tertiary);
+      font-variant-numeric: tabular-nums;
+    }
+    .delta {
+      display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 999px;
+      font-weight: 600; color: var(--accent-text); background: var(--accent-soft);
     }
 
-    .grid { display: grid; gap: 14px; }
-    .grid-2 { grid-template-columns: 1fr 1fr; }
+    /* Temperature range */
+    .temps { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--border); }
+    .range { position: relative; height: 28px; margin: 0 7px; }
+    .range-rail { position: absolute; left: 0; right: 0; top: 11px; height: 6px; border-radius: 3px; background: var(--surface-2); }
+    .range-fill {
+      position: absolute; top: 11px; height: 6px; border-radius: 3px;
+      background: linear-gradient(90deg, var(--cold), var(--warm));
+    }
+    .range-avg {
+      position: absolute; top: 5px; width: 2px; height: 18px; margin-left: -1px;
+      border-radius: 1px; background: var(--text-secondary);
+    }
+    .range-now {
+      position: absolute; top: 5px; width: 18px; height: 18px; margin-left: -9px;
+      border-radius: 50%; background: #fff;
+      box-shadow: 0 0 0 4px var(--surface), 0 2px 8px rgba(0,0,0,0.6);
+      will-change: transform;
+    }
+    .temp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+    .temp-stat span {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .temp-stat b {
+      display: block; margin-top: 4px;
+      font-size: 20px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+    }
+    .temp-stat b small { font-size: 12px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0; margin-left: 1px; }
+    .key { flex: none; display: inline-block; }
+    .key-now { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+    .key-avg { width: 2px; height: 10px; border-radius: 1px; background: var(--text-secondary); }
+    .key-low { width: 8px; height: 8px; border-radius: 2px; background: var(--cold); }
+    .key-high { width: 8px; height: 8px; border-radius: 2px; background: var(--warm); }
 
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-
-    select, input[type="text"] {
-      font: inherit; font-size: 14px;
+    /* ── Location ── */
+    .location-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+    input[type="text"] {
+      font: inherit; font-size: 16px; font-weight: 500;
       color: var(--text-primary);
       background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: var(--radius-input);
-      padding: 10px 12px;
+      padding: 12px 14px;
       width: 100%;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
       font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
     }
-    select:focus, input:focus { outline: none; border-color: var(--accent); }
-    select { cursor: pointer; }
+    input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
     input::placeholder { color: var(--text-tertiary); }
 
-    .location-row { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: end; }
-
-    .status { font-size: 13px; color: var(--text-tertiary); line-height: 1.5; }
-    .error { font-size: 13px; color: var(--red); line-height: 1.5; }
-    .status-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; min-height: 20px; }
-
-    .btn-secondary {
-      font: inherit; font-size: 13px; font-weight: 600;
-      color: var(--text-primary);
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-      white-space: nowrap;
-    }
-    .btn-secondary:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--border-hover); }
-    .btn-secondary:disabled { color: var(--text-tertiary); cursor: wait; }
-
-
-    /* ── Results ── */
-    .stat-row {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 18px;
-    }
-    .stat {
+    .pill {
+      font: inherit; font-size: 14px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--accent-text);
       background: var(--accent-soft);
       border: 1px solid var(--accent-border);
-      border-radius: 14px;
-      padding: 12px;
-      min-width: 0;
+      border-radius: 999px;
+      padding: 0 18px;
+      cursor: pointer; white-space: nowrap;
+      transition: transform 120ms ease-out, background 0.15s;
+      touch-action: manipulation;
     }
-    .stat-label {
-      display: block;
-      font-size: 11px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.06em;
-      color: var(--text-tertiary);
-    }
-    .stat-value {
-      display: block;
-      font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
-      color: var(--accent-text);
-      margin-top: 4px;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    .stat-value small { font-size: 12px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0; margin-left: 2px; }
+    .pill svg { width: 15px; height: 15px; }
+    .pill:hover:not(:disabled) { background: rgba(59,130,246,0.22); }
+    .pill:active:not(:disabled) { transform: scale(0.96); transition-duration: 60ms; }
+    .pill:disabled { opacity: 0.6; cursor: wait; }
+    .pill.busy svg { animation: pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: 0.35; } }
 
-    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-    th, td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border); font-size: 14px; }
-    th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-tertiary); }
-    th:first-child, td:first-child { text-align: left; }
-    tr:last-child td { border-bottom: none; }
-    td.axle { font-weight: 600; }
-    td.target { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: var(--accent-text); }
-    td.muted { color: var(--text-tertiary); }
+    .status-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; min-height: 18px; font-size: 13px; }
+    .status { color: var(--text-tertiary); }
+    .error { color: var(--red); }
+
+    /* ── Ruler picker ── */
+    .picker + .picker { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .picker-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .picker-label { font-size: 15px; font-weight: 600; }
+    .picker-ctl { display: flex; align-items: center; gap: 10px; }
+    .picker-value {
+      min-width: 88px; text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .picker-value b { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; }
+    .picker-value small { font-size: 12px; font-weight: 600; color: var(--text-tertiary); margin-left: 3px; }
+    .step {
+      width: 36px; height: 36px; border-radius: 50%;
+      font: inherit; font-size: 20px; font-weight: 500; line-height: 1;
+      color: var(--text-primary); background: var(--surface-2);
+      border: 1px solid var(--border);
+      cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none;
+      transition: transform 120ms ease-out, background 0.15s;
+    }
+    .step:hover { background: var(--surface-hover); }
+    .step.pressed { transform: scale(0.9); background: var(--surface-hover); transition-duration: 60ms; }
+
+    .ruler {
+      position: relative; height: 62px; overflow: hidden;
+      border-radius: 12px;
+      cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+    }
+    .ruler:focus-visible { outline: none; }
+    .ruler:focus-visible .ruler-needle { box-shadow: 0 0 0 3px rgba(99,102,241,0.6); }
+    .ruler.dragging { cursor: grabbing; }
+    .ruler-track {
+      position: absolute; top: 0; bottom: 0; left: 0;
+      will-change: transform;
+      background-image:
+        linear-gradient(90deg, #9a9a9a 1px, transparent 1px),
+        linear-gradient(90deg, #5a5a5a 1px, transparent 1px),
+        linear-gradient(90deg, #3a3a3a 1px, transparent 1px);
+      background-size: calc(var(--step-px) * 10) 26px, calc(var(--step-px) * 2) 18px, var(--step-px) 11px;
+      background-position: 0 6px;
+      background-repeat: repeat-x;
+      transition: opacity 250ms ease;
+    }
+    .ruler-track span {
+      position: absolute; top: 38px; transform: translateX(-50%);
+      font-size: 12px; font-weight: 600; color: var(--text-tertiary); font-variant-numeric: tabular-nums;
+    }
+    .ruler-needle {
+      position: absolute; left: 50%; top: 2px; width: 3px; height: 34px; margin-left: -1px;
+      border-radius: 2px; background: var(--accent);
+      transform-origin: 50% 0;
+      transition: transform 140ms ease-out, background 0.2s;
+    }
+    .ruler.dragging .ruler-needle { transform: scaleY(1.08); }
+    .picker.unset .ruler-track { opacity: 0.4; }
+    .picker.unset .ruler-needle { background: var(--border-hover); }
+    .picker.unset .picker-value b { color: var(--text-tertiary); }
 
     .footer { text-align: center; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; margin-top: 24px; }
     .footer a { color: var(--text-secondary); }
 
     @media (max-width: 640px) {
-      .nav-inner { padding: 0 20px; }
-      .nav-title { font-size: 15px; }
-      .page { padding: 28px 20px 60px; }
-      .page-header h1 { font-size: 26px; }
-      .card { padding: 22px; }
-      .grid-2 { grid-template-columns: 1fr; }
+      .nav-inner { padding: 0 16px; }
+      .page { padding: 12px 16px 60px; }
+      .large-title { font-size: 30px; }
+      .card { padding: 20px; }
+      .hero { padding: 24px 20px 20px; }
+      .temp-stats { grid-template-columns: 1fr 1fr; row-gap: 14px; }
       .location-row { grid-template-columns: 1fr; }
-      .stat-row { grid-template-columns: 1fr 1fr; }
-      th, td { padding: 10px 6px; }
+      .pill { justify-content: center; height: 46px; }
     }
 
     :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 1ms !important; animation: none !important; }
+    }
+    @media (prefers-reduced-transparency: reduce) {
+      nav { background: #141414; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    }
+    @media (prefers-contrast: more) {
+      .card { border-color: #6a6a6a; }
+      .target-meta, .status, .temp-stat span { color: var(--text-secondary); }
+    }
   </style>
 </head>
 <body>
 
-  <nav aria-label="Main navigation">
+  <nav aria-label="Main navigation" id="nav">
     <div class="nav-inner">
       <a class="nav-back" href="/">← amanvg</a>
-      <span class="nav-title">Tire Pressure</span>
+      <span class="nav-title" aria-hidden="true">Tire Pressure</span>
       <span></span>
     </div>
   </nav>
 
   <main class="page">
-    <header class="page-header">
-      <h1>🛞 Tire Pressure</h1>
-    </header>
+    <h1 class="large-title" id="large-title">🛞 Tire Pressure</h1>
+
+    <section class="card hero" aria-live="polite">
+      <div class="targets">
+        <div>
+          <span class="target-label">Front</span>
+          <div class="target-value"><b id="t-front">—</b><small>psi</small></div>
+          <div class="target-meta" id="m-front"></div>
+        </div>
+        <div>
+          <span class="target-label">Rear</span>
+          <div class="target-value"><b id="t-rear">—</b><small>psi</small></div>
+          <div class="target-meta" id="m-rear"></div>
+        </div>
+      </div>
+
+      <div class="temps" id="temps" hidden>
+        <div class="range" aria-hidden="true">
+          <div class="range-rail"></div>
+          <div class="range-fill" id="r-fill"></div>
+          <div class="range-avg" id="r-avg"></div>
+          <div class="range-now" id="r-now"></div>
+        </div>
+        <div class="temp-stats">
+          <div class="temp-stat"><span><i class="key key-now"></i>Now</span><b id="s-now">—</b></div>
+          <div class="temp-stat"><span><i class="key key-avg"></i><em id="s-month" style="font-style:normal">Month Avg</em></span><b id="s-avg">—</b></div>
+          <div class="temp-stat"><span><i class="key key-low"></i>Avg Low</span><b id="s-low">—</b></div>
+          <div class="temp-stat"><span><i class="key key-high"></i>Avg High</span><b id="s-high">—</b></div>
+        </div>
+      </div>
+    </section>
 
     <section class="card">
-      <h2>1. Location</h2>
+      <h2>Location</h2>
       <div class="location-row">
-        <div class="field">
-          <label for="zip">Zip Code</label>
-          <input type="text" id="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="98101">
-        </div>
-        <button type="button" class="btn-secondary" id="btn-locate">Use my location</button>
+        <input type="text" id="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="Zip Code" aria-label="Zip Code">
+        <button type="button" class="pill" id="btn-locate">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.7 2.3a1 1 0 0 0-1.05-.23l-18 7a1 1 0 0 0 .08 1.9l7.6 2.1 2.1 7.6a1 1 0 0 0 .92.73h.04a1 1 0 0 0 .93-.64l7-18a1 1 0 0 0-.22-1.06Z"/></svg>
+          Use my location
+        </button>
       </div>
       <div class="status-row">
         <span class="status" id="loc-status"></span>
@@ -223,34 +342,29 @@
     </section>
 
     <section class="card">
-      <h2>2. Door Jamb Cold Pressure</h2>
-      <div class="grid grid-2">
-        <div class="field">
-          <label for="spec-front">Front (psi)</label>
-          <select id="spec-front"></select>
+      <h2>Door Jamb Cold Pressure</h2>
+      <div class="picker unset" id="p-front">
+        <div class="picker-head">
+          <span class="picker-label">Front</span>
+          <div class="picker-ctl">
+            <button type="button" class="step" data-dir="-1" aria-label="Decrease front">−</button>
+            <span class="picker-value"><b>—</b><small>psi</small></span>
+            <button type="button" class="step" data-dir="1" aria-label="Increase front">+</button>
+          </div>
         </div>
-        <div class="field">
-          <label for="spec-rear">Rear (psi)</label>
-          <select id="spec-rear"></select>
+        <div class="ruler" tabindex="0" role="slider" aria-label="Front cold pressure (psi)"><div class="ruler-track"></div><div class="ruler-needle"></div></div>
+      </div>
+      <div class="picker unset" id="p-rear">
+        <div class="picker-head">
+          <span class="picker-label">Rear</span>
+          <div class="picker-ctl">
+            <button type="button" class="step" data-dir="-1" aria-label="Decrease rear">−</button>
+            <span class="picker-value"><b>—</b><small>psi</small></span>
+            <button type="button" class="step" data-dir="1" aria-label="Increase rear">+</button>
+          </div>
         </div>
+        <div class="ruler" tabindex="0" role="slider" aria-label="Rear cold pressure (psi)"><div class="ruler-track"></div><div class="ruler-needle"></div></div>
       </div>
-    </section>
-
-
-    <section class="card" id="results" hidden>
-      <h2>3. Target Pressure</h2>
-      <div class="stat-row">
-        <div class="stat"><span class="stat-label">Now</span><span class="stat-value" id="stat-now">—</span></div>
-        <div class="stat"><span class="stat-label" id="stat-month-label">Month Avg</span><span class="stat-value" id="stat-avg">—</span></div>
-        <div class="stat"><span class="stat-label">Avg Low</span><span class="stat-value" id="stat-low">—</span></div>
-        <div class="stat"><span class="stat-label">Avg High</span><span class="stat-value" id="stat-high">—</span></div>
-      </div>
-      <table>
-        <thead>
-          <tr><th>Axle</th><th>Spec</th><th>Target</th></tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
     </section>
 
     <footer class="footer">
@@ -264,35 +378,243 @@
     const $ = id => document.getElementById(id);
     const PSI_PER_DEG_F = 0.1;
     const HISTORY_YEARS = 10;
-    const SPEC_MIN = 20, SPEC_MAX = 80;
+    const SPEC_MIN = 20, SPEC_MAX = 80, SPEC_STEP = 0.5, SPEC_START = 35;
     const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const REDUCED = matchMedia('(prefers-reduced-motion: reduce)');
+    const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
 
     const zipInput = $('zip');
     const locStatus = $('loc-status');
     const locError = $('loc-error');
     const btnLocate = $('btn-locate');
-    const results = $('results');
-
-    const AXLES = [
-      { id: 'spec-front', name: 'Front' },
-      { id: 'spec-rear', name: 'Rear' },
-    ];
 
     let weather = null;   // { nowF, avgF, lowF, highF, month }
     let requestSeq = 0;
 
+    // ── Spring (Apple's response / damping-ratio parameterization, unit mass) ──
+    // Animates from the live value and keeps velocity on re-target, so it can be
+    // interrupted and redirected at any frame.
+    class Spring {
+      constructor(value, epsilon) {
+        this.x = this.target = value; this.v = 0; this.eps = epsilon; this.raf = 0;
+        this.onUpdate = () => {}; this.onRest = () => {};
+        this.tick = this.tick.bind(this);
+      }
+      get running() { return this.raf !== 0; }
+      stop() { cancelAnimationFrame(this.raf); this.raf = 0; this.v = 0; }
+      set(x) { this.stop(); this.x = this.target = x; this.onUpdate(x); }
+      to(target, { velocity, response = 0.4, damping = 1 } = {}) {
+        this.target = target;
+        if (velocity !== undefined) this.v = velocity;
+        this.k = (2 * Math.PI / response) ** 2;
+        this.c = 4 * Math.PI * damping / response;
+        if (REDUCED.matches) { this.set(target); this.onRest(); return; }
+        if (!this.raf) { this.last = performance.now(); this.raf = requestAnimationFrame(this.tick); }
+      }
+      tick(now) {
+        let dt = Math.min((now - this.last) / 1000, 1 / 30);
+        this.last = now;
+        while (dt > 0) {
+          const h = Math.min(dt, 1 / 240);
+          this.v += (-this.k * (this.x - this.target) - this.c * this.v) * h;
+          this.x += this.v * h;
+          dt -= h;
+        }
+        if (Math.abs(this.x - this.target) < this.eps && Math.abs(this.v) < this.eps * 10) {
+          this.x = this.target; this.v = 0; this.raf = 0;
+          this.onUpdate(this.x); this.onRest();
+          return;
+        }
+        this.onUpdate(this.x);
+        this.raf = requestAnimationFrame(this.tick);
+      }
+    }
+
+    // Momentum projection (Designing Fluid Interfaces) and rubber-band resistance
+    const project = (v, rate = 0.995) => (v / 1000) * rate / (1 - rate);
+    const rubberband = (over, dim, c = 0.55) => (over * dim * c) / (dim + c * Math.abs(over));
+
+    // ── Ruler picker ──
+    const STEP_PX = 14;
+    const MAX_PX = (SPEC_MAX - SPEC_MIN) / SPEC_STEP * STEP_PX;
+    const toPx = v => (v - SPEC_MIN) / SPEC_STEP * STEP_PX;
+    const toVal = px => SPEC_MIN + Math.round(clamp(px, 0, MAX_PX) / STEP_PX) * SPEC_STEP;
+    const snapPx = px => toPx(toVal(px));
+
+    function makePicker(root, onChange) {
+      const ruler = root.querySelector('.ruler');
+      const track = root.querySelector('.ruler-track');
+      const readout = root.querySelector('.picker-value b');
+      const dpr = window.devicePixelRatio || 1;
+      let pos = toPx(SPEC_START);
+      let value = null;
+
+      track.style.width = `${MAX_PX + 1}px`;
+      for (let v = SPEC_MIN; v <= SPEC_MAX; v += 5) {
+        const s = document.createElement('span');
+        s.textContent = v; s.style.left = `${toPx(v)}px`;
+        track.appendChild(s);
+      }
+      ruler.setAttribute('aria-valuemin', SPEC_MIN);
+      ruler.setAttribute('aria-valuemax', SPEC_MAX);
+
+      const spring = new Spring(pos, 0.1);
+      spring.onUpdate = x => { pos = x; paint(); };
+
+      function paint() {
+        const x = Math.round((ruler.clientWidth / 2 - pos) * dpr) / dpr;
+        track.style.transform = `translate3d(${x}px,0,0)`;
+        if (value === null) return;
+        const v = toVal(pos);
+        if (v !== value) setValue(v);
+      }
+      function setValue(v) {
+        value = v;
+        root.classList.toggle('unset', v === null);
+        readout.textContent = v === null ? '—' : fmtPsi(v);
+        if (v === null) ruler.removeAttribute('aria-valuenow');
+        else ruler.setAttribute('aria-valuenow', v);
+        onChange();
+      }
+      function activate() { if (value === null) setValue(toVal(pos)); }
+
+      function settleTo(v, opts) { activate(); spring.to(toPx(clamp(v, SPEC_MIN, SPEC_MAX)), opts); }
+      function currentTarget() { return toVal(spring.running ? spring.target : pos); }
+      function stepBy(dir, n = 1) {
+        if (value === null) { activate(); return; }
+        settleTo(currentTarget() + dir * n * SPEC_STEP, { response: 0.3, damping: 1 });
+      }
+
+      // Drag: 10px-ish hysteresis, then 1:1 tracking; release hands velocity to a spring
+      let drag = null;
+      ruler.addEventListener('pointerdown', e => {
+        if (e.button !== 0) return;
+        spring.stop();                        // grab mid-flight: pos is the presentation value
+        ruler.setPointerCapture(e.pointerId);
+        ruler.classList.add('dragging');
+        drag = { x0: e.clientX, pos0: pos, moved: false, hist: [[e.clientX, e.timeStamp]] };
+      });
+      ruler.addEventListener('pointermove', e => {
+        if (!drag) return;
+        let dx = e.clientX - drag.x0;
+        if (!drag.moved) {
+          if (Math.abs(dx) < 8) return;
+          drag.moved = true; drag.x0 = e.clientX; dx = 0; activate();
+        }
+        const raw = drag.pos0 - dx;
+        const dim = ruler.clientWidth;
+        pos = raw < 0 ? -rubberband(-raw, dim) : raw > MAX_PX ? MAX_PX + rubberband(raw - MAX_PX, dim) : raw;
+        paint();
+        drag.hist.push([e.clientX, e.timeStamp]);
+        while (drag.hist.length > 2 && e.timeStamp - drag.hist[0][1] > 80) drag.hist.shift();
+      });
+      function endDrag(e, cancelled) {
+        if (!drag) return;
+        ruler.classList.remove('dragging');
+        const d = drag; drag = null;
+        if (cancelled) { spring.to(snapPx(pos)); return; }
+        if (!d.moved) {                        // tap: jump to the tick under the pointer
+          const r = ruler.getBoundingClientRect();
+          settleTo(toVal(pos + e.clientX - r.left - r.width / 2), { response: 0.4, damping: 1 });
+          return;
+        }
+        const [x1, t1] = d.hist[0], [x2, t2] = d.hist[d.hist.length - 1];
+        const v = t2 > t1 ? -(x2 - x1) / ((t2 - t1) / 1000) : 0;
+        const inBounds = pos >= 0 && pos <= MAX_PX;
+        const target = snapPx(pos + (inBounds ? project(v) : 0));
+        const flick = inBounds && Math.abs(v) > 400;
+        spring.to(target, { velocity: v, response: 0.4, damping: flick ? 0.85 : 1 });
+      }
+      ruler.addEventListener('pointerup', e => endDrag(e, false));
+      ruler.addEventListener('pointercancel', e => endDrag(e, true));
+
+      // Trackpad horizontal scroll: follow 1:1, snap once it goes quiet
+      let wheelTimer = 0;
+      ruler.addEventListener('wheel', e => {
+        if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+        e.preventDefault();
+        spring.stop(); activate();
+        pos = clamp(pos + e.deltaX, 0, MAX_PX);
+        paint();
+        clearTimeout(wheelTimer);
+        wheelTimer = setTimeout(() => spring.to(snapPx(pos), { response: 0.3 }), 90);
+      }, { passive: false });
+
+      ruler.addEventListener('keydown', e => {
+        const big = e.shiftKey ? 10 : 1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') stepBy(1, big);
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') stepBy(-1, big);
+        else if (e.key === 'Home') settleTo(SPEC_MIN, { response: 0.5 });
+        else if (e.key === 'End') settleTo(SPEC_MAX, { response: 0.5 });
+        else return;
+        e.preventDefault();
+      });
+
+      // −/+ : act on press, repeat while held
+      root.querySelectorAll('.step').forEach(btn => {
+        const dir = +btn.dataset.dir;
+        let hold = 0;
+        const release = () => { clearTimeout(hold); clearInterval(hold); hold = 0; btn.classList.remove('pressed'); };
+        btn.addEventListener('pointerdown', e => {
+          if (e.button !== 0) return;
+          btn.setPointerCapture(e.pointerId);
+          btn.classList.add('pressed');
+          stepBy(dir);
+          hold = setTimeout(() => { hold = setInterval(() => stepBy(dir), 70); }, 380);
+        });
+        btn.addEventListener('pointerup', release);
+        btn.addEventListener('pointercancel', release);
+        btn.addEventListener('click', e => { if (e.detail === 0) stepBy(dir); }); // keyboard
+      });
+
+      addEventListener('resize', paint);
+      paint();
+
+      return {
+        get value() { return value; },
+        restore(v) {
+          if (!Number.isFinite(v)) return;
+          spring.set(toPx(clamp(v, SPEC_MIN, SPEC_MAX)));
+          setValue(toVal(pos));
+        },
+      };
+    }
+
+    // ── Hero numbers: critically damped roll from the on-screen value ──
+    function makeNumber(el) {
+      const s = new Spring(0, 0.01);
+      let shown = false;
+      s.onUpdate = x => { el.textContent = s.running ? x.toFixed(1) : fmtPsi(x); };
+      return (v) => {
+        if (v === null) { shown = false; s.stop(); el.textContent = '—'; return; }
+        if (!shown) { shown = true; s.set(v); return; }
+        s.to(v, { response: 0.35, damping: 1 });
+      };
+    }
+
+    const AXLES = [
+      { key: 'Front', picker: null, number: makeNumber($('t-front')), meta: $('m-front'), el: $('p-front') },
+      { key: 'Rear', picker: null, number: makeNumber($('t-rear')), meta: $('m-rear'), el: $('p-rear') },
+    ];
+
     // ── Persistence ──
     const STORE_KEY = 'tirepressure.inputs';
+    let restoring = true;
     function saveInputs() {
-      const data = { zip: zipInput.value, specFront: $('spec-front').value, specRear: $('spec-rear').value };
+      if (restoring) return;
+      const data = {
+        zip: zipInput.value,
+        specFront: AXLES[0].picker.value === null ? '' : fmtPsi(AXLES[0].picker.value),
+        specRear: AXLES[1].picker.value === null ? '' : fmtPsi(AXLES[1].picker.value),
+      };
       try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
     }
     function loadInputs() {
       try {
         const data = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
         if (data.zip) zipInput.value = data.zip;
-        if (data.specFront) $('spec-front').value = data.specFront;
-        if (data.specRear) $('spec-rear').value = data.specRear;
+        AXLES[0].picker.restore(parseFloat(data.specFront));
+        AXLES[1].picker.restore(parseFloat(data.specRear));
       } catch (e) {}
     }
 
@@ -330,8 +652,6 @@
     }
 
     // ── Weather ──
-    function isoDate(d) { return d.toISOString().slice(0, 10); }
-
     async function fetchCurrentF(lat, lon) {
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m&temperature_unit=fahrenheit&timezone=auto`;
       const data = await fetchJson(url);
@@ -378,6 +698,7 @@
         weather = { nowF, avgF: hist.avgF, lowF: hist.lowF, highF: hist.highF, month, years: hist.years };
         setStatus(label);
         render();
+        renderTemps();
       } catch (e) {
         if (seq !== requestSeq) return;
         setError(`Weather unavailable: ${e.message}`);
@@ -398,14 +719,16 @@
     function useGeolocation() {
       if (!navigator.geolocation) { setError('Geolocation not available'); return; }
       btnLocate.disabled = true;
+      btnLocate.classList.add('busy');
       setStatus('Locating…');
+      const done = () => { btnLocate.disabled = false; btnLocate.classList.remove('busy'); };
       navigator.geolocation.getCurrentPosition(async pos => {
         const { latitude: lat, longitude: lon } = pos.coords;
         const label = await reverseGeocode(lat, lon);
-        btnLocate.disabled = false;
+        done();
         await loadWeather(lat, lon, label);
       }, err => {
-        btnLocate.disabled = false;
+        done();
         setError(`Location ${err.code === 1 ? 'denied' : 'unavailable'}`);
       }, { timeout: 15000, maximumAge: 600000 });
     }
@@ -414,25 +737,44 @@
     function roundHalf(x) { return Math.round(x * 2) / 2; }
     function fmtPsi(x) { return Number.isInteger(x) ? String(x) : x.toFixed(1); }
     function fmtDeg(x) { return `${Math.round(x)}<small>°F</small>`; }
+    function fmtDelta(x) { return x === 0 ? '±0' : `${x > 0 ? '+' : '−'}${fmtPsi(Math.abs(x))}`; }
 
     function render() {
-      const specs = AXLES.map(a => parseFloat($(a.id).value));
-      if (!weather || !specs.some(Number.isFinite)) { results.hidden = true; return; }
+      saveInputs();
+      const offset = weather ? (weather.nowF - weather.avgF) * PSI_PER_DEG_F : null;
+      for (const a of AXLES) {
+        const spec = a.picker ? a.picker.value : null;
+        if (spec === null || offset === null) {
+          a.number(null);
+          a.meta.innerHTML = spec === null ? '' : `Spec ${fmtPsi(spec)}`;
+          continue;
+        }
+        const target = roundHalf(spec + offset);
+        a.number(target);
+        a.meta.innerHTML = `Spec ${fmtPsi(spec)}<span class="delta">${fmtDelta(target - spec)}</span>`;
+      }
+    }
 
-      const offset = (weather.nowF - weather.avgF) * PSI_PER_DEG_F;
-
-      $('stat-now').innerHTML = fmtDeg(weather.nowF);
-      $('stat-month-label').textContent = `${MONTHS[weather.month]} Avg`;
-      $('stat-avg').innerHTML = fmtDeg(weather.avgF);
-      $('stat-low').innerHTML = fmtDeg(weather.lowF);
-      $('stat-high').innerHTML = fmtDeg(weather.highF);
-
-      $('rows').innerHTML = AXLES.map((a, i) => {
-        const spec = specs[i];
-        if (!Number.isFinite(spec)) return `<tr><td class="axle">${a.name}</td><td class="muted">—</td><td class="target muted">—</td></tr>`;
-        return `<tr><td class="axle">${a.name}</td><td>${fmtPsi(spec)}</td><td class="target">${fmtPsi(roundHalf(spec + offset))}</td></tr>`;
-      }).join('');
-      results.hidden = false;
+    // Temperature range: the Now dot travels out from the month average,
+    // so the motion points at how far today departs from normal.
+    const nowSpring = new Spring(0, 0.05);
+    nowSpring.onUpdate = x => { $('r-now').style.left = `${x}%`; };
+    function renderTemps() {
+      if (!weather) { $('temps').hidden = true; return; }
+      const { nowF, avgF, lowF, highF, month } = weather;
+      const lo = Math.min(lowF, nowF) - 4, hi = Math.max(highF, nowF) + 4;
+      const pct = f => (f - lo) / (hi - lo) * 100;
+      $('r-fill').style.left = `${pct(lowF)}%`;
+      $('r-fill').style.width = `${pct(highF) - pct(lowF)}%`;
+      $('r-avg').style.left = `${pct(avgF)}%`;
+      $('s-now').innerHTML = fmtDeg(nowF);
+      $('s-month').textContent = `${MONTHS[month].slice(0, 3)} Avg`;
+      $('s-avg').innerHTML = fmtDeg(avgF);
+      $('s-low').innerHTML = fmtDeg(lowF);
+      $('s-high').innerHTML = fmtDeg(highF);
+      $('temps').hidden = false;
+      nowSpring.set(pct(avgF));
+      nowSpring.to(pct(nowF), { response: 0.7, damping: 1 });
     }
 
     // ── Events ──
@@ -441,14 +783,16 @@
       if (zipInput.value.length === 5) useZip(zipInput.value);
     });
     btnLocate.addEventListener('click', useGeolocation);
-    AXLES.forEach(({ id }) => {
-      const sel = $(id);
-      sel.appendChild(new Option('—', ''));
-      for (let psi = SPEC_MIN; psi <= SPEC_MAX; psi += 0.5) sel.appendChild(new Option(fmtPsi(psi), fmtPsi(psi)));
-      sel.addEventListener('change', () => { saveInputs(); render(); });
-    });
 
+    // Large title collapses into the nav once it scrolls underneath
+    new IntersectionObserver(([entry]) => {
+      $('nav').classList.toggle('scrolled', !entry.isIntersecting);
+    }, { rootMargin: '-56px 0px 0px 0px' }).observe($('large-title'));
+
+    AXLES.forEach(a => { a.picker = makePicker(a.el, render); });
     loadInputs();
+    restoring = false;
+    render();
     if (zipInput.value.length === 5) useZip(zipInput.value);
   </script>
 </body>
