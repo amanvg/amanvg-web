@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-25T01:46:52.755Z",
+ "generatedAt": "2026-09-25T07:26:32.668Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -273,67 +273,32 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-09-24T02:00Z",
+     "date": "2026-09-25T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "post",
-         "shortDetail": "Final/10",
+         "shortDetail": "Final",
          "description": "Final"
         }
        },
        "competitors": [
         {
          "homeAway": "home",
+         "winner": false,
+         "score": "4",
+         "team": {
+          "id": "12",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Mariners",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
+         }
+        },
+        {
+         "homeAway": "away",
          "winner": true,
          "score": "6",
-         "team": {
-          "id": "12",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Mariners",
-          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
-         "winner": false,
-         "score": "5",
-         "team": {
-          "id": "18",
-          "abbreviation": "HOU",
-          "shortDisplayName": "Astros",
-          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png"
-         }
-        }
-       ],
-       "broadcasts": []
-      }
-     ]
-    },
-    "liveGame": {
-     "date": "2026-09-25T01:40Z",
-     "competitions": [
-      {
-       "status": {
-        "type": {
-         "state": "in",
-         "shortDetail": "Top 1st",
-         "description": "In Progress"
-        }
-       },
-       "competitors": [
-        {
-         "homeAway": "home",
-         "team": {
-          "id": "12",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Mariners",
-          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
          "team": {
           "id": "3",
           "abbreviation": "LAA",
@@ -346,6 +311,7 @@
       }
      ]
     },
+    "liveGame": null,
     "nextGame": {
      "date": "2026-09-26T02:10Z",
      "competitions": [
@@ -403,12 +369,12 @@
       {
        "name": "losses",
        "abbreviation": "L",
-       "displayValue": "84"
+       "displayValue": "85"
       },
       {
        "name": "points",
        "abbreviation": "GBP",
-       "displayValue": "-5.0"
+       "displayValue": "-5.5"
       },
       {
        "name": "ties",
@@ -418,7 +384,7 @@
       {
        "name": "winPercent",
        "abbreviation": "PCT",
-       "displayValue": ".468"
+       "displayValue": ".465"
       },
       {
        "name": "wins",
@@ -430,20 +396,20 @@
     "divisionEntries": [
      {
       "team": {
-       "id": "13",
-       "abbreviation": "TEX",
-       "displayName": "Texas Rangers"
+       "id": "18",
+       "abbreviation": "HOU",
+       "displayName": "Houston Astros"
       },
       "stats": [
        {
         "name": "OTLosses",
         "abbreviation": "OTL",
-        "displayValue": "2"
+        "displayValue": "8"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "17.5"
+        "displayValue": "17"
        },
        {
         "name": "losses",
@@ -474,20 +440,20 @@
      },
      {
       "team": {
-       "id": "18",
-       "abbreviation": "HOU",
-       "displayName": "Houston Astros"
+       "id": "13",
+       "abbreviation": "TEX",
+       "displayName": "Texas Rangers"
       },
       "stats": [
        {
         "name": "OTLosses",
         "abbreviation": "OTL",
-        "displayValue": "8"
+        "displayValue": "2"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "18"
+        "displayValue": "17"
        },
        {
         "name": "losses",
@@ -497,7 +463,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-1.0"
+        "displayValue": "-0.5"
        },
        {
         "name": "ties",
@@ -507,12 +473,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".494"
+        "displayValue": ".497"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "78"
+        "displayValue": "79"
        }
       ]
      },
@@ -536,12 +502,12 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "84"
+        "displayValue": "85"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-5.0"
+        "displayValue": "-5.5"
        },
        {
         "name": "ties",
@@ -551,7 +517,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".468"
+        "displayValue": ".465"
        },
        {
         "name": "wins",
@@ -580,12 +546,12 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "95"
+        "displayValue": "96"
        },
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-16.0"
+        "displayValue": "-16.5"
        },
        {
         "name": "ties",
@@ -595,7 +561,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".399"
+        "displayValue": ".396"
        },
        {
         "name": "wins",
@@ -619,7 +585,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "36"
+        "displayValue": "35"
        },
        {
         "name": "losses",
@@ -629,7 +595,7 @@
        {
         "name": "points",
         "abbreviation": "GBP",
-        "displayValue": "-19.0"
+        "displayValue": "-18.5"
        },
        {
         "name": "ties",
@@ -639,12 +605,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".380"
+        "displayValue": ".384"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "60"
+        "displayValue": "61"
        }
       ]
      }
@@ -662,30 +628,19 @@
      "cls": "phase-pre"
     },
     "lastGame": {
-     "date": "2026-09-21T00:00Z",
+     "date": "2026-09-25T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "post",
-         "shortDetail": "Final",
+         "shortDetail": "Final/SO",
          "description": "Final"
         }
        },
        "competitors": [
         {
          "homeAway": "home",
-         "winner": false,
-         "score": "2",
-         "team": {
-          "id": "3",
-          "abbreviation": "CGY",
-          "shortDisplayName": "Flames",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/cgy.png"
-         }
-        },
-        {
-         "homeAway": "away",
          "winner": true,
          "score": "4",
          "team": {
@@ -694,35 +649,11 @@
           "shortDisplayName": "Kraken",
           "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
          }
-        }
-       ],
-       "broadcasts": []
-      }
-     ]
-    },
-    "liveGame": {
-     "date": "2026-09-25T01:40Z",
-     "competitions": [
-      {
-       "status": {
-        "type": {
-         "state": "in",
-         "shortDetail": "20:00 - 1st",
-         "description": "In Progress"
-        }
-       },
-       "competitors": [
-        {
-         "homeAway": "home",
-         "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
-         }
         },
         {
          "homeAway": "away",
+         "winner": false,
+         "score": "3",
          "team": {
           "id": "3",
           "abbreviation": "CGY",
@@ -735,6 +666,7 @@
       }
      ]
     },
+    "liveGame": null,
     "nextGame": {
      "date": "2026-09-26T23:00Z",
      "competitions": [
@@ -787,7 +719,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "2"
+       "displayValue": "-"
       },
       {
        "name": "losses",
@@ -797,12 +729,12 @@
       {
        "name": "points",
        "abbreviation": "PTS",
-       "displayValue": "4"
+       "displayValue": "6"
       },
       {
        "name": "wins",
        "abbreviation": "W",
-       "displayValue": "2"
+       "displayValue": "3"
       },
       {
        "name": "overtimeLosses",
@@ -812,45 +744,6 @@
      ]
     },
     "divisionEntries": [
-     {
-      "team": {
-       "id": "124292",
-       "abbreviation": "SEA",
-       "displayName": "Seattle Kraken"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "2"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "0"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "4"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "2"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       }
-      ]
-     },
      {
       "team": {
        "id": "6",
@@ -866,7 +759,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2"
+        "displayValue": "-"
        },
        {
         "name": "losses",
@@ -876,12 +769,51 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "4"
+        "displayValue": "6"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "2"
+        "displayValue": "3"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "124292",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Kraken"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "-"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "0"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "6"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "3"
        },
        {
         "name": "overtimeLosses",
@@ -905,7 +837,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2"
+        "displayValue": "-"
        },
        {
         "name": "losses",
@@ -915,12 +847,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "4"
+        "displayValue": "6"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "overtimeLosses",
@@ -931,20 +863,20 @@
      },
      {
       "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
+       "id": "18",
+       "abbreviation": "SJ",
+       "displayName": "San Jose Sharks"
       },
       "stats": [
        {
         "name": "otLosses",
         "abbreviation": "OTL",
-        "displayValue": "0"
+        "displayValue": "1"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "4"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -954,7 +886,7 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "wins",
@@ -964,7 +896,7 @@
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
-        "displayValue": "0"
+        "displayValue": "1"
        }
       ]
      },
@@ -978,12 +910,12 @@
        {
         "name": "otLosses",
         "abbreviation": "OTL",
-        "displayValue": "0"
+        "displayValue": "1"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "4"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -993,7 +925,7 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "wins",
@@ -1003,7 +935,7 @@
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
-        "displayValue": "0"
+        "displayValue": "1"
        }
       ]
      },
@@ -1048,40 +980,40 @@
      },
      {
       "team": {
-       "id": "18",
-       "abbreviation": "SJ",
-       "displayName": "San Jose Sharks"
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
       },
       "stats": [
        {
         "name": "otLosses",
         "abbreviation": "OTL",
-        "displayValue": "1"
+        "displayValue": "0"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "5"
+        "displayValue": "4"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "1"
+        "displayValue": "2"
        },
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "1"
+        "displayValue": "2"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "0"
+        "displayValue": "1"
        },
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
-        "displayValue": "1"
+        "displayValue": "0"
        }
       ]
      },
@@ -1105,7 +1037,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "points",
