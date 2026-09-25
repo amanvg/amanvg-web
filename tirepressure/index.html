@@ -279,6 +279,26 @@
     .footer { text-align: center; color: var(--text-tertiary); font-size: 12px; line-height: 1.7; margin-top: 24px; }
     .footer a { color: var(--text-secondary); }
 
+    /* ── Desktop: answer pinned on the left, inputs on the right ── */
+    @media (min-width: 960px) {
+      .nav-inner { max-width: 1104px; }
+      .page {
+        max-width: 1104px;
+        display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas: "title title" "hero instr" "hero loc" "hero jamb" "foot foot";
+        grid-template-rows: auto auto auto 1fr auto;
+        column-gap: 24px; align-items: start;
+      }
+      .page > .card { margin-bottom: 16px; }
+      .large-title { grid-area: title; }
+      .page > .hero { grid-area: hero; position: sticky; top: 72px; }
+      .page > .instructions { grid-area: instr; }
+      .page > section:nth-of-type(3) { grid-area: loc; }
+      .page > section:nth-of-type(4) { grid-area: jamb; }
+      .page > .footer { grid-area: foot; }
+      .target-value b { font-size: 96px; }
+    }
+
     @media (max-width: 640px) {
       .nav-inner { padding: 0 16px; }
       .page { padding: 12px 16px 60px; }
