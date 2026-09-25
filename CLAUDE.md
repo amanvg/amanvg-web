@@ -41,6 +41,9 @@ A Reject means make no changes and ask what to adjust.
   title), `.card`, and form styles from an existing page such as
   `commuteplanner/index.html` rather than inventing new ones. Inter from
   Google Fonts, 20px card radius, accent `#3b82f6`.
+- Desktop first. Design and verify at 1440×900 and 1024×768 before phone
+  widths: inputs and results visible together, key controls above the fold.
+  Collapse to one column below 960px.
 - UI text is labels, questions, counts, and attribution only. No taglines,
   help text, or explanatory sentences in the page.
 - Attribute data sources in the page footer or the map attribution.
