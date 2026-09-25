@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-24T23:19:54.910Z",
+ "generatedAt": "2026-09-25T01:46:52.755Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -311,15 +311,49 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-09-25T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
+         "state": "in",
+         "shortDetail": "Top 1st",
+         "description": "In Progress"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "12",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Mariners",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "3",
+          "abbreviation": "LAA",
+          "shortDisplayName": "Angels",
+          "logo": "https://a.espncdn.com/i/teamlogos/mlb/500/laa.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "nextGame": {
+     "date": "2026-09-26T02:10Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
          "state": "pre",
-         "shortDetail": "9/24 - 9:40 PM EDT",
+         "shortDetail": "9/25 - 10:10 PM EDT",
          "description": "Scheduled"
         }
        },
@@ -666,16 +700,15 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-09-25T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
-         "state": "pre",
-         "shortDetail": "9/24 - 9:40 PM EDT",
-         "description": "Scheduled"
+         "state": "in",
+         "shortDetail": "20:00 - 1st",
+         "description": "In Progress"
         }
        },
        "competitors": [
@@ -695,6 +728,41 @@
           "abbreviation": "CGY",
           "shortDisplayName": "Flames",
           "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/cgy.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "nextGame": {
+     "date": "2026-09-26T23:00Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "9/26 - 7:00 PM EDT",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "22",
+          "abbreviation": "VAN",
+          "shortDisplayName": "Canucks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/van.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "124292",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Kraken",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
          }
         }
        ],
