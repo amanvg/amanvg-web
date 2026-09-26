@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-26T05:20:09.735Z",
+ "generatedAt": "2026-09-26T23:47:22.754Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -666,21 +666,21 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-09-26T23:00Z",
      "competitions": [
       {
        "status": {
         "type": {
-         "state": "pre",
-         "shortDetail": "9/26 - 7:00 PM EDT",
-         "description": "Scheduled"
+         "state": "in",
+         "shortDetail": "End of 1st",
+         "description": "End of Period"
         }
        },
        "competitors": [
         {
          "homeAway": "home",
+         "score": "1",
          "team": {
           "id": "22",
           "abbreviation": "VAN",
@@ -690,6 +690,7 @@
         },
         {
          "homeAway": "away",
+         "score": "2",
          "team": {
           "id": "124292",
           "abbreviation": "SEA",
@@ -701,7 +702,8 @@
        "broadcasts": []
       }
      ]
-    }
+    },
+    "nextGame": null
    },
    "standings": {
     "teamEntry": {
@@ -863,6 +865,45 @@
      },
      {
       "team": {
+       "id": "8",
+       "abbreviation": "LA",
+       "displayName": "Los Angeles Kings"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "4"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "2"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "2"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "18",
        "abbreviation": "SJ",
        "displayName": "San Jose Sharks"
@@ -941,45 +982,6 @@
      },
      {
       "team": {
-       "id": "8",
-       "abbreviation": "LA",
-       "displayName": "Los Angeles Kings"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "6"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "2"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "2"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "1"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "25",
        "abbreviation": "ANA",
        "displayName": "Anaheim Ducks"
@@ -998,7 +1000,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "points",
