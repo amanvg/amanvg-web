@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-30T11:05:21.239Z",
+ "generatedAt": "2026-10-01T07:02:23.815Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -792,45 +792,6 @@
      },
      {
       "team": {
-       "id": "8",
-       "abbreviation": "LA",
-       "displayName": "Los Angeles Kings"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "2"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "0"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "0"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "0"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "124292",
        "abbreviation": "SEA",
        "displayName": "Seattle Kraken"
@@ -928,6 +889,45 @@
         "name": "losses",
         "abbreviation": "L",
         "displayValue": "0"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "0"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "0"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "8",
+       "abbreviation": "LA",
+       "displayName": "Los Angeles Kings"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "2"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "1"
        },
        {
         "name": "points",
@@ -1092,6 +1092,35 @@
      },
      {
       "team": {
+       "id": "21812",
+       "abbreviation": "STL",
+       "displayName": "St. Louis CITY SC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "47"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "8"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "13"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "191",
        "abbreviation": "SJ",
        "displayName": "San Jose Earthquakes"
@@ -1145,35 +1174,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "13"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "21812",
-       "abbreviation": "STL",
-       "displayName": "St. Louis CITY SC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "6"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "44"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "8"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "12"
        }
       ]
      },
