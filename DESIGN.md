@@ -1,376 +1,416 @@
 ---
 name: amanvg
-description: Home page and Seattle Sports page of amanvg.com as flat-colour poster sheets on a night-green ground.
+description: amanvg.com in two modes. Light is Federal Park Serigraph (parchment, pine, ochre, clay); dark is Nocturne Serigraph (midnight pine, campfire amber, terracotta). Both are WPA serigraph posters with hard print-strike shadows and 0px corners.
 colors:
-  night-green: "#0f2421"
-  paper-cream: "#f1e4c3"
-  poster-ink: "#10201d"
-  trail-gold: "#f0b43c"
-  band-navy: "#1b2f66"
-  band-blue: "#2c5f9e"
-  band-pine: "#1f5a45"
-  band-orange: "#e8742c"
-  band-plum: "#6b2f4a"
-  team-seahawks: "#002244"
-  team-seahawks-accent: "#69BE28"
-  team-mariners: "#0C2C56"
-  team-mariners-accent: "#005C5C"
-  team-kraken: "#001628"
-  team-kraken-accent: "#99D9D9"
-  team-sounders: "#005595"
-  team-sounders-accent: "#658D1B"
+  surface: '#f1fee1'
+  surface-dim: '#d2dec3'
+  surface-bright: '#f1fee1'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#ecf8dc'
+  surface-container: '#e6f2d6'
+  surface-container-high: '#e0ecd1'
+  surface-container-highest: '#dae7cb'
+  on-surface: '#151e0d'
+  on-surface-variant: '#424842'
+  inverse-surface: '#293321'
+  inverse-on-surface: '#e9f5d9'
+  outline: '#727972'
+  outline-variant: '#c2c8c0'
+  surface-tint: '#46654f'
+  primary: '#0d2c19'
+  on-primary: '#ffffff'
+  primary-container: '#24422e'
+  on-primary-container: '#8dae94'
+  inverse-primary: '#adcfb4'
+  secondary: '#8f4e00'
+  on-secondary: '#ffffff'
+  secondary-container: '#fea047'
+  on-secondary-container: '#6d3a00'
+  tertiary: '#510900'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#761705'
+  on-tertiary-container: '#ff8267'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#c8ebcf'
+  primary-fixed-dim: '#adcfb4'
+  on-primary-fixed: '#022110'
+  on-primary-fixed-variant: '#2f4d38'
+  secondary-fixed: '#ffdcc2'
+  secondary-fixed-dim: '#ffb77a'
+  on-secondary-fixed: '#2e1500'
+  on-secondary-fixed-variant: '#6d3a00'
+  tertiary-fixed: '#ffdad3'
+  tertiary-fixed-dim: '#ffb4a4'
+  on-tertiary-fixed: '#3e0500'
+  on-tertiary-fixed-variant: '#85230f'
+  background: '#f1fee1'
+  on-background: '#151e0d'
+  surface-variant: '#dae7cb'
+colors-dark:
+  surface: '#0e1511'
+  surface-dim: '#0e1511'
+  surface-bright: '#333b36'
+  surface-container-lowest: '#09100c'
+  surface-container-low: '#161d19'
+  surface-container: '#1a211d'
+  surface-container-high: '#242c27'
+  surface-container-highest: '#2f3632'
+  on-surface: '#dde4dd'
+  on-surface-variant: '#d8c3b1'
+  inverse-surface: '#dde4dd'
+  inverse-on-surface: '#2b322d'
+  outline: '#a08d7d'
+  outline-variant: '#534437'
+  surface-tint: '#ffb872'
+  primary: '#ffb872'
+  on-primary: '#4a2800'
+  primary-container: '#e5933a'
+  on-primary-container: '#5a3100'
+  inverse-primary: '#8c5000'
+  secondary: '#adcfb6'
+  on-secondary: '#183625'
+  secondary-container: '#314f3c'
+  on-secondary-container: '#9fc0a8'
+  tertiary: '#ffb4a5'
+  on-tertiary: '#650b00'
+  tertiary-container: '#ff8168'
+  on-tertiary-container: '#751605'
+  error: '#ffb4ab'
+  on-error: '#690005'
+  error-container: '#93000a'
+  on-error-container: '#ffdad6'
+  primary-fixed: '#ffdcbf'
+  primary-fixed-dim: '#ffb872'
+  on-primary-fixed: '#2d1600'
+  on-primary-fixed-variant: '#6a3b00'
+  secondary-fixed: '#c8ebd1'
+  secondary-fixed-dim: '#adcfb6'
+  on-secondary-fixed: '#022111'
+  on-secondary-fixed-variant: '#2f4d3a'
+  tertiary-fixed: '#ffdad3'
+  tertiary-fixed-dim: '#ffb4a5'
+  on-tertiary-fixed: '#3e0400'
+  on-tertiary-fixed-variant: '#862210'
+  background: '#0e1511'
+  on-background: '#dde4dd'
+  surface-variant: '#2f3632'
+  surface-obsidian: '#0a0f0c'
+  surface-midnight: '#0e1511'
+  surface-pine: '#141e17'
+  surface-card: '#1a271f'
+  surface-elevated: '#223329'
+  border-keyline: '#35483b'
+  border-subtle: '#233328'
+  ink-parchment: '#f4ede2'
+  ink-bone: '#ded5c5'
+  ink-muted: '#96a498'
+  campfire-amber: '#e5933a'
+  starlight-gold: '#f0c868'
+  ranger-terracotta: '#c8523b'
+  alpine-emerald: '#44805d'
+  night-sky-navy: '#141c26'
 typography:
-  logo:
-    fontFamily: "'Big Shoulders Display', 'Arial Narrow', sans-serif"
-    fontSize: "30px"
-    fontWeight: 900
-    lineHeight: "normal"
-    letterSpacing: "0.06em"
-  sources-label:
-    fontFamily: "'Big Shoulders Display', 'Arial Narrow', sans-serif"
-    fontSize: "20px"
-    fontWeight: 900
-    lineHeight: "normal"
-    letterSpacing: "0.3em"
-  band-title:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "clamp(32px, 3.4vw, 46px)"
-    fontWeight: 800
-    lineHeight: 1
-    letterSpacing: "0.12em"
-  row-title:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "clamp(24px, 2.4vw, 32px)"
-    fontWeight: 700
-    lineHeight: 1
-    letterSpacing: "0.09em"
-  row-qualifier:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "0.58em"
-    fontWeight: 600
-    lineHeight: 1
-    letterSpacing: "0.32em"
-  nav-link:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "17px"
-    fontWeight: 700
-    lineHeight: "normal"
-    letterSpacing: "0.22em"
-  sources:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "15px"
-    fontWeight: 600
-    lineHeight: "normal"
-    letterSpacing: "0.2em"
-  team-name:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "clamp(24px, 2vw, 28px)"
-    fontWeight: 800
-    lineHeight: 1
-    letterSpacing: "0.1em"
-  team-record:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "16px"
-    fontWeight: 600
-    lineHeight: "normal"
-    letterSpacing: "0.2em"
-  section-label:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "13px"
-    fontWeight: 700
-    lineHeight: "normal"
-    letterSpacing: "0.22em"
-  game-row:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "21px"
-    fontWeight: 700
-    lineHeight: 1.1
-    letterSpacing: "0.08em"
-  game-score:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "28px"
-    fontWeight: 800
-    lineHeight: "normal"
-    letterSpacing: "normal"
-    fontFeature: "tabular-nums"
-  next-opponent:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "24px"
-    fontWeight: 800
-    lineHeight: "normal"
-    letterSpacing: "0.08em"
-  table:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "16px"
-    fontWeight: 600
-    lineHeight: "normal"
-    letterSpacing: "0.06em"
-    fontFeature: "tabular-nums"
-  table-head:
-    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
-    fontSize: "13px"
-    fontWeight: 700
-    lineHeight: "normal"
-    letterSpacing: "0.16em"
-rounded:
-  none: "0px"
+  headline-xl:
+    fontFamily: Oswald
+    fontSize: 56px
+    fontWeight: '700'
+    lineHeight: 64px
+    letterSpacing: 0.05em
+  headline-xl-mobile:
+    fontFamily: Oswald
+    fontSize: 36px
+    fontWeight: '700'
+    lineHeight: 44px
+    letterSpacing: 0.04em
+  headline-lg:
+    fontFamily: Oswald
+    fontSize: 40px
+    fontWeight: '700'
+    lineHeight: 48px
+    letterSpacing: 0.04em
+  headline-lg-mobile:
+    fontFamily: Oswald
+    fontSize: 28px
+    fontWeight: '700'
+    lineHeight: 36px
+    letterSpacing: 0.03em
+  headline-md:
+    fontFamily: Oswald
+    fontSize: 28px
+    fontWeight: '600'
+    lineHeight: 36px
+    letterSpacing: 0.03em
+  headline-sm:
+    fontFamily: Oswald
+    fontSize: 22px
+    fontWeight: '600'
+    lineHeight: 28px
+    letterSpacing: 0.02em
+  title-lg:
+    fontFamily: Work Sans
+    fontSize: 20px
+    fontWeight: '700'
+    lineHeight: 26px
+    letterSpacing: 0.02em
+  title-md:
+    fontFamily: Work Sans
+    fontSize: 16px
+    fontWeight: '600'
+    lineHeight: 22px
+    letterSpacing: 0.01em
+  body-lg:
+    fontFamily: Vollkorn
+    fontSize: 18px
+    fontWeight: '400'
+    lineHeight: 28px
+    letterSpacing: 0em
+  body-md:
+    fontFamily: Vollkorn
+    fontSize: 16px
+    fontWeight: '400'
+    lineHeight: 24px
+    letterSpacing: 0em
+  body-sm:
+    fontFamily: Vollkorn
+    fontSize: 14px
+    fontWeight: '400'
+    lineHeight: 20px
+    letterSpacing: 0em
+  label-lg:
+    fontFamily: Work Sans
+    fontSize: 14px
+    fontWeight: '700'
+    lineHeight: 18px
+    letterSpacing: 0.08em
+  label-md:
+    fontFamily: Work Sans
+    fontSize: 12px
+    fontWeight: '600'
+    lineHeight: 16px
+    letterSpacing: 0.06em
+  label-sm:
+    fontFamily: Work Sans
+    fontSize: 11px
+    fontWeight: '600'
+    lineHeight: 14px
+    letterSpacing: 0.08em
 spacing:
-  nav-height: "60px"
-  sheet-top-gap: "44px"
-  sheet-bottom-gap: "40px"
-  sheet-border: "10px"
-  band-height: "76px"
-  row-height: "60px"
-  band-pad-x: "28px"
-  row-indent: "56px"
-  content-max: "1200px"
-  gutter-min: "40px"
-  panel-gap: "10px"
-  accent-stripe: "6px"
-  logo-tile-head: "52px"
-  logo-tile-game: "28px"
-  logo-tile-table: "20px"
-components:
-  band-head:
-    backgroundColor: "{colors.band-navy}"
-    textColor: "{colors.paper-cream}"
-    typography: "{typography.band-title}"
-    rounded: "{rounded.none}"
-    height: "76px"
-    padding: "0 28px"
-  band-head-orange:
-    backgroundColor: "{colors.band-orange}"
-    textColor: "{colors.poster-ink}"
-  project-row:
-    backgroundColor: "#162652"
-    textColor: "{colors.paper-cream}"
-    typography: "{typography.row-title}"
-    rounded: "{rounded.none}"
-    height: "60px"
-    padding: "0 28px 0 56px"
-  nav-link:
-    textColor: "{colors.paper-cream}"
-    typography: "{typography.nav-link}"
-    padding: "8px 14px"
-  nav-link-hover:
-    textColor: "{colors.trail-gold}"
-  sheet:
-    backgroundColor: "{colors.paper-cream}"
-    rounded: "{rounded.none}"
-    padding: "10px"
-  masthead:
-    backgroundColor: "{colors.band-navy}"
-    textColor: "{colors.paper-cream}"
-    typography: "{typography.band-title}"
-    rounded: "{rounded.none}"
-    padding: "12px 28px"
-  refresh-button:
-    backgroundColor: "transparent"
-    textColor: "{colors.paper-cream}"
-    rounded: "{rounded.none}"
-    height: "44px"
-    padding: "8px 18px"
-  refresh-button-hover:
-    textColor: "{colors.trail-gold}"
-  team-panel-head:
-    backgroundColor: "{colors.team-seahawks}"
-    textColor: "{colors.paper-cream}"
-    typography: "{typography.team-name}"
-    rounded: "{rounded.none}"
-    padding: "10px 24px"
-  team-panel-stripe:
-    backgroundColor: "{colors.team-seahawks-accent}"
-    height: "6px"
-  team-panel-body:
-    textColor: "{colors.paper-cream}"
-    rounded: "{rounded.none}"
-    padding: "16px 24px 20px"
-  live-chip:
-    backgroundColor: "{colors.band-orange}"
-    textColor: "{colors.poster-ink}"
-    rounded: "{rounded.none}"
-    padding: "5px 10px"
-  result-chip-win:
-    backgroundColor: "{colors.paper-cream}"
-    textColor: "{colors.poster-ink}"
-    rounded: "{rounded.none}"
-    size: "26px"
-  logo-tile:
-    backgroundColor: "transparent"
-    rounded: "{rounded.none}"
-    size: "52px"
+  gutter: 1.5rem
+  gutter-mobile: 1rem
+  margin: 2.5rem
+  margin-mobile: 1rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
+  space-md: 1rem
+  space-lg: 1.5rem
+  space-xl: 2.5rem
 ---
 
-# Design System: amanvg
+## Brand & Style
 
-Scope: this system covers the home page (`/index.html`) and `/seattlesports/`. The other app pages (`/commute/`, `/roadtrip/`, `/commuteplanner/`, `/whichcar/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`, `/tirepressure/`, `/carafford/`, `/trust/`) still use the older dark / Inter / `#3b82f6` accent / 20px-radius card style and are not yet part of this system. Do not mix the two on one page.
+This design system translates the handcrafted vigor, public utility, and heroic romanticism of 1930s–1940s Works Progress Administration (WPA) Federal Art Project posters into an authoritative modern digital experience. Drawing from the printmaking legacy of serigraphers like Chester Don Powell and Dale Nichols, the visual tone honors American conservation, wilderness exploration, and disciplined craftsmanship.
 
-`/seattlesports/` is the first migrated app page. It reuses the nav, cream sheet, ink rule, grain, Sports navy, type and gold hover of the home page, and adds one page pattern (a masthead band over a grid of team panels) plus the Team-Colour Exception below.
-
-## Overview
-
-**Creative North Star: "The Park Poster Sheet"**
-
-One cream-framed sheet sits on a night-green ground. Inside it, a cropped public-domain park-service poster banner is followed by five flat, saturated colour bands that step cool to warm (navy, blue, pine, orange, plum). Each band is an accordion: it opens to a stack of darker rows, one per project. Poster inspiration was taken only for colour and lettering, in condensed, all-caps, widely tracked type. It is not borrowed for illustration or pastiche.
-
-The page is flat and printed-feeling: no gradients, no shadows at rest, no rounded corners, no imagery other than the banner. Copy is labels and titles only: band names, project names, short qualifiers, and a Sources line.
-
-**Key Characteristics:**
-- Flat saturated colour bands, cool to warm, each with a darker child-row shade derived by `color-mix`.
-- Condensed all-caps tracked lettering throughout (Barlow Condensed for text, Big Shoulders Display for the logo and the Sources label).
-- Cream paper frame (10px) around banner and bands; night-green ground outside it.
-- Square corners everywhere; depth comes only from colour steps and an inset keyline on hover.
-- Motion is limited to accordion expand, staggered row fade, and small arrow nudges, all on one easing.
-- On `/seattlesports/` the same sheet holds a navy masthead and four flat team-colour panels instead of bands; state is shown with orange, cream fills and cream outlines only.
+The visual style blends **Tactile Printmaking** with **High-Contrast Structural Graphicism**:
+- **Atmospheric Block Coloration:** Layered, non-gradient planes of pigment evoke hand-pulled screen prints, stencils, and linocut reductions.
+- **Lithographic Warmth:** Surfaces reject sterile digital whites and cold hex grays in favor of sun-cured newsprint, unbleached parchment, and aged field-journal cardstock.
+- **Utilitarian Discipline:** Every container is grounded by definite ink-weight borders, structural registration lines, and deliberate framing inspired by vintage park boundary markers and government broadsides.
+- **Modern Digital Utility:** While honoring historic print aesthetics, the UI remains sharp, responsive, and accessible with AAA-compliant contrast thresholds and precise ergonomic touch targets.
 
 ## Colors
 
-A night-green ground, cream paper, one gold accent, and five poster-flat band colours.
+The palette reproduces the specialized matte oil inks and naturally aged cotton rag papers of mid-century serigraphy. 
 
-### Primary
-- **Poster Cream** (`paper-cream`, #f1e4c3): the sheet frame, all text on dark grounds, nav rule, focus outline, skip-link fill.
-- **Trail Gold** (`trail-gold`, #f0b43c): the only accent. Nav-link hover (text and border), text selection background, and the Sources label. Never a band or row colour.
-
-### Secondary: the five bands (cool to warm, in page order)
-- **Navy** (`band-navy`, #1b2f66): Sports.
-- **Blue** (`band-blue`, #2c5f9e): Maps.
-- **Pine** (`band-pine`, #1f5a45): Weather.
-- **Orange** (`band-orange`, #e8742c): Calculators. Carries ink text, not cream.
-- **Plum** (`band-plum`, #6b2f4a): Planning.
-- **Child rows** are the band colour mixed 80% with 20% black (`color-mix(in srgb, band 80%, #000)`). Computed shades: navy #162652, blue #234c7e, pine #194837, plum #56263b. The orange band is the exception: its rows are orange mixed 90% with 10% white (`--mix:90%; --tint:#fff`, #ea8241), because ink text on the darker mix measured 3.75:1. These are derived, not separate tokens; always compute from the band colour.
-
-### Team colours (`/seattlesports/` only)
-Official primary and accent colours, used as flat fields on that page and nowhere else.
-- **Seahawks** (`team-seahawks` #002244, accent `team-seahawks-accent` #69BE28)
-- **Mariners** (`team-mariners` #0C2C56, accent `team-mariners-accent` #005C5C)
-- **Kraken** (`team-kraken` #001628, accent `team-kraken-accent` #99D9D9)
-- **Sounders** (`team-sounders` #005595, accent `team-sounders-accent` #658D1B)
-- Panel head = primary; stripe = accent; panel body = primary mixed 80% with 20% black (`color-mix(in srgb, primary 80%, #000)`, the same rule as home child rows). Text is cream on all four. Measured contrast: heads 6.08 to 14.52:1, bodies 7.94 to 15.05:1, masthead 10.11:1, LIVE chip 5.59:1.
-
-### Neutral
-- **Night Green** (`night-green`, #0f2421): page ground and sticky nav background.
-- **Poster Ink** (`poster-ink`, #10201d): text on the orange band and on cream/gold fills (skip link, selection).
-
-### Named Rules
-**The Team-Colour Exception Rule.** Official team colours are used as flat fields on `/seattlesports/` only, as head, accent stripe and derived body. They are the one sanctioned exception to the five band hues. No other page may introduce hues this way without approval.
-
-**The Band-Owns-Its-Colour Rule.** A band sets one `--c` and one `--fg`; its head, its rows, its focus ring, and its hover keyline all derive from those two values. Nothing inside a band introduces another hue.
-
-**The Ink-On-Orange Rule.** Cream text on orange is too weak; the orange band uses ink (#10201d) for its text. Any new light band does the same; pick `--fg` per band, not globally.
-
-**The One Gold Rule.** Gold marks interaction on the dark ground (nav hover, and the Refresh button hover on `/seattlesports/`) and the Sources label only. It never fills a surface.
-
-**The No-Extra-Hue State Rule.** On `/seattlesports/`, state uses no hue beyond the panel's own colour and the existing orange: live and error are orange with ink text, a win is a cream fill with an ink letter, a loss and a season badge are 2px cream outlines. Do not add green/red result colours.
+### Color Roles & Implementation
+- **Primary (`#24422e` / Ranger Pine):** Represents foundational authority, evergreen canopies, and administrative weight. Applied to primary CTAs, main site navigation headers, strong keylines, and emphasized titles.
+- **Secondary (`#d9822b` / Ochre Gold):** Radiates low-angled sunset warmth, amber canyon rock, and cautionary park signage. Used for active states, key highlight banners, prominent indicators, and secondary action surfaces.
+- **Tertiary (`#a63a24` / Redwood Clay):** The intense terracotta of ancient bark and red-rock amphitheaters. Serves as the critical accent for alerts, tags, urgent notices, and focal stamp badges.
+- **Neutral Keyline (`#4d5843` / Muted Olive):** Replaces synthetic cool grays for component borders, dividers, secondary metadata, and structural registration marks.
+- **Canvas Base (`#f6efe1` / Parchment Wash):** The default screen background, providing a warm, non-glare paper field that softens high-contrast typography.
+- **Surface Elevation (`#ede3ce` / Oatmeal Sandstone):** A slightly deeper paper pulp tone used for cards, fieldsets, drawers, and modal backdrops to establish tactile layering without digital drop shadows.
+- **Typography Ink (`#181c16` / Printer's Ink):** A deep, soot-derived botanical charcoal that grounds body copy and headings with dense lithographic contrast.
+- **Atmospheric Sky (`#60888f` / Mist Cyan):** Applied to informational notices, badge washes, and subtle thematic backgrounds reminiscent of distant mountain ranges.
+- **Atmospheric Night (`#1c2730` / Midnight Vista):** An ink-dense navy charcoal reserved for high-contrast dark sections, footer broadsheets, and nighttime cartographic panels.
 
 ## Typography
 
-**Text Font:** Barlow Condensed (with Arial Narrow, sans-serif); weights 600, 700, 800 loaded.
-**Display Font:** Big Shoulders Display (with Arial Narrow, sans-serif); weight 900 only.
+The typographic hierarchy balances hand-carved poster display lettering with bookish editorial legibility and federal utility.
 
-**Character:** Condensed, uppercase, and generously tracked, like lettering on a trail-service poster. Big Shoulders at 900 is reserved for the two identity marks; everything else is Barlow Condensed.
+- **Headlines (Oswald):** Evokes the condensed, hand-routed wooden typography and chiseled serigraph title placards of 1930s national park posters. Rendered primarily in uppercase (`text-transform: uppercase`) with measured tracking to let each character breathe like carved wood type.
+- **Body & Continuous Reading (Vollkorn):** A robust, warm, slightly sturdy serif designed by Friedrich Althausen. Its deep ink traps, hefty serifs, and high legibility mimic classic letterpress books and field guides without tiring the eye on high-resolution displays.
+- **Labels, Captions & Badges (Work Sans):** A balanced, unpretentious grotesque sans serif reminiscent of mid-century civil service technical documents, trail markers, and survey plots. Its geometric bone structure complements the organic serif body.
+- **Typesetting Rule:** Headings should always maintain a tight vertical grid. Never float large Oswald headers over low-contrast images; frame them within dedicated color bands or bounded signboards.
 
-### Hierarchy
-- **Logo** (Big Shoulders 900, 30px, tracking 0.06em, uppercase): the "amanvg" wordmark in the nav.
-- **Band Title** (Barlow Condensed 800, clamp(32px, 3.4vw, 46px), line-height 1, tracking 0.12em, uppercase): the `h2` on each colour band.
-- **Row Title** (Barlow Condensed 700, clamp(24px, 2.4vw, 32px), line-height 1, tracking 0.09em, uppercase): project names, `h3`.
-- **Row Qualifier** (Barlow Condensed 600, 0.58em of the row title, tracking 0.32em, uppercase): a short trailing phrase inline with the row title, baseline-aligned, 18px gap.
-- **Nav Link** (Barlow Condensed 700, 17px, tracking 0.22em, uppercase).
-- **Sources** (Barlow Condensed 600, 15px, tracking 0.2em, uppercase) with the **Sources Label** in Big Shoulders 900, 20px, tracking 0.3em, gold.
+## Layout & Spacing
 
-`/seattlesports/` adds these steps, all Barlow Condensed, uppercase, minimum 13px:
-- **Masthead title** uses Band Title (the page `h1`); the status label ("auto-refreshes"), updated timestamp and Refresh button are 15px, 600/700, tracking 0.2em.
-- **Team Name** (800, clamp(24px, 2vw, 28px), line-height 1, tracking 0.1em, `text-wrap: balance`): panel `h2`.
-- **Team Record** (600, 16px, tracking 0.2em).
-- **Section Label** (700, 13px, tracking 0.22em, 80% opacity): "Last Game", "Next Game", division name.
-- **Game Row** (700, 21px, tracking 0.08em) with **Score** (800, 28px, tabular numerals) and **Next Opponent** (800, 24px, tracking 0.08em).
-- **Table** (600, 16px, tracking 0.06em, tabular numerals); head cells 13px, 700, tracking 0.16em.
+Layouts follow a **framed broadsheet grid** inspired by physical print sheets, posters, and field guides. Content lives within structured, deliberate containers rather than borderless endless cascades.
 
-### Named Rules
-**The All-Caps Tracked Rule.** Every piece of text on the page is uppercase with positive letter-spacing; tracking widens as size shrinks (0.12em at band size, 0.32em at qualifier size).
+### Layout Model
+- **Desktop (1024px+):** 12-column structured grid with `2.5rem` margins and `1.5rem` gutters. Content is constrained to a maximum container width of `1280px` to maintain poster-like proportions.
+- **Tablet (768px – 1023px):** 8-column layout with `2rem` margins and `1.25rem` gutters.
+- **Mobile (< 768px):** 4-column layout with `1rem` margins and `1rem` gutters. Grid tracks collapse to stacked placard configurations.
 
-**The Tabular Numerals Rule.** Scores, records and standings use tabular numerals so columns align.
-
-**The Two Display Marks Rule.** Big Shoulders Display 900 appears only on the logo and the Sources label. Do not extend it to headings.
-
-## Layout
-
-Single column, content centred with a fluid gutter of `max(40px, (100% - 1200px) / 2)`, so the nav, the sheet, and the Sources line share the same edges. At 700px and below the gutter drops to 16px, the sheet border to 8px, band height to 68px, band padding to 16px, and row indent to 32px.
-
-Vertical rhythm: sticky nav 60px with a 2px cream rule; 44px gap between nav and sheet; sheet bottom margin 40px; Sources padded 48px at the bottom. Bands are 76px tall closed; rows are 60px tall, indented 56px from the band edge so they read as children. Band head and row are grids with a flexible title column and a fixed icon column (32px and 28px) with 24px column gap. The banner is full sheet width at a height of clamp(110px, 16vw, 200px), cropped to fit with `object-fit: cover`, anchored at 50% 12% so the peaks and the light-blue notch stay in frame. `html` uses `scrollbar-gutter: stable` so expanding a band does not shift the layout.
-
-`/seattlesports/` keeps the nav, sheet and Sources gutters, with a 24px gap between nav and sheet. Inside the sheet, a navy masthead (min 76px) is followed by a 2x2 grid of team panels separated by 10px of cream (one column at 960px and below). Each panel is a container: its body is games on the left and a 250px standings column on the right, and when the panel is under 560px wide (for example 1024px viewport in 2x2) the standings stack under the games with a 2px divider. At 700px and below the panel head wraps with the badges under the name, the body is one column, and padding drops to 16px.
-
-Categories start collapsed. Accordions are independent (opening one does not close others).
+### Grid Rhythm & Poster Framing
+- **Outer Register Framing:** Main views feature an explicit 1px to 2px inner border inset by `space-sm` or `space-md` from the screen edge on wide viewports, mimicking the registration borders of serigraph art prints.
+- **Signboard Rhythm:** Elements align to a baseline multiple of `0.25rem` (4px). Components prioritize explicit padding over floating whitespace, reinforcing the tactile sensation of structured placards and framed notices.
 
 ## Elevation & Depth
 
-Flat. There are no resting shadows. Depth is conveyed by the colour step from band to darker child rows and by the cream frame around the sheet. The one state-driven treatment is an inset keyline on row hover.
+This design system deliberately rejects ambient digital drop shadows, multi-tier blurred elevations, and semi-transparent glassmorphism. Hand-pulled screen prints express depth through physical pigment density, distinct color overlapping, and mechanical hard offsets.
 
-### Shadow Vocabulary
-- **Inset Keyline** (`box-shadow: inset 0 0 0 4px var(--fg)`): row hover, drawn in the band's own text colour.
-
-### Named Rules
-**The Print-Grain Rule.** One screenprint texture sits over the whole sheet: a `.sheet::after` overlay of inline SVG fractal noise at 7% opacity with `mix-blend-mode: multiply`, so band colours and text keep their contrast within about 0.4:1 and no extra file loads. It is hidden under `forced-colors`. It is texture, not shadow or gradient; nothing else on the page is textured.
-
-**The Flat-By-Default Rule.** Surfaces are flat at rest. Hover is a keyline, never a drop shadow or a lift.
+### Depth Paradigms
+- **Flat Litho Stacking:** Surfaces step forward purely through color contrast (`#f6efe1` canvas base to `#ede3ce` card wash) paired with crisp `2px` borders in Ranger Pine (`#24422e`) or Muted Olive (`#4d5843`).
+- **The "Print Strike" Hard Shadow:** When an element must physically elevate (e.g., hover states on primary buttons, interactive cards, floating modal alerts), use a hard, un-blurred offset:
+  `box-shadow: 4px 4px 0px 0px #181c16` (or `#24422e`).
+- **Registration Offset:** Active or pressed states shift the element visually by adjusting translation (`transform: translate(2px, 2px)`) and reducing the hard shadow to `2px 2px 0px 0px`, simulating the mechanical depression of a stamp or printing press.
+- **Inner Deboss Framing:** Recessed areas (such as code blocks, inset input wells, or data grids) use a crisp `1px` or `2px` inset line (`box-shadow: inset 2px 2px 0px 0px rgba(24, 28, 22, 0.15)`) coupled with a darker paper surface wash (`#ede3ce`).
 
 ## Shapes
 
-Square and printed. No border radius anywhere (0px). The sheet is a 10px cream border (8px under 700px) with a 2px ink rule 3px inside its edge (`outline`, offset -7px, -6px under 700px); bands and rows are full-bleed rectangles inside it. The nav link has a 2px transparent border that turns gold on hover. Icons are two small solid SVG glyphs filled with `currentColor`: a chevron (28px, rotates 90deg when open) on band heads and a block arrow (26px) on rows.
+The shape language reflects hand-trimmed paper, guillotine paper cutters, chiselled woodblocks, and classic routed timber signs.
+
+- **Primary Geometry (Sharp / 0px):** Form fields, action buttons, image cards, and structural panels utilize strict 0px square corners. This preserves the graphic punch of geometric WPA poster layouts.
+- **Notched & Chamfered Signboards:** High-tier hero components and featured badges may feature 45-degree corner chamfers (`clip-path: polygon(...)` or 6px–8px notched corners), reminiscent of historical CCC (Civilian Conservation Corps) trail signage.
+- **Stamp & Pill Exceptions:** Small status markers and auxiliary tags use full circular or pill shapes (`9999px`) to emulate embossed metal ranger pins, trail trailheads, and inked ink-stamp validation seals.
+- **Border Weight System:** Borders are visible, intentional design elements:
+  - Standard container boundary: `2px solid #4d5843`
+  - Heavy hero border / active focus: `3px solid #24422e`
+  - Internal divider: `1px solid rgba(77, 88, 67, 0.35)`
+  - Double-line framing: `3px double #24422e` on commemorative certificates and high-priority cards.
 
 ## Components
 
-### Navigation
-Sticky, 60px, night-green with a 2px cream bottom border. Logo left, one link ("Trust") right. Link: cream, 17px tracked caps, 44px minimum height, 14px side padding, 2px transparent border. Hover: border and text turn gold. Includes a skip link that slides in on focus (cream fill, ink text).
+### Buttons
+- **Primary Button:** Solid `#24422e` background, `#f6efe1` uppercase text (Oswald Bold, `label-lg`), `2px solid #181c16` border. Zero border-radius. Padding: `0.75rem 1.75rem`. Hover state creates a `4px 4px 0px 0px #181c16` hard strike shadow. Pressed state translates `2px 2px` with a `2px 2px 0px 0px` shadow.
+- **Secondary Button (Ochre Amber):** Solid `#d9822b` background, `#181c16` text, `2px solid #181c16` border. Hard offset shadow on hover.
+- **Terracotta Accent Button:** Solid `#a63a24` background with `#f6efe1` text for critical actions or urgent trail alerts.
+- **Outlined / Broadside Button:** Transparent background, `#24422e` text, `2px solid #24422e` border. On hover, background fills with `#ede3ce` wash.
 
-### Band (accordion head)
-Full-width button, 76px, band colour background, `--fg` text, title left and chevron right. Hover nudges the chevron 3px right. Open state rotates the chevron 90deg (0.45s). Focus ring: 3px outline in `--fg`, offset -8px (inset). The title is an `h2` wrapping the button.
+### Cards & Placards
+- **Standard Card:** Background in `#ede3ce`, bordered with `2px solid #4d5843`. Padding: `1.5rem`.
+- **Framed Field Card:** Inset nested frame using a `1px solid #4d5843` keyline placed `6px` inside the main `2px solid #24422e` outer boundary, echoing framed park boundary signs.
+- **Header Banding:** Card headers frequently use solid background blocks (e.g., `#24422e` banner across the top) with contrasting light typography to divide sections cleanly.
 
-### Panel and Project Row
-Panel expands with a grid-rows transition (0fr to 1fr, 0.5s). Rows are 60px, darker band shade, title left and block arrow right. When a band opens, rows fade in and slide from -10px; the second to fourth rows delay by 0.06s, 0.12s, 0.18s (opacity and transform only). Hover adds the inset keyline and moves the arrow 7px right (0.3s). Row focus ring is 3px in `--fg`. Closed panels are `inert`, so their links are out of the tab order. Opening a band scrolls just enough to keep its last row 24px above the fold, never past 72px under the top edge, and stops if the visitor scrolls; under `prefers-reduced-motion` it applies at once. Easing for all expand, slide, and nudge motion: `cubic-bezier(.16, 1, .3, 1)`; the opacity fade is 0.35s `ease`. All of it is disabled under `prefers-reduced-motion`.
+### Badges, Stamps & Chips
+- **Ranger Stamp Badge:** Circular or chamfered pill shape. Uppercase `label-sm` in Work Sans Bold with `0.08em` tracking. Uses high-contrast foreground/background pairs:
+  - *Standard:* `#24422e` on `#f6efe1` with a `1.5px solid #24422e` border.
+  - *Alert / Fire Warning:* `#a63a24` on `#f6efe1` with a `1.5px solid #a63a24` border.
+  - *Advisory / Sunset:* `#d9822b` on `#181c16`.
+- **Selection Chips:** Sharp corners, `1.5px solid #4d5843` outline on `#ede3ce`. When selected, inverts to solid `#24422e` with `#f6efe1` text.
 
-### Masthead Band (`/seattlesports/`)
-Full-width Sports-navy band at the top of the sheet: `h1` at Band Title scale left; right side holds the status label, the updated timestamp and the Refresh button. Refresh is square, transparent, 2px cream border, 44px minimum height, 8px/18px padding; hover turns border and text gold (0.25s); focus ring offset 3px. Transitions are off under reduced motion.
+### Form Inputs & Controls
+- **Text Inputs:** Sharp 0px corners, background `#f6efe1`, border `2px solid #4d5843`, padding `0.75rem 1rem`. Typography uses Vollkorn for user entry. Focus state swaps border to `2px solid #24422e` with a `2px 2px 0px 0px #24422e` hard shadow. Placeholder text is tinted in `#4d5843` at 65% opacity.
+- **Checkboxes:** Square 18px × 18px box, `2px solid #24422e`, sharp corners. Checked state fills with `#24422e` and renders a crisp, geometric `#f6efe1` check glyph.
+- **Radio Buttons:** Circular 18px × 18px, `2px solid #24422e`. Checked state features a solid `#24422e` inner pip with `3px` white space separation.
 
-### Team Panel (`/seattlesports/`)
-A flat field in a team's official colours (see Team-Colour Exception Rule). Head: 52px team logo (the transparent dark-background variant, no tile fill), team name over record, badges right-aligned. Under the head, a 6px flat stripe in the team accent. Body: a "Last Game" or "Live" box and a "Next Game" box, each a cream 9% tint on the body (12px/14px padding), and a standings column. Game rows show a 28px logo, the abbreviation and a tabular score; the loser row is set at 75% opacity. The Seattle row in standings has a cream 16% tint and weight 800; the table uses a 20px logo tile. Standings and game boxes carry no hover state.
+### Lists & Data Displays
+- **Ledger Rows:** Alternating row stripes using `#f6efe1` and `#ede3ce`. Row dividers are crisp `1px solid rgba(77, 88, 67, 0.25)`.
+- **List Headers:** Bold uppercase Oswald typography over a `#24422e` or `#1c2730` banner strip with `#f6efe1` text.
 
-### State Markers (`/seattlesports/`)
-- **LIVE chip:** orange fill, ink text, 15px 800 tracked caps, 5px/10px padding, with an 8px square dot that pulses (opacity 1 to 0.3, 1.5s); the dot animation is off under reduced motion.
-- **Season badge:** 2px cream outline, no fill, 13px 700 caps; off-season at 75% opacity.
-- **Result chip:** 26px square; a win is a cream fill with an ink letter, a loss is a 2px cream outline with a cream letter.
-- **Error:** orange chip with ink text.
-- **Logos:** ESPN's transparent `500-dark` variant sits directly on the panel colour, 52px in the head, 28px in games, 20px in standings. If a team has no dark variant the standard logo loads instead.
+### Specialized Graphic Motifs
+- **Color-Banded Dividers:** Triple-striped horizontal rules combining 3px Pine (`#24422e`), 2px Ochre (`#d9822b`), and 2px Clay (`#a63a24`) to denote major content divisions.
+- **Park Arrowhead Marker:** Stylized triangular or chevron markers applied to bullet points and navigation accordions to anchor the heritage identity.
 
-### Banner Plate
-A cropped poster image (`/assets/banner.jpg`, North Cascades, Ivan Chermayeff, National Park Service, 1972) at the top of the sheet, decorative (empty alt), credited in the Sources row. It is the only imagery on the page.
+## Dark Mode: Nocturne Serigraph
 
-### Sources Line
-Wrapping row below the sheet, 8px/26px gaps: the gold Big Shoulders "Sources" label, then data-source names, then the banner credit. Attribution only.
+Dark mode shares the light system's type scale, spacing, 12/8/4-column grid, 0px corners, and hard-shadow mechanics. What follows records only the dark palette and where its rules differ. Follow the user's system setting (`prefers-color-scheme`); a page may also offer a manual toggle.
 
-## Do's and Don'ts
+### Brand & Style
 
-### Do:
-- **Do** give each new category a flat saturated band colour and an explicit `--fg`, stepping along the cool-to-warm order, and derive its rows with `color-mix(in srgb, <band> 80%, #000)`.
-- **Do** keep copy to labels and titles; qualifiers stay short phrases.
-- **Do** keep text uppercase, Barlow Condensed, with the tracking steps above.
-- **Do** keep cream (#f1e4c3) as the frame and text colour on dark grounds and gold (#f0b43c) as the only accent.
-- **Do** credit any outside image or data in the Sources line.
-- **Do** keep reduced-motion handling when adding transitions.
-- **Do** use state markers built from orange, cream fills and cream outlines on team-colour panels; derive each panel body with `color-mix(in srgb, <primary> 80%, #000)`.
-- **Do** use the transparent dark-background logo variant directly on the panel colour; never put a cream box behind a logo.
+This design system translates the handcrafted graphic power and federal conservation romanticism of 1930s–1940s Works Progress Administration (WPA) silkscreen posters into an immersive, nocturnal visual language. Drawing from master serigraphers who captured the dramatic solitude of night in the national parks—towering pine silhouettes under crystalline skies, lantern-lit basecamps, and starfields over obsidian ridges—this system pairs physical printmaking craft with modern dark-mode ergonomics.
 
-### Don't:
-- **Don't** add seals, emblems, fake scenery, AI-generated assets, or poster pastiche; the poster influence is colour and type only. (Rejected by the owner.)
-- **Don't** put the owner's name on a banner, URLs on rows, or per-category counts. (Rejected by the owner.)
-- **Don't** add rounded corners, gradients, or resting drop shadows.
-- **Don't** use gold as a surface fill or Big Shoulders Display for headings.
-- **Don't** carry the older Inter / blue accent / 20px-radius card style onto this page, or this system onto the other app pages without an explicit decision.
-- **Don't** use team or any other off-palette colours outside `/seattlesports/` without approval.
+The visual style blends **Tactile Silkscreen Printmaking** with **Atmospheric Midnight Graphicism**:
+- **Pigment Over Obsidian:** Instead of sterile, synthetic digital pure-black `#000000`, the dark canvas is built from deep botanical midnight pine, charcoal-tinted printer's pitch, and cold mineral slate.
+- **Luminous Starlight Contrast:** Typography and line art emerge like unbleached parchment and pale bone cardstock illuminated by starlight or campfire embers, providing restful yet commanding legibility without harsh eye strain.
+- **Silkscreen Luminescence:** Accent colors retain the flat, non-gradient matte density of oil-based block inks, recalibrated to glow vibrantly against nocturnal grounds—campfire amber, ranger terracotta, and starlight ochre.
+- **Tactile Poster Framing:** Physical registration lines, crisp 2–3px structural ink borders, and hard mechanical strike-shadows preserve the authenticity of hand-pulled woodblock and serigraph prints.
 
-## Open Notes
-- `/seattlesports/`: the Sounders standings table lists the whole 15-team Western Conference, so the second row of panels is taller than the first and falls partly below the fold at 1440x900. Not repaired.
-- `/seattlesports/`: loser rows (75%), section labels (80%), the off-season badge (75%) and standings rank cells (80%) are set with reduced opacity; the measured contrast figures above are for full-opacity text. Not canonized as a way to de-emphasise text.
-- The banner's public-domain status is unconfirmed (Wikimedia Commons lists it as public domain; the owner will handle licensing).
-- Text contrast measured 2026-10-03: heads 5.13 to 10.11:1; rows 6.24 to 11.66:1 (orange rows with the lighter mix 6.24:1). Orange rows are lighter than their head, the one place the child-darker step is inverted.
-- Not canonized: the calculator titles carry no qualifier; the remaining row qualifiers are phrase fragments ("I have been to", "I have seen a game in"), which strain the labels-and-titles-only copy rule; the stale CSS comment mentioning a "sun-and-rays cap" no longer matches the build.
+
+### Colors
+
+The color palette shifts the historic serigraph into a nighttime park expedition. Atmospheric midnight tones form the base substrates, while luminous inks bring functional elements, iconography, and field typography to the forefront.
+
+#### Palette Hierarchy & Functional Roles
+- **Canvas Base (`#0e1511` / Surface Midnight):** The foundational dark background, tinted with botanical pine charcoal to evoke a national forest under a moonless sky.
+- **Card & Placard Bed (`#1a271f` / Surface Card):** A slightly raised, ink-dense pine wash that establishes tactile container separation without digital blurs.
+- **Elevated Surfaces (`#223329` / Surface Elevated):** Reserved for popovers, drawers, active selection wells, and raised placards.
+- **Primary Accent (`#e5933a` / Campfire Amber):** The guiding lantern light. Provides punchy, inviting contrast for primary call-to-actions, active toggle states, progress indicators, and critical navigational highlights.
+- **Secondary Accent (`#2d4b38` / Forest Canopy):** A deep mid-tone alpine green that provides tonal grounding for secondary buttons, container headers, and chip backgrounds.
+- **Tertiary Accent (`#c8523b` / Ranger Terracotta):** Heated red-clay pigment calibrated for urgency, park boundary hazard tags, error states, and stamped heritage insignias.
+- **Starlight Gold (`#f0c868`):** An auxiliary luminous metallic ochre dedicated to star ratings, heritage seals, and high-priority badges.
+- **Alpine Emerald (`#44805d`):** A radiant evergreen midtone used for verified status pips, positive feedback, and trail-open telemetry.
+- **Typography & Keyline Parchment (`#f4ede2` / Ink Parchment):** Unbleached, warm cotton-rag white used for crisp, non-fatiguing headline and display reading.
+- **Subordinate Text (`#ded5c5` / Ink Bone & `#96a498` / Ink Muted):** Warm aged papers and mist tones that create an effortless reading hierarchy against dark pine backgrounds.
+- **Structural Keyline (`#35483b` / Border Keyline):** The linocut holding line; defines container perimeters and layout divisions.
+
+
+### Typography
+
+Typography honors the three foundational pillars of Works Progress Administration broadsides: chiseled poster woodcut lettering, sturdy literary book print, and technical civil service signage.
+
+- **Display & Headline Hierarchy (Oswald):** Chiseled, condensed, and assertive. Headings mirror carved timber signboards and letterpress titling. In nocturne mode, Oswald is rendered in `text-transform: uppercase` with deliberate tracking, glowing cleanly against deep pine and midnight slate fields.
+- **Body & Longform Reading (Vollkorn):** Designed by Friedrich Althausen with robust serifs and open counters. In a dark environment, its sturdy anatomy prevents letter stems from thinning out or vibrating against dark backgrounds. Set Vollkorn body text in `#ded5c5` (Ink Bone) to maintain optimal comfort over long reading sessions.
+- **Labels, Telemetry & Badges (Work Sans):** Clean, utilitarian mid-century sans serif. Handles all technical metadata, coordinates, trail markers, button labels, and operational statuses. It is tracked out in uppercase (`letter-spacing: 0.06em` to `0.08em`) to mirror official surveyor documents and punched brass park markers.
+
+
+### Elevation & Depth
+
+Nocturne Serigraph explicitly rejects soft, translucent blur effects, nebulous drop shadows, and glassmorphism. Hand-pulled screen prints communicate depth through physical layering of dense ink plates, structural borders, and directional mechanical cutouts.
+
+#### Depth Rules
+- **Tonal Substrate Stacking:** Elevation advances forward through step-ups in ink density: base canvas (`#0e1511`) → card placard (`#1a271f`) → elevated panel (`#223329`).
+- **The Nocturne "Print Strike" Hard Shadow:** Interactive controls and active cards rise above the surface using a zero-blur, hard-edge block shadow:
+  `box-shadow: 4px 4px 0px 0px #060a08`.
+  On button hover or card focus, this creates an unmistakable physical woodblock silhouette.
+- **Pressed Plate Mechanical Translation:** On active or pressed states, the component translates by `2px 2px` (`transform: translate(2px, 2px)`) while its hard shadow collapses to `2px 2px 0px 0px #060a08`, reproducing the tactile depression of a physical printing press.
+- **Debossed Field Guide Wells:** Inset data displays, cartography viewports, and form input fields simulate stamped or routed paper wells via a deep inset border: `box-shadow: inset 2px 2px 0px 0px #080d0a` over a sunken background of `#0a0f0c`.
+
+
+### Shapes
+
+The shape vocabulary is rooted in the industrial tools of the 1930s Federal Art Project: linoleum carving blades, guillotine paper trimmers, and routed cedar trail signage.
+
+- **Strict Right Angles (`roundedness: 0`):** Buttons, cards, modals, tabs, and form fields possess crisp, unrounded 0px corners. This maintains the bold, architectural geometry of silkscreen composition.
+- **Chamfered Signboards:** Special highlight placards, hero callouts, and navigational banners may incorporate 45-degree diagonal corner cutouts (`clip-path: polygon(...)` or 6px–8px notched chamfers), referencing CCC rustic park signage.
+- **Insignia Stamp Exceptions:** Badges, status markers, and validation seals may break the 0px rule by adopting circular or pill geometries (`9999px`) to evoke stamped ink approvals and metal ranger medallions.
+- **Linocut Border Matrix:**
+  - Standard structural border: `2px solid #35483b`
+  - Active / Primary focal boundary: `2px solid #e5933a`
+  - Subtle partition divider: `1px solid #233328`
+  - Commemorative double keyline: `3px double #e5933a` on special certs or master placards.
+
+
+### Components
+
+#### Buttons
+- **Primary Action (Campfire Amber):** Solid `#e5933a` fill with `#0e1511` text (Oswald Bold, uppercase, `label-lg`). Border: `2px solid #060a08`. Sharp 0px corners. Hover state activates a `4px 4px 0px 0px #060a08` hard shadow. Pressed state: `transform: translate(2px, 2px)` with shadow reduced to `2px 2px 0px 0px`.
+- **Secondary Action (Forest Canopy):** Solid `#2d4b38` fill with `#f4ede2` text. Border: `2px solid #35483b`. Hover triggers a `#e5933a` border color shift and a `3px 3px 0px 0px #060a08` shadow.
+- **Tertiary / Danger (Ranger Terracotta):** Solid `#c8523b` fill with `#f4ede2` text. Border: `2px solid #060a08`. Used for critical alerts, fire warnings, and irreversible actions.
+- **Outlined / Broadsheet Button:** Transparent background, `#f4ede2` text, `2px solid #35483b` border. On hover, background fills with `#1a271f` and the border illuminates to `#e5933a`.
+
+#### Cards & Placards
+- **Standard Field Card:** Grounded in `#1a271f` (Surface Card) with a `2px solid #35483b` border and `1.5rem` internal padding. 
+- **Framed Serigraph Card:** Features a dual-border layout: an outer `2px solid #35483b` container with an internal `1px solid #233328` keyline inset by `6px`, creating the authentic serigraph art-print margin.
+- **Placard Header Banner:** Card heads are frequently capped with a solid `#141e17` or `#2d4b38` color band with `#f4ede2` Oswald titling, cleanly partitioning the card's body from its administrative header.
+
+#### Chips, Badges & Seals
+- **Ranger Badge Stamp:** Pill or circular shape (`roundedness: 9999px`), uppercase `label-sm` in Work Sans Bold with `0.08em` tracking.
+  - *Nocturne Standard:* `#e5933a` text on `#1a271f` surface with a `1.5px solid #e5933a` border.
+  - *Fire / Hazard Alert:* `#c8523b` text on `#22120e` surface with a `1.5px solid #c8523b` border.
+  - *Trail Open / Ecology:* `#44805d` text on `#0f1f16` surface with a `1.5px solid #44805d` border.
+- **Filter Chips:** 0px corners, `#1a271f` background, `1.5px solid #35483b` border with `#ded5c5` text. When selected, fills with solid `#e5933a` and `#0e1511` text.
+
+#### Form Inputs & Controls
+- **Text Inputs:** Sharp 0px corners, background `#0a0f0c`, border `2px solid #35483b`, text `#f4ede2` set in Vollkorn (`body-md`). Inset deboss shadow: `box-shadow: inset 2px 2px 0px 0px #060a08`. Focus state shifts border to `2px solid #e5933a` with an external `2px 2px 0px 0px #e5933a` hard ring. Placeholder text is tinted in `#96a498` at 60% opacity.
+- **Checkboxes:** Sharp 18px × 18px square, `#0a0f0c` background with `2px solid #35483b`. When checked, fills with `#e5933a` and displays a bold, geometric `#0e1511` checkmark.
+- **Radio Buttons:** Circular 18px × 18px, `2px solid #35483b` on `#0a0f0c`. Checked state displays a solid `#e5933a` center pip with a 3px dark gap.
+
+#### Lists & Field Dispatches
+- **Observation Ledger:** Alternating table rows in `#141e17` and `#1a271f`. Row dividers are crisp `1px solid #233328`. Hovered rows brighten to `#223329`.
+- **List Header Bars:** Sturdy uppercase Oswald headers enclosed in a `#141e17` banner strip bordered by `2px solid #35483b`.
+
+#### Heritage Accents
+- **Nocturne Registration Divider:** A triple-striped horizontal separator combining a 3px Alpine Emerald line (`#44805d`), a 2px Campfire Amber line (`#e5933a`), and a 2px Terracotta line (`#c8523b`) to delineate thematic chapters and section breaks.
+- **Field Arrowhead Bullet:** Solid triangular arrow glyph (`▶`) rendered in `#e5933a` used for unordered lists, accordion triggers, and breadcrumbs.
