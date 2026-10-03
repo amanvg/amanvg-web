@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-10-03T14:37:51.976Z",
         "reason": "Owner-approved design: cream paper border is the poster margin and category bands are intentional full-bleed colour fields (user approved this session; no narrower value extractable)"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-03T16:42:52.968Z",
+        "reason": "user confirmed: DESIGN.md canvas #f6efe1, owner-chosen"
       }
     ]
   }
