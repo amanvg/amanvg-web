@@ -122,7 +122,8 @@ main{flex:1;padding:40px var(--margin) 0}
 .stamp .late{background:var(--late-bg);color:var(--late-fg);padding:2px 8px;margin-left:8px}
 
 /* shortlist */
-.item{display:grid;grid-template-columns:104px minmax(0,1fr) auto;border-top:1px solid var(--divider);animation:strike .5s var(--ease) both;animation-delay:calc(var(--n,0) * 35ms)}
+.item{display:grid;grid-template-columns:104px minmax(0,1fr) auto;border-top:1px solid var(--divider);}
+#p-short:not(.seen) .item{animation:strike .5s var(--ease) both;animation-delay:calc(var(--n,0) * 35ms)}
 .item:first-child{border-top:0}
 .item:nth-child(odd){background:var(--row-a)}
 .item:nth-child(even){background:var(--row-b)}
@@ -134,16 +135,35 @@ main{flex:1;padding:40px var(--margin) 0}
 .t0{--tb:var(--trk-bg);--tf:var(--trk-fg)}
 .tier.t0{box-shadow:inset 0 0 0 1.5px var(--key)}
 .info{padding:14px 20px;min-width:0}
-.id{display:inline-block;font-family:var(--display);font-weight:700;font-size:26px;line-height:32px;letter-spacing:.03em;color:var(--text);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--accent)}
-@media(hover:hover){.id:hover{background:var(--sel-bg);color:var(--sel-fg);text-decoration-color:transparent}}
+.idb{display:inline-flex;align-items:center;gap:8px;max-width:100%;background:none;border:0;border-radius:0;padding:0;cursor:pointer;text-align:left;font-family:var(--display);font-weight:700;font-size:26px;line-height:32px;letter-spacing:.03em;color:var(--text);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--accent)}
+.idb svg{width:14px;height:14px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:3;transition:transform .2s var(--ease)}
+.idb[aria-expanded=true] svg{transform:rotate(90deg)}
+@media(hover:hover){.idb:hover{background:var(--sel-bg);color:var(--sel-fg);text-decoration-color:transparent}}
+td .idb{font-size:17px;line-height:22px;gap:6px;white-space:nowrap}
+td .idb svg{width:10px;height:10px}
 .what{margin-top:2px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);overflow-wrap:anywhere}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .tag{font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border:1.5px solid currentColor;border-radius:9999px;white-space:nowrap}
+a.tag{color:inherit;text-decoration:none;transition:background .15s,color .15s}
+@media(hover:hover){a.tag:hover{background:var(--text);color:var(--card)}}
 .tag.hot{background:var(--late-bg);color:var(--late-fg);border-color:var(--late-bg)}
 .nums{display:flex;align-items:center;gap:22px;padding:14px 22px}
 .num{display:flex;flex-direction:column;align-items:flex-end;min-width:56px}
 .num b{font-family:var(--display);font-weight:700;font-size:34px;line-height:38px;font-variant-numeric:tabular-nums}
 .num i{font-style:normal;font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.detail{grid-column:1/-1;padding:16px 20px 20px;background:var(--well-bg);border-top:2px solid var(--key);box-shadow:inset 2px 2px 0 0 var(--well-shadow);font-family:var(--label);text-align:left;white-space:normal}
+.dprod+.dprod{margin-top:14px}
+.dprod h3{font-family:var(--display);font-weight:600;font-size:18px;line-height:24px;letter-spacing:.03em;text-transform:uppercase}
+.vr{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;min-height:28px;padding:4px 0;border-top:1px solid var(--divider);font-size:14px;line-height:20px;letter-spacing:.02em;font-weight:600}
+.vr:first-of-type{margin-top:6px}
+.vr .k{font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.vr b{font-family:var(--display);font-weight:600;font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:.02em;margin-right:14px;overflow-wrap:anywhere}
+.vr b.fix{background:var(--accent);color:var(--sel-fg);padding:0 8px}
+.note{margin-top:12px;font-family:var(--body);font-size:16px;line-height:24px;max-width:70ch}
+.note .k{display:block;font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dlinks{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.dstat{display:flex;align-items:center;gap:12px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dstat .btn{min-height:36px;padding:4px 14px;border-color:var(--text);color:var(--text)}
 .more{display:flex;border-top:2px solid var(--head-line)}
 .more .btn{flex:1;justify-content:center;border:0;color:var(--text);min-height:52px}
 :root[data-theme="dark"] .more .btn{border:0}
@@ -170,14 +190,15 @@ th button:focus-visible{outline:3px solid var(--head-text);outline-offset:-4px}
 th [aria-hidden]{width:8px;font-size:9px}
 td{padding:8px 12px;font-weight:600;font-variant-numeric:tabular-nums;vertical-align:middle}
 tbody tr{border-top:1px solid var(--divider)}
-tbody tr:nth-child(odd){background:var(--row-a)}
-tbody tr:nth-child(even){background:var(--row-b)}
-@media(hover:hover){tbody tr:hover{background:var(--sel-bg);color:var(--sel-fg)}tbody tr:hover a{color:var(--sel-fg)}}
+tbody tr.ra{background:var(--row-a)}
+tbody tr.rb{background:var(--row-b)}
+tbody tr.drow{background:var(--well-bg)}
+@media(hover:hover){tbody tr.r:hover{background:var(--sel-bg);color:var(--sel-fg)}tbody tr.r:hover .idb{color:var(--sel-fg)}}
 tr.off td:not(.tcell){opacity:.72}
 td.tcell{padding:0;width:92px}
 td.tcell span{display:flex;align-items:center;justify-content:center;min-height:38px;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;background:var(--tb);color:var(--tf)}
 td.tcell .t0{box-shadow:inset 0 0 0 1.5px var(--key)}
-td a{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.03em;color:var(--text);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:3px;white-space:nowrap}
+td.dcell{padding:0;font-weight:400}
 td.prod{max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 td.late{color:var(--late-bg)}
 :root[data-theme="dark"] td.late{color:var(--late-bg)}
@@ -322,12 +343,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         // ── Configuration ───────────────────────────────────────
 
         const SNAPSHOT = '/cve/data/snapshot.json';
+        const RECORD_API = 'https://cveawg.mitre.org/api/cve/';
         const EPSS_LIKELY = 0.1;      // at or above, a CVE counts as likely to be exploited
         const SHORTLIST_MAX = 15;
         const STALE_HOURS = 48;
         const TIER_NAMES = ['Track', 'Track*', 'Attend', 'Act'];
 
-        const state = { items: [], snap: null, net: true, prod: true, days: 7, tab: 'short', sort: { k: 'tier', dir: -1 }, q: '', list: [] };
+        const state = { items: [], snap: null, net: true, prod: true, days: 7, tab: 'short', open: new Set(), sort: { k: 'tier', dir: -1 }, q: '', list: [] };
 
         // ── Storage (every access guarded) ──────────────────────
 
@@ -386,6 +408,113 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 || ((b.cvss || 0) - (a.cvss || 0));
         }
 
+        // ── Details (affected and fixed versions, from the CVE record) ──
+
+        const records = new Map();   // id -> { s: 'loading' | 'ok' | 'err', d }
+        const CHEVRON = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1l6 5-6 5"/></svg>';
+        const shortVer = v => /^[0-9a-f]{40}$/.test(v) ? v.slice(0, 10) : String(v).slice(0, 40);
+
+        function parseRecord(rec) {
+            const cna = (rec.containers && rec.containers.cna) || {};
+            const adp = (rec.containers && rec.containers.adp) || [];
+            const affected = (cna.affected && cna.affected.length) ? cna.affected : [].concat(...adp.map(a => a.affected || []));
+            const products = [];
+            for (const a of affected) {
+                const rows = [], seen = new Set();
+                for (const v of a.versions || []) {
+                    if (v.status !== 'affected') continue;
+                    const lo = v.version && v.version !== 'n/a' ? shortVer(v.version) : null;
+                    let range, fixed = null;
+                    if (v.lessThan) { range = (lo || '0') + ' < ' + shortVer(v.lessThan); fixed = shortVer(v.lessThan); }
+                    else if (v.lessThanOrEqual) range = (lo || '0') + ' ≤ ' + shortVer(v.lessThanOrEqual);
+                    else range = lo || 'All';
+                    const fix = (v.changes || []).find(c => c.status === 'unaffected' && c.at);
+                    if (fix) fixed = shortVer(fix.at);
+                    const key = range + '|' + fixed;
+                    if (!seen.has(key)) { seen.add(key); rows.push({ range, fixed }); }
+                }
+                if (!rows.length && a.defaultStatus === 'affected') rows.push({ range: 'All', fixed: null });
+                if (rows.length) products.push({ name: [a.vendor, a.product].filter(Boolean).join(' ') || 'Product', rows: rows.slice(0, 12) });
+            }
+            const text = list => (list || []).map(x => String(x.value || '').trim().slice(0, 400)).filter(Boolean).slice(0, 3);
+            const urls = new Set(), refs = [];
+            const ranked = (cna.references || []).slice().sort((a, b) => {
+                const g = r => (r.tags || []).some(t => t === 'vendor-advisory' || t === 'patch' || t === 'mitigation') ? 0 : 1;
+                return g(a) - g(b);
+            });
+            for (const r of ranked) {
+                if (!/^https?:\/\//.test(r.url) || urls.has(r.url)) continue;
+                urls.add(r.url);
+                let host = r.url;
+                try {
+                    const u = new URL(r.url), seg = u.pathname.split('/').filter(Boolean).pop() || '';
+                    host = u.hostname.replace(/^www\./, '') + (seg && seg.length <= 12 ? '/' + seg : '');
+                } catch (e) {}
+                refs.push({ url: r.url, host });
+                if (refs.length >= 6) break;
+            }
+            return { products: products.slice(0, 8), solutions: text(cna.solutions), workarounds: text(cna.workarounds), refs };
+        }
+
+        async function loadRecord(id) {
+            let cached = null;
+            try { cached = JSON.parse(sessionStorage.getItem('cve.rec.' + id)); } catch (e) {}
+            if (cached) { records.set(id, { s: 'ok', d: cached }); return; }
+            records.set(id, { s: 'loading' });
+            try {
+                const res = await fetch(RECORD_API + id);
+                if (!res.ok) throw new Error(res.status);
+                const d = parseRecord(await res.json());
+                records.set(id, { s: 'ok', d });
+                try { sessionStorage.setItem('cve.rec.' + id, JSON.stringify(d)); } catch (e) {}
+            } catch (e) {
+                records.set(id, { s: 'err' });
+            }
+        }
+
+        function detailHtml(id, view) {
+            const r = records.get(id);
+            let body;
+            if (!r || r.s === 'loading') body = '<p class="dstat">Loading</p>';
+            else if (r.s === 'err') body = '<p class="dstat"><span class="tag hot">Record unavailable</span><button class="btn" type="button" data-retry="' + id + '">Retry</button></p>';
+            else {
+                const d = r.d;
+                body = d.products.map(p =>
+                    '<div class="dprod"><h3>' + esc(p.name) + '</h3>' + p.rows.map(x =>
+                        '<div class="vr"><span class="k">Affected</span><b>' + esc(x.range) + '</b>' +
+                        (x.fixed ? '<span class="k">Fixed</span><b class="fix">' + esc(x.fixed) + '</b>' : '') + '</div>').join('') + '</div>').join('');
+                if (!d.products.length) body = '<p class="dstat">Versions not listed</p>';
+                body += d.solutions.map(t => '<p class="note"><span class="k">Solution</span>' + esc(t) + '</p>').join('');
+                body += d.workarounds.map(t => '<p class="note"><span class="k">Workaround</span>' + esc(t) + '</p>').join('');
+                body += '<div class="dlinks"><a class="tag" href="' + idUrl(id) + '" target="_blank" rel="noopener">NVD</a>' +
+                    d.refs.map(x => '<a class="tag" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.host) + '</a>').join('') + '</div>';
+            }
+            return '<div class="detail" id="d-' + view + '-' + id + '" role="region" aria-label="' + id + ' versions">' + body + '</div>';
+        }
+
+        function toggleBtn(id, view) {
+            const open = state.open.has(id);
+            return '<button class="idb" type="button" data-toggle="' + id + '" aria-expanded="' + open + '" aria-controls="d-' + view + '-' + id + '">' + esc(id) + CHEVRON + '</button>';
+        }
+
+        async function toggle(id) {
+            if (!/^CVE-\d{4}-\d{4,}$/.test(id)) return;
+            if (state.open.has(id)) state.open.delete(id);
+            else {
+                state.open.add(id);
+                if (!records.has(id) || records.get(id).s === 'err') { const p = loadRecord(id); render(); await p; }
+            }
+            render();
+            const b = document.querySelector('#p-' + (state.tab === 'short' ? 'short' : 'ledger') + ' [data-toggle="' + id + '"]');
+            if (b) b.focus();
+        }
+        async function retry(id) { const p = loadRecord(id); render(); await p; render(); }
+        function onDetailClick(e) {
+            const t = e.target.closest('[data-toggle]'), r = e.target.closest('[data-retry]');
+            if (t) toggle(t.dataset.toggle);
+            else if (r) retry(r.dataset.retry);
+        }
+
         // ── Rendering ───────────────────────────────────────────
 
         function tags(i) {
@@ -408,7 +537,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 '<article class="item' + (i.m ? '' : ' off') + '" style="--n:' + n + '">' +
                   '<div class="tier t' + i.t + '">' + TIER_NAMES[i.t] + '</div>' +
                   '<div class="info">' +
-                    '<a class="id" href="' + idUrl(i.id) + '" target="_blank" rel="noopener">' + esc(i.id) + '</a>' +
+                    toggleBtn(i.id, 'short') +
                     '<div class="what">' + esc(subject(i)) + '</div>' +
                     '<div class="tags">' + tags(i) + '</div>' +
                   '</div>' +
@@ -416,12 +545,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     '<div class="num"><b>' + pct(i.epss) + '</b><i>EPSS</i></div>' +
                     '<div class="num"><b>' + cvss(i.cvss) + '</b><i>CVSS</i></div>' +
                   '</div>' +
+                  (state.open.has(i.id) ? detailHtml(i.id, 'short') : '') +
                 '</article>'
             )).join('');
             if (hot.length > shown.length) {
                 html += '<div class="more"><button class="btn" type="button" id="more">' + (hot.length - shown.length) + ' more in Ledger</button></div>';
             }
             el.innerHTML = html;
+            if (!el.classList.contains('seen')) setTimeout(() => el.classList.add('seen'), 900);
             const more = document.getElementById('more');
             if (more) more.addEventListener('click', () => { state.sort = { k: 'tier', dir: -1 }; setTab('ledger', true); });
         }
@@ -463,16 +594,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 return c ? c * dir : rank(a, b);
             });
             document.getElementById('count').textContent = list.length + (list.length === 1 ? ' CVE' : ' CVEs');
-            document.getElementById('tbody').innerHTML = list.length ? list.map(i => (
-                '<tr' + (i.m ? '' : ' class="off"') + '>' +
+            document.getElementById('tbody').innerHTML = list.length ? list.map((i, n) => (
+                '<tr class="r ' + (n % 2 ? 'rb' : 'ra') + (i.m ? '' : ' off') + '">' +
                   '<td class="tcell"><span class="t' + i.t + '">' + TIER_NAMES[i.t] + '</span></td>' +
-                  '<td><a href="' + idUrl(i.id) + '" target="_blank" rel="noopener">' + esc(i.id) + '</a></td>' +
+                  '<td>' + toggleBtn(i.id, 'ledger') + '</td>' +
                   '<td class="prod" title="' + esc(i.name || subject(i)) + '">' + esc(subject(i)) + '</td>' +
                   '<td>' + (i.kev ? 'KEV' + (i.kev.ransomware ? ' · Ransomware' : '') : i.exploitation === 'poc' ? 'PoC' : '—') + '</td>' +
                   '<td class="r">' + pct(i.epss) + '</td>' +
                   '<td class="r">' + cvss(i.cvss) + '</td>' +
                   '<td class="' + (i.kev && i.kev.due < today() ? 'late' : '') + '">' + (i.kev ? esc(i.kev.due) : '—') + '</td>' +
-                '</tr>'
+                '</tr>' +
+                (state.open.has(i.id) ? '<tr class="drow"><td class="dcell" colspan="7">' + detailHtml(i.id, 'ledger') + '</td></tr>' : '')
             )).join('') : '<tr><td colspan="7" class="empty">No match</td></tr>';
         }
 
@@ -545,6 +677,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             render();
             document.querySelector('th button[data-k="' + k + '"]').focus();
         });
+        document.getElementById('p-short').addEventListener('click', onDetailClick);
+        document.getElementById('tbody').addEventListener('click', onDetailClick);
         document.getElementById('filter').addEventListener('input', e => { state.q = e.target.value; renderLedger(visible()); });
 
         document.getElementById('wl-form').addEventListener('submit', e => {
