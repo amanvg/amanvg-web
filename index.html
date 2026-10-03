@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>amanvg — projects &amp; dashboards</title>
   <meta name="description" content="Personal site of Aman Gandhi — live dashboards, maps, and tools.">
+  <meta name="theme-color" content="#24422e">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="amanvg — projects &amp; dashboards">
+  <meta property="og:description" content="Personal site of Aman Gandhi — live dashboards, maps, and tools.">
+  <meta property="og:url" content="https://www.amanvg.com/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <script>
     (function () {
       var t = null;
@@ -15,7 +21,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Vollkorn:ital,wght@0,400;0,600;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Vollkorn:ital,wght@0,400;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 /* Federal Park Serigraph (light) */
@@ -66,12 +72,14 @@ body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:1
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50}
 header{background:var(--head-bg);border-bottom:3px solid var(--head-line);padding:0 var(--margin);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
 h1{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text)}
-h1 a{color:inherit;text-decoration:none}
+h1 a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
 .tools{display:flex;gap:12px}
 .btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s}
 :root[data-theme="dark"] .btn{border-color:var(--key)}
+@media(hover:hover){
 .btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
 :root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
+}
 .btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
 .btn:focus-visible{outline-color:var(--head-text)}
 .icon-btn{width:44px;padding:0;justify-content:center}
@@ -91,7 +99,7 @@ main{padding:40px var(--margin) 0}
 .head{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr 24px;align-items:center;column-gap:16px;width:100%;min-height:76px;padding:0 28px;background:var(--c);color:var(--fg);border-bottom:2px solid var(--head-line)}
 .cat:not([data-open="true"]) .head{border-bottom-color:transparent}
 .head:focus-visible{outline:3px solid var(--fg);outline-offset:-8px}
-.head:hover .chev{translate:3px 0}
+@media(hover:hover){.head:hover .chev{translate:3px 0}}
 .cat h2{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
 .chev{width:22px;height:22px;transition:transform .4s var(--ease),translate .2s var(--ease)}
 .cat[data-open="true"] .chev{transform:rotate(90deg)}
@@ -103,16 +111,16 @@ li:nth-child(odd) .row{background:var(--row-a)}
 li:nth-child(even) .row{background:var(--row-b)}
 li+li{border-top:1px solid var(--divider)}
 .row{display:grid;grid-template-columns:18px 1fr 22px;align-items:center;column-gap:14px;min-height:60px;padding:0 28px 0 56px;color:var(--text);text-decoration:none;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s}
-.row:hover{background:var(--hover-bg)!important;color:var(--hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px);position:relative}
-.row:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+@media(hover:hover){.row:hover{background:var(--hover-bg)!important;color:var(--hover-fg);box-shadow:inset -4px -4px 0 0 var(--shadow)}}
+.row:active{box-shadow:inset -2px -2px 0 0 var(--shadow)}
 .row:focus-visible{outline-offset:-6px}
 .pip{width:14px;height:14px;color:var(--c)}
 :root[data-theme="dark"] .pip{color:var(--accent)}
-.row:hover .pip{color:var(--accent)}
+@media(hover:hover){.row:hover .pip{color:var(--accent)}}
 .row h3{font-family:var(--display);font-weight:600;font-size:22px;line-height:28px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 12px}
 .row h3 em{font-family:var(--body);font-style:italic;font-weight:400;font-size:16px;letter-spacing:0;text-transform:none;opacity:.85}
 .go{width:20px;height:20px;transition:transform .2s var(--ease)}
-.row:hover .go{transform:translateX(5px)}
+@media(hover:hover){.row:hover .go{transform:translateX(5px)}}
 
 footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
 .sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
@@ -140,7 +148,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     <div class="stripes"></div>
   </div>
   <main id="projects">
-    <div class="plate"><img alt="" src="/assets/banner.jpg"></div>
+    <div class="plate"><img alt="" src="/assets/banner.jpg" width="1700" height="500" fetchpriority="high"></div>
     <div class="grid">
       <section class="cat" data-open="false" style="--c:var(--b-sports);--fg:var(--f-sports)">
         <h2><button class="head" aria-expanded="false">Sports<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
@@ -190,19 +198,22 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     function reveal(cat) {
       var panel = cat.querySelector('.panel'), end = performance.now() + (still.matches ? 50 : 600), id = ++follow, stop = false;
       function halt() { stop = true; }
+      function done() { removeEventListener('wheel', halt); removeEventListener('touchmove', halt); }
       addEventListener('wheel', halt, { once: true, passive: true });
       addEventListener('touchmove', halt, { once: true, passive: true });
       (function step() {
-        if (stop || id !== follow) return;
+        if (stop || id !== follow) return done();
         var over = panel.getBoundingClientRect().bottom - (innerHeight - 24);
         var by = Math.min(over, cat.getBoundingClientRect().top - 80);
         if (by > 0) scrollBy(0, by);
-        if (performance.now() < end) requestAnimationFrame(step);
+        if (performance.now() < end) requestAnimationFrame(step); else done();
       })();
     }
-    document.querySelectorAll('.cat').forEach(function (cat) {
+    document.querySelectorAll('.cat').forEach(function (cat, i) {
       var btn = cat.querySelector('.head');
       var panel = cat.querySelector('.panel');
+      panel.id = 'panel-' + i;
+      btn.setAttribute('aria-controls', panel.id);
       function sync(open) {
         cat.dataset.open = open;
         btn.setAttribute('aria-expanded', open);
@@ -220,6 +231,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       paint();
     });
     paint();
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+      var saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (x) {}
+      if (saved === 'light' || saved === 'dark') return;
+      root.dataset.theme = e.matches ? 'dark' : 'light';
+      paint();
+    });
   </script>
 </body>
 </html>
