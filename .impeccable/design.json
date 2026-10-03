@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-03T00:00:00Z",
+  "title": "Design System: amanvg",
+  "extensions": {
+    "colorMeta": {
+      "night-green": { "role": "neutral", "displayName": "Night Green", "canonical": "#0f2421", "tonalRamp": ["#050e0d", "#0f2421", "#1a3f39", "#2a5c53", "#43786d", "#6b988d", "#9bbab1", "#cfe0db"] },
+      "paper-cream": { "role": "primary", "displayName": "Poster Cream", "canonical": "#f1e4c3", "tonalRamp": ["#5c5238", "#7d7050", "#a09068", "#c2b283", "#dccea6", "#f1e4c3", "#f7eed9", "#fcf8ec"] },
+      "poster-ink": { "role": "neutral", "displayName": "Poster Ink", "canonical": "#10201d", "tonalRamp": ["#060d0c", "#10201d", "#1d3a35", "#2d544d", "#46746b", "#6e988f", "#a2bfb8", "#d4e3df"] },
+      "trail-gold": { "role": "primary", "displayName": "Trail Gold", "canonical": "#f0b43c", "tonalRamp": ["#4d3508", "#7a5510", "#a8761a", "#d3962a", "#f0b43c", "#f5c765", "#f9dc9a", "#fdf0d2"] },
+      "band-navy": { "role": "secondary", "displayName": "Navy Band", "canonical": "#1b2f66", "tonalRamp": ["#0b1230", "#13214a", "#1b2f66", "#2a4488", "#4060ab", "#6a86c9", "#a0b3e0", "#d3dcf1"] },
+      "band-blue": { "role": "secondary", "displayName": "Blue Band", "canonical": "#2c5f9e", "tonalRamp": ["#0f2340", "#1a3d6d", "#2c5f9e", "#4379b8", "#6595cc", "#8fb2de", "#bcd0ec", "#e0eaf6"] },
+      "band-pine": { "role": "secondary", "displayName": "Pine Band", "canonical": "#1f5a45", "tonalRamp": ["#0a211a", "#133a2d", "#1f5a45", "#2f785d", "#4c9679", "#79b59b", "#aed1c0", "#d9eae1"] },
+      "band-orange": { "role": "secondary", "displayName": "Orange Band", "canonical": "#e8742c", "tonalRamp": ["#4a2108", "#7d3a12", "#b55a1f", "#e8742c", "#ee9255", "#f3ae82", "#f8cdb0", "#fce8da"] },
+      "band-plum": { "role": "secondary", "displayName": "Plum Band", "canonical": "#6b2f4a", "tonalRamp": ["#2a101d", "#451e30", "#6b2f4a", "#8a4764", "#a76683", "#c28ba3", "#d9b4c6", "#eed9e3"] }
+    },
+    "typographyMeta": {
+      "logo": { "displayName": "Logo", "purpose": "Wordmark in the nav. Big Shoulders Display 900 only." },
+      "sources-label": { "displayName": "Sources Label", "purpose": "Gold label that opens the Sources line. Big Shoulders Display 900 only." },
+      "band-title": { "displayName": "Band Title", "purpose": "Category name on each colour band (h2)." },
+      "row-title": { "displayName": "Row Title", "purpose": "Project name inside an expanded band (h3)." },
+      "row-qualifier": { "displayName": "Row Qualifier", "purpose": "Short trailing phrase inline with a row title." },
+      "nav-link": { "displayName": "Nav Link", "purpose": "Single right-hand navigation link." },
+      "sources": { "displayName": "Sources", "purpose": "Data and image attribution." }
+    },
+    "shadows": [
+      { "name": "inset-keyline", "value": "inset 0 0 0 4px var(--fg)", "purpose": "Row hover keyline in the band's text colour. No other shadows exist." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(.16, 1, .3, 1)", "purpose": "Accordion expand (0.5s), row slide (0.45s), chevron rotate (0.45s), arrow nudge (0.3s), keyline (0.25s)." },
+      { "name": "row-fade", "value": "opacity .35s ease", "purpose": "Row fade-in on open; rows 2-4 delay 0.06s, 0.12s, 0.18s." },
+      { "name": "reduced-motion", "value": "transition: none", "purpose": "Panel, row, chevron, and arrow transitions are disabled under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "phone", "value": "700px (max-width): gutter 16px, sheet border 8px, band 68px, narrower padding" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Band Head",
+      "kind": "custom",
+      "refersTo": "band-head",
+      "description": "Accordion header: flat band colour, condensed caps title, chevron.",
+      "html": "<div class=\"ds-band\" style=\"--c:#1b2f66;--fg:#f1e4c3\"><button class=\"ds-head\"><span class=\"ds-title\">Sports</span><svg class=\"ds-chev\" viewBox=\"0 0 28 28\" width=\"28\" height=\"28\" aria-hidden=\"true\"><path d=\"M9 3l12 11-12 11-3-3 8-8-8-8z\" fill=\"currentColor\"/></svg></button></div>",
+      "css": ".ds-head{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr 32px;align-items:center;column-gap:24px;width:100%;height:76px;padding:0 28px;background:var(--c);color:var(--fg)} .ds-title{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:40px;line-height:1} .ds-chev{transition:transform .45s cubic-bezier(.16,1,.3,1)} .ds-head:hover .ds-chev{translate:3px 0} .ds-head:focus-visible{outline:3px solid var(--fg);outline-offset:-8px}"
+    },
+    {
+      "name": "Project Row",
+      "kind": "custom",
+      "refersTo": "project-row",
+      "description": "Child link row in a darker shade of its band, with inset keyline on hover.",
+      "html": "<a class=\"ds-row\" href=\"#\" style=\"--c:#1b2f66;--fg:#f1e4c3\"><h3 class=\"ds-rt\">MLB Stadiums <em>I have seen a game in</em></h3><svg class=\"ds-go\" viewBox=\"0 0 28 28\" width=\"26\" height=\"26\" aria-hidden=\"true\"><path d=\"M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z\" fill=\"currentColor\"/></svg></a>",
+      "css": ".ds-row{display:grid;grid-template-columns:1fr 28px;align-items:center;column-gap:24px;height:60px;padding:0 28px 0 56px;background:color-mix(in srgb,var(--c) 80%,#000);color:var(--fg);text-decoration:none;transition:box-shadow .25s cubic-bezier(.16,1,.3,1)} .ds-row:hover{box-shadow:inset 0 0 0 4px var(--fg)} .ds-rt{margin:0;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-size:28px;line-height:1;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 18px} .ds-rt em{font-style:normal;font-weight:600;font-size:.58em;letter-spacing:.32em} .ds-go{transition:transform .3s cubic-bezier(.16,1,.3,1)} .ds-row:hover .ds-go{transform:translateX(7px)} .ds-row:focus-visible{outline:3px solid var(--fg);outline-offset:-6px}"
+    },
+    {
+      "name": "Orange Band Head",
+      "kind": "custom",
+      "refersTo": "band-head-orange",
+      "description": "The warm band uses ink text instead of cream.",
+      "html": "<div style=\"--c:#e8742c;--fg:#10201d\"><button class=\"ds-head2\"><span class=\"ds-title2\">Calculators</span></button></div>",
+      "css": ".ds-head2{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:76px;line-height:76px;padding:0 28px;background:var(--c);color:var(--fg)} .ds-title2{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:40px} .ds-head2:focus-visible{outline:3px solid var(--fg);outline-offset:-8px}"
+    },
+    {
+      "name": "Nav",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Sticky night-green bar with cream rule, Big Shoulders logo, one tracked link with gold hover.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-logo\" href=\"#\">amanvg</a><a class=\"ds-link\" href=\"#\">Trust</a></nav>",
+      "css": ".ds-nav{height:60px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;background:#0f2421;border-bottom:2px solid #f1e4c3} .ds-logo{font-family:'Big Shoulders Display','Arial Narrow',sans-serif;font-weight:900;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:#f1e4c3;text-decoration:none} .ds-link{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:17px;letter-spacing:.22em;text-transform:uppercase;color:#f1e4c3;text-decoration:none;padding:8px 14px;border:2px solid transparent} .ds-link:hover{border-color:#f0b43c;color:#f0b43c} .ds-link:focus-visible{outline:3px solid #f1e4c3;outline-offset:-6px}"
+    },
+    {
+      "name": "Sources Line",
+      "kind": "custom",
+      "refersTo": "sources",
+      "description": "Gold Big Shoulders label followed by tracked attribution names.",
+      "html": "<div class=\"ds-sources\"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span></div>",
+      "css": ".ds-sources{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:#f1e4c3;background:#0f2421;padding:16px} .ds-sources b{font-family:'Big Shoulders Display','Arial Narrow',sans-serif;font-weight:900;font-size:20px;letter-spacing:.3em;color:#f0b43c}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Park Poster Sheet",
+    "overview": "One cream-framed sheet sits on a night-green ground. Inside it, a cropped public-domain park-service poster banner is followed by five flat, saturated colour bands that step cool to warm (navy, blue, pine, orange, plum). Each band is an accordion: it opens to a stack of darker rows, one per project. Poster inspiration was taken only for colour and lettering, in condensed, all-caps, widely tracked type. It is not borrowed for illustration or pastiche.\n\nThe page is flat and printed-feeling: no gradients, no shadows at rest, no rounded corners, no imagery other than the banner. Copy is labels and titles only: band names, project names, short qualifiers, and a Sources line.",
+    "keyCharacteristics": [
+      "Flat saturated colour bands, cool to warm, each with a darker child-row shade derived by color-mix.",
+      "Condensed all-caps tracked lettering throughout (Barlow Condensed for text, Big Shoulders Display for the logo and the Sources label).",
+      "Cream paper frame (10px) around banner and bands; night-green ground outside it.",
+      "Square corners everywhere; depth comes only from colour steps and an inset keyline on hover.",
+      "Motion is limited to accordion expand, staggered row fade, and small arrow nudges, all on one easing."
+    ],
+    "rules": [
+      { "name": "The Band-Owns-Its-Colour Rule", "body": "A band sets one --c and one --fg; its head, its rows, its focus ring, and its hover keyline all derive from those two values. Nothing inside a band introduces another hue.", "section": "colors" },
+      { "name": "The Ink-On-Orange Rule", "body": "Cream text on orange is too weak; the orange band uses ink (#10201d) for its text. Any new light band does the same; pick --fg per band, not globally.", "section": "colors" },
+      { "name": "The One Gold Rule", "body": "Gold marks interaction on the dark ground (nav hover) and the Sources label only. It never fills a surface.", "section": "colors" },
+      { "name": "The All-Caps Tracked Rule", "body": "Every piece of text on the page is uppercase with positive letter-spacing; tracking widens as size shrinks (0.12em at band size, 0.32em at qualifier size).", "section": "typography" },
+      { "name": "The Two Display Marks Rule", "body": "Big Shoulders Display 900 appears only on the logo and the Sources label. Do not extend it to headings.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Hover is a keyline, never a drop shadow or a lift.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do give each new category a flat saturated band colour and an explicit --fg, stepping along the cool-to-warm order, and derive its rows with color-mix(in srgb, <band> 80%, #000).",
+      "Do keep copy to labels and titles; qualifiers stay short phrases.",
+      "Do keep text uppercase, Barlow Condensed, with the tracking steps above.",
+      "Do keep cream (#f1e4c3) as the frame and text colour on dark grounds and gold (#f0b43c) as the only accent.",
+      "Do credit any outside image or data in the Sources line.",
+      "Do keep reduced-motion handling when adding transitions."
+    ],
+    "donts": [
+      "Don't add seals, emblems, fake scenery, AI-generated assets, or poster pastiche; the poster influence is colour and type only. (Rejected by the owner.)",
+      "Don't put the owner's name on a banner, URLs on rows, or per-category counts. (Rejected by the owner.)",
+      "Don't add rounded corners, gradients, or resting drop shadows.",
+      "Don't use gold as a surface fill or Big Shoulders Display for headings.",
+      "Don't carry the older Inter / blue accent / 20px-radius card style onto this page, or this system onto the app pages without an explicit decision."
+    ]
+  }
+}

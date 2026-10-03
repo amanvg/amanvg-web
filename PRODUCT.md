@@ -27,7 +27,9 @@ Served by GitHub Pages from `main`. No build step, no framework, no shared JS: o
 - Every change goes through the approval process in `CLAUDE.md`.
 
 ## Brand Commitments
-Dark theme, Inter, 20px card radius, accent `#3b82f6`, shared nav (`← amanvg` back link, centered title), shared `.card` and form styles taken from existing pages.
+Home page (`/`): poster-inspired look defined in `DESIGN.md`. WPA / national-park posters inform colour and type only: flat saturated colour bands stepping cool to warm, condensed all-caps tracked lettering (Barlow Condensed, Big Shoulders Display), a cream sheet framing a real public-domain poster crop, accordion categories. No illustration, seals, emblems, AI-generated art, URLs on rows, or per-category counts. Dark night-green ground. Real assets only, credited in the Sources row; the owner handles any licensing.
+
+App pages (`/commute/`, `/roadtrip/`, `/whichcar/`, `/commuteplanner/`, etc.): not yet migrated. They keep the earlier look until each is taken up one step at a time: dark theme, Inter, 20px card radius, accent `#3b82f6`, shared nav (`← amanvg` back link, centered title), shared `.card` and form styles.
 
 ## Evidence on Hand
 Live data files: `commute/data/gas-prices.json`, `seattlesports/data/snapshot.json`, `commuteplanner/data/electricity-prices.json`, `whichcar/data/vehicles.json`. No testimonials, usage metrics, or customer claims exist and none should be invented.
