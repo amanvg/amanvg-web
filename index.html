@@ -9,186 +9,104 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Big+Shoulders+Display:wght@900&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Layout: nav, a sun-and-rays cap, then one framed poster sheet holding five category bands that expand into project rows */
+:root{
+  color-scheme:dark;
+  --night:#0f2421; --paper:#f1e4c3; --ink:#10201d; --gold:#f0b43c;
+  --display:'Big Shoulders Display','Arial Narrow',sans-serif;
+  --label:'Barlow Condensed','Arial Narrow',sans-serif;
+  --gutter:max(40px,calc((100% - 1200px)/2));
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+body{background:var(--night);color:var(--paper);font-family:var(--label);min-height:100vh;-webkit-font-smoothing:antialiased}
+::selection{background:var(--gold);color:var(--ink)}
+:focus-visible{outline:3px solid var(--paper);outline-offset:-6px}
+.skip-link{position:absolute;top:-48px;left:16px;background:var(--paper);color:var(--ink);padding:8px 16px;z-index:200;font-size:16px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
+.skip-link:focus{top:8px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--night);border-bottom:2px solid var(--paper)}
+.nav{height:60px;padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--display);font-weight:900;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper);text-decoration:none}
+.nav a.link{font-weight:700;font-size:17px;letter-spacing:.22em;text-transform:uppercase;color:var(--paper);text-decoration:none;padding:8px 14px;border:2px solid transparent}
+.nav a.link:hover{border-color:var(--gold);color:var(--gold)}
 
-    /* Eleven flat colour bands stepping cool to warm, after WPA poster skies */
-    :root {
-      --night: #0f2421;
-      --paper: #f1e4c3;
-      --ink: #10201d;
-      --b1: #1b2f66; --b2: #24428a; --b3: #2c5f9e; --b4: #256b7d; --b5: #1f5a45;
-      --b6: #f0b43c; --b7: #f29a33; --b8: #e8742c; --b9: #a64a22; --b10: #6b2f4a; --b11: #4a1f33;
-      --display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
-      --label: 'Barlow Condensed', 'Arial Narrow', sans-serif;
-      --gutter: max(40px, calc((100% - 1360px) / 2 + 40px));
-    }
+/* poster sheet: cream paper margin around the bands */
+.sheet{margin:44px var(--gutter) 40px;border:10px solid var(--paper);border-top-width:10px;background:var(--paper)}
+.plate{display:block;width:100%;height:clamp(150px,26vw,320px);object-fit:cover;object-position:50% 50%}
+.cat{background:var(--c)}
+.cat+.cat{margin-top:0}
+.head{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr 32px;align-items:center;column-gap:24px;width:100%;height:76px;padding:0 28px;background:var(--c);color:var(--fg)}
+.head:focus-visible{outline:3px solid var(--fg);outline-offset:-8px}
+.head h2{font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(32px,3.4vw,46px);line-height:1}
+.chev{width:28px;height:28px;transition:transform .45s var(--ease)}
+.cat[data-open="true"] .chev{transform:rotate(90deg)}
+.head:hover .chev{translate:3px 0}
 
-    html { scroll-behavior: smooth; }
+/* expand / contract */
+.panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.cat[data-open="true"] .panel{grid-template-rows:1fr}
+.panel>ul{overflow:hidden;list-style:none;min-height:0}
+.row{display:grid;grid-template-columns:1fr 28px;align-items:center;column-gap:24px;height:60px;padding:0 28px 0 56px;background:color-mix(in srgb,var(--c) 80%,#000);color:var(--fg);text-decoration:none;opacity:0;transform:translateY(-10px);transition:opacity .35s ease,transform .45s var(--ease),box-shadow .25s var(--ease)}
+.cat[data-open="true"] .row{opacity:1;transform:none}
+.cat[data-open="true"] li:nth-child(2) .row{transition-delay:.06s,.06s,0s}
+.cat[data-open="true"] li:nth-child(3) .row{transition-delay:.12s,.12s,0s}
+.cat[data-open="true"] li:nth-child(4) .row{transition-delay:.18s,.18s,0s}
+.row:hover{box-shadow:inset 0 0 0 4px var(--fg)}
+.row h3{font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-size:clamp(24px,2.4vw,32px);line-height:1;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 18px;min-width:0}
+.row h3 em{font-style:normal;font-weight:600;font-size:.58em;letter-spacing:.32em}
+.go{width:26px;height:26px;transition:transform .3s var(--ease)}
+.row:hover .go{transform:translateX(7px)}
 
-    body {
-      font-family: var(--label);
-      background: var(--night);
-      color: var(--paper);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
+.sources{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;padding:0 var(--gutter) 48px;font-weight:600;font-size:15px;letter-spacing:.2em;text-transform:uppercase}
+.sources b{font-family:var(--display);font-weight:900;font-size:20px;letter-spacing:.3em;color:var(--gold)}
 
-    ::selection { background: var(--b6); color: var(--ink); }
-
-    :focus-visible { outline: 3px solid var(--paper); outline-offset: -6px; }
-
-    .skip-link {
-      position: absolute; top: -48px; left: 16px;
-      background: var(--paper); color: var(--ink);
-      padding: 8px 16px; z-index: 200;
-      font-size: 16px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
-    }
-    .skip-link:focus { top: 8px; }
-
-    /* NAV */
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--night);
-      border-bottom: 2px solid var(--paper);
-    }
-
-    .nav-inner {
-      height: 60px;
-      padding: 0 var(--gutter);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .nav-logo {
-      font-family: var(--display);
-      font-weight: 900;
-      font-size: 30px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--paper);
-      text-decoration: none;
-    }
-
-    .nav-link {
-      font-weight: 700;
-      font-size: 17px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--paper);
-      text-decoration: none;
-      padding: 8px 14px;
-      border: 2px solid transparent;
-    }
-    .nav-link:hover { border-color: var(--b6); color: var(--b6); }
-
-    /* PROJECT ROWS */
-    .list { list-style: none; }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 32px;
-      align-items: center;
-      column-gap: 32px;
-      height: 72px;
-      padding: 0 var(--gutter);
-      background: var(--bg);
-      color: var(--fg);
-      text-decoration: none;
-      box-shadow: inset 0 0 0 0 var(--fg);
-      transition: box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .row:hover { box-shadow: inset 0 0 0 5px var(--fg); }
-
-    .row h3 {
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      font-size: clamp(30px, 3.2vw, 44px);
-      line-height: 1;
-      display: flex;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 0 22px;
-      min-width: 0;
-    }
-
-    .row h3 em {
-      font-style: normal;
-      font-weight: 700;
-      font-size: 0.5em;
-      letter-spacing: 0.34em;
-    }
-
-    .go {
-      width: 32px;
-      height: 32px;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .row:hover .go { transform: translateX(8px); }
-
-    /* SOURCES */
-    .sources {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 28px;
-      align-items: center;
-      padding: 28px var(--gutter) 48px;
-      font-weight: 600;
-      font-size: 15px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-    .sources b {
-      font-family: var(--display);
-      font-weight: 900;
-      font-size: 20px;
-      letter-spacing: 0.3em;
-      color: var(--b6);
-    }
-
-    @media (max-width: 860px) {
-      .row { column-gap: 16px; grid-template-columns: 1fr 28px; }
-    }
-
-    @media (max-width: 560px) {
-      :root { --gutter: 16px; }
-      .row { height: auto; min-height: 64px; padding-block: 10px; }
-      .row h3 em { letter-spacing: 0.2em; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .row, .go { transition: none; }
-    }
+@media(max-width:700px){:root{--gutter:16px}.sheet{border-width:8px}.head{padding:0 16px;height:68px}.row{padding:0 16px 0 32px}.row h3 em{letter-spacing:.2em}}
+@media(prefers-reduced-motion:reduce){.panel,.row,.chev,.go{transition:none}}
   </style>
 </head>
 <body>
   <a class="skip-link" href="#projects">Skip to content</a>
-
   <nav aria-label="Main navigation">
-    <div class="nav-inner">
-      <a class="nav-logo" href="/">amanvg</a>
-      <a class="nav-link" href="/trust/">Trust</a>
-    </div>
+    <div class="nav"><a class="logo" href="/">amanvg</a><a class="link" href="/trust/">Trust</a></div>
   </nav>
-
   <main id="projects">
-    <ul class="list">
-      <li><a class="row" href="/seattlesports/" style="--bg:var(--b1);--fg:var(--paper)"><h3>Seattle Sports</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/USStates/" style="--bg:var(--b2);--fg:var(--paper)"><h3>US States <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/worldmap/" style="--bg:var(--b3);--fg:var(--paper)"><h3>Countries <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/mlbstadiums/" style="--bg:var(--b4);--fg:var(--paper)"><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/tempest/" style="--bg:var(--b5);--fg:var(--paper)"><h3>Tempest Station</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/commute/" style="--bg:var(--b6);--fg:var(--ink)"><h3>Commute Cost <em>Calculator</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/commuteplanner/" style="--bg:var(--b7);--fg:var(--ink)"><h3>Commute Planner</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/roadtrip/" style="--bg:var(--b8);--fg:var(--ink)"><h3>Road Trip <em>Cost Calculator</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/whichcar/" style="--bg:var(--b9);--fg:var(--paper)"><h3>What car should I buy?</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/tirepressure/" style="--bg:var(--b10);--fg:var(--paper)"><h3>Tire Pressure</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-      <li><a class="row" href="/carafford/" style="--bg:var(--b11);--fg:var(--paper)"><h3>Car Affordability</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-    </ul>
-    <div class="sources"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span><span>OSRM</span><span>OpenStreetMap</span></div>
+    <div class="sheet" id="sheet">
+      <img class="plate" alt="" src="/assets/banner.jpg">
+      <section class="cat" data-open="true" style="--c:#1b2f66;--fg:#f1e4c3">
+        <button class="head" id="h0" aria-expanded="true" aria-controls="p0"><h2>Sports</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
+        <div class="panel" id="p0" role="region" aria-labelledby="h0"><ul><li><a class="row" href="/seattlesports/"><h3>Seattle Sports</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/mlbstadiums/"><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      </section>
+      <section class="cat" data-open="false" style="--c:#2c5f9e;--fg:#f1e4c3">
+        <button class="head" id="h1" aria-expanded="false" aria-controls="p1"><h2>Maps</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
+        <div class="panel" id="p1" role="region" aria-labelledby="h1"><ul><li><a class="row" href="/USStates/"><h3>US States <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/worldmap/"><h3>Countries <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      </section>
+      <section class="cat" data-open="false" style="--c:#1f5a45;--fg:#f1e4c3">
+        <button class="head" id="h2" aria-expanded="false" aria-controls="p2"><h2>Weather</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
+        <div class="panel" id="p2" role="region" aria-labelledby="h2"><ul><li><a class="row" href="/tempest/"><h3>Tempest Station</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      </section>
+      <section class="cat" data-open="false" style="--c:#e8742c;--fg:#10201d">
+        <button class="head" id="h3" aria-expanded="false" aria-controls="p3"><h2>Calculators</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
+        <div class="panel" id="p3" role="region" aria-labelledby="h3"><ul><li><a class="row" href="/commute/"><h3>Commute Cost <em>Calculator</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/roadtrip/"><h3>Road Trip <em>Cost Calculator</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/tirepressure/"><h3>Tire Pressure</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/carafford/"><h3>Car Affordability</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      </section>
+      <section class="cat" data-open="false" style="--c:#6b2f4a;--fg:#f1e4c3">
+        <button class="head" id="h4" aria-expanded="false" aria-controls="p4"><h2>Planning</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
+        <div class="panel" id="p4" role="region" aria-labelledby="h4"><ul><li><a class="row" href="/commuteplanner/"><h3>Commute Planner</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/whichcar/"><h3>What car should I buy?</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      </section>
+    </div>
+    <div class="sources"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span><span>OSRM</span><span>OpenStreetMap</span><span>Banner: North Cascades, Ivan Chermayeff, National Park Service, 1972 (Smithsonian Cooper Hewitt; Wikimedia Commons lists public domain)</span></div>
   </main>
+  <script>
+    document.querySelectorAll('.cat').forEach(function (cat) {
+      var btn = cat.querySelector('.head');
+      var links = cat.querySelectorAll('.row');
+      function sync(open) {
+        cat.dataset.open = open;
+        btn.setAttribute('aria-expanded', open);
+        links.forEach(function (a) { if (open) a.removeAttribute('tabindex'); else a.setAttribute('tabindex', '-1'); });
+      }
+      btn.addEventListener('click', function () { sync(cat.dataset.open !== 'true'); });
+      sync(cat.dataset.open === 'true');
+    });
+  </script>
 </body>
 </html>
