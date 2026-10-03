@@ -37,10 +37,14 @@ A Reject means make no changes and ask what to adjust.
 
 ## Look and copy
 
-- Dark theme. Copy the `:root` tokens, nav (`← amanvg` back link, centered
-  title), `.card`, and form styles from an existing page such as
+- Home page (`/`): follow `DESIGN.md` (poster-inspired bands, Barlow
+  Condensed and Big Shoulders Display, cream sheet). Do not use Inter, `.card`,
+  or the blue accent there.
+- App pages: dark theme. Copy the `:root` tokens, nav (`← amanvg` back link,
+  centered title), `.card`, and form styles from an existing page such as
   `commuteplanner/index.html` rather than inventing new ones. Inter from
-  Google Fonts, 20px card radius, accent `#3b82f6`.
+  Google Fonts, 20px card radius, accent `#3b82f6`. They keep this look until
+  each is migrated, one step at a time.
 - Desktop first. Design and verify at 1440×900 and 1024×768 before phone
   widths: inputs and results visible together, key controls above the fold.
   Collapse to one column below 960px.
