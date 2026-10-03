@@ -46,6 +46,9 @@ A Reject means make no changes and ask what to adjust.
   colour on the header band only; bodies sit on the card surface.
 - `/tirepressure/`: follows `DESIGN.md` like `/seattlesports/`; unit chips live
   in the masthead, results sit on framed signboards.
+- `/cve/`: follows `DESIGN.md` like `/tirepressure/`; exposure, environment and
+  window chips live in the masthead, tier blocks (Act, Attend, Track*, Track)
+  carry the result.
 - Other app pages: dark theme. Copy the `:root` tokens, nav (`← amanvg` back link,
   centered title), `.card`, and form styles from an existing page such as
   `commute/index.html` rather than inventing new ones. Inter from
@@ -71,6 +74,8 @@ A Reject means make no changes and ask what to adjust.
     state averages, run by `.github/workflows/commute-gas-prices.yml`.
   - `seattlesports/build-snapshot.mjs` → `seattlesports/data/snapshot.json`,
     run by `.github/workflows/seattlesports-snapshot.yml`.
+  - `cve/update.py` → `cve/data/snapshot.json`, CISA KEV, FIRST EPSS, NVD and
+    CVE.org (CISA SSVC), run every 6 hours by `.github/workflows/cve-snapshot.yml`.
 - Workflows only commit when real data moved (they ignore timestamp-only diffs).
 
 ## Sections
@@ -80,5 +85,8 @@ A Reject means make no changes and ask what to adjust.
 - `/tirepressure/` Tire Pressure: fill pressure that averages to the cold
   placard over the next 30 days, from current temperature, 10-year climate
   and altitude. Follows `DESIGN.md`; units °F/°C and PSI/kPa/bar.
+- `/cve/` CVE Triage: recent CISA KEV and likely-exploited CVEs tiered Act,
+  Attend, Track*, Track from exploitation, EPSS, exposure, environment and a
+  browser-saved watchlist. Follows `DESIGN.md`.
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
   dashboards and maps; `carpicker/` is an older, unlinked page.

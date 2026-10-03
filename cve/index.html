@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE Triage — amanvg</title>
+    <meta name="description" content="Recent exploited and likely-exploited CVEs, tiered Act, Attend, Track* and Track.">
+    <meta name="theme-color" content="#24422e">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="CVE Triage — amanvg">
+    <meta property="og:description" content="Recent exploited and likely-exploited CVEs, tiered Act, Attend, Track* and Track.">
+    <meta property="og:url" content="https://www.amanvg.com/cve/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script>
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Vollkorn:ital,wght@0,400;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Federal Park Serigraph (light) */
+:root{
+  color-scheme:light;
+  --canvas:#f6efe1; --card:#ede3ce; --row-a:#f6efe1; --row-b:#ede3ce;
+  --text:#181c16; --muted:#4d5843; --head-bg:#24422e; --head-text:#f6efe1; --head-line:#181c16;
+  --key:#4d5843; --frame:#24422e; --divider:rgba(77,88,67,.25);
+  --shadow:#181c16; --accent:#d9822b; --focus:#24422e; --sel-bg:#d9822b; --sel-fg:#181c16;
+  --btn-hover-bg:#ede3ce; --btn-hover-fg:#24422e;
+  --well-bg:#f6efe1; --well-shadow:rgba(24,28,22,.15);
+  --s1:#24422e; --s2:#d9822b; --s3:#a63a24;
+  --foot-bg:#1c2730; --foot-text:#f6efe1; --foot-line:#181c16;
+  --b-band:#24422e; --f-band:#f6efe1;
+  --tab-on-bg:#24422e; --tab-on-fg:#f6efe1;
+  --act-bg:#a63a24; --act-fg:#f6efe1;
+  --att-bg:#d9822b; --att-fg:#181c16;
+  --trs-bg:#24422e; --trs-fg:#f6efe1;
+  --trk-bg:transparent; --trk-fg:#4d5843;
+  --late-bg:#a63a24; --late-fg:#f6efe1;
+  --display:'Oswald','Arial Narrow',sans-serif;
+  --body:'Vollkorn',Georgia,serif;
+  --label:'Work Sans',system-ui,sans-serif;
+  --margin:max(40px,calc((100% - 1200px)/2));
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+/* Nocturne Serigraph (dark) */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --canvas:#0e1511; --card:#1a271f; --row-a:#141e17; --row-b:#1a271f;
+  --text:#f4ede2; --muted:#96a498; --head-bg:#141e17; --head-text:#f4ede2; --head-line:#35483b;
+  --key:#35483b; --frame:#35483b; --divider:#233328;
+  --shadow:#060a08; --accent:#e5933a; --focus:#e5933a; --sel-bg:#e5933a; --sel-fg:#0e1511;
+  --btn-hover-bg:#1a271f; --btn-hover-fg:#f4ede2;
+  --well-bg:#0a0f0c; --well-shadow:#060a08;
+  --s1:#44805d; --s2:#e5933a; --s3:#c8523b;
+  --foot-bg:#0a0f0c; --foot-text:#ded5c5; --foot-line:#35483b;
+  --b-band:#2d4b38; --f-band:#f4ede2;
+  --tab-on-bg:#e5933a; --tab-on-fg:#0e1511;
+  --act-bg:#ff8168; --act-fg:#3e0400;
+  --att-bg:#e5933a; --att-fg:#0e1511;
+  --trs-bg:#2d4b38; --trs-fg:#f4ede2;
+  --trk-bg:transparent; --trk-fg:#96a498;
+  --late-bg:#ff8168; --late-fg:#3e0400;
+}
+html{scrollbar-gutter:stable}
+body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:10px;border:2px solid var(--key);min-height:calc(100vh - 20px);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+::selection{background:var(--sel-bg);color:var(--sel-fg)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+input{caret-color:var(--accent)}
+*{scrollbar-width:thin;scrollbar-color:var(--key) transparent}
+
+.skip-link{position:absolute;top:-48px;left:16px;background:var(--head-text);color:var(--head-bg);padding:8px 16px;z-index:200;font-family:var(--label);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
+.skip-link:focus{top:8px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50}
+header{background:var(--head-bg);border-bottom:3px solid var(--head-line);padding:0 var(--margin);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
+.tools{display:flex;gap:12px}
+.btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s,color .15s}
+:root[data-theme="dark"] .btn{border-color:var(--key)}
+@media(hover:hover){
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+:root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
+}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.btn:focus-visible{outline-color:var(--head-text)}
+.icon-btn{width:44px;padding:0;justify-content:center}
+.icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn .sun{display:none}
+:root[data-theme="dark"] .icon-btn .sun{display:block}
+:root[data-theme="dark"] .icon-btn .moon{display:none}
+.stripes{height:7px;background:linear-gradient(var(--s1) 0 3px,var(--s2) 3px 5px,var(--s3) 5px 7px)}
+
+main{flex:1;padding:40px var(--margin) 0}
+.sheet{border:3px solid var(--frame);background:var(--card);box-shadow:4px 4px 0 0 var(--shadow)}
+.masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--b-band);color:var(--f-band);border-bottom:2px solid var(--head-line)}
+.masthead h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
+.controls{display:flex;flex-wrap:wrap;gap:8px 16px}
+.chips{display:flex}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.chips span{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:44px;padding:8px 14px;border:1.5px solid var(--f-band);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;transition:background .15s,color .15s,border-color .15s}
+.chips label+label span{margin-left:-1.5px}
+.chips input:checked+span{background:var(--accent);color:var(--sel-fg);position:relative}
+.chips input:focus-visible+span{outline:3px solid var(--f-band);outline-offset:3px;position:relative}
+@media(hover:hover){.chips input:not(:checked)+span:hover{background:rgba(246,239,225,.14)}}
+
+.body{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:2px;background:var(--head-line)}
+.stage,.rail{background:var(--card);min-width:0}
+.stage{display:flex;flex-direction:column}
+.tabbar{display:flex;align-items:stretch;justify-content:space-between;gap:12px;background:var(--row-a);border-bottom:2px solid var(--head-line)}
+[role=tablist]{display:flex}
+[role=tab]{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;min-height:48px;padding:8px 24px;border:0;border-right:2px solid var(--head-line);background:transparent;color:var(--text);cursor:pointer;transition:background .15s,color .15s}
+[role=tab][aria-selected=true]{background:var(--tab-on-bg);color:var(--tab-on-fg)}
+@media(hover:hover){[role=tab][aria-selected=false]:hover{background:var(--row-b)}}
+[role=tab]:focus-visible{outline-offset:-5px}
+.stamp{align-self:center;padding-right:20px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:right}
+.stamp .late{background:var(--late-bg);color:var(--late-fg);padding:2px 8px;margin-left:8px}
+
+/* shortlist */
+.item{display:grid;grid-template-columns:104px minmax(0,1fr) auto;border-top:1px solid var(--divider);animation:strike .5s var(--ease) both;animation-delay:calc(var(--n,0) * 35ms)}
+.item:first-child{border-top:0}
+.item:nth-child(odd){background:var(--row-a)}
+.item:nth-child(even){background:var(--row-b)}
+.item.off .info,.item.off .nums{opacity:.72}
+.tier{display:flex;align-items:center;justify-content:center;padding:8px;font-family:var(--display);font-weight:700;font-size:22px;line-height:28px;letter-spacing:.06em;text-transform:uppercase;background:var(--tb);color:var(--tf)}
+.t3{--tb:var(--act-bg);--tf:var(--act-fg)}
+.t2{--tb:var(--att-bg);--tf:var(--att-fg)}
+.t1{--tb:var(--trs-bg);--tf:var(--trs-fg)}
+.t0{--tb:var(--trk-bg);--tf:var(--trk-fg)}
+.tier.t0{box-shadow:inset 0 0 0 1.5px var(--key)}
+.info{padding:14px 20px;min-width:0}
+.id{display:inline-block;font-family:var(--display);font-weight:700;font-size:26px;line-height:32px;letter-spacing:.03em;color:var(--text);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;text-decoration-color:var(--accent)}
+@media(hover:hover){.id:hover{background:var(--sel-bg);color:var(--sel-fg);text-decoration-color:transparent}}
+.what{margin-top:2px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);overflow-wrap:anywhere}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border:1.5px solid currentColor;border-radius:9999px;white-space:nowrap}
+.tag.hot{background:var(--late-bg);color:var(--late-fg);border-color:var(--late-bg)}
+.nums{display:flex;align-items:center;gap:22px;padding:14px 22px}
+.num{display:flex;flex-direction:column;align-items:flex-end;min-width:56px}
+.num b{font-family:var(--display);font-weight:700;font-size:34px;line-height:38px;font-variant-numeric:tabular-nums}
+.num i{font-style:normal;font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.more{display:flex;border-top:2px solid var(--head-line)}
+.more .btn{flex:1;justify-content:center;border:0;color:var(--text);min-height:52px}
+:root[data-theme="dark"] .more .btn{border:0}
+@keyframes strike{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.empty{padding:40px 28px;font-family:var(--label);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fail{display:flex;align-items:center;gap:16px;padding:28px}
+.fail span{background:var(--late-bg);color:var(--late-fg);padding:6px 14px;font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.fail .btn{border-color:var(--text);color:var(--text)}
+
+/* ledger */
+.toolbar{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--divider);background:var(--row-b)}
+.field{flex:1;max-width:340px;min-height:44px;padding:8px 14px;border:2px solid var(--key);background:var(--well-bg);box-shadow:inset 2px 2px 0 0 var(--well-shadow);color:var(--text);font-family:var(--body);font-size:16px;line-height:24px;border-radius:0}
+.field::placeholder{color:var(--muted);opacity:.7}
+.field:focus{outline:none;border-color:var(--focus);box-shadow:inset 2px 2px 0 0 var(--well-shadow),2px 2px 0 0 var(--focus)}
+.count{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-left:auto;white-space:nowrap}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-family:var(--label);font-size:14px;line-height:20px;letter-spacing:.02em}
+th{background:var(--head-bg);color:var(--head-text);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;text-align:left;white-space:nowrap;padding:0}
+th.r,td.r{text-align:right}
+th button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;width:100%;min-height:40px;padding:6px 12px;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit}
+th.r button{justify-content:flex-end}
+th button:focus-visible{outline:3px solid var(--head-text);outline-offset:-4px}
+th [aria-hidden]{width:8px;font-size:9px}
+td{padding:8px 12px;font-weight:600;font-variant-numeric:tabular-nums;vertical-align:middle}
+tbody tr{border-top:1px solid var(--divider)}
+tbody tr:nth-child(odd){background:var(--row-a)}
+tbody tr:nth-child(even){background:var(--row-b)}
+@media(hover:hover){tbody tr:hover{background:var(--sel-bg);color:var(--sel-fg)}tbody tr:hover a{color:var(--sel-fg)}}
+tr.off td:not(.tcell){opacity:.72}
+td.tcell{padding:0;width:92px}
+td.tcell span{display:flex;align-items:center;justify-content:center;min-height:38px;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;background:var(--tb);color:var(--tf)}
+td.tcell .t0{box-shadow:inset 0 0 0 1.5px var(--key)}
+td a{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.03em;color:var(--text);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:3px;white-space:nowrap}
+td.prod{max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td.late{color:var(--late-bg)}
+:root[data-theme="dark"] td.late{color:var(--late-bg)}
+
+/* rail */
+.rail-in{display:flex;flex-direction:column;position:sticky;top:75px}
+.act{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;background:var(--act-bg);color:var(--act-fg);border-bottom:2px solid var(--head-line)}
+.act h2{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase}
+.act output{display:block;font-family:var(--display);font-weight:700;font-size:80px;line-height:80px;font-variant-numeric:tabular-nums;animation:stamp .6s var(--ease) both}
+@keyframes stamp{from{opacity:0;transform:scale(1.35)}to{opacity:1;transform:none}}
+.tiers{list-style:none}
+.tiers li{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 24px;border-top:1px solid var(--divider);font-family:var(--label);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.tiers li:first-child{border-top:0}
+.tiers li:nth-child(odd){background:var(--row-a)}
+.tiers li:nth-child(even){background:var(--row-b)}
+.tiers .sw{width:18px;height:18px;background:var(--tb);box-shadow:inset 0 0 0 1.5px var(--text)}
+.tiers .t0{background:transparent}
+.tiers b{margin-left:auto;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.railhead{padding:10px 24px;background:var(--head-bg);color:var(--head-text);border-top:2px solid var(--head-line);border-bottom:2px solid var(--head-line);font-family:var(--display);font-weight:700;font-size:18px;line-height:26px;letter-spacing:.05em;text-transform:uppercase}
+.watch{padding:16px 24px 24px;display:flex;flex-direction:column;gap:14px}
+.watch form{display:flex;gap:8px}
+.watch .field{min-width:0;max-width:none}
+.watch .btn{border-color:var(--text);color:var(--text);padding:8px 16px}
+:root[data-theme="dark"] .watch .btn{border-color:var(--key)}
+.wl{display:flex;flex-wrap:wrap;gap:8px;list-style:none}
+.wl button{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:4px 10px 4px 12px;border:1.5px solid var(--key);background:var(--well-bg);color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s}
+.wl svg{width:12px;height:12px;stroke:currentColor;stroke-width:2.5;fill:none}
+@media(hover:hover){.wl button:hover{background:var(--sel-bg);color:var(--sel-fg);border-color:var(--sel-bg)}}
+
+footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
+.sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
+.sources a{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px;color:inherit;text-decoration:none;transition:background .15s,color .15s}
+.sources a:focus-visible{outline-color:var(--foot-text)}
+@media(hover:hover){.sources a:hover{background:var(--foot-text);color:var(--foot-bg)}}
+
+@media(max-width:1100px){.stamp .src{display:none}.nums{gap:14px;padding:14px 16px}.num{min-width:48px}.num b{font-size:28px;line-height:32px}}
+@media(max-width:960px){
+  .body{grid-template-columns:1fr}
+  .rail-in{position:static}
+}
+@media(max-width:700px){
+  :root{--margin:16px}
+  header{height:56px}
+  .brand{font-size:24px;line-height:32px}
+  .btn{padding:8px 14px}
+  main{padding-top:24px}
+  .masthead{padding:12px 16px}
+  .masthead h1{font-size:28px;line-height:36px}
+  .tabbar{flex-wrap:wrap}
+  [role=tab]{padding:8px 16px}
+  .stamp{padding:0 16px 8px;text-align:left;flex-basis:100%}
+  .item{grid-template-columns:1fr}
+  .tier{min-height:36px;justify-content:flex-start;padding:4px 20px;font-size:18px}
+  .nums{padding:0 20px 16px;justify-content:flex-start}
+  .num{align-items:flex-start}
+  .toolbar{flex-wrap:wrap;padding:12px 16px}
+  .act,.watch,.tiers li,.railhead{padding-left:16px;padding-right:16px}
+  body{margin:6px;min-height:calc(100vh - 12px)}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#stage">Skip to content</a>
+    <div class="top">
+        <header>
+            <a class="brand" href="/">amanvg</a>
+            <nav class="tools" aria-label="Main navigation">
+                <button class="btn icon-btn" id="mode" type="button" aria-label="Switch to dark mode">
+                    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>
+                    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                </button>
+            </nav>
+        </header>
+        <div class="stripes"></div>
+    </div>
+    <main>
+        <div class="sheet">
+            <div class="masthead">
+                <h1>CVE Triage</h1>
+                <div class="controls">
+                    <div class="chips" role="radiogroup" aria-label="Exposure">
+                        <label><input type="radio" name="exp" value="net" checked><span>Internet-facing</span></label>
+                        <label><input type="radio" name="exp" value="int"><span>Internal</span></label>
+                    </div>
+                    <div class="chips" role="radiogroup" aria-label="Environment">
+                        <label><input type="radio" name="env" value="prod" checked><span>Prod</span></label>
+                        <label><input type="radio" name="env" value="dev"><span>Dev/Test</span></label>
+                    </div>
+                    <div class="chips" role="radiogroup" aria-label="Window">
+                        <label><input type="radio" name="win" value="7" checked><span>7 days</span></label>
+                        <label><input type="radio" name="win" value="30"><span>30 days</span></label>
+                    </div>
+                </div>
+            </div>
+            <div class="body">
+                <section class="stage" id="stage" aria-label="Candidates">
+                    <div class="tabbar">
+                        <div role="tablist" aria-label="View">
+                            <button role="tab" id="tab-short" aria-controls="p-short" aria-selected="true" type="button">Shortlist</button>
+                            <button role="tab" id="tab-ledger" aria-controls="p-ledger" aria-selected="false" tabindex="-1" type="button">Ledger</button>
+                        </div>
+                        <div class="stamp" id="stamp"></div>
+                    </div>
+                    <div id="p-short" role="tabpanel" aria-labelledby="tab-short"><p class="empty">Loading</p></div>
+                    <div id="p-ledger" role="tabpanel" aria-labelledby="tab-ledger" hidden>
+                        <div class="toolbar">
+                            <input class="field" id="filter" type="search" placeholder="Filter" aria-label="Filter by CVE, vendor or product" autocomplete="off" spellcheck="false">
+                            <span class="count" id="count"></span>
+                        </div>
+                        <div class="wrap">
+                            <table>
+                                <thead><tr id="thead"></tr></thead>
+                                <tbody id="tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <aside class="rail" aria-label="Summary">
+                    <div class="rail-in">
+                    <div class="act"><h2>Act</h2><output id="act-n" aria-live="polite">0</output></div>
+                    <ul class="tiers" id="tiers"></ul>
+                    <h2 class="railhead">Watchlist</h2>
+                    <div class="watch">
+                        <form id="wl-form" autocomplete="off">
+                            <input class="field" id="wl-input" type="text" placeholder="Vendor or product" aria-label="Add vendor or product to watchlist" spellcheck="false" maxlength="60">
+                            <button class="btn" type="submit">Add</button>
+                        </form>
+                        <ul class="wl" id="wl"></ul>
+                    </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="stripes"></div>
+        <div class="sources"><a href="/trust/#sources">Trust &amp; Sources</a></div>
+    </footer>
+
+    <script>
+        // ── Configuration ───────────────────────────────────────
+
+        const SNAPSHOT = '/cve/data/snapshot.json';
+        const EPSS_LIKELY = 0.1;      // at or above, a CVE counts as likely to be exploited
+        const SHORTLIST_MAX = 15;
+        const STALE_HOURS = 48;
+        const TIER_NAMES = ['Track', 'Track*', 'Attend', 'Act'];
+
+        const state = { items: [], snap: null, net: true, prod: true, days: 7, tab: 'short', sort: { k: 'tier', dir: -1 }, q: '', list: [] };
+
+        // ── Storage (every access guarded) ──────────────────────
+
+        function load(key, fallback) {
+            try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? fallback : v; } catch (e) { return fallback; }
+        }
+        function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+
+        // ── Tiering ─────────────────────────────────────────────
+
+        function exploitLevel(i) {
+            if (i.kev || i.exploitation === 'active') return 'active';
+            if ((i.epss || 0) >= EPSS_LIKELY) return 'likely';
+            if (i.exploitation === 'poc') return 'poc';
+            return 'none';
+        }
+        function matches(i) {
+            if (!state.list.length) return true;
+            const hay = ((i.vendor || '') + ' ' + (i.product || '')).toLowerCase();
+            return state.list.some(t => hay.includes(t.toLowerCase()));
+        }
+        function tierOf(i) {
+            const lvl = exploitLevel(i);
+            let t = 0;
+            if (lvl === 'active') t = (state.net || (i.kev && i.kev.ransomware)) ? 3 : 2;
+            else if (lvl === 'likely') t = state.net ? 2 : 1;
+            else if (lvl === 'poc') t = state.net ? 1 : 0;
+            if (!state.prod) t = Math.max(0, t - 1);
+            const m = matches(i);
+            if (!m) t = Math.min(t, 1);
+            return { t, m };
+        }
+
+        // ── Helpers ─────────────────────────────────────────────
+
+        const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const today = () => new Date().toISOString().slice(0, 10);
+        const pct = v => v == null ? '—' : (v >= 0.1 ? Math.round(v * 100) : (v * 100).toFixed(1)) + '%';
+        const cvss = v => v == null ? '—' : Number(v).toFixed(1);
+        const dateOf = i => i.kev ? i.kev.added : i.published;
+        const idUrl = id => /^CVE-\d{4}-\d{4,}$/.test(id) ? 'https://nvd.nist.gov/vuln/detail/' + id : '#';
+        const subject = i => [i.vendor, i.product].filter(Boolean).join(' ') || i.name || '';
+
+        function visible() {
+            const cutoff = new Date(Date.now() - state.days * 864e5).toISOString().slice(0, 10);
+            return state.items
+                .filter(i => (dateOf(i) || '') >= cutoff)
+                .map(i => Object.assign({}, i, tierOf(i)));
+        }
+        function rank(a, b) {
+            return (b.t - a.t)
+                || ((b.kev && b.kev.ransomware ? 1 : 0) - (a.kev && a.kev.ransomware ? 1 : 0))
+                || ((b.kev ? 1 : 0) - (a.kev ? 1 : 0))
+                || ((a.kev ? a.kev.due : '9') < (b.kev ? b.kev.due : '9') ? -1 : (a.kev ? a.kev.due : '9') > (b.kev ? b.kev.due : '9') ? 1 : 0)
+                || ((b.epss || 0) - (a.epss || 0))
+                || ((b.cvss || 0) - (a.cvss || 0));
+        }
+
+        // ── Rendering ───────────────────────────────────────────
+
+        function tags(i) {
+            const out = [];
+            if (i.kev) out.push('<span class="tag">KEV</span>');
+            if (i.kev && i.kev.ransomware) out.push('<span class="tag hot">Ransomware</span>');
+            if (!i.kev && i.exploitation === 'poc') out.push('<span class="tag">PoC</span>');
+            if (i.automatable === 'yes') out.push('<span class="tag">Automatable</span>');
+            if (i.kev) out.push('<span class="tag' + (i.kev.due < today() ? ' hot' : '') + '">Due ' + esc(i.kev.due) + '</span>');
+            if (!i.m) out.push('<span class="tag">Not on watchlist</span>');
+            return out.join('');
+        }
+
+        function renderShortlist(rows) {
+            const el = document.getElementById('p-short');
+            const hot = rows.filter(r => r.t >= 2).sort(rank);
+            if (!hot.length) { el.innerHTML = '<p class="empty">Nothing to raise</p>'; return; }
+            const shown = hot.slice(0, SHORTLIST_MAX);
+            let html = shown.map((i, n) => (
+                '<article class="item' + (i.m ? '' : ' off') + '" style="--n:' + n + '">' +
+                  '<div class="tier t' + i.t + '">' + TIER_NAMES[i.t] + '</div>' +
+                  '<div class="info">' +
+                    '<a class="id" href="' + idUrl(i.id) + '" target="_blank" rel="noopener">' + esc(i.id) + '</a>' +
+                    '<div class="what">' + esc(subject(i)) + '</div>' +
+                    '<div class="tags">' + tags(i) + '</div>' +
+                  '</div>' +
+                  '<div class="nums">' +
+                    '<div class="num"><b>' + pct(i.epss) + '</b><i>EPSS</i></div>' +
+                    '<div class="num"><b>' + cvss(i.cvss) + '</b><i>CVSS</i></div>' +
+                  '</div>' +
+                '</article>'
+            )).join('');
+            if (hot.length > shown.length) {
+                html += '<div class="more"><button class="btn" type="button" id="more">' + (hot.length - shown.length) + ' more in Ledger</button></div>';
+            }
+            el.innerHTML = html;
+            const more = document.getElementById('more');
+            if (more) more.addEventListener('click', () => { state.sort = { k: 'tier', dir: -1 }; setTab('ledger', true); });
+        }
+
+        const COLS = [
+            { k: 'tier', label: 'Tier' },
+            { k: 'id', label: 'CVE' },
+            { k: 'prod', label: 'Product' },
+            { k: 'exp', label: 'Exploit' },
+            { k: 'epss', label: 'EPSS', r: true },
+            { k: 'cvss', label: 'CVSS', r: true },
+            { k: 'due', label: 'Due' },
+        ];
+        function sortVal(i, k) {
+            switch (k) {
+                case 'tier': return i.t;
+                case 'id': return i.id;
+                case 'prod': return subject(i).toLowerCase();
+                case 'exp': return i.kev ? 2 : i.exploitation === 'poc' ? 1 : 0;
+                case 'epss': return i.epss || 0;
+                case 'cvss': return i.cvss || 0;
+                case 'due': return i.kev ? i.kev.due : '';
+            }
+        }
+        function renderHead() {
+            document.getElementById('thead').innerHTML = COLS.map(c => {
+                const on = state.sort.k === c.k;
+                return '<th class="' + (c.r ? 'r' : '') + '" aria-sort="' + (on ? (state.sort.dir > 0 ? 'ascending' : 'descending') : 'none') + '">' +
+                    '<button type="button" data-k="' + c.k + '">' + c.label + '<span aria-hidden="true">' + (on ? (state.sort.dir > 0 ? '▲' : '▼') : '') + '</span></button></th>';
+            }).join('');
+        }
+        function renderLedger(rows) {
+            const q = state.q.trim().toLowerCase();
+            let list = rows.filter(i => !q || (i.id + ' ' + subject(i) + ' ' + (i.name || '')).toLowerCase().includes(q));
+            const { k, dir } = state.sort;
+            list.sort((a, b) => {
+                const x = sortVal(a, k), y = sortVal(b, k);
+                const c = x < y ? -1 : x > y ? 1 : 0;
+                return c ? c * dir : rank(a, b);
+            });
+            document.getElementById('count').textContent = list.length + (list.length === 1 ? ' CVE' : ' CVEs');
+            document.getElementById('tbody').innerHTML = list.length ? list.map(i => (
+                '<tr' + (i.m ? '' : ' class="off"') + '>' +
+                  '<td class="tcell"><span class="t' + i.t + '">' + TIER_NAMES[i.t] + '</span></td>' +
+                  '<td><a href="' + idUrl(i.id) + '" target="_blank" rel="noopener">' + esc(i.id) + '</a></td>' +
+                  '<td class="prod" title="' + esc(i.name || subject(i)) + '">' + esc(subject(i)) + '</td>' +
+                  '<td>' + (i.kev ? 'KEV' + (i.kev.ransomware ? ' · Ransomware' : '') : i.exploitation === 'poc' ? 'PoC' : '—') + '</td>' +
+                  '<td class="r">' + pct(i.epss) + '</td>' +
+                  '<td class="r">' + cvss(i.cvss) + '</td>' +
+                  '<td class="' + (i.kev && i.kev.due < today() ? 'late' : '') + '">' + (i.kev ? esc(i.kev.due) : '—') + '</td>' +
+                '</tr>'
+            )).join('') : '<tr><td colspan="7" class="empty">No match</td></tr>';
+        }
+
+        function renderRail(rows) {
+            const n = [0, 0, 0, 0];
+            rows.forEach(r => n[r.t]++);
+            document.getElementById('act-n').textContent = n[3];
+            document.getElementById('tiers').innerHTML = [2, 1, 0].map(t =>
+                '<li><span class="sw t' + t + '"></span>' + TIER_NAMES[t] + '<b>' + n[t] + '</b></li>').join('');
+        }
+
+        function renderWatch() {
+            document.getElementById('wl').innerHTML = state.list.map((t, n) =>
+                '<li><button type="button" data-n="' + n + '" aria-label="Remove ' + esc(t) + '">' + esc(t) +
+                '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></li>').join('');
+        }
+
+        function renderStamp() {
+            const el = document.getElementById('stamp');
+            if (!state.snap) { el.textContent = ''; return; }
+            const g = state.snap.generatedAt;
+            const stale = (Date.now() - new Date(g).getTime()) > STALE_HOURS * 36e5;
+            el.innerHTML = '<span class="src">KEV ' + esc(state.snap.kevCatalogVersion) + ' · EPSS ' + esc(state.snap.epssDate) + ' · </span>' + esc(g.slice(0, 10) + ' ' + g.slice(11, 16)) + 'Z' +
+                (stale ? '<span class="late">Stale</span>' : '');
+        }
+
+        function render() {
+            const rows = visible();
+            renderRail(rows);
+            renderShortlist(rows);
+            renderHead();
+            renderLedger(rows);
+            renderStamp();
+        }
+
+        // ── Controls ────────────────────────────────────────────
+
+        function setTab(name, focus) {
+            state.tab = name;
+            const short = name === 'short';
+            document.getElementById('tab-short').setAttribute('aria-selected', short);
+            document.getElementById('tab-short').tabIndex = short ? 0 : -1;
+            document.getElementById('tab-ledger').setAttribute('aria-selected', !short);
+            document.getElementById('tab-ledger').tabIndex = short ? -1 : 0;
+            document.getElementById('p-short').hidden = !short;
+            document.getElementById('p-ledger').hidden = short;
+            if (focus) document.getElementById(short ? 'tab-short' : 'tab-ledger').focus();
+            if (!short) render();
+        }
+        document.getElementById('tab-short').addEventListener('click', () => setTab('short'));
+        document.getElementById('tab-ledger').addEventListener('click', () => setTab('ledger'));
+        document.querySelector('[role=tablist]').addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') setTab(state.tab === 'short' ? 'ledger' : 'short', true);
+        });
+
+        function savePrefs() { save('cve.prefs', { net: state.net, prod: state.prod, days: state.days }); }
+        document.querySelectorAll('.chips input').forEach(r => r.addEventListener('change', () => {
+            if (r.name === 'exp') state.net = r.value === 'net';
+            if (r.name === 'env') state.prod = r.value === 'prod';
+            if (r.name === 'win') state.days = Number(r.value);
+            savePrefs();
+            render();
+        }));
+
+        document.getElementById('thead').addEventListener('click', e => {
+            const b = e.target.closest('button[data-k]');
+            if (!b) return;
+            const k = b.dataset.k;
+            state.sort = state.sort.k === k ? { k, dir: -state.sort.dir } : { k, dir: k === 'tier' || k === 'epss' || k === 'cvss' ? -1 : 1 };
+            render();
+            document.querySelector('th button[data-k="' + k + '"]').focus();
+        });
+        document.getElementById('filter').addEventListener('input', e => { state.q = e.target.value; renderLedger(visible()); });
+
+        document.getElementById('wl-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const inp = document.getElementById('wl-input');
+            const v = inp.value.trim().slice(0, 60);
+            if (v && !state.list.some(t => t.toLowerCase() === v.toLowerCase())) {
+                state.list.push(v);
+                save('cve.watchlist', state.list);
+                renderWatch();
+                render();
+            }
+            inp.value = '';
+        });
+        document.getElementById('wl').addEventListener('click', e => {
+            const b = e.target.closest('button[data-n]');
+            if (!b) return;
+            state.list.splice(Number(b.dataset.n), 1);
+            save('cve.watchlist', state.list);
+            renderWatch();
+            render();
+        });
+
+        // ── Theme ───────────────────────────────────────────────
+
+        const root = document.documentElement, mode = document.getElementById('mode');
+        function paint() { mode.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'); }
+        mode.addEventListener('click', () => {
+            root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+            try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+            paint();
+        });
+        matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            let saved = null;
+            try { saved = localStorage.getItem('theme'); } catch (x) {}
+            if (saved === 'light' || saved === 'dark') return;
+            root.dataset.theme = e.matches ? 'dark' : 'light';
+            paint();
+        });
+        paint();
+
+        // ── Go ──────────────────────────────────────────────────
+
+        async function start() {
+            const p = load('cve.prefs', {});
+            if (typeof p.net === 'boolean') state.net = p.net;
+            if (typeof p.prod === 'boolean') state.prod = p.prod;
+            if (p.days === 7 || p.days === 30) state.days = p.days;
+            const wl = load('cve.watchlist', []);
+            state.list = Array.isArray(wl) ? wl.filter(t => typeof t === 'string').slice(0, 50) : [];
+            document.querySelector('input[name=exp][value=' + (state.net ? 'net' : 'int') + ']').checked = true;
+            document.querySelector('input[name=env][value=' + (state.prod ? 'prod' : 'dev') + ']').checked = true;
+            document.querySelector('input[name=win][value="' + state.days + '"]').checked = true;
+            renderWatch();
+            try {
+                const res = await fetch(SNAPSHOT, { cache: 'no-cache' });
+                if (!res.ok) throw new Error(res.status);
+                state.snap = await res.json();
+                state.items = state.snap.items;
+                render();
+            } catch (e) {
+                document.getElementById('p-short').innerHTML = '<div class="fail"><span>Snapshot failed to load</span><button class="btn" type="button" id="retry">Retry</button></div>';
+                document.getElementById('retry').addEventListener('click', start);
+            }
+        }
+        start();
+    </script>
+</body>
+</html>

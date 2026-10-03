@@ -38,6 +38,7 @@
   --b-maps:#60888f;   --f-maps:#181c16;
   --b-weather:#1c2730; --f-weather:#f6efe1;
   --b-calc:#d9822b;   --f-calc:#181c16;
+  --b-sec:#a63a24;    --f-sec:#f6efe1;
   --display:'Oswald','Arial Narrow',sans-serif;
   --body:'Vollkorn',Georgia,serif;
   --label:'Work Sans',system-ui,sans-serif;
@@ -58,6 +59,7 @@
   --b-maps:#44805d;   --f-maps:#0e1511;
   --b-weather:#141c26; --f-weather:#f4ede2;
   --b-calc:#e5933a;   --f-calc:#0e1511;
+  --b-sec:#86301f;    --f-sec:#f4ede2;
 }
 html{scrollbar-gutter:stable}
 body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:10px;border:2px solid var(--key);min-height:calc(100vh - 20px);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
@@ -167,6 +169,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         <h2><button class="head" aria-expanded="false">Weather<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
         <div class="panel"><ul>
           <li><a class="row" href="/tempest/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Tempest Station</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+        </ul></div>
+      </section>
+      <section class="cat" data-open="false" style="--c:var(--b-sec);--fg:var(--f-sec)">
+        <h2><button class="head" aria-expanded="false">Security<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel"><ul>
+          <li><a class="row" href="/cve/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>CVE Triage</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
         </ul></div>
       </section>
       <section class="cat" data-open="false" style="--c:var(--b-calc);--fg:var(--f-calc)">
