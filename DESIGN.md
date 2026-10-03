@@ -130,7 +130,7 @@ A night-green ground, cream paper, one gold accent, and five poster-flat band co
 - **Pine** (`band-pine`, #1f5a45): Weather.
 - **Orange** (`band-orange`, #e8742c): Calculators. Carries ink text, not cream.
 - **Plum** (`band-plum`, #6b2f4a): Planning.
-- **Child rows** are the band colour mixed 80% with 20% black (`color-mix(in srgb, band 80%, #000)`). Computed shades: navy #162652, blue #234c7e, pine #194837, orange #ba5d23, plum #56263b. These are derived, not separate tokens; always compute from the band colour.
+- **Child rows** are the band colour mixed 80% with 20% black (`color-mix(in srgb, band 80%, #000)`). Computed shades: navy #162652, blue #234c7e, pine #194837, plum #56263b. The orange band is the exception: its rows are orange mixed 90% with 10% white (`--mix:90%; --tint:#fff`, #ea8241), because ink text on the darker mix measured 3.75:1. These are derived, not separate tokens; always compute from the band colour.
 
 ### Neutral
 - **Night Green** (`night-green`, #0f2421): page ground and sticky nav background.
@@ -167,7 +167,7 @@ A night-green ground, cream paper, one gold accent, and five poster-flat band co
 
 Single column, content centred with a fluid gutter of `max(40px, (100% - 1200px) / 2)`, so the nav, the sheet, and the Sources line share the same edges. At 700px and below the gutter drops to 16px, the sheet border to 8px, band height to 68px, band padding to 16px, and row indent to 32px.
 
-Vertical rhythm: sticky nav 60px with a 2px cream rule; 44px gap between nav and sheet; sheet bottom margin 40px; Sources padded 48px at the bottom. Bands are 76px tall closed; rows are 60px tall, indented 56px from the band edge so they read as children. Band head and row are grids with a flexible title column and a fixed icon column (32px and 28px) with 24px column gap. The banner is full sheet width at a height of clamp(150px, 26vw, 320px), cropped to fit with `object-fit: cover`, centred. `html` uses `scrollbar-gutter: stable` so expanding a band does not shift the layout.
+Vertical rhythm: sticky nav 60px with a 2px cream rule; 44px gap between nav and sheet; sheet bottom margin 40px; Sources padded 48px at the bottom. Bands are 76px tall closed; rows are 60px tall, indented 56px from the band edge so they read as children. Band head and row are grids with a flexible title column and a fixed icon column (32px and 28px) with 24px column gap. The banner is full sheet width at a height of clamp(110px, 16vw, 200px), cropped to fit with `object-fit: cover`, centred. `html` uses `scrollbar-gutter: stable` so expanding a band does not shift the layout.
 
 Categories start collapsed. Accordions are independent (opening one does not close others).
 
@@ -188,13 +188,13 @@ Square and printed. No border radius anywhere (0px). The sheet is a 10px cream b
 ## Components
 
 ### Navigation
-Sticky, 60px, night-green with a 2px cream bottom border. Logo left, one link ("Trust") right. Link: cream, 17px tracked caps, 8px 14px padding, 2px transparent border. Hover: border and text turn gold. Includes a skip link that slides in on focus (cream fill, ink text).
+Sticky, 60px, night-green with a 2px cream bottom border. Logo left, one link ("Trust") right. Link: cream, 17px tracked caps, 44px minimum height, 14px side padding, 2px transparent border. Hover: border and text turn gold. Includes a skip link that slides in on focus (cream fill, ink text).
 
 ### Band (accordion head)
-Full-width button, 76px, band colour background, `--fg` text, title left and chevron right. Hover nudges the chevron 3px right. Open state rotates the chevron 90deg (0.45s). Focus ring: 3px outline in `--fg`, offset -8px (inset).
+Full-width button, 76px, band colour background, `--fg` text, title left and chevron right. Hover nudges the chevron 3px right. Open state rotates the chevron 90deg (0.45s). Focus ring: 3px outline in `--fg`, offset -8px (inset). The title is an `h2` wrapping the button.
 
 ### Panel and Project Row
-Panel expands with a grid-rows transition (0fr to 1fr, 0.5s). Rows are 60px, darker band shade, title left and block arrow right. When a band opens, rows fade in and slide from -10px; the second to fourth rows delay by 0.06s, 0.12s, 0.18s (opacity and transform only). Hover adds the inset keyline and moves the arrow 7px right (0.3s). Links inside closed panels are removed from the tab order. Easing for all expand, slide, and nudge motion: `cubic-bezier(.16, 1, .3, 1)`; the opacity fade is 0.35s `ease`. All of it is disabled under `prefers-reduced-motion`.
+Panel expands with a grid-rows transition (0fr to 1fr, 0.5s). Rows are 60px, darker band shade, title left and block arrow right. When a band opens, rows fade in and slide from -10px; the second to fourth rows delay by 0.06s, 0.12s, 0.18s (opacity and transform only). Hover adds the inset keyline and moves the arrow 7px right (0.3s). Row focus ring is 3px in `--fg`. Closed panels are `inert`, so their links are out of the tab order. Opening a band scrolls just enough to keep its last row 24px above the fold, never past 72px under the top edge, and stops if the visitor scrolls; under `prefers-reduced-motion` it applies at once. Easing for all expand, slide, and nudge motion: `cubic-bezier(.16, 1, .3, 1)`; the opacity fade is 0.35s `ease`. All of it is disabled under `prefers-reduced-motion`.
 
 ### Banner Plate
 A cropped poster image (`/assets/banner.jpg`, North Cascades, Ivan Chermayeff, National Park Service, 1972) at the top of the sheet, decorative (empty alt), credited in the Sources row. It is the only imagery on the page.
@@ -221,5 +221,5 @@ Wrapping row below the sheet, 8px/26px gaps: the gold Big Shoulders "Sources" la
 
 ## Open Notes
 - The banner's public-domain status is unconfirmed (Wikimedia Commons lists it as public domain; the owner will handle licensing).
-- Text contrast on the bands measured at 4.59:1 or better for the earlier flat-list version of the page. It has not been re-measured for the accordion (including the darker child rows).
-- Not canonized: the row qualifiers are phrase fragments ("I have been to", "I have seen a game in"), which strain the labels-and-titles-only copy rule; the stale CSS comment mentioning a "sun-and-rays cap" no longer matches the build.
+- Text contrast measured 2026-10-03: heads 5.13 to 10.11:1; rows 6.24 to 11.66:1 (orange rows with the lighter mix 6.24:1). Orange rows are lighter than their head, the one place the child-darker step is inverted.
+- Not canonized: the calculator titles carry no qualifier; the remaining row qualifiers are phrase fragments ("I have been to", "I have seen a game in"), which strain the labels-and-titles-only copy rule; the stale CSS comment mentioning a "sun-and-rays cap" no longer matches the build.

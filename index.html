@@ -28,17 +28,17 @@ body{background:var(--night);color:var(--paper);font-family:var(--label);min-hei
 nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--night);border-bottom:2px solid var(--paper)}
 .nav{height:60px;padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:var(--display);font-weight:900;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper);text-decoration:none}
-.nav a.link{font-weight:700;font-size:17px;letter-spacing:.22em;text-transform:uppercase;color:var(--paper);text-decoration:none;padding:8px 14px;border:2px solid transparent}
+.nav a.link{display:inline-flex;align-items:center;min-height:44px;font-weight:700;font-size:17px;letter-spacing:.22em;text-transform:uppercase;color:var(--paper);text-decoration:none;padding:8px 14px;border:2px solid transparent}
 .nav a.link:hover{border-color:var(--gold);color:var(--gold)}
 
 /* poster sheet: cream paper margin around the bands */
 .sheet{margin:44px var(--gutter) 40px;border:10px solid var(--paper);border-top-width:10px;background:var(--paper)}
-.plate{display:block;width:100%;height:clamp(150px,26vw,320px);object-fit:cover;object-position:50% 50%}
+.plate{display:block;width:100%;height:clamp(110px,16vw,200px);object-fit:cover;object-position:50% 50%}
 .cat{background:var(--c)}
 .cat+.cat{margin-top:0}
 .head{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr 32px;align-items:center;column-gap:24px;width:100%;height:76px;padding:0 28px;background:var(--c);color:var(--fg)}
 .head:focus-visible{outline:3px solid var(--fg);outline-offset:-8px}
-.head h2{font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(32px,3.4vw,46px);line-height:1}
+.cat h2{font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(32px,3.4vw,46px);line-height:1}
 .chev{width:28px;height:28px;transition:transform .45s var(--ease)}
 .cat[data-open="true"] .chev{transform:rotate(90deg)}
 .head:hover .chev{translate:3px 0}
@@ -47,12 +47,13 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
 .panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
 .cat[data-open="true"] .panel{grid-template-rows:1fr}
 .panel>ul{overflow:hidden;list-style:none;min-height:0}
-.row{display:grid;grid-template-columns:1fr 28px;align-items:center;column-gap:24px;height:60px;padding:0 28px 0 56px;background:color-mix(in srgb,var(--c) 80%,#000);color:var(--fg);text-decoration:none;opacity:0;transform:translateY(-10px);transition:opacity .35s ease,transform .45s var(--ease),box-shadow .25s var(--ease)}
+.row{display:grid;grid-template-columns:1fr 28px;align-items:center;column-gap:24px;height:60px;padding:0 28px 0 56px;background:color-mix(in srgb,var(--c) var(--mix,80%),var(--tint,#000));color:var(--fg);text-decoration:none;opacity:0;transform:translateY(-10px);transition:opacity .35s ease,transform .45s var(--ease),box-shadow .25s var(--ease)}
 .cat[data-open="true"] .row{opacity:1;transform:none}
 .cat[data-open="true"] li:nth-child(2) .row{transition-delay:.06s,.06s,0s}
 .cat[data-open="true"] li:nth-child(3) .row{transition-delay:.12s,.12s,0s}
 .cat[data-open="true"] li:nth-child(4) .row{transition-delay:.18s,.18s,0s}
 .row:hover{box-shadow:inset 0 0 0 4px var(--fg)}
+.row:focus-visible{outline-color:var(--fg)}
 .row h3{font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-size:clamp(24px,2.4vw,32px);line-height:1;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 18px;min-width:0}
 .row h3 em{font-style:normal;font-weight:600;font-size:max(12px,.58em);letter-spacing:.32em}
 .go{width:26px;height:26px;transition:transform .3s var(--ease)}
@@ -74,39 +75,54 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
     <div class="sheet" id="sheet">
       <img class="plate" alt="" src="/assets/banner.jpg">
       <section class="cat" data-open="false" style="--c:#1b2f66;--fg:#f1e4c3">
-        <button class="head" id="h0" aria-expanded="false" aria-controls="p0"><h2>Sports</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
-        <div class="panel" id="p0" role="region" aria-labelledby="h0"><ul><li><a class="row" href="/seattlesports/"><h3>Seattle Sports</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/mlbstadiums/"><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+        <h2><button class="head" id="h0" aria-expanded="false" aria-controls="p0">Sports<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel" id="p0" inert><ul><li><a class="row" href="/seattlesports/"><h3>Seattle Sports</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/mlbstadiums/"><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
       </section>
       <section class="cat" data-open="false" style="--c:#2c5f9e;--fg:#f1e4c3">
-        <button class="head" id="h1" aria-expanded="false" aria-controls="p1"><h2>Maps</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
-        <div class="panel" id="p1" role="region" aria-labelledby="h1"><ul><li><a class="row" href="/USStates/"><h3>US States <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/worldmap/"><h3>Countries <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+        <h2><button class="head" id="h1" aria-expanded="false" aria-controls="p1">Maps<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel" id="p1" inert><ul><li><a class="row" href="/USStates/"><h3>US States <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/worldmap/"><h3>Countries <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
       </section>
       <section class="cat" data-open="false" style="--c:#1f5a45;--fg:#f1e4c3">
-        <button class="head" id="h2" aria-expanded="false" aria-controls="p2"><h2>Weather</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
-        <div class="panel" id="p2" role="region" aria-labelledby="h2"><ul><li><a class="row" href="/tempest/"><h3>Tempest Station</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+        <h2><button class="head" id="h2" aria-expanded="false" aria-controls="p2">Weather<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel" id="p2" inert><ul><li><a class="row" href="/tempest/"><h3>Tempest Station</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
       </section>
-      <section class="cat" data-open="false" style="--c:#e8742c;--fg:#10201d">
-        <button class="head" id="h3" aria-expanded="false" aria-controls="p3"><h2>Calculators</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
-        <div class="panel" id="p3" role="region" aria-labelledby="h3"><ul><li><a class="row" href="/commute/"><h3>Commute Cost <em>Calculator</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/roadtrip/"><h3>Road Trip <em>Cost Calculator</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/tirepressure/"><h3>Tire Pressure</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/carafford/"><h3>Car Affordability</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      <section class="cat" data-open="false" style="--c:#e8742c;--fg:#10201d;--mix:90%;--tint:#fff">
+        <h2><button class="head" id="h3" aria-expanded="false" aria-controls="p3">Calculators<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel" id="p3" inert><ul><li><a class="row" href="/commute/"><h3>Commute Cost</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/roadtrip/"><h3>Road Trip Cost</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/tirepressure/"><h3>Tire Pressure</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/carafford/"><h3>Car Affordability</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
       </section>
       <section class="cat" data-open="false" style="--c:#6b2f4a;--fg:#f1e4c3">
-        <button class="head" id="h4" aria-expanded="false" aria-controls="p4"><h2>Planning</h2><svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button>
-        <div class="panel" id="p4" role="region" aria-labelledby="h4"><ul><li><a class="row" href="/commuteplanner/"><h3>Commute Planner</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/whichcar/"><h3>What car should I buy?</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+        <h2><button class="head" id="h4" aria-expanded="false" aria-controls="p4">Planning<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel" id="p4" inert><ul><li><a class="row" href="/commuteplanner/"><h3>Commute Planner</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/whichcar/"><h3>What car should I buy?</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
       </section>
     </div>
     <div class="sources"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span><span>OSRM</span><span>OpenStreetMap</span><span>Banner: North Cascades, Ivan Chermayeff, National Park Service, 1972 (Smithsonian Cooper Hewitt; Wikimedia Commons lists public domain)</span></div>
   </main>
   <script>
+    var still = matchMedia('(prefers-reduced-motion: reduce)');
+    var follow = 0;
+    function reveal(cat) {
+      var panel = cat.querySelector('.panel'), end = performance.now() + (still.matches ? 50 : 600), id = ++follow, stop = false;
+      function halt() { stop = true; }
+      addEventListener('wheel', halt, { once: true, passive: true });
+      addEventListener('touchmove', halt, { once: true, passive: true });
+      (function step() {
+        if (stop || id !== follow) return;
+        var over = panel.getBoundingClientRect().bottom - (innerHeight - 24);
+        var by = Math.min(over, cat.getBoundingClientRect().top - 72);
+        if (by > 0) scrollBy(0, by);
+        if (performance.now() < end) requestAnimationFrame(step);
+      })();
+    }
     document.querySelectorAll('.cat').forEach(function (cat) {
       var btn = cat.querySelector('.head');
-      var links = cat.querySelectorAll('.row');
+      var panel = cat.querySelector('.panel');
       function sync(open) {
         cat.dataset.open = open;
         btn.setAttribute('aria-expanded', open);
-        links.forEach(function (a) { if (open) a.removeAttribute('tabindex'); else a.setAttribute('tabindex', '-1'); });
+        panel.inert = !open;
+        if (open) reveal(cat);
       }
       btn.addEventListener('click', function () { sync(cat.dataset.open !== 'true'); });
-      sync(cat.dataset.open === 'true');
     });
   </script>
 </body>
