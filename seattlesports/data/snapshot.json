@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-02T06:02:43.089Z",
+ "generatedAt": "2026-10-03T07:50:45.256Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -752,9 +752,9 @@
      },
      {
       "team": {
-       "id": "37",
-       "abbreviation": "VGK",
-       "displayName": "Vegas Golden Knights"
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
       },
       "stats": [
        {
@@ -830,9 +830,9 @@
      },
      {
       "team": {
-       "id": "22",
-       "abbreviation": "VAN",
-       "displayName": "Vancouver Canucks"
+       "id": "37",
+       "abbreviation": "VGK",
+       "displayName": "Vegas Golden Knights"
       },
       "stats": [
        {
@@ -869,9 +869,9 @@
      },
      {
       "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
+       "id": "22",
+       "abbreviation": "VAN",
+       "displayName": "Vancouver Canucks"
       },
       "stats": [
        {
@@ -882,22 +882,22 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "3"
+        "displayValue": "1"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "0"
+        "displayValue": "1"
        },
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "0"
+        "displayValue": "2"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "0"
+        "displayValue": "1"
        },
        {
         "name": "overtimeLosses",
