@@ -62,7 +62,7 @@
   --b-plan:#c8523b;   --f-plan:#f4ede2;
 }
 html{scrollbar-gutter:stable}
-body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:10px;border:2px solid var(--key);min-height:calc(100vh - 20px);-webkit-font-smoothing:antialiased}
+body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:10px;border:2px solid var(--key);min-height:calc(100vh - 20px);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 ::selection{background:var(--sel-bg);color:var(--sel-fg)}
 :focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 
@@ -89,7 +89,7 @@ h1 a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;m
 :root[data-theme="dark"] .icon-btn .moon{display:none}
 .stripes{height:7px;background:linear-gradient(var(--s1) 0 3px,var(--s2) 3px 5px,var(--s3) 5px 7px)}
 
-main{padding:40px var(--margin) 0}
+main{flex:1;padding:40px var(--margin) 0}
 .plate{border:3px double var(--frame);padding:6px;background:var(--card)}
 :root[data-theme="dark"] .plate{border-color:var(--accent)}
 .plate img{display:block;width:100%;height:clamp(110px,13vw,150px);object-fit:cover;object-position:50% 12%;border:2px solid var(--shadow)}
@@ -125,7 +125,10 @@ li+li{border-top:1px solid var(--divider)}
 footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
 .sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
 .sources b{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--foot-accent);margin-right:10px}
-.sources span{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px}
+.sources a,.sources span{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px}
+.sources a{color:inherit;text-decoration:none;transition:background .15s,color .15s}
+.sources a:focus-visible{outline-color:var(--foot-text)}
+@media(hover:hover){.sources a:hover{background:var(--foot-text);color:var(--foot-bg)}}
 .sources span.credit{border-radius:0;border-color:rgba(244,237,226,.4);text-transform:none;letter-spacing:.01em;font-family:var(--body);font-weight:400;font-size:14px}
 
 @media(max-width:700px){:root{--margin:16px}header{height:56px}h1{font-size:24px;line-height:32px}.btn{padding:8px 14px}main{padding-top:24px}.grid{margin-top:24px}.cat h2{font-size:28px;line-height:36px}.head{padding:0 16px;min-height:64px}.row{padding:0 16px 0 28px}body{margin:6px;min-height:calc(100vh - 12px)}}
@@ -190,7 +193,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   </main>
   <footer>
     <div class="stripes"></div>
-    <div class="sources"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span><span>OSRM</span><span>OpenStreetMap</span><span class="credit">Banner: North Cascades, Ivan Chermayeff, National Park Service, 1972 (Smithsonian Cooper Hewitt; Wikimedia Commons lists public domain)</span></div>
+    <div class="sources"><b>Sources</b><a href="/trust/#sources">fueleconomy.gov</a><a href="/trust/#sources">AAA</a><a href="/trust/#sources">EIA</a><a href="/trust/#sources">OSRM</a><a href="/trust/#sources">OpenStreetMap</a><span class="credit">Banner: North Cascades, Ivan Chermayeff, National Park Service, 1972 (Smithsonian Cooper Hewitt; Wikimedia Commons lists public domain)</span></div>
   </footer>
   <script>
     var still = matchMedia('(prefers-reduced-motion: reduce)');
