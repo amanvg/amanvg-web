@@ -6,476 +6,189 @@
   <title>amanvg — projects &amp; dashboards</title>
   <meta name="description" content="Personal site of Aman Gandhi — live dashboards, maps, and tools.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Big+Shoulders+Display:wght@900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* Eleven flat colour bands stepping cool to warm, after WPA poster skies */
     :root {
-      --bg: #141414;
-      --surface: #1e1e1e;
-      --surface-hover: #252525;
-      --border: #2e2e2e;
-      --border-hover: #3d3d3d;
-      --text-primary: #ffffff;
-      --text-secondary: #b0b0b0;
-      --text-tertiary: #8a8a8a;
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
-      --shadow-lg: 0 8px 16px -2px rgba(0,0,0,0.5), 0 24px 64px -8px rgba(0,0,0,0.6);
-      --radius-card: 20px;
-      --radius-pill: 999px;
+      --night: #0f2421;
+      --paper: #f1e4c3;
+      --ink: #10201d;
+      --b1: #1b2f66; --b2: #24428a; --b3: #2c5f9e; --b4: #256b7d; --b5: #1f5a45;
+      --b6: #f0b43c; --b7: #f29a33; --b8: #e8742c; --b9: #a64a22; --b10: #6b2f4a; --b11: #4a1f33;
+      --display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+      --label: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+      --gutter: max(40px, calc((100% - 1360px) / 2 + 40px));
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
+      font-family: var(--label);
+      background: var(--night);
+      color: var(--paper);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ─────────────────────────────────────────
-       NAV
-    ───────────────────────────────────────── */
+    ::selection { background: var(--b6); color: var(--ink); }
+
+    :focus-visible { outline: 3px solid var(--paper); outline-offset: -6px; }
+
+    .skip-link {
+      position: absolute; top: -48px; left: 16px;
+      background: var(--paper); color: var(--ink);
+      padding: 8px 16px; z-index: 200;
+      font-size: 16px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* NAV */
     nav {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(13, 13, 13, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
+      background: var(--night);
+      border-bottom: 2px solid var(--paper);
     }
 
     .nav-inner {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 32px;
-      height: 56px;
+      height: 60px;
+      padding: 0 var(--gutter);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
     .nav-logo {
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--text-primary);
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 30px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--paper);
       text-decoration: none;
     }
-
-    .nav-logo span { color: var(--text-tertiary); }
 
     .nav-link {
-      font-size: 13px; font-weight: 500; color: var(--text-secondary);
-      text-decoration: none; padding: 6px 12px; border-radius: 8px;
-      transition: color 0.15s, background 0.15s;
-    }
-    .nav-link:hover { color: var(--text-primary); background: var(--border); }
-
-    /* ─────────────────────────────────────────
-       PROJECTS
-    ───────────────────────────────────────── */
-    .projects {
-      max-width: 960px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 40px 32px 80px;
-      flex: 1;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-    }
-
-    /* ── Project card ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-md);
-      padding: 28px;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.2s,
-                  border-color 0.2s;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--border-hover);
-    }
-
-    .card-stripe {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      border-radius: var(--radius-card) var(--radius-card) 0 0;
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 16px;
-    }
-
-    .card-icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      background: var(--bg);
-      flex-shrink: 0;
-    }
-
-    .card-badge {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-      background: rgba(22, 163, 74, 0.15);
-      color: #4ade80;
-      border: 1px solid rgba(74, 222, 128, 0.25);
-    }
-
-    .card-badge.wip {
-      background: rgba(217, 119, 6, 0.15);
-      color: #fbbf24;
-      border-color: rgba(251, 191, 36, 0.25);
-    }
-
-    .card-badge.agent {
-      background: rgba(139, 92, 246, 0.15);
-      color: #a78bfa;
-      border-color: rgba(167, 139, 250, 0.25);
-    }
-
-    .card-title {
-      font-size: 20px;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-      margin-bottom: 6px;
-    }
-
-    .card-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 20px;
-      flex: 1;
-    }
-
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-    }
-
-    .card-tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .tag {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-tertiary);
-      background: var(--bg);
-      padding: 3px 9px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border);
-    }
-
-    .card-cta {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-tertiary);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: color 0.15s, gap 0.15s;
-      white-space: nowrap;
-    }
-
-    .card:hover .card-cta {
-      color: var(--text-primary);
-      gap: 8px;
-    }
-
-    /* ─────────────────────────────────────────
-       HERO / BIO
-    ───────────────────────────────────────── */
-    .hero {
-      max-width: 960px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 56px 32px 0;
-    }
-
-    .hero h1 {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--text-primary);
-    }
-
-    .hero p {
-      font-size: 16px;
-      color: var(--text-secondary);
-      margin-top: 10px;
-      line-height: 1.7;
-    }
-
-    .hero-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    /* ─────────────────────────────────────────
-       SECTION HEADER
-    ───────────────────────────────────────── */
-    .section-header {
-      max-width: 960px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 48px 32px 0;
-    }
-
-    .section-header h2 {
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-tertiary);
+      color: var(--paper);
+      text-decoration: none;
+      padding: 8px 14px;
+      border: 2px solid transparent;
+    }
+    .nav-link:hover { border-color: var(--b6); color: var(--b6); }
+
+    /* PROJECT ROWS */
+    .list { list-style: none; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 32px;
+      align-items: center;
+      column-gap: 32px;
+      height: 72px;
+      padding: 0 var(--gutter);
+      background: var(--bg);
+      color: var(--fg);
+      text-decoration: none;
+      box-shadow: inset 0 0 0 0 var(--fg);
+      transition: box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .row:hover { box-shadow: inset 0 0 0 5px var(--fg); }
+
+    .row h3 {
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: clamp(30px, 3.2vw, 44px);
+      line-height: 1;
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0 22px;
+      min-width: 0;
     }
 
-    .section-divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin-top: 12px;
+    .row h3 em {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 0.5em;
+      letter-spacing: 0.34em;
     }
 
-    /* ─────────────────────────────────────────
-       RESPONSIVE
-    ───────────────────────────────────────── */
-    @media (max-width: 640px) {
-      .projects { padding-left: 20px; padding-right: 20px; }
-      .nav-inner { padding: 0 20px; }
-      .hero { padding: 40px 20px 0; }
-      .section-header { padding: 40px 20px 0; }
+    .go {
+      width: 32px;
+      height: 32px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .row:hover .go { transform: translateX(8px); }
+
+    /* SOURCES */
+    .sources {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 28px;
+      align-items: center;
+      padding: 28px var(--gutter) 48px;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .sources b {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      color: var(--b6);
     }
 
-    /* ── Accessibility ── */
-    :focus-visible {
-      outline: 2px solid #6366f1;
-      outline-offset: 2px;
+    @media (max-width: 860px) {
+      .row { column-gap: 16px; grid-template-columns: 1fr 28px; }
     }
-    .skip-link {
-      position: absolute; top: -40px; left: 16px;
-      background: var(--surface); color: var(--text-primary);
-      padding: 8px 16px; border-radius: 8px; z-index: 200;
-      font-size: 13px; font-weight: 500; text-decoration: none;
+
+    @media (max-width: 560px) {
+      :root { --gutter: 16px; }
+      .row { height: auto; min-height: 64px; padding-block: 10px; }
+      .row h3 em { letter-spacing: 0.2em; }
     }
-    .skip-link:focus { top: 8px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .row, .go { transition: none; }
+    }
   </style>
 </head>
 <body>
   <a class="skip-link" href="#projects">Skip to content</a>
 
-  <!-- NAV -->
   <nav aria-label="Main navigation">
     <div class="nav-inner">
-      <a class="nav-logo" href="/">aman<span>vg</span></a>
+      <a class="nav-logo" href="/">amanvg</a>
       <a class="nav-link" href="/trust/">Trust</a>
     </div>
   </nav>
 
-  <!-- BIO -->
-  <div class="hero" id="about">
-    <div class="hero-row">
-      <h1>Aman Gandhi</h1>
-    </div>
-  </div>
-
-  <!-- SECTION HEADER -->
-  <div class="section-header">
-    <h2>Things I want to host online</h2>
-    <hr class="section-divider">
-  </div>
-
-  <!-- PROJECT GRID -->
-  <main class="projects" id="projects">
-    <div class="grid">
-
-      <a class="card" href="/seattlesports/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #002244, #69BE28);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🏟️</div>
-        </div>
-        <div class="card-title">Seattle Sports</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/USStates/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #ef4444, #b91c1c);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🗺️</div>
-        </div>
-        <div class="card-title">US States I have been to</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/worldmap/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #3b82f6, #1d4ed8);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🌍</div>
-        </div>
-        <div class="card-title">Countries I have been to</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/mlbstadiums/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #002D72, #D50032);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">⚾</div>
-        </div>
-        <div class="card-title">MLB Stadiums I have seen a game in</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/tempest/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #6366f1, #a855f7);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🌦️</div>
-        </div>
-        <div class="card-title">Tempest Station</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/commute/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #3b82f6, #22c55e);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🚗</div>
-        </div>
-        <div class="card-title">Commute Cost Calculator</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/commuteplanner/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #3b82f6, #93c5fd);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🧭</div>
-        </div>
-        <div class="card-title">Commute Planner</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/roadtrip/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #f59e0b, #ef4444);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🛣️</div>
-        </div>
-        <div class="card-title">Road Trip Cost Calculator</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/whichcar/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #ef4444, #a855f7);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🏁</div>
-        </div>
-        <div class="card-title">What car should I buy?</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/tirepressure/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #64748b, #3b82f6);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">🛞</div>
-        </div>
-        <div class="card-title">Tire Pressure</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="/carafford/">
-        <div class="card-stripe" style="background: linear-gradient(90deg, #22c55e, #3b82f6);"></div>
-        <div class="card-top">
-          <div class="card-icon-wrap">💵</div>
-        </div>
-        <div class="card-title">Car Affordability</div>
-        <div class="card-footer">
-          <div class="card-tags">
-          </div>
-          <span class="card-cta">Open →</span>
-        </div>
-      </a>
-
-    </div>
+  <main id="projects">
+    <ul class="list">
+      <li><a class="row" href="/seattlesports/" style="--bg:var(--b1);--fg:var(--paper)"><h3>Seattle Sports</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/USStates/" style="--bg:var(--b2);--fg:var(--paper)"><h3>US States <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/worldmap/" style="--bg:var(--b3);--fg:var(--paper)"><h3>Countries <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/mlbstadiums/" style="--bg:var(--b4);--fg:var(--paper)"><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/tempest/" style="--bg:var(--b5);--fg:var(--paper)"><h3>Tempest Station</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/commute/" style="--bg:var(--b6);--fg:var(--ink)"><h3>Commute Cost <em>Calculator</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/commuteplanner/" style="--bg:var(--b7);--fg:var(--ink)"><h3>Commute Planner</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/roadtrip/" style="--bg:var(--b8);--fg:var(--ink)"><h3>Road Trip <em>Cost Calculator</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/whichcar/" style="--bg:var(--b9);--fg:var(--paper)"><h3>What car should I buy?</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/tirepressure/" style="--bg:var(--b10);--fg:var(--paper)"><h3>Tire Pressure</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+      <li><a class="row" href="/carafford/" style="--bg:var(--b11);--fg:var(--paper)"><h3>Car Affordability</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+    </ul>
+    <div class="sources"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span><span>OSRM</span><span>OpenStreetMap</span></div>
   </main>
-
 </body>
 </html>
