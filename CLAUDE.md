@@ -49,9 +49,12 @@ A Reject means make no changes and ask what to adjust.
 - `/cve/`: follows `DESIGN.md` like `/tirepressure/`; exposure, environment and
   window chips live in the masthead, tier blocks (Act, Attend, Track*, Track)
   carry the result.
+- `/commute/`: follows `DESIGN.md` like `/tirepressure/`; car, route and pump
+  price inputs sit left, fare signboards and cost, miles, hours ledgers sit
+  right, and results update live (no Calculate button).
 - Other app pages: dark theme. Copy the `:root` tokens, nav (`← amanvg` back link,
   centered title), `.card`, and form styles from an existing page such as
-  `commute/index.html` rather than inventing new ones. Inter from
+  `worldmap/index.html` rather than inventing new ones. Inter from
   Google Fonts, 20px card radius, accent `#3b82f6`. They keep this look until
   each is migrated, one step at a time.
 - Desktop first. Design and verify at 1440×900 and 1024×768 before phone
