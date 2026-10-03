@@ -124,6 +124,20 @@ input[type=text]{width:100%;min-width:0;min-height:48px;background:var(--well-bg
 input[type=text]::placeholder{color:var(--muted);opacity:.65}
 input[type=text]:focus{outline:none;border-color:var(--focus);box-shadow:2px 2px 0 0 var(--focus)}
 input[type=text][aria-invalid=true]{border-color:var(--live-bg)}
+input[type=text][data-next]{border-color:var(--accent);box-shadow:2px 2px 0 0 var(--accent)}
+.group-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.jamb{margin:0;border:2px solid var(--key);background:var(--well-bg);padding:12px;display:flex;flex-direction:column;gap:8px}
+.jamb svg{display:block;width:100%;max-width:320px;height:auto}
+.jamb figcaption{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.jamb .j-panel{fill:var(--card);stroke:var(--key);stroke-width:2}
+.jamb .j-door{fill:var(--head-bg)}
+.jamb .j-sticker{fill:var(--canvas);stroke:var(--frame);stroke-width:2}
+.jamb .j-band{fill:var(--head-bg)}
+.jamb .j-ring{fill:none;stroke:var(--accent);stroke-width:3;stroke-dasharray:6 4}
+.jamb .j-line{stroke:var(--key);stroke-width:2;stroke-linecap:square}
+.jamb text{font-family:var(--label);font-weight:700;font-size:11px;letter-spacing:.08em;fill:var(--text)}
+.jamb .j-band-text{fill:var(--head-text)}
+.example-row{margin-top:auto}
 .stepper input:focus{position:relative;z-index:1}
 
 .row{display:flex;gap:10px}
@@ -150,7 +164,9 @@ input[type=text][aria-invalid=true]{border-color:var(--live-bg)}
 .sign{border:3px solid var(--frame);background:var(--well-bg);box-shadow:4px 4px 0 0 var(--shadow);min-width:0}
 .sign-head{background:var(--head-bg);color:var(--head-text);border-bottom:2px solid var(--head-line);padding:8px 16px;font-family:var(--display);font-weight:700;font-size:22px;line-height:28px;letter-spacing:.06em;text-transform:uppercase}
 .sign-body{display:flex;flex-direction:column;align-items:center;gap:2px;padding:20px 12px 18px}
-.num{display:block;font-family:var(--display);font-weight:700;font-size:clamp(72px,8vw,96px);line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums;color:var(--text)}
+.num{display:flex;align-items:center;justify-content:center;text-align:center;min-height:clamp(72px,8vw,96px);font-family:var(--display);font-weight:700;font-size:clamp(72px,8vw,96px);line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums;color:var(--text)}
+.num.prompt{font-size:28px;line-height:32px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-wrap:balance;max-width:10ch}
+.sign.empty .sign-unit{visibility:hidden}
 .num.strike{animation:strike .34s var(--ease)}
 @keyframes strike{from{opacity:.15;transform:translateY(8px)}to{opacity:1;transform:none}}
 .sign-unit{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -227,7 +243,23 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             <div class="body">
                 <div class="panel inputs" id="inputs">
                     <div class="group">
-                        <div class="section-label" id="placard-label">Cold placard</div>
+                        <div class="group-head">
+                            <div class="section-label" id="placard-label">Cold placard</div>
+                            <button class="act small" type="button" id="jamb-btn" aria-expanded="false" aria-controls="jamb">Where</button>
+                        </div>
+                        <figure class="jamb" id="jamb" hidden>
+                            <svg viewBox="0 0 320 150" role="img" aria-label="Door jamb sticker">
+                                <rect class="j-panel" x="1" y="1" width="318" height="148"/>
+                                <rect class="j-door" x="1" y="1" width="34" height="148"/>
+                                <rect class="j-sticker" x="100" y="28" width="168" height="96"/>
+                                <rect class="j-band" x="100" y="28" width="168" height="24"/>
+                                <text class="j-band-text" x="112" y="44">COLD PSI</text>
+                                <text x="112" y="82">FRONT</text><path class="j-line" d="M184 78h72"/>
+                                <text x="112" y="108">REAR</text><path class="j-line" d="M184 104h72"/>
+                                <rect class="j-ring" x="92" y="20" width="184" height="112"/>
+                            </svg>
+                            <figcaption>Door jamb</figcaption>
+                        </figure>
                         <div class="pair" role="group" aria-labelledby="placard-label">
                             <div class="field">
                                 <label for="front">Front</label>
@@ -269,8 +301,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <button type="button" data-step="1" data-for="fill" aria-label="Increase fill temperature"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h12M9 3v12"/></svg></button>
                             </div>
                         </div>
+                        <div class="place" id="fill-source"></div>
                         <button class="act small" type="button" id="fill-reset" hidden>Use outdoor</button>
                     </div>
+                    <div class="example-row"><button class="act" type="button" id="example" hidden>Example</button></div>
                 </div>
                 <div class="panel">
                     <div class="results" id="results" aria-live="polite">
@@ -338,11 +372,18 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             weather: null,                   // { nowF, avgF, coldF, warmF, elevM }
             fillF: null,                     // user override, °F; null = outdoor now
             loading: false,
+            example: false,                  // demo values; never saved
         };
         let requestSeq = 0;
 
         function save() {
             try {
+                if (S.example) {
+                    const d = JSON.parse(localStorage.getItem(STORE_KEY) || 'null') || {};
+                    d.tempU = S.tempU; d.pressU = S.pressU;
+                    localStorage.setItem(STORE_KEY, JSON.stringify(d));
+                    return;
+                }
                 localStorage.setItem(STORE_KEY, JSON.stringify({
                     front: S.front, rear: S.rear, tempU: S.tempU, pressU: S.pressU, loc: S.loc,
                 }));
@@ -537,8 +578,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         PLACARD_KEYS.forEach(key => {
             const el = $(key);
-            el.addEventListener('input', () => { readPlacard(key, el.value); save(); render(); });
-            el.addEventListener('change', () => { readPlacard(key, el.value); save(); render(true); });
+            el.addEventListener('input', () => { S.example = false; readPlacard(key, el.value); save(); render(); });
+            el.addEventListener('change', () => { S.example = false; readPlacard(key, el.value); save(); render(true); });
         });
         $('fill').addEventListener('input', () => { readFill($('fill').value); render(); });
         $('fill').addEventListener('change', () => { readFill($('fill').value); render(true); });
@@ -551,6 +592,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 const base = cur == null ? (S.tempU === 'f' ? 60 : 15) : fToDisp(cur, S.tempU);
                 S.fillF = dispToF(Math.round(base) + dir, S.tempU);
             } else {
+                S.example = false;
                 const cur = S[which];
                 const base = cur == null ? psiToDisp(35, S.pressU) : psiToDisp(cur, S.pressU);
                 S[which] = dispToPsi(base + dir * STEP[S.pressU], S.pressU);
@@ -559,8 +601,32 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             render(true);
         }));
 
-        $('zip-form').addEventListener('submit', e => { e.preventDefault(); useZip($('zip').value.trim()); });
-        $('locate').addEventListener('click', useGeolocation);
+        $('zip-form').addEventListener('submit', e => { e.preventDefault(); S.example = false; useZip($('zip').value.trim()); });
+        $('locate').addEventListener('click', () => { S.example = false; useGeolocation(); });
+
+        $('example').addEventListener('click', () => {
+            if (S.example) { clearExample(); return; }
+            S.example = true; S.front = 36; S.rear = 36; S.fillF = null;
+            $('zip').value = '98101';
+            render(true);
+            useZip('98101');
+        });
+        function clearExample() {
+            requestSeq++;
+            Object.assign(S, { front: null, rear: null, loc: null, weather: null, fillF: null, loading: false, example: false });
+            $('zip').value = ''; showError('');
+            load(); render(true);
+            if (S.loc) loadWeather(S.loc);
+        }
+
+        const jambBtn = $('jamb-btn'), jamb = $('jamb');
+        function toggleJamb(open) {
+            jamb.hidden = !open;
+            jambBtn.setAttribute('aria-expanded', String(open));
+            jambBtn.textContent = open ? 'Close' : 'Where';
+        }
+        jambBtn.addEventListener('click', () => toggleJamb(jamb.hidden));
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !jamb.hidden) { toggleJamb(false); jambBtn.focus(); } });
 
         document.querySelectorAll('input[name=tu]').forEach(r => r.addEventListener('change', () => { S.tempU = r.value; save(); render(true); }));
         document.querySelectorAll('input[name=pu]').forEach(r => r.addEventListener('change', () => { S.pressU = r.value; save(); render(true); }));
@@ -571,13 +637,33 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         // ── Render ──────────────────────────────────────────────
 
-        function setNum(id, text) {
+        function setNum(id, text, prompt) {
             const el = $(id);
+            el.classList.toggle('prompt', !!prompt);
+            el.closest('.sign').classList.toggle('empty', !!prompt);
             if (el.textContent === text) return;
             el.textContent = text;
             el.classList.remove('strike');
             void el.offsetWidth;
-            if (text !== '—') el.classList.add('strike');
+            if (!prompt) el.classList.add('strike');
+        }
+
+        function nextField() {
+            if (!placardOk(S.front)) return 'front';
+            if (!placardOk(S.rear)) return 'rear';
+            if (!S.loc) return 'zip';
+            if (!S.loading && S.weather && effectiveFillF() == null) return 'fill';
+            return null;
+        }
+
+        function promptFor(key) {
+            const p = S[key];
+            if (p == null) return 'Enter placard';
+            if (!placardOk(p)) return 'Check placard';
+            if (!S.loc) return 'Enter location';
+            if (S.loading) return 'Loading';
+            if (!S.weather) return 'Try again';
+            return effectiveFillF() == null ? 'Enter fill temp' : 'Check fill temp';
         }
 
         function setCell(rowId, cells) {
@@ -614,6 +700,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             } else $('place').textContent = S.loc ? S.loc.label : '';
             $('results').classList.toggle('loading', S.loading);
 
+            const ph = fmtP(35, pu);
+            PLACARD_KEYS.forEach(key => { $(key).placeholder = ph; });
+            const next = nextField();
+            ['front', 'rear', 'zip', 'fill'].forEach(id => $(id).toggleAttribute('data-next', id === next));
+            $('fill-source').textContent = S.fillF == null && hasOutdoor ? 'Outdoor now' : '';
+            $('example').hidden = !(S.example || (S.front == null && S.rear == null && !S.loc));
+            $('example').textContent = S.example ? 'Clear' : 'Example';
+
             renderResults();
         }
 
@@ -627,7 +721,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             for (const key of PLACARD_KEYS) {
                 const placard = S[key];
                 if (!w || !tempOk || !placardOk(placard)) {
-                    setNum(`num-${key}`, '—');
+                    setNum(`num-${key}`, promptFor(key), true);
                     $(`ref-${key}`).innerHTML = '';
                     continue;
                 }
