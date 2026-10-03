@@ -1,999 +1,858 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tempest Station — amanvg</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tempest Station — amanvg</title>
+    <meta name="description" content="Live readings, 24-hour charts, 7-day forecast and yearly history from the Tempest weather station.">
+    <meta name="theme-color" content="#24422e">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Tempest Station — amanvg">
+    <meta property="og:description" content="Live readings, 24-hour charts, 7-day forecast and yearly history from the Tempest weather station.">
+    <meta property="og:url" content="https://www.amanvg.com/tempest/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script>
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Vollkorn:ital,wght@0,400;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Federal Park Serigraph (light) */
+:root{
+  color-scheme:light;
+  --canvas:#f6efe1; --card:#ede3ce; --row-a:#f6efe1; --row-b:#ede3ce;
+  --text:#181c16; --muted:#4d5843; --head-bg:#24422e; --head-text:#f6efe1; --head-line:#181c16;
+  --key:#4d5843; --frame:#24422e; --divider:rgba(77,88,67,.25);
+  --shadow:#181c16; --accent:#d9822b; --focus:#24422e; --sel-bg:#d9822b; --sel-fg:#181c16;
+  --btn-hover-bg:#ede3ce; --btn-hover-fg:#24422e;
+  --well-bg:#f6efe1; --well-shadow:rgba(24,28,22,.15);
+  --live-bg:#a63a24; --live-fg:#f6efe1;
+  --act-fg:#24422e; --act-line:#24422e; --act-hover:#f6efe1;
+  --s1:#24422e; --s2:#d9822b; --s3:#a63a24;
+  --foot-bg:#1c2730; --foot-text:#f6efe1; --foot-line:#181c16; --foot-accent:#d9822b;
+  --b-sports:#24422e; --f-sports:#f6efe1;
+  --ser-temp:#8f4e00; --ser-hum:#60888f; --ser-wind:#24422e; --ser-gust:#a63a24; --ser-press:#4d5843; --ser-uv:#8f4e00; --ser-solar:#a63a24; --ser-rain:#60888f;
+  --display:'Oswald','Arial Narrow',sans-serif;
+  --body:'Vollkorn',Georgia,serif;
+  --label:'Work Sans',system-ui,sans-serif;
+  --margin:max(40px,calc((100% - 1200px)/2));
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+/* Nocturne Serigraph (dark) */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --canvas:#0e1511; --card:#1a271f; --row-a:#141e17; --row-b:#1a271f;
+  --text:#f4ede2; --muted:#96a498; --head-bg:#141e17; --head-text:#f4ede2; --head-line:#35483b;
+  --key:#35483b; --frame:#35483b; --divider:#233328;
+  --shadow:#060a08; --accent:#e5933a; --focus:#e5933a; --sel-bg:#e5933a; --sel-fg:#0e1511;
+  --btn-hover-bg:#1a271f; --btn-hover-fg:#f4ede2;
+  --well-bg:#0a0f0c; --well-shadow:#060a08;
+  --live-bg:#ff8168; --live-fg:#3e0400;
+  --act-fg:#f4ede2; --act-line:#35483b; --act-hover:#223329;
+  --s1:#44805d; --s2:#e5933a; --s3:#c8523b;
+  --foot-bg:#0a0f0c; --foot-text:#ded5c5; --foot-line:#35483b; --foot-accent:#e5933a;
+  --b-sports:#2d4b38; --f-sports:#f4ede2;
+  --ser-temp:#e5933a; --ser-hum:#8db4bb; --ser-wind:#44805d; --ser-gust:#ff8168; --ser-press:#96a498; --ser-uv:#f0c868; --ser-solar:#e5933a; --ser-rain:#8db4bb;
+}
+html{scrollbar-gutter:stable;scrollbar-color:var(--key) var(--canvas)}
+body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:10px;border:2px solid var(--key);min-height:calc(100vh - 20px);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+::selection{background:var(--sel-bg);color:var(--sel-fg)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+button{font:inherit;color:inherit}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-    :root {
-      --bg: #141414;
-      --surface: #1e1e1e;
-      --surface-2: #232323;
-      --border: #2e2e2e;
-      --border-hover: #3d3d3d;
-      --text-primary: #ffffff;
-      --text-secondary: #b0b0b0;
-      --text-tertiary: #8a8a8a;
-      --radius-card: 20px;
-      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
-    }
+.skip-link{position:absolute;top:-48px;left:16px;background:var(--head-text);color:var(--head-bg);padding:8px 16px;z-index:200;font-family:var(--label);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
+.skip-link:focus{top:8px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50}
+header{background:var(--head-bg);border-bottom:3px solid var(--head-line);padding:0 var(--margin);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
+.tools{display:flex;gap:12px}
+.btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s,color .15s}
+:root[data-theme="dark"] .btn{border-color:var(--key)}
+@media(hover:hover){
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+:root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
+}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.btn:focus-visible{outline-color:var(--head-text)}
+.icon-btn{width:44px;padding:0}
+.icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn .sun{display:none}
+:root[data-theme="dark"] .icon-btn .sun{display:block}
+:root[data-theme="dark"] .icon-btn .moon{display:none}
+.stripes{height:7px;background:linear-gradient(var(--s1) 0 3px,var(--s2) 3px 5px,var(--s3) 5px 7px)}
 
-    html { scroll-behavior: smooth; }
+main{flex:1;padding:40px var(--margin) 0}
+.sheet{border:3px solid var(--frame);background:var(--card);box-shadow:4px 4px 0 0 var(--shadow)}
+.masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--b-sports);color:var(--f-sports);border-bottom:2px solid var(--head-line)}
+.masthead h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
+.chips{display:flex;flex-wrap:wrap}
+.chips button{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:44px;padding:8px 18px;border:1.5px solid var(--f-sports);background:transparent;color:var(--f-sports);cursor:pointer;font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;transition:background .15s,color .15s,border-color .15s}
+.chips button+button{margin-left:-1.5px}
+.chips button[aria-selected="true"],.chips button[aria-pressed="true"]{background:var(--accent);color:var(--sel-fg);position:relative}
+.chips button:focus-visible{outline:3px solid var(--f-sports);outline-offset:3px;position:relative}
+@media(hover:hover){.chips button[aria-selected="false"]:hover,.chips button[aria-pressed="false"]:hover{background:rgba(246,239,225,.14)}}
+.chips.on-card button{border-color:var(--key);color:var(--text)}
+.chips.on-card button[aria-pressed="true"]{border-color:var(--key);color:var(--sel-fg)}
+.chips.on-card button:focus-visible{outline-color:var(--focus)}
+@media(hover:hover){.chips.on-card button[aria-pressed="false"]:hover{background:var(--row-a)}}
 
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text-primary);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
+.body{display:grid;grid-template-columns:minmax(360px,4fr) minmax(0,7fr);gap:2px;background:var(--head-line)}
+.panel{background:var(--card);min-width:0;padding:24px 28px 28px}
+.rail-inner{display:flex;flex-direction:column;gap:20px}
+@media(min-width:961px) and (min-height:840px){.rail-inner{position:sticky;top:95px}}
+.stage{display:flex;flex-direction:column;gap:20px;transition:opacity .2s}
+.stage.loading{opacity:.45}
 
-    /* ── Nav ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(13,13,13,0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-inner {
-      max-width: 980px; margin: 0 auto;
-      padding: 0 32px; height: 56px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-back {
-      font-size: 13px; font-weight: 500; color: var(--text-secondary);
-      text-decoration: none; padding: 6px 12px; border-radius: 8px;
-      transition: color 0.15s, background 0.15s;
-    }
-    .nav-back:hover { color: var(--text-primary); background: var(--border); }
-    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; }
+.section-label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sign{border:3px solid var(--frame);background:var(--well-bg);box-shadow:4px 4px 0 0 var(--shadow);min-width:0}
+.sign-head{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--head-bg);color:var(--head-text);border-bottom:2px solid var(--head-line);padding:8px 16px;font-family:var(--display);font-weight:700;font-size:22px;line-height:28px;letter-spacing:.06em;text-transform:uppercase}
+.sign-head .hv{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sign-body{display:flex;flex-direction:column;align-items:center;gap:2px;padding:20px 12px 18px}
+.num{display:flex;align-items:center;justify-content:center;text-align:center;min-height:clamp(72px,8vw,96px);font-family:var(--display);font-weight:700;font-size:clamp(72px,8vw,96px);line-height:1;letter-spacing:0;font-variant-numeric:tabular-nums;color:var(--text)}
+.num.sm{min-height:56px;font-size:48px}
+.num.strike{animation:strike .34s var(--ease)}
+@keyframes strike{from{opacity:.15;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sky{display:flex;align-items:center;gap:10px;font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.glyph{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sky .glyph{color:var(--text)}
+.sign-ref{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 10px;margin-top:12px;min-height:28px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.pill{font-weight:700;font-size:12px;line-height:14px;letter-spacing:.08em;padding:5px 12px;border:1.5px solid var(--accent);border-radius:9999px;font-variant-numeric:tabular-nums}
+:root:not([data-theme="dark"]) .pill{border-color:var(--frame)}
 
-    /* ── Nav dropdown ── */
-    .nav-dropdown { position: relative; }
-    .nav-dropdown-btn {
-      font-family: inherit; font-size: 13px; font-weight: 500;
-      color: var(--text-secondary); background: none; border: 1px solid var(--border);
-      padding: 6px 14px; border-radius: 8px; cursor: pointer;
-      transition: color 0.15s, background 0.15s, border-color 0.15s;
-    }
-    .nav-dropdown-btn:hover { color: var(--text-primary); background: var(--border); }
-    .nav-dropdown-menu {
-      position: absolute; top: calc(100% + 6px); right: 0;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 6px; min-width: 220px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      opacity: 0; transform: translateY(-4px);
-      pointer-events: none; transition: opacity 0.15s, transform 0.15s;
-    }
-    .nav-dropdown.open .nav-dropdown-menu {
-      opacity: 1; transform: translateY(0); pointer-events: auto;
-    }
-    .nav-dropdown-item {
-      display: block; padding: 8px 12px; border-radius: 8px;
-      font-size: 13px; font-weight: 500; color: var(--text-secondary);
-      text-decoration: none; transition: color 0.15s, background 0.15s;
-    }
-    .nav-dropdown-item:hover { color: var(--text-primary); background: var(--border); }
+.ledger{width:100%;border-collapse:collapse;font-family:var(--label);font-size:16px;line-height:22px;letter-spacing:.02em}
+.ledger th,.ledger td{padding:9px 14px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.ledger thead th{background:var(--head-bg);color:var(--head-text);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;padding:8px 14px}
+.ledger th:first-child,.ledger td:first-child{text-align:left}
+.ledger tbody tr+tr{border-top:1px solid var(--divider)}
+.ledger tbody tr:nth-child(odd){background:var(--row-a)}
+.ledger tbody tr:nth-child(even){background:var(--row-b)}
+.ledger tbody th{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px;white-space:nowrap}
+.ledger td.note{text-align:left;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.ledger .unit{font-size:12px;font-weight:600;color:var(--muted);margin-left:3px}
+.ledger.now{border-top:2px solid var(--head-line)}
+.wind-note{display:flex;align-items:center;gap:8px}
+.compass{width:34px;height:34px;flex:none}
+.compass .ring{fill:var(--well-bg);stroke:var(--key);stroke-width:2}
+.compass .tick{stroke:var(--key);stroke-width:2}
+.compass .needle{stroke:var(--accent);stroke-width:3;stroke-linecap:round}
+.compass .pip{fill:var(--accent)}
+.ledger.week td.day{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+.ledger.week td.day small{display:block;font-weight:600;font-size:11px;letter-spacing:.06em;color:var(--muted)}
+.ledger.week .cond{display:flex;align-items:center;gap:10px;text-align:left;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.ledger.week .cond .glyph{width:26px;height:26px;color:var(--text)}
+.ledger.week td.rng{width:34%;padding-left:6px;padding-right:6px}
+.track{position:relative;height:14px;background:var(--well-bg);border:1.5px solid var(--key)}
+.track i{position:absolute;top:-1.5px;bottom:-1.5px;background:var(--ser-temp)}
+.ledger.week td.hi{font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:.02em}
+.ledger.week td.lo{color:var(--muted)}
+.ledger-wrap{border:2px solid var(--key)}
 
-    .main { max-width: 980px; margin: 0 auto; padding: 40px 32px 80px; }
+.plot{min-width:0;padding:8px 12px 6px}
+.plot svg{display:block;width:100%;height:auto}
+.plot .g{stroke:var(--divider);stroke-width:1}
+.plot .ax{stroke:var(--key);stroke-width:2}
+.plot .t{font-family:var(--label);font-weight:600;font-size:11px;letter-spacing:.04em;fill:var(--muted);font-variant-numeric:tabular-nums}
+.plot .ln{fill:none;stroke:var(--c);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.plot .ar{fill:var(--c);fill-opacity:.16;stroke:none}
+.plot .av{fill:none;stroke:var(--text);stroke-width:1.5;stroke-linejoin:round;opacity:.75}
+.plot .dot{fill:var(--c);stroke:var(--well-bg);stroke-width:2}
+.plot .cross{stroke:var(--text);stroke-width:1;opacity:0}
+.plot .cdot{fill:var(--well-bg);stroke:var(--text);stroke-width:2;opacity:0}
+.plot svg.on .cross,.plot svg.on .cdot{opacity:1}
+.plot.hov svg{cursor:crosshair;touch-action:pan-y}
+.empty{padding:48px 20px;text-align:center;font-family:var(--label);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 
-    /* ── Hero ── */
-    .hero-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-md);
-      padding: 40px;
-      margin-bottom: 14px;
-      display: flex; align-items: center; justify-content: space-between; gap: 24px;
-      position: relative; overflow: hidden;
-    }
-    .hero-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, #0ea5e9, #6366f1);
-    }
-    .hero-station {
-      font-size: 12px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: 8px;
-    }
-    .hero-temp {
-      font-size: 88px; font-weight: 800;
-      letter-spacing: -0.04em; line-height: 1; margin-bottom: 8px;
-    }
-    .hero-desc { font-size: 18px; font-weight: 500; color: var(--text-secondary); }
-    .hero-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; flex-shrink: 0; }
-    .hero-icon { font-size: 88px; line-height: 1; }
-    .hero-meta {
-      font-size: 13px; color: var(--text-tertiary); text-align: right; line-height: 1.6;
-    }
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:2px solid var(--head-line)}
+.stat-row.two{grid-template-columns:repeat(2,1fr)}
+.stat{padding:12px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat+.stat{border-left:1px solid var(--divider)}
+.stat .k{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--display);font-weight:700;font-size:30px;line-height:36px;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.stat .v small{font-family:var(--label);font-weight:600;font-size:13px;letter-spacing:.06em;color:var(--muted);margin-left:4px}
 
-    /* ── Stats grid ── */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px; margin-bottom: 32px;
-    }
-    .stat-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 18px 20px;
-    }
-    .stat-label {
-      font-size: 10px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.09em; color: var(--text-tertiary); margin-bottom: 6px;
-    }
-    .stat-value {
-      font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15;
-    }
-    .stat-unit { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
-    .stat-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 3px; }
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;background:var(--head-line);border:2px solid var(--head-line)}
+.tile{display:flex;flex-direction:column;gap:2px;align-items:stretch;text-align:left;border:0;background:var(--well-bg);padding:12px 14px 10px;cursor:pointer;transition:background .15s}
+.tile .k{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-weight:700;font-size:28px;line-height:34px;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.tile .v small{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;color:var(--muted);margin-left:3px}
+.tile .mini{display:block;width:100%;height:34px;margin-top:6px}
+.mini .ar{fill:var(--c);fill-opacity:.16;stroke:none}
+.mini .ln{fill:none;stroke:var(--c);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.tile[aria-pressed="true"]{box-shadow:inset 0 0 0 3px var(--accent)}
+.tile:focus-visible{outline-offset:-3px}
+@media(hover:hover){.tile[aria-pressed="false"]:hover{background:var(--row-b)}}
 
-    /* ── Section label ── */
-    .section-label {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.09em; color: var(--text-tertiary); margin-bottom: 12px;
-    }
+.signs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.signs .sign-head{font-size:18px;padding:6px 12px}
+.signs .sign-body{padding:12px 8px 10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.bar-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
-    /* ── Charts ── */
-    .charts-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 14px; margin-bottom: 32px;
-    }
-    .chart-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 20px 14px 10px; overflow: hidden;
-    }
-    .chart-header {
-      display: flex; justify-content: space-between; align-items: baseline;
-      margin-bottom: 10px;
-    }
-    .chart-title {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--text-tertiary);
-    }
-    .chart-current {
-      font-size: 18px; font-weight: 700; letter-spacing: -0.02em;
-    }
-    .chart-current-unit { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
-    .chart-empty {
-      padding: 36px 20px; text-align: center;
-      color: var(--text-tertiary); font-size: 13px;
-    }
+.state{padding:56px 24px;text-align:center;font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.error-text{display:block;background:var(--live-bg);color:var(--live-fg);padding:10px 16px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
 
-    /* ── Forecast ── */
-    .forecast {
-      display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;
-    }
-    .forecast-day {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 14px 8px; text-align: center;
-      display: flex; flex-direction: column; align-items: center; gap: 5px;
-    }
-    .forecast-name {
-      font-size: 10px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.06em; color: var(--text-tertiary);
-    }
-    .forecast-icon { font-size: 26px; }
-    .forecast-high { font-size: 16px; font-weight: 700; }
-    .forecast-low { font-size: 13px; color: var(--text-tertiary); }
-    .forecast-rain { font-size: 10px; color: #60a5fa; font-weight: 600; }
+footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
+.sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
+.sources a{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px;color:inherit;text-decoration:none;transition:background .15s,color .15s}
+.sources a:focus-visible{outline-color:var(--foot-text)}
+@media(hover:hover){.sources a:hover{background:var(--foot-text);color:var(--foot-bg)}}
 
-    /* ── Annual chart ── */
-    .annual-section { margin-bottom: 32px; }
-    .annual-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-card); padding: 24px 14px 10px; overflow: hidden;
-    }
-    .annual-header {
-      display: flex; justify-content: space-between; align-items: baseline;
-      margin-bottom: 14px; padding: 0 6px;
-    }
-    .annual-title {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--text-tertiary);
-    }
-    .annual-stats {
-      display: flex; gap: 16px; font-size: 13px; font-weight: 600;
-    }
-    .annual-stats .hi { color: #f97316; }
-    .annual-stats .lo { color: #38bdf8; }
-    .annual-stats .avg { color: var(--text-secondary); }
-    .annual-metric-row {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;
-    }
-    @media (max-width: 700px) {
-      .annual-metric-row { grid-template-columns: 1fr; }
-    }
-
-    /* ── Modal overlay ── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.70);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 40px;
-      opacity: 0; transition: opacity 0.2s ease;
-      pointer-events: none;
-    }
-    .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-card);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
-      padding: 32px 24px 20px;
-      max-width: 1100px; width: 100%;
-      max-height: calc(100vh - 80px);
-      overflow-y: auto; position: relative;
-      transform: scale(0.96); transition: transform 0.2s ease;
-    }
-    .modal-overlay.active .modal-content { transform: scale(1); }
-    .modal-close {
-      position: absolute; top: 12px; right: 16px;
-      background: none; border: none; color: var(--text-tertiary);
-      font-size: 20px; cursor: pointer; padding: 4px 8px; border-radius: 6px;
-      transition: color 0.15s, background 0.15s;
-    }
-    .modal-close:hover { color: var(--text-primary); background: var(--border); }
-
-    /* Make expandable cards show pointer */
-    .chart-card, .annual-card { cursor: pointer; transition: border-color 0.15s; }
-    .chart-card:hover, .annual-card:hover { border-color: var(--border-hover); }
-
-    @media (max-width: 700px) {
-      .modal-overlay { padding: 20px; }
-    }
-
-    /* ── Accessibility ── */
-    :focus-visible {
-      outline: 2px solid #6366f1;
-      outline-offset: 2px;
-    }
-
-    /* ── State messages ── */
-    .state-msg {
-      text-align: center; padding: 80px 32px;
-      color: var(--text-tertiary); font-size: 15px; line-height: 1.6;
-    }
-
-    .updated {
-      margin-top: 32px; font-size: 12px;
-      color: var(--text-tertiary); text-align: right;
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 700px) {
-      .main { padding: 28px 20px 60px; }
-      .nav-inner { padding: 0 20px; }
-      .hero-card { flex-direction: column; align-items: flex-start; padding: 28px; }
-      .hero-temp { font-size: 68px; }
-      .hero-icon { font-size: 64px; }
-      .hero-right { align-items: flex-start; }
-      .hero-meta { text-align: left; }
-      .charts-grid { grid-template-columns: 1fr; }
-      .forecast { grid-template-columns: repeat(4, 1fr); }
-      .stats { grid-template-columns: repeat(2, 1fr); }
-    }
-  </style>
+@media(max-width:1100px){
+  .panel{padding:20px 20px 24px}
+  .ledger.now th,.ledger.now td{padding:9px 10px}
+  .ledger.now td.note{font-size:12px;letter-spacing:.04em}
+  .ledger.now .wind-note{gap:6px}
+}
+@media(max-width:960px){
+  .body{grid-template-columns:1fr}
+  .signs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  :root{--margin:16px}
+  header{height:56px}
+  .brand{font-size:24px;line-height:32px}
+  .btn{padding:8px 14px}
+  main{padding-top:24px}
+  .masthead{padding:12px 16px}
+  .masthead h1{font-size:28px;line-height:36px}
+  .chips button{padding:8px 12px;flex:1}
+  .masthead .chips{width:100%}
+  .panel{padding:20px 16px 24px}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2{grid-template-columns:1fr}
+  .sign-head{font-size:18px;padding:6px 12px}
+  .stat{padding:10px 10px}
+  .stat .v{font-size:24px;line-height:30px}
+  .ledger th,.ledger td{padding:8px 8px}
+  .ledger.week td.rng{display:none}
+  .ledger.week .rng-h{display:none}
+  .ledger.week th,.ledger.week td{padding:8px 5px}
+  .ledger.week .cond-t{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .ledger.week td.hi{font-size:20px}
+  body{margin:6px;min-height:calc(100vh - 12px)}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.num.strike{animation:none}}
+    </style>
 </head>
 <body>
-
-  <nav aria-label="Main navigation">
-    <div class="nav-inner">
-      <a class="nav-back" href="/">← amanvg</a>
-      <span class="nav-title">Tempest Station</span>
-      <div class="nav-dropdown">
-        <button class="nav-dropdown-btn" id="yearMenuBtn" aria-haspopup="true" aria-expanded="false">History ▾</button>
-        <div class="nav-dropdown-menu" id="yearMenu" role="menu">
-          <a href="#year/2026" class="nav-dropdown-item" role="menuitem">2026</a>
-          <a href="#year/2025" class="nav-dropdown-item" role="menuitem">2025</a>
-        </div>
-      </div>
+    <a class="skip-link" href="#stage">Skip to content</a>
+    <div class="top">
+        <header>
+            <a class="brand" href="/">amanvg</a>
+            <nav class="tools" aria-label="Main navigation">
+                <button class="btn icon-btn" id="mode" type="button" aria-label="Switch to dark mode">
+                    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>
+                    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                </button>
+            </nav>
+        </header>
+        <div class="stripes"></div>
     </div>
-  </nav>
+    <main>
+        <div class="sheet">
+            <div class="masthead">
+                <h1>Tempest Station</h1>
+                <div class="chips" role="tablist" aria-label="View" id="tabs">
+                    <button type="button" role="tab" id="tab-24h" data-tab="24h" aria-controls="stage" aria-selected="true">24 Hours</button><button type="button" role="tab" id="tab-7d" data-tab="7d" aria-controls="stage" aria-selected="false" tabindex="-1">7-Day</button><button type="button" role="tab" id="tab-history" data-tab="history" aria-controls="stage" aria-selected="false" tabindex="-1">History</button>
+                </div>
+            </div>
+            <div class="body">
+                <div class="panel">
+                    <div class="rail-inner" id="rail" aria-live="polite"><div class="state">Loading</div></div>
+                </div>
+                <div class="panel">
+                    <div class="stage" id="stage" role="tabpanel" aria-labelledby="tab-24h"><div class="state">Loading</div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="stripes"></div>
+        <div class="sources"><a href="/trust/#sources">Trust &amp; Sources</a><a href="https://weatherflow.com/" target="_blank" rel="noopener">WeatherFlow Tempest</a></div>
+    </footer>
 
-  <main class="main" id="app">
-    <div class="state-msg">Loading station data…</div>
-  </main>
+    <script>
+        // Personal use token — visible client-side by design
+        const TOKEN      = '4ce85bb1-b95b-4fa8-aaf8-c92b53e34c1a';
+        const STATION_ID = 168029;
+        const DEVICE_ID  = 400121;
+        const BASE       = 'https://swd.weatherflow.com/swd/rest';
+        const FIRST_YEAR = 2025;
 
-  <script>
-    // Personal use token — visible client-side by design
-    const TOKEN      = '4ce85bb1-b95b-4fa8-aaf8-c92b53e34c1a';
-    const STATION_ID = 168029;
-    const DEVICE_ID  = 400121;
-    const BASE       = 'https://swd.weatherflow.com/swd/rest';
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        const n = (v, d = 0) => (v == null || isNaN(v)) ? '—' : (+v).toFixed(d);
 
-    // ── HTML escape ───────────────────────────────────────────────────────────
-    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        // ── Unit converters (metric → imperial) ──────────────────
+        const c2f     = c  => +(c * 9/5 + 32).toFixed(1);
+        const ms2mph  = ms => +(ms * 2.23694).toFixed(1);
+        const mb2inhg = mb => +(mb * 0.0295301).toFixed(2);
+        const mm2in   = mm => +(mm * 0.0393701).toFixed(3);
 
-    // ── Unit converters (metric → imperial) ──────────────────────────────────
-    const c2f    = c  => +(c * 9/5 + 32).toFixed(1);
-    const ms2mph = ms => +(ms * 2.23694).toFixed(1);
-    const mb2inhg = mb => +(mb * 0.0295301).toFixed(2);
-    const mm2in  = mm => +(mm * 0.0393701).toFixed(3);
-
-    function deg2card(deg) {
-      const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-      return dirs[Math.round((deg || 0) / 22.5) % 16];
-    }
-
-    function iconToEmoji(icon) {
-      const m = {
-        'clear-day':'☀️','clear-night':'🌙',
-        'cloudy':'☁️','foggy':'🌫️',
-        'partly-cloudy-day':'⛅','partly-cloudy-night':'🌙',
-        'possibly-rainy-day':'🌦️','possibly-rainy-night':'🌦️',
-        'possibly-sleet-day':'🌨️','possibly-sleet-night':'🌨️',
-        'possibly-snow-day':'🌨️','possibly-snow-night':'🌨️',
-        'possibly-thunderstorm-day':'⛈️','possibly-thunderstorm-night':'⛈️',
-        'rainy':'🌧️','sleet':'🌨️','snow':'❄️',
-        'thunderstorm':'⛈️','windy':'💨',
-      };
-      return m[icon] || '🌡️';
-    }
-
-    function trendArrow(trend) {
-      return trend === 'rising' ? ' ↑' : trend === 'falling' ? ' ↓' : '';
-    }
-
-    // ── obs_st device array indices ───────────────────────────────────────────
-    const F = {
-      TS: 0, WIND_LULL: 1, WIND_AVG: 2, WIND_GUST: 3, WIND_DIR: 4,
-      PRESSURE: 6, TEMP: 7, HUMIDITY: 8, UV: 10, SOLAR: 11,
-      RAIN: 12, LIGHTNING_DIST: 14, LIGHTNING_COUNT: 15, BATTERY: 16
-    };
-
-    // ── Stat card HTML ────────────────────────────────────────────────────────
-    function statCard(label, value, unit = '', sub = '') {
-      return `
-        <div class="stat-card">
-          <div class="stat-label">${label}</div>
-          <div class="stat-value">${value}${unit ? `<span class="stat-unit"> ${unit}</span>` : ''}</div>
-          ${sub ? `<div class="stat-sub">${sub}</div>` : ''}
-        </div>`;
-    }
-
-    // ── SVG line chart ────────────────────────────────────────────────────────
-    function lineChart({ data, color, yUnit = '', height = 170, yDecimals = 0, forceYMin }) {
-      if (!data || data.length < 2) {
-        return '<div class="chart-empty">No data available</div>';
-      }
-
-      // Downsample to ≤300 points for smooth rendering
-      const step = Math.max(1, Math.floor(data.length / 300));
-      const pts  = data.filter((_, i) => i % step === 0);
-
-      const W = 740, H = height;
-      const pad = { top: 10, right: 12, bottom: 28, left: 48 };
-      const cw  = W - pad.left - pad.right;
-      const ch  = H - pad.top - pad.bottom;
-
-      const xs    = pts.map(d => d.t);
-      const ys    = pts.map(d => d.v);
-      const xMin  = xs[0], xMax = xs[xs.length - 1];
-      const rawYMin = Math.min(...ys), rawYMax = Math.max(...ys);
-      const yPad  = (rawYMax - rawYMin) * 0.07 || 0.5;
-      const yMin  = forceYMin !== undefined ? forceYMin : rawYMin - yPad;
-      const yMax  = rawYMax + yPad;
-      const yRange = yMax - yMin || 1;
-
-      const sx = t => pad.left + ((t - xMin) / (xMax - xMin)) * cw;
-      const sy = v => pad.top  + ch - ((v - yMin) / yRange) * ch;
-
-      const coords   = pts.map(d => `${sx(d.t).toFixed(1)},${sy(d.v).toFixed(1)}`);
-      const linePath = `M ${coords.join(' L ')}`;
-      const areaPath = `M ${sx(xMin).toFixed(1)},${(pad.top + ch).toFixed(1)} L ${coords.join(' L ')} L ${sx(xMax).toFixed(1)},${(pad.top + ch).toFixed(1)} Z`;
-
-      // 5 Y-axis ticks
-      const yTicks = [0,1,2,3,4].map(i => {
-        const v = yMin + yRange * i / 4;
-        const lbl = yDecimals > 0 ? v.toFixed(yDecimals) + yUnit : Math.round(v) + yUnit;
-        return { y: sy(v).toFixed(1), lbl };
-      });
-
-      // X-axis ticks every 4 hours
-      const step4h     = 4 * 3600;
-      const firstTick  = Math.ceil(xMin / step4h) * step4h;
-      const xTicks     = [];
-      for (let t = firstTick; t <= xMax; t += step4h) {
-        const d = new Date(t * 1000);
-        xTicks.push({
-          x: sx(t).toFixed(1),
-          lbl: d.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })
-        });
-      }
-
-      const gid = 'g' + Math.random().toString(36).slice(2, 8);
-
-      return `
-        <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" aria-hidden="true">
-          <defs>
-            <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"   stop-color="${color}" stop-opacity="0.28"/>
-              <stop offset="100%" stop-color="${color}" stop-opacity="0.02"/>
-            </linearGradient>
-          </defs>
-          ${yTicks.map(t => `
-            <line x1="${pad.left}" y1="${t.y}" x2="${pad.left + cw}" y2="${t.y}"
-                  stroke="#262626" stroke-width="1"/>
-            <text x="${pad.left - 6}" y="${+t.y + 4}"
-                  text-anchor="end" fill="#505050"
-                  font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500">${t.lbl}</text>
-          `).join('')}
-          <path d="${areaPath}" fill="url(#${gid})"/>
-          <path d="${linePath}" fill="none" stroke="${color}"
-                stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-          ${xTicks.map(t => `
-            <text x="${t.x}" y="${pad.top + ch + 18}"
-                  text-anchor="middle" fill="#505050"
-                  font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500">${t.lbl}</text>
-          `).join('')}
-        </svg>`;
-    }
-
-    // ── Wind direction rose (small inline SVG) ────────────────────────────────
-    function windRose(deg) {
-      const r = 18, cx = 20, cy = 20;
-      const rad = (deg - 90) * Math.PI / 180;
-      const tx  = cx + r * Math.cos(rad);
-      const ty  = cy + r * Math.sin(rad);
-      return `
-        <svg width="40" height="40" viewBox="0 0 40 40" style="vertical-align:middle;margin-left:4px" aria-hidden="true">
-          <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#2e2e2e" stroke-width="1"/>
-          <circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="4" fill="#a78bfa"/>
-          <line x1="${cx}" y1="${cy}" x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}"
-                stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>`;
-    }
-
-    // ── Annual band chart (high / low range + avg line) ───────────────────────
-    function annualBandChart({ data, colorHi, colorLo, colorAvg, yUnit = '', height = 220, yDecimals = 0, forceYMin, forceYMax, yStep }) {
-      if (!data || data.length < 2) return '<div class="chart-empty">No data available</div>';
-
-      const W = 920, H = height;
-      const pad = { top: 14, right: 16, bottom: 36, left: 52 };
-      const cw = W - pad.left - pad.right;
-      const ch = H - pad.top - pad.bottom;
-
-      const allVals = data.flatMap(d => [d.hi, d.lo]);
-      const rawYMin = Math.min(...allVals), rawYMax = Math.max(...allVals);
-      const yPad = (rawYMax - rawYMin) * 0.08 || 1;
-      const yMin = forceYMin !== undefined ? forceYMin : rawYMin - yPad;
-      const yMax = forceYMax !== undefined ? forceYMax : rawYMax + yPad;
-      const yRange = yMax - yMin || 1;
-
-      // X is index-based (evenly spaced days)
-      const sx = i => pad.left + (i / (data.length - 1)) * cw;
-      const sy = v => pad.top + ch - ((v - yMin) / yRange) * ch;
-
-      // Band path (high line forward, low line backward)
-      const hiPts = data.map((d, i) => `${sx(i).toFixed(1)},${sy(d.hi).toFixed(1)}`);
-      const loPts = data.map((d, i) => `${sx(i).toFixed(1)},${sy(d.lo).toFixed(1)}`).reverse();
-      const bandPath = `M ${hiPts.join(' L ')} L ${loPts.join(' L ')} Z`;
-
-      // Avg line
-      const avgPts = data.map((d, i) => `${sx(i).toFixed(1)},${sy(d.avg).toFixed(1)}`);
-      const avgPath = `M ${avgPts.join(' L ')}`;
-
-      // Y ticks
-      const yTicks = [];
-      if (yStep) {
-        for (let v = yMin; v <= yMax; v += yStep) {
-          const lbl = yDecimals > 0 ? v.toFixed(yDecimals) + yUnit : Math.round(v) + yUnit;
-          yTicks.push({ y: sy(v).toFixed(1), lbl });
+        function deg2card(deg) {
+            const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+            return dirs[Math.round((deg || 0) / 22.5) % 16];
         }
-      } else {
-        for (let i = 0; i <= 4; i++) {
-          const v = yMin + yRange * i / 4;
-          const lbl = yDecimals > 0 ? v.toFixed(yDecimals) + yUnit : Math.round(v) + yUnit;
-          yTicks.push({ y: sy(v).toFixed(1), lbl });
+        function uvLevel(uv) {
+            if (uv == null) return '';
+            if (uv < 3)  return 'Low';
+            if (uv < 6)  return 'Moderate';
+            if (uv < 8)  return 'High';
+            if (uv < 11) return 'Very high';
+            return 'Extreme';
         }
-      }
 
-      // X ticks — month labels
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const xTicks = [];
-      for (let m = 0; m < 12; m++) {
-        const yr = data[0].date.slice(0, 4);
-        const target = `${yr}-${String(m+1).padStart(2,'0')}-01`;
-        const idx = data.findIndex(d => d.date >= target);
-        if (idx >= 0) xTicks.push({ x: sx(idx).toFixed(1), lbl: months[m] });
-      }
+        // ── Weather glyphs ───────────────────────────────────────
+        const CLOUD = 'M7 15h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.1 6.6 4.2 4.2 0 0 0 7 15z';
+        const GLYPHS = {
+            sun:   '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+            moon:  '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+            cloud: '<path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.1 9.6 4.2 4.2 0 0 0 7 18z"/>',
+            partlyDay:   '<circle cx="8" cy="8" r="2.6"/><path d="M8 2.5v1.2M2.5 8h1.2M3.9 3.9l.9.9M12.1 3.9l-.9.9"/><path d="M9 20h8.5a3.5 3.5 0 0 0 .4-6.97A5 5 0 0 0 8.4 13 3.6 3.6 0 0 0 9 20z"/>',
+            partlyNight: '<path d="M10.5 3a4.2 4.2 0 1 0 4.6 5.6A4.2 4.2 0 0 1 10.5 3z"/><path d="M9 20h8.5a3.5 3.5 0 0 0 .4-6.97A5 5 0 0 0 8.4 13 3.6 3.6 0 0 0 9 20z"/>',
+            rain:  `<path d="${CLOUD}"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>`,
+            snow:  `<path d="${CLOUD}"/><path d="M8 19h.01M12 19h.01M16 19h.01M10 22h.01M14 22h.01" stroke-width="3"/>`,
+            bolt:  `<path d="${CLOUD}"/><path d="M12.5 12l-2.5 4h4l-2.5 4"/>`,
+            fog:   '<path d="M4 7h16M3 11h18M6 15h12M9 19h6"/>',
+            wind:  '<path d="M3 8h10a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h7"/>'
+        };
+        function glyph(icon) {
+            const s = String(icon || '');
+            const k = s.includes('thunder') ? 'bolt'
+                : (s.includes('snow') || s.includes('sleet')) ? 'snow'
+                : s.includes('rain') ? 'rain'
+                : s.includes('fog') ? 'fog'
+                : s === 'windy' ? 'wind'
+                : s === 'partly-cloudy-night' ? 'partlyNight'
+                : s.startsWith('partly') ? 'partlyDay'
+                : s === 'clear-night' ? 'moon'
+                : s.startsWith('clear') ? 'sun'
+                : 'cloud';
+            return `<svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">${GLYPHS[k]}</svg>`;
+        }
 
-      const gid = 'ab' + Math.random().toString(36).slice(2, 8);
+        // ── Chart engine ─────────────────────────────────────────
+        const decimals = s => { const t = String(+s.toFixed(6)); const i = t.indexOf('.'); return i < 0 ? 0 : t.length - i - 1; };
 
-      return `
-        <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" aria-hidden="true">
-          <defs>
-            <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="${colorHi}" stop-opacity="0.30"/>
-              <stop offset="100%" stop-color="${colorLo}" stop-opacity="0.10"/>
-            </linearGradient>
-          </defs>
-          ${yTicks.map(t => `
-            <line x1="${pad.left}" y1="${t.y}" x2="${pad.left + cw}" y2="${t.y}"
-                  stroke="#262626" stroke-width="1"/>
-            <text x="${pad.left - 6}" y="${+t.y + 4}"
-                  text-anchor="end" fill="#505050"
-                  font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500">${t.lbl}</text>
-          `).join('')}
-          <path d="${bandPath}" fill="url(#${gid})"/>
-          <path d="${avgPath}" fill="none" stroke="${colorAvg}"
-                stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.7"/>
-          ${xTicks.map(t => `
-            <text x="${t.x}" y="${pad.top + ch + 20}"
-                  text-anchor="middle" fill="#505050"
-                  font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500">${t.lbl}</text>
-          `).join('')}
-        </svg>`;
-    }
+        function niceScale(lo, hi, forceMin, forceMax) {
+            let min = forceMin ?? lo, max = forceMax ?? hi;
+            if (max - min < 1e-9) max = min + 1;
+            const raw = (max - min) / 4, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+            const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
+            const a = forceMin ?? Math.floor(min / step) * step;
+            const b = forceMax ?? Math.ceil(max / step) * step;
+            const ticks = [];
+            for (let v = a; v <= b + step / 1000; v += step) ticks.push(+v.toFixed(6));
+            return { min: a, max: b, step, ticks };
+        }
 
-    // Simple annual line chart (single value per day)
-    function annualLineChart({ data, color, yUnit = '', height = 170, yDecimals = 0, forceYMin }) {
-      if (!data || data.length < 2) return '<div class="chart-empty">No data available</div>';
+        function chart(o) {
+            const { w, h, pts, color, tickUnit = '', dec = 0, min: fMin, max: fMax, xTicks = [], xMin, xMax, band = false, marks = false } = o;
+            if (!pts || pts.length < 2) return { html: '<div class="empty">No data</div>' };
+            const ys = band ? pts.flatMap(p => [p.lo, p.hi]) : pts.map(p => p.y);
+            const sc = niceScale(Math.min(...ys), Math.max(...ys), fMin, fMax);
+            const dp = Math.max(dec, decimals(sc.step));
+            const labels = sc.ticks.map(v => v.toFixed(dp) + tickUnit);
+            const pad = { t: 16, r: 16, b: 28, l: Math.ceil(Math.max(...labels.map(l => l.length)) * 6.8) + 14 };
+            const cw = w - pad.l - pad.r, ch = h - pad.t - pad.b;
+            const x0 = xMin ?? pts[0].x, x1 = xMax ?? pts[pts.length - 1].x;
+            const sx = x => pad.l + (x - x0) / ((x1 - x0) || 1) * cw;
+            const sy = v => pad.t + ch - (v - sc.min) / ((sc.max - sc.min) || 1) * ch;
+            const f = v => v.toFixed(1);
+            const base = pad.t + ch;
+            const yLine = p => band ? p.avg : p.y;
+            const line = 'M' + pts.map(p => `${f(sx(p.x))},${f(sy(yLine(p)))}`).join('L');
+            const area = band
+                ? 'M' + pts.map(p => `${f(sx(p.x))},${f(sy(p.hi))}`).join('L') + 'L' + pts.slice().reverse().map(p => `${f(sx(p.x))},${f(sy(p.lo))}`).join('L') + 'Z'
+                : `M${f(sx(pts[0].x))},${f(base)}L` + pts.map(p => `${f(sx(p.x))},${f(sy(p.y))}`).join('L') + `L${f(sx(pts[pts.length - 1].x))},${f(base)}Z`;
+            let mk = '';
+            if (marks) {
+                let hi = pts[0], lo = pts[0];
+                for (const p of pts) { if (p.y > hi.y) hi = p; if (p.y < lo.y) lo = p; }
+                const last = pts[pts.length - 1];
+                mk = [hi, lo, last].map(p => `<circle class="dot" cx="${f(sx(p.x))}" cy="${f(sy(p.y))}" r="5"/>`).join('');
+            }
+            const html = `<svg viewBox="0 0 ${w} ${h}" style="--c:var(${color})" role="img" aria-label="${esc(o.label || 'Chart')}">
+                ${sc.ticks.map((v, i) => `<line class="g" x1="${pad.l}" x2="${pad.l + cw}" y1="${f(sy(v))}" y2="${f(sy(v))}"/><text class="t" x="${pad.l - 8}" y="${f(sy(v) + 4)}" text-anchor="end">${labels[i]}</text>`).join('')}
+                <line class="ax" x1="${pad.l}" x2="${pad.l + cw}" y1="${base}" y2="${base}"/>
+                <path class="ar" d="${area}"/>
+                <path class="${band ? 'av' : 'ln'}" d="${line}"/>
+                ${xTicks.map(t => `<text class="t" x="${f(sx(t.x))}" y="${base + 19}" text-anchor="middle">${t.label}</text>`).join('')}
+                ${mk}
+                <line class="cross" y1="${pad.t}" y2="${base}" x1="0" x2="0"/><circle class="cdot" r="5" cx="0" cy="0"/>
+            </svg>`;
+            return { html, sx, sy, pad, cw, x0, x1, pts, w };
+        }
 
-      const W = 920, H = height;
-      const pad = { top: 14, right: 16, bottom: 36, left: 52 };
-      const cw = W - pad.left - pad.right;
-      const ch = H - pad.top - pad.bottom;
+        function miniChart(pts, floor0) {
+            if (!pts || pts.length < 2) return '<svg class="mini" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true"><path class="ln" d="M0,30L100,30"/></svg>';
+            const step = Math.max(1, Math.floor(pts.length / 60));
+            const p = pts.filter((_, i) => i % step === 0);
+            const ys = p.map(d => d.y);
+            let lo = floor0 ? 0 : Math.min(...ys), hi = Math.max(...ys);
+            if (hi - lo < 1e-9) hi = lo + 1;
+            const x0 = p[0].x, x1 = p[p.length - 1].x;
+            const xy = d => `${((d.x - x0) / ((x1 - x0) || 1) * 100).toFixed(1)},${(30 - (d.y - lo) / (hi - lo) * 28).toFixed(1)}`;
+            const line = 'M' + p.map(xy).join('L');
+            return `<svg class="mini" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true"><path class="ar" d="${line}L100,32L0,32Z"/><path class="ln" d="${line}"/></svg>`;
+        }
 
-      const ys = data.map(d => d.v);
-      const rawYMin = Math.min(...ys), rawYMax = Math.max(...ys);
-      const yPad = (rawYMax - rawYMin) * 0.07 || 0.5;
-      const yMin = forceYMin !== undefined ? forceYMin : rawYMin - yPad;
-      const yMax = rawYMax + yPad;
-      const yRange = yMax - yMin || 1;
+        const timeFmt = x => new Date(x * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        function hourTicks(x0, x1, w) {
+            const step = (w < 480 ? 6 : 4) * 3600, out = [];
+            for (let t = Math.ceil(x0 / step) * step; t <= x1; t += step) {
+                out.push({ x: t, label: new Date(t * 1000).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true }) });
+            }
+            return out;
+        }
+        const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        function monthTicks(data, w) {
+            const out = [], yr = data[0].date.slice(0, 4);
+            for (let m = 0; m < 12; m++) {
+                const idx = data.findIndex(d => d.date >= `${yr}-${String(m + 1).padStart(2, '0')}-01`);
+                if (idx >= 0) out.push({ x: idx, label: w < 480 ? MONTHS[m][0] : MONTHS[m] });
+            }
+            return out;
+        }
 
-      const sx = i => pad.left + (i / (data.length - 1)) * cw;
-      const sy = v => pad.top + ch - ((v - yMin) / yRange) * ch;
+        // Plots are drawn at their real pixel width so axis text stays at 1:1.
+        const plots = {};
+        function paintPlots() {
+            document.querySelectorAll('.plot[data-plot]').forEach(el => {
+                const fn = plots[el.dataset.plot];
+                const w = Math.round(el.clientWidth - 24);
+                if (!fn || w < 120) return;
+                fn(el, w);
+            });
+        }
 
-      const coords = data.map((d, i) => `${sx(i).toFixed(1)},${sy(d.v).toFixed(1)}`);
-      const linePath = `M ${coords.join(' L ')}`;
-      const areaPath = `M ${sx(0).toFixed(1)},${(pad.top + ch).toFixed(1)} L ${coords.join(' L ')} L ${sx(data.length-1).toFixed(1)},${(pad.top + ch).toFixed(1)} Z`;
+        // ── Live data (24 hours + now + forecast) ────────────────
+        const F = {
+            TS: 0, WIND_AVG: 2, WIND_GUST: 3, PRESSURE: 6, TEMP: 7, HUMIDITY: 8, UV: 10, SOLAR: 11, RAIN: 12
+        };
+        const METRICS = [
+            { id: 'temp',  label: 'Temperature', short: 'Temp',     unit: '°F',   tick: '°',    dec: 0, color: '--ser-temp' },
+            { id: 'hum',   label: 'Humidity',    short: 'Humidity', unit: '%',    tick: '%',    dec: 0, color: '--ser-hum',  min: 0 },
+            { id: 'wind',  label: 'Wind Speed',  short: 'Wind',     unit: 'mph',  tick: '',     dec: 0, color: '--ser-wind', min: 0 },
+            { id: 'gust',  label: 'Wind Gust',   short: 'Gust',     unit: 'mph',  tick: '',     dec: 0, color: '--ser-gust', min: 0 },
+            { id: 'press', label: 'Pressure',    short: 'Pressure', unit: 'inHg', tick: '',     dec: 2, color: '--ser-press' },
+            { id: 'uv',    label: 'UV Index',    short: 'UV',       unit: '',     tick: '',     dec: 1, color: '--ser-uv',   min: 0 },
+            { id: 'solar', label: 'Solar',       short: 'Solar',    unit: 'W/m²', tick: '',     dec: 0, color: '--ser-solar', min: 0 },
+            { id: 'rain',  label: 'Rain Today',  short: 'Rain',     unit: 'in',   tick: '',     dec: 2, color: '--ser-rain', min: 0 }
+        ];
+        const S = { tab: '24h', metric: 'temp', year: null, data: null, error: null, years: {} };
+        let stageSeq = 0;
 
-      const yTicks = [0,1,2,3,4].map(i => {
-        const v = yMin + yRange * i / 4;
-        const lbl = yDecimals > 0 ? v.toFixed(yDecimals) + yUnit : Math.round(v) + yUnit;
-        return { y: sy(v).toFixed(1), lbl };
-      });
+        async function loadAll() {
+            try {
+                const [obsRes, todayRes, yestRes, fcRes] = await Promise.all([
+                    fetch(`${BASE}/observations/station/${STATION_ID}?token=${TOKEN}`),
+                    fetch(`${BASE}/observations/device/${DEVICE_ID}?token=${TOKEN}&day_offset=0`),
+                    fetch(`${BASE}/observations/device/${DEVICE_ID}?token=${TOKEN}&day_offset=1`),
+                    fetch(`${BASE}/better_forecast?station_id=${STATION_ID}&token=${TOKEN}&units_temp=f&units_wind=mph&units_precip=in&units_pressure=inhg&units_distance=mi&units_direction=cardinal`)
+                ]);
+                if (!obsRes.ok || !fcRes.ok) throw new Error(`API error (${obsRes.status}/${fcRes.status})`);
+                const [obsData, todayData, yestData, fcData] = await Promise.all([obsRes.json(), todayRes.json(), yestRes.json(), fcRes.json()]);
 
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const xTicks = [];
-      for (let m = 0; m < 12; m++) {
-        const yr = data[0].date.slice(0, 4);
-        const target = `${yr}-${String(m+1).padStart(2,'0')}-01`;
-        const idx = data.findIndex(d => d.date >= target);
-        if (idx >= 0) xTicks.push({ x: sx(idx).toFixed(1), lbl: months[m] });
-      }
+                const raw0 = obsData.obs?.[0];
+                if (!raw0) throw new Error('No observations returned');
+                // Station observations arrive in metric whatever the station's display units are.
+                const cur = {
+                    ...raw0,
+                    wind_avg: ms2mph(raw0.wind_avg), wind_gust: ms2mph(raw0.wind_gust), wind_lull: ms2mph(raw0.wind_lull),
+                    sea_level_pressure: mb2inhg(raw0.sea_level_pressure), dew_point: c2f(raw0.dew_point),
+                    precip_accum_local_day: mm2in(raw0.precip_accum_local_day ?? 0),
+                    precip_accum_local_yesterday: mm2in(raw0.precip_accum_local_yesterday ?? 0),
+                    lightning_strike_last_distance: raw0.lightning_strike_last_distance != null ? Math.round(raw0.lightning_strike_last_distance * 0.621371) : null
+                };
+                const cc = fcData.current_conditions;
+                if (!cc) throw new Error('No current_conditions in forecast');
 
-      const gid = 'al' + Math.random().toString(36).slice(2, 8);
+                const nowEpoch = Date.now() / 1000, cutoff = nowEpoch - 24 * 3600;
+                const rawObs = [...(yestData.obs || []), ...(todayData.obs || [])]
+                    .filter(o => Array.isArray(o) && o[F.TS] >= cutoff && o[F.TS] <= nowEpoch)
+                    .sort((a, b) => a[F.TS] - b[F.TS]);
 
-      return `
-        <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" aria-hidden="true">
-          <defs>
-            <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="${color}" stop-opacity="0.25"/>
-              <stop offset="100%" stop-color="${color}" stop-opacity="0.02"/>
-            </linearGradient>
-          </defs>
-          ${yTicks.map(t => `
-            <line x1="${pad.left}" y1="${t.y}" x2="${pad.left + cw}" y2="${t.y}"
-                  stroke="#262626" stroke-width="1"/>
-            <text x="${pad.left - 6}" y="${+t.y + 4}"
-                  text-anchor="end" fill="#505050"
-                  font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500">${t.lbl}</text>
-          `).join('')}
-          <path d="${areaPath}" fill="url(#${gid})"/>
-          <path d="${linePath}" fill="none" stroke="${color}"
-                stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-          ${xTicks.map(t => `
-            <text x="${t.x}" y="${pad.top + ch + 20}"
-                  text-anchor="middle" fill="#505050"
-                  font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500">${t.lbl}</text>
-          `).join('')}
-        </svg>`;
-    }
+                const ser = {
+                    temp:  rawObs.map(o => ({ x: o[F.TS], y: c2f(o[F.TEMP]) })),
+                    hum:   rawObs.map(o => ({ x: o[F.TS], y: o[F.HUMIDITY] })),
+                    wind:  rawObs.map(o => ({ x: o[F.TS], y: ms2mph(o[F.WIND_AVG]) })),
+                    gust:  rawObs.map(o => ({ x: o[F.TS], y: ms2mph(o[F.WIND_GUST]) })),
+                    press: rawObs.map(o => ({ x: o[F.TS], y: mb2inhg(o[F.PRESSURE]) })),
+                    uv:    rawObs.map(o => ({ x: o[F.TS], y: o[F.UV] ?? 0 })),
+                    solar: rawObs.map(o => ({ x: o[F.TS], y: o[F.SOLAR] ?? 0 }))
+                };
+                const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
+                let rs = 0;
+                ser.rain = rawObs.filter(o => o[F.TS] >= midnight.getTime() / 1000)
+                    .map(o => { rs += mm2in(o[F.RAIN] ?? 0); return { x: o[F.TS], y: +rs.toFixed(3) }; });
 
-    // ── Annual data indices (daily bucket obs_st) ───────────────────────────
-    const DF = {
-      DATE: 0, PRES_AVG: 1, PRES_MAX: 2, PRES_MIN: 3,
-      TEMP_AVG: 4, TEMP_MAX: 5, TEMP_MIN: 6,
-      HUM_AVG: 7, HUM_MAX: 8, HUM_MIN: 9,
-      SOLAR_SUM: 10, SOLAR_MAX: 17, UV_MAX: 12,
-      WIND_AVG: 13, WIND_GUST: 14, WIND_LULL: 15,
-      WIND_DIR: 16, RAIN: 29
-    };
+                const rainToday = cur.precip_accum_local_day ?? rs;
+                const battV = cur.battery;
+                S.data = {
+                    cur, cc, ser,
+                    daily: fcData.forecast?.daily?.slice(0, 7) || [],
+                    now: {
+                        temp: cc.air_temperature, hum: cur.relative_humidity, wind: cur.wind_avg, gust: cur.wind_gust,
+                        press: cur.sea_level_pressure, uv: cur.uv ?? 0, solar: cur.solar_radiation ?? 0, rain: rainToday
+                    },
+                    rainYest: cur.precip_accum_local_yesterday ?? 0,
+                    battPct: battV != null ? Math.min(100, Math.max(0, Math.round((battV - 2.35) / (2.80 - 2.35) * 100))) : null,
+                    updated: timeFmt(cur.timestamp)
+                };
+                S.error = null;
+                $('rail').classList.remove('loading');
+                renderRail();
+                if (S.tab !== 'history') renderStage();
+            } catch (err) {
+                console.error(err);
+                if (!S.data) {
+                    S.error = err.message;
+                    $('rail').innerHTML = `<div class="state">Couldn’t load station data</div><div class="error-text">${esc(err.message)}</div>`;
+                    if (S.tab !== 'history') renderStage();
+                }
+            }
+        }
 
-    async function loadAnnual(year) {
-      const start = Date.UTC(year, 0, 1) / 1000;
-      const end   = Date.UTC(year + 1, 0, 1) / 1000;
-      const res = await fetch(
-        `${BASE}/observations/device/${DEVICE_ID}?token=${TOKEN}&time_start=${start}&time_end=${end}`
-      );
-      if (!res.ok) return null;
-      const data = await res.json();
-      return (data.obs || []).filter(o => o[DF.DATE] && o[DF.DATE].startsWith(String(year)));
-    }
+        // ── Now rail ─────────────────────────────────────────────
+        function compass(deg) {
+            const rad = (deg - 90) * Math.PI / 180, r = 11;
+            const tx = 17 + r * Math.cos(rad), ty = 17 + r * Math.sin(rad);
+            return `<svg class="compass" viewBox="0 0 34 34" aria-hidden="true"><circle class="ring" cx="17" cy="17" r="15"/><path class="tick" d="M17 2v4"/><path class="needle" d="M17 17L${tx.toFixed(1)} ${ty.toFixed(1)}"/><circle class="pip" cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="3"/></svg>`;
+        }
 
-    function renderAnnualSection(obs, year) {
-      if (!obs || obs.length < 7) return '<div class="state-msg">Not enough data for this year yet.</div>';
-      const heading = String(year);
+        function renderRail() {
+            const { cur, cc, daily, now, rainYest, battPct, updated } = S.data;
+            const hi = daily[0]?.air_temp_high ?? cc.air_temperature, lo = daily[0]?.air_temp_low ?? cc.air_temperature;
+            const lightning = cur.lightning_strike_count_last_3hr ?? 0;
+            const row = (k, v, unit, note) => `<tr><th scope="row">${k}</th><td>${v}${unit ? `<span class="unit">${unit}</span>` : ''}</td><td class="note">${note || ''}</td></tr>`;
+            $('rail').innerHTML = `
+                <section class="sign" aria-labelledby="now-h">
+                    <h2 class="sign-head"><span id="now-h">Now</span><span class="hv">${updated}</span></h2>
+                    <div class="sign-body">
+                        <output class="num strike">${Math.round(cc.air_temperature)}°</output>
+                        <div class="sky">${glyph(cc.icon)}<span>${esc(cc.conditions)}</span></div>
+                        <div class="sign-ref">
+                            <span class="pill">Feels ${Math.round(cc.feels_like)}°</span>
+                            <span class="pill">Hi ${Math.round(hi)}° Lo ${Math.round(lo)}°</span>
+                            ${cc.precip_probability > 0 ? `<span class="pill">Rain ${cc.precip_probability}%</span>` : ''}
+                        </div>
+                    </div>
+                    <table class="ledger now" aria-label="Current readings"><tbody>
+                        ${row('Wind', n(cur.wind_avg, 1), 'mph', `<span class="wind-note">${compass(cur.wind_direction ?? 0)}${deg2card(cur.wind_direction)}</span>`)}
+                        ${row('Gust', n(cur.wind_gust, 1), 'mph', `Lull ${n(cur.wind_lull, 1)}`)}
+                        ${row('Humidity', n(cur.relative_humidity), '%', `Dew ${Math.round(cur.dew_point)}°`)}
+                        ${row('Pressure', n(cur.sea_level_pressure, 2), 'inHg', esc(cur.pressure_trend || ''))}
+                        ${row('UV', n(cur.uv ?? 0, 1), '', uvLevel(cur.uv))}
+                        ${row('Solar', n(cur.solar_radiation ?? 0), 'W/m²', '')}
+                        ${row('Rain today', n(now.rain, 2), 'in', `Yday ${n(rainYest, 2)}`)}
+                        ${lightning > 0
+                            ? row('Lightning', lightning, '', `3h${cur.lightning_strike_last_distance != null ? ` · ${cur.lightning_strike_last_distance} mi` : ''}`)
+                            : row('Lightning', 'None', '', '')}
+                        ${cur.battery != null ? row('Battery', n(cur.battery, 2), 'V', battPct != null ? battPct + '%' : '') : ''}
+                    </tbody></table>
+                </section>`;
+        }
 
-      // Build datasets (clamp min temp to avg if it's an obvious bad read, e.g. power loss)
-      const tempData = obs.map(o => {
-        const hi = c2f(o[DF.TEMP_MAX]), lo = c2f(o[DF.TEMP_MIN]), avg = c2f(o[DF.TEMP_AVG]);
-        return { date: o[DF.DATE], hi, lo: (avg - lo > 40) ? avg : lo, avg };
-      });
-      const humData = obs.map(o => ({
-        date: o[DF.DATE], hi: o[DF.HUM_MAX], lo: o[DF.HUM_MIN], avg: o[DF.HUM_AVG]
-      }));
-      const windData = obs.map(o => ({ date: o[DF.DATE], v: ms2mph(o[DF.WIND_AVG]) }));
-      const gustData = obs.map(o => ({ date: o[DF.DATE], v: ms2mph(o[DF.WIND_GUST]) }));
-      const pressData = obs.map(o => ({ date: o[DF.DATE], v: mb2inhg(o[DF.PRES_AVG]) }));
-      const solarData = obs.map(o => {
-        const v = o[DF.SOLAR_MAX] ?? 0;
-        return { date: o[DF.DATE], v: v > 1500 ? 0 : v };
-      });
+        // ── 24 Hours stage ───────────────────────────────────────
+        const metricById = id => METRICS.find(m => m.id === id);
+        const fmtVal = (m, v) => n(v, m.dec);
 
-      // Rain accumulation over year
-      let rainSum = 0;
-      const rainAccData = obs.map(o => {
-        rainSum += mm2in(o[DF.RAIN] ?? 0);
-        return { date: o[DF.DATE], v: +rainSum.toFixed(2) };
-      });
+        function statsFor(m) {
+            const d = S.data, pts = d.ser[m.id], unit = m.unit ? `<small>${m.unit}</small>` : '';
+            if (m.id === 'rain') {
+                return `<div class="stat-row two"><div class="stat"><span class="k">Today</span><span class="v">${n(d.now.rain, 2)}${unit}</span></div><div class="stat"><span class="k">Yesterday</span><span class="v">${n(d.rainYest, 2)}${unit}</span></div></div>`;
+            }
+            if (!pts.length) return '';
+            let hi = pts[0], lo = pts[0];
+            for (const p of pts) { if (p.y > hi.y) hi = p; if (p.y < lo.y) lo = p; }
+            const cell = (k, v, extra, id) => `<div class="stat"${id ? ` id="${id}"` : ''}><span class="k">${k}</span><span class="v">${v}${unit}</span>${extra ? `<span class="k">${extra}</span>` : ''}</div>`;
+            return `<div class="stat-row">${cell('Now', fmtVal(m, d.now[m.id]), '', 'stat-now')}${cell('High', fmtVal(m, hi.y), timeFmt(hi.x))}${cell('Low', fmtVal(m, lo.y), timeFmt(lo.x))}</div>`;
+        }
 
-      // Summary stats
-      const allHighs = tempData.map(d => d.hi);
-      const allLows  = tempData.map(d => d.lo);
-      const yearHigh = Math.round(Math.max(...allHighs));
-      const yearLow  = Math.round(Math.min(...allLows));
-      const yearAvg  = Math.round(tempData.reduce((s, d) => s + d.avg, 0) / tempData.length);
-      const totalRain = rainAccData[rainAccData.length - 1].v;
+        function renderBig() {
+            const m = metricById(S.metric), pts = S.data.ser[m.id];
+            const rainEmpty = m.id === 'rain' && !(S.data.now.rain > 0);
+            $('big').innerHTML = `
+                <h2 class="sign-head"><span>${m.label}</span><span class="hv">Last 24 hours</span></h2>
+                ${statsFor(m)}
+                ${rainEmpty ? '<div class="empty">No rain today</div>' : '<div class="plot hov" data-plot="big"></div>'}`;
+            plots.big = (el, w) => {
+                const x0 = S.data.ser.temp.length ? S.data.ser.temp[0].x : undefined;
+                const x1 = S.data.ser.temp.length ? S.data.ser.temp[S.data.ser.temp.length - 1].x : undefined;
+                const step = Math.max(1, Math.floor(pts.length / 400));
+                const cp = pts.filter((_, i) => i % step === 0 || i === pts.length - 1);
+                const r = chart({ w, h: w < 520 ? 220 : 256, pts: cp, color: m.color, tickUnit: m.tick, dec: m.dec, min: m.min,
+                    xMin: m.id === 'rain' ? x0 : undefined, xMax: m.id === 'rain' ? x1 : undefined,
+                    xTicks: hourTicks(m.id === 'rain' ? x0 : cp[0]?.x ?? 0, m.id === 'rain' ? x1 : cp[cp.length - 1]?.x ?? 0, w),
+                    marks: m.id !== 'rain', label: `${m.label}, last 24 hours` });
+                el.innerHTML = r.html;
+                if (!r.sx) return;
+                const svg = el.querySelector('svg'), cross = svg.querySelector('.cross'), cdot = svg.querySelector('.cdot');
+                const cell = $('stat-now');
+                const nowK = cell?.querySelector('.k'), nowV = cell?.querySelector('.v');
+                const k0 = nowK?.textContent, v0 = nowV?.innerHTML;
+                const unit = m.unit ? `<small>${m.unit}</small>` : '';
+                const show = e => {
+                    const box = svg.getBoundingClientRect();
+                    const x = (e.clientX - box.left) * (r.w / box.width);
+                    let best = cp[0], bd = Infinity;
+                    for (const p of cp) { const dd = Math.abs(r.sx(p.x) - x); if (dd < bd) { bd = dd; best = p; } }
+                    const px = r.sx(best.x), py = r.sy(best.y);
+                    cross.setAttribute('x1', px); cross.setAttribute('x2', px);
+                    cdot.setAttribute('cx', px); cdot.setAttribute('cy', py);
+                    svg.classList.add('on');
+                    if (nowK) { nowK.textContent = timeFmt(best.x); nowV.innerHTML = fmtVal(m, best.y) + unit; }
+                };
+                const hide = () => { svg.classList.remove('on'); if (nowK) { nowK.textContent = k0; nowV.innerHTML = v0; } };
+                svg.addEventListener('pointermove', show);
+                svg.addEventListener('pointerdown', show);
+                svg.addEventListener('pointerleave', hide);
+            };
+            paintPlots();
+        }
 
-      return `
-        <div class="section-label">${heading}</div>
-        <div class="annual-section">
-          <div class="annual-card">
-            <div class="annual-header">
-              <div class="annual-title">Temperature — Daily High / Low</div>
-              <div class="annual-stats">
-                <span class="hi">High ${yearHigh}°F</span>
-                <span class="lo">Low ${yearLow}°F</span>
-                <span class="avg">Avg ${yearAvg}°F</span>
-              </div>
-            </div>
-            ${annualBandChart({ data: tempData, colorHi: '#f97316', colorLo: '#38bdf8', colorAvg: '#a0a0a0', yUnit: '°', forceYMin: 0, forceYMax: 100, yStep: 10 })}
-          </div>
-          <div class="annual-metric-row">
-            <div class="annual-card">
-              <div class="annual-header">
-                <div class="annual-title">Humidity — Daily Range</div>
-              </div>
-              ${annualBandChart({ data: humData, colorHi: '#38bdf8', colorLo: '#6366f1', colorAvg: '#7dd3fc', yUnit: '%', height: 180, forceYMin: 0 })}
-            </div>
-            <div class="annual-card">
-              <div class="annual-header">
-                <div class="annual-title">Rainfall — Cumulative</div>
-                <div class="annual-stats"><span class="avg">${totalRain.toFixed(1)} in total</span></div>
-              </div>
-              ${annualLineChart({ data: rainAccData, color: '#60a5fa', yUnit: '"', yDecimals: 1, forceYMin: 0, height: 180 })}
-            </div>
-          </div>
-          <div class="annual-metric-row">
-            <div class="annual-card">
-              <div class="annual-header">
-                <div class="annual-title">Wind Speed — Daily Avg</div>
-              </div>
-              ${annualLineChart({ data: windData, color: '#a78bfa', yUnit: ' mph', forceYMin: 0, height: 180 })}
-            </div>
-            <div class="annual-card">
-              <div class="annual-header">
-                <div class="annual-title">Wind Gust — Daily Max</div>
-              </div>
-              ${annualLineChart({ data: gustData, color: '#c084fc', yUnit: ' mph', forceYMin: 0, height: 180 })}
-            </div>
-          </div>
-          <div class="annual-metric-row">
-            <div class="annual-card">
-              <div class="annual-header">
-                <div class="annual-title">Pressure — Daily Avg</div>
-              </div>
-              ${annualLineChart({ data: pressData, color: '#34d399', yUnit: '"', yDecimals: 2, height: 180 })}
-            </div>
-            <div class="annual-card">
-              <div class="annual-header">
-                <div class="annual-title">Solar Radiation — Daily Peak</div>
-              </div>
-              ${annualLineChart({ data: solarData, color: '#fb923c', yUnit: ' W/m²', forceYMin: 0, height: 180 })}
-            </div>
-          </div>
-        </div>`;
-    }
+        function render24() {
+            const st = $('stage');
+            st.innerHTML = `
+                <section class="sign" id="big" aria-live="polite"></section>
+                <div class="tiles" role="group" aria-label="Metric">
+                    ${METRICS.map(m => `
+                        <button type="button" class="tile" data-m="${m.id}" aria-pressed="${m.id === S.metric}" style="--c:var(${m.color})">
+                            <span class="k">${m.short}</span>
+                            <span class="v">${fmtVal(m, S.data.now[m.id])}${m.unit ? `<small>${m.unit}</small>` : ''}</span>
+                            ${miniChart(S.data.ser[m.id], m.min === 0)}
+                        </button>`).join('')}
+                </div>`;
+            renderBig();
+        }
 
-    // ── Main load ─────────────────────────────────────────────────────────────
-    async function loadAll() {
-      const app = document.getElementById('app');
-      try {
-        // Parallel fetch: current station obs + today device obs + yesterday device obs + forecast
-        const [obsRes, todayRes, yestRes, fcRes] = await Promise.all([
-          fetch(`${BASE}/observations/station/${STATION_ID}?token=${TOKEN}`),
-          fetch(`${BASE}/observations/device/${DEVICE_ID}?token=${TOKEN}&day_offset=0`),
-          fetch(`${BASE}/observations/device/${DEVICE_ID}?token=${TOKEN}&day_offset=1`),
-          fetch(`${BASE}/better_forecast?station_id=${STATION_ID}&token=${TOKEN}&units_temp=f&units_wind=mph&units_precip=in&units_pressure=inhg&units_distance=mi&units_direction=cardinal`),
-        ]);
+        // ── 7-Day stage ──────────────────────────────────────────
+        function renderForecast() {
+            const daily = S.data.daily;
+            if (!daily.length) { $('stage').innerHTML = '<div class="state">No forecast</div>'; return; }
+            const lo = Math.min(...daily.map(d => d.air_temp_low)), hi = Math.max(...daily.map(d => d.air_temp_high)), span = (hi - lo) || 1;
+            $('stage').innerHTML = `
+                <div class="ledger-wrap"><table class="ledger week" aria-label="7-day forecast">
+                    <thead><tr><th scope="col">Day</th><th scope="col">Sky</th><th scope="col" class="rng-h" style="text-align:center">Range</th><th scope="col">Low</th><th scope="col">High</th><th scope="col">Rain</th></tr></thead>
+                    <tbody>${daily.map((d, i) => {
+                        const dt = new Date(d.day_start_local * 1000);
+                        const name = i === 0 ? 'Today' : dt.toLocaleDateString('en-US', { weekday: 'short' });
+                        const iso = dt.toLocaleDateString('en-CA');
+                        const l = (d.air_temp_low - lo) / span * 100, w = Math.max(2, (d.air_temp_high - d.air_temp_low) / span * 100);
+                        return `<tr>
+                            <td class="day">${name}<small>${iso.slice(5)}</small></td>
+                            <td><div class="cond">${glyph(d.icon)}<span class="cond-t">${esc(d.conditions || '')}</span></div></td>
+                            <td class="rng"><div class="track" role="img" aria-label="Low ${Math.round(d.air_temp_low)}, high ${Math.round(d.air_temp_high)}"><i style="left:${l.toFixed(1)}%;width:${w.toFixed(1)}%"></i></div></td>
+                            <td class="lo">${Math.round(d.air_temp_low)}°</td>
+                            <td class="hi">${Math.round(d.air_temp_high)}°</td>
+                            <td>${d.precip_probability > 0 ? d.precip_probability + '%' : '—'}</td>
+                        </tr>`;
+                    }).join('')}</tbody>
+                </table></div>`;
+        }
 
-        if (!obsRes.ok || !fcRes.ok) throw new Error(`API error (${obsRes.status}/${fcRes.status})`);
+        // ── History stage ────────────────────────────────────────
+        const DF = {
+            DATE: 0, PRES_AVG: 1, TEMP_AVG: 4, TEMP_MAX: 5, TEMP_MIN: 6,
+            HUM_AVG: 7, HUM_MAX: 8, HUM_MIN: 9, SOLAR_MAX: 17,
+            WIND_AVG: 13, WIND_GUST: 14, RAIN: 29
+        };
+        async function loadAnnual(year) {
+            if (S.years[year]) return S.years[year];
+            const start = Date.UTC(year, 0, 1) / 1000, end = Date.UTC(year + 1, 0, 1) / 1000;
+            const res = await fetch(`${BASE}/observations/device/${DEVICE_ID}?token=${TOKEN}&time_start=${start}&time_end=${end}`);
+            if (!res.ok) throw new Error(`API error (${res.status})`);
+            const data = await res.json();
+            const obs = (data.obs || []).filter(o => o[DF.DATE] && String(o[DF.DATE]).startsWith(String(year)));
+            S.years[year] = obs;
+            return obs;
+        }
 
-        const [obsData, todayData, yestData, fcData] = await Promise.all([
-          obsRes.json(), todayRes.json(), yestRes.json(), fcRes.json()
-        ]);
+        function yearChips() {
+            const ys = [];
+            for (let y = new Date().getFullYear(); y >= FIRST_YEAR; y--) ys.push(y);
+            return `<div class="bar-head"><div class="section-label" id="year-label">Year</div><div class="chips on-card" role="group" aria-labelledby="year-label">${ys.map(y => `<button type="button" data-year="${y}" aria-pressed="${y === S.year}">${y}</button>`).join('')}</div></div>`;
+        }
 
-        // ── Current conditions (all already in imperial) ──────────────────────
-        const cur = obsData.obs?.[0];
-        if (!cur) throw new Error('No observations returned');
-        const cc = fcData.current_conditions;
-        if (!cc) throw new Error('No current_conditions in forecast');
+        function annualPanel(id, title, headRight, h) {
+            return `<section class="sign"><h3 class="sign-head"><span>${title}</span>${headRight ? `<span class="hv">${headRight}</span>` : ''}</h3><div class="plot" data-plot="${id}" data-h="${h}"></div></section>`;
+        }
 
-        const stationName  = esc(obsData.station_name || 'Tempest Station');
-        const pressureStr  = cur.sea_level_pressure?.toFixed(2) + trendArrow(cur.pressure_trend);
-        const windDir      = cur.wind_direction ?? 0;
-        const windCard     = deg2card(windDir);
-        const lightning3h  = cur.lightning_strike_count_last_3hr ?? 0;
-        const lightningDist = cur.lightning_strike_last_distance; // in mi (station_units.units_distance = mi)
-        const rainYest     = (cur.precip_accum_local_yesterday ?? 0).toFixed(2);
+        function renderHistoryBody(obs, year) {
+            if (!obs || obs.length < 7) return '<div class="state">Not enough data yet</div>';
+            const temp = obs.map(o => {
+                const hi = c2f(o[DF.TEMP_MAX]), lo = c2f(o[DF.TEMP_MIN]), avg = c2f(o[DF.TEMP_AVG]);
+                return { date: o[DF.DATE], hi, lo: (avg - lo > 40) ? avg : lo, avg };
+            });
+            const hum = obs.map(o => ({ date: o[DF.DATE], hi: o[DF.HUM_MAX], lo: o[DF.HUM_MIN], avg: o[DF.HUM_AVG] }));
+            const single = f => obs.map(o => ({ date: o[DF.DATE], y: f(o) }));
+            let acc = 0;
+            const rain = obs.map(o => { acc += mm2in(o[DF.RAIN] ?? 0); return { date: o[DF.DATE], y: +acc.toFixed(2) }; });
+            const set = {
+                wind:  single(o => ms2mph(o[DF.WIND_AVG])),
+                gust:  single(o => ms2mph(o[DF.WIND_GUST])),
+                press: single(o => mb2inhg(o[DF.PRES_AVG])),
+                solar: single(o => { const v = o[DF.SOLAR_MAX] ?? 0; return v > 1500 ? 0 : v; })
+            };
+            const yHi = Math.round(Math.max(...temp.map(d => d.hi))), yLo = Math.round(Math.min(...temp.map(d => d.lo)));
+            const yAvg = Math.round(temp.reduce((s, d) => s + d.avg, 0) / temp.length), total = rain[rain.length - 1].y;
 
-        // ── Historical data — combine yesterday + today, filter to last 24 h ──
-        const nowEpoch = Date.now() / 1000;
-        const cutoff   = nowEpoch - 24 * 3600;
+            const line = (id, data, m, label, w) => {
+                const pts = data.map((d, i) => ({ x: i, y: d.y }));
+                return chart({ w, h: 190, pts, color: m.color, tickUnit: m.tick, dec: m.dec, min: m.min, xTicks: monthTicks(data, w), label });
+            };
+            const wire = (id, fn) => { plots[id] = (el, w) => { el.innerHTML = fn(w); }; };
+            wire('h-temp', w => chart({ w, h: 240, pts: temp.map((d, i) => ({ x: i, hi: d.hi, lo: d.lo, avg: d.avg })), band: true, color: '--ser-temp', tickUnit: '°', min: 0, max: 100, xTicks: monthTicks(temp, w), label: `Daily temperature range ${year}` }).html);
+            wire('h-hum', w => chart({ w, h: 190, pts: hum.map((d, i) => ({ x: i, hi: d.hi, lo: d.lo, avg: d.avg })), band: true, color: '--ser-hum', tickUnit: '%', min: 0, xTicks: monthTicks(hum, w), label: `Daily humidity range ${year}` }).html);
+            wire('h-rain', w => line('h-rain', rain, metricById('rain'), `Cumulative rain ${year}`, w).html);
+            wire('h-wind', w => line('h-wind', set.wind, metricById('wind'), `Daily average wind ${year}`, w).html);
+            wire('h-gust', w => line('h-gust', set.gust, metricById('gust'), `Daily peak gust ${year}`, w).html);
+            wire('h-press', w => line('h-press', set.press, metricById('press'), `Daily average pressure ${year}`, w).html);
+            wire('h-solar', w => line('h-solar', set.solar, metricById('solar'), `Daily peak solar ${year}`, w).html);
 
-        const rawObs = [
-          ...(yestData.obs || []),
-          ...(todayData.obs || []),
-        ].filter(o => Array.isArray(o) && o[F.TS] >= cutoff && o[F.TS] <= nowEpoch)
-         .sort((a, b) => a[F.TS] - b[F.TS]);
+            const sign = (k, v) => `<section class="sign"><h3 class="sign-head">${k}</h3><div class="sign-body"><output class="num sm">${v}</output></div></section>`;
+            return `
+                <div class="signs">${sign('High', yHi + '°')}${sign('Low', yLo + '°')}${sign('Average', yAvg + '°')}${sign('Rain', total.toFixed(1) + '"')}</div>
+                ${annualPanel('h-temp', 'Temperature', 'Daily high / low', 240)}
+                <div class="grid2">
+                    ${annualPanel('h-hum', 'Humidity', 'Daily range', 190)}
+                    ${annualPanel('h-rain', 'Rain', 'Cumulative · in', 190)}
+                    ${annualPanel('h-wind', 'Wind Speed', 'Daily avg · mph', 190)}
+                    ${annualPanel('h-gust', 'Wind Gust', 'Daily max · mph', 190)}
+                    ${annualPanel('h-press', 'Pressure', 'Daily avg · inHg', 190)}
+                    ${annualPanel('h-solar', 'Solar', 'Daily peak · W/m²', 190)}
+                </div>`;
+        }
 
-        // Chart datasets
-        const tempData  = rawObs.map(o => ({ t: o[F.TS], v: c2f(o[F.TEMP]) }));
-        const humidData = rawObs.map(o => ({ t: o[F.TS], v: o[F.HUMIDITY] }));
-        const windData  = rawObs.map(o => ({ t: o[F.TS], v: ms2mph(o[F.WIND_AVG]) }));
-        const gustData  = rawObs.map(o => ({ t: o[F.TS], v: ms2mph(o[F.WIND_GUST]) }));
-        const pressData = rawObs.map(o => ({ t: o[F.TS], v: mb2inhg(o[F.PRESSURE]) }));
-        const uvData    = rawObs.map(o => ({ t: o[F.TS], v: o[F.UV] ?? 0 }));
-        const solarData = rawObs.map(o => ({ t: o[F.TS], v: o[F.SOLAR] ?? 0 }));
+        async function renderHistory() {
+            const seq = ++stageSeq, st = $('stage');
+            st.setAttribute('aria-labelledby', 'tab-history');
+            const head = yearChips();
+            st.innerHTML = head + '<div class="state">Loading</div>';
+            try {
+                const obs = await loadAnnual(S.year);
+                if (seq !== stageSeq) return;
+                st.innerHTML = head + renderHistoryBody(obs, S.year);
+                paintPlots();
+            } catch (err) {
+                console.error(err);
+                if (seq !== stageSeq) return;
+                st.innerHTML = head + `<div class="state">Couldn’t load year data</div><div class="error-text">${esc(err.message)}</div>`;
+            }
+        }
 
-        // Rain accumulated today (from local midnight)
-        const todayMidnight = new Date(); todayMidnight.setHours(0, 0, 0, 0);
-        const midnightEpoch = todayMidnight.getTime() / 1000;
-        let rainSum = 0;
-        const rainAccData = rawObs
-          .filter(o => o[F.TS] >= midnightEpoch)
-          .map(o => { rainSum += mm2in(o[F.RAIN]); return { t: o[F.TS], v: rainSum }; });
-        const totalRainToday = rainAccData.length > 0 ? rainAccData[rainAccData.length - 1].v : 0;
+        // ── Stage + routing ──────────────────────────────────────
+        function renderStage() {
+            const st = $('stage');
+            stageSeq++;
+            st.setAttribute('aria-labelledby', 'tab-' + S.tab);
+            if (S.tab === 'history') { renderHistory(); return; }
+            if (!S.data) { st.innerHTML = S.error ? `<div class="state">Couldn’t load station data</div>` : '<div class="state">Loading</div>'; return; }
+            if (S.tab === '7d') renderForecast(); else render24();
+        }
 
-        // ── Forecast ──────────────────────────────────────────────────────────
-        const daily    = fcData.forecast?.daily?.slice(0, 7) || [];
-        const dayNames = daily.map((d, i) => {
-          if (i === 0) return 'Today';
-          if (i === 1) return 'Tmrw';
-          return new Date(d.day_start_local * 1000).toLocaleDateString('en-US', { weekday: 'short' });
+        function paintTabs() {
+            document.querySelectorAll('#tabs [role=tab]').forEach(b => {
+                const on = b.dataset.tab === S.tab;
+                b.setAttribute('aria-selected', on);
+                b.tabIndex = on ? 0 : -1;
+            });
+        }
+
+        function parseHash() {
+            const h = location.hash;
+            const m = h.match(/^#year(?:\/(\d{4}))?$/);
+            if (m) return { tab: 'history', year: +m[1] || new Date().getFullYear() };
+            if (h === '#forecast') return { tab: '7d' };
+            return { tab: '24h' };
+        }
+        function route() {
+            const r = parseHash();
+            S.tab = r.tab;
+            if (r.year) S.year = r.year;
+            paintTabs();
+            renderStage();
+        }
+        const hashFor = (tab, year) => tab === 'history' ? `#year/${year || S.year}` : tab === '7d' ? '#forecast' : '#';
+        function go(hash) {
+            if (location.hash === hash || (hash === '#' && location.hash === '')) route();
+            else location.hash = hash;
+        }
+
+        $('tabs').addEventListener('click', e => {
+            const b = e.target.closest('[role=tab]');
+            if (b) go(hashFor(b.dataset.tab));
+        });
+        $('tabs').addEventListener('keydown', e => {
+            const tabs = [...document.querySelectorAll('#tabs [role=tab]')];
+            const i = tabs.indexOf(document.activeElement);
+            if (i < 0) return;
+            let j = -1;
+            if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+            else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+            else if (e.key === 'Home') j = 0;
+            else if (e.key === 'End') j = tabs.length - 1;
+            if (j < 0) return;
+            e.preventDefault();
+            tabs[j].focus();
+            go(hashFor(tabs[j].dataset.tab));
+            tabs[j].focus();
         });
 
-        // ── Battery indicator ─────────────────────────────────────────────────
-        const battV    = cur.battery?.toFixed(2);
-        const battPct  = battV ? Math.min(100, Math.max(0, Math.round((battV - 2.35) / (2.80 - 2.35) * 100))) : null;
-
-        const updatedAt = new Date(cur.timestamp * 1000).toLocaleTimeString('en-US', {
-          hour: 'numeric', minute: '2-digit', hour12: true
+        $('stage').addEventListener('click', e => {
+            const tile = e.target.closest('.tile');
+            if (tile) {
+                S.metric = tile.dataset.m;
+                document.querySelectorAll('.tile').forEach(t => t.setAttribute('aria-pressed', t === tile));
+                renderBig();
+                return;
+            }
+            const yr = e.target.closest('[data-year]');
+            if (yr) go(`#year/${yr.dataset.year}`);
         });
 
-        // ── Render ────────────────────────────────────────────────────────────
-        app.innerHTML = `
-          <div class="hero-card">
-            <div class="hero-left">
-              <div class="hero-station">${stationName}</div>
-              <div class="hero-temp">${Math.round(cc.air_temperature)}°</div>
-              <div class="hero-desc">${esc(cc.conditions)} · Feels like ${Math.round(cc.feels_like)}°</div>
-            </div>
-            <div class="hero-right">
-              <div class="hero-icon">${iconToEmoji(cc.icon)}</div>
-              <div class="hero-meta">
-                ${cc.precip_probability > 0 ? `💧 ${cc.precip_probability}% chance of rain<br>` : ''}
-                Hi ${Math.round(daily[0]?.air_temp_high ?? cc.air_temperature)}° · Lo ${Math.round(daily[0]?.air_temp_low ?? cc.air_temperature)}°
-              </div>
-            </div>
-          </div>
+        window.addEventListener('hashchange', route);
+        let lastW = 0, raf = 0;
+        new ResizeObserver(entries => {
+            const w = Math.round(entries[0].contentRect.width);
+            if (w === lastW) return;
+            lastW = w;
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(paintPlots);
+        }).observe($('stage'));
 
-          <div class="stats">
-            ${statCard('Humidity',    cur.relative_humidity,                      '%',    `Dew point ${Math.round(cur.dew_point)}°F`)}
-            ${statCard('Wind',        `${cur.wind_avg} <span class="stat-unit" style="font-size:18px">${windCard}</span>`, 'mph', `Gust ${cur.wind_gust} mph · Lull ${cur.wind_lull} mph`)}
-            ${statCard('Pressure',    pressureStr,                                 'inHg', esc(cur.pressure_trend))}
-            ${statCard('UV Index',    (cur.uv ?? 0).toFixed(1),                   '',     uvLevel(cur.uv))}
-            ${statCard('Solar',       Math.round(cur.solar_radiation ?? 0),       'W/m²', '')}
-            ${statCard('Rain Today',  (cur.precip_accum_local_day ?? 0).toFixed(2), 'in', `Yesterday: ${rainYest} in`)}
-            ${lightning3h > 0
-              ? statCard('Lightning', lightning3h,  `strike${lightning3h !== 1 ? 's' : ''} (3h)`,
-                  lightningDist != null ? `Last: ${lightningDist} mi away` : '')
-              : statCard('Lightning', 'None',       '',  'No strikes nearby')}
-            ${battV != null ? statCard('Battery', battV, 'V', battPct != null ? `${battPct}% charge` : '') : ''}
-          </div>
+        // ── Theme ────────────────────────────────────────────────
+        const root = document.documentElement, mode = $('mode');
+        const paintMode = () => mode.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        mode.addEventListener('click', () => {
+            root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+            try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+            paintMode();
+        });
+        matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            let saved = null;
+            try { saved = localStorage.getItem('theme'); } catch (x) {}
+            if (saved === 'light' || saved === 'dark') return;
+            root.dataset.theme = e.matches ? 'dark' : 'light';
+            paintMode();
+        });
+        paintMode();
 
-          <div class="section-label">Last 24 Hours</div>
-          <div class="charts-grid">
-            <div class="chart-card">
-              <div class="chart-header">
-                <div class="chart-title">Temperature</div>
-                <div class="chart-current">${Math.round(cc.air_temperature)}<span class="chart-current-unit">°F</span></div>
-              </div>
-              ${lineChart({ data: tempData, color: '#f97316', yUnit: '°' })}
-            </div>
-            <div class="chart-card">
-              <div class="chart-header">
-                <div class="chart-title">Humidity</div>
-                <div class="chart-current">${cur.relative_humidity}<span class="chart-current-unit">%</span></div>
-              </div>
-              ${lineChart({ data: humidData, color: '#38bdf8', yUnit: '%', forceYMin: 0 })}
-            </div>
-            <div class="chart-card">
-              <div class="chart-header">
-                <div class="chart-title">Wind Speed</div>
-                <div class="chart-current">${cur.wind_avg}<span class="chart-current-unit"> mph</span></div>
-              </div>
-              ${lineChart({ data: windData, color: '#a78bfa', yUnit: ' mph', forceYMin: 0 })}
-            </div>
-            <div class="chart-card">
-              <div class="chart-header">
-                <div class="chart-title">Wind Gust</div>
-                <div class="chart-current">${cur.wind_gust}<span class="chart-current-unit"> mph</span></div>
-              </div>
-              ${lineChart({ data: gustData, color: '#c084fc', yUnit: ' mph', forceYMin: 0 })}
-            </div>
-            <div class="chart-card">
-              <div class="chart-header">
-                <div class="chart-title">Pressure</div>
-                <div class="chart-current">${cur.sea_level_pressure?.toFixed(2)}<span class="chart-current-unit"> inHg</span></div>
-              </div>
-              ${lineChart({ data: pressData, color: '#34d399', yUnit: '"', yDecimals: 2 })}
-            </div>
-            <div class="chart-card">
-              <div class="chart-header">
-                <div class="chart-title">UV Index</div>
-                <div class="chart-current">${(cur.uv ?? 0).toFixed(1)}</div>
-              </div>
-              ${lineChart({ data: uvData, color: '#fbbf24', yUnit: '', forceYMin: 0 })}
-            </div>
-            <div class="chart-card">
-              <div class="chart-header">
-                <div class="chart-title">Solar Radiation</div>
-                <div class="chart-current">${Math.round(cur.solar_radiation ?? 0)}<span class="chart-current-unit"> W/m²</span></div>
-              </div>
-              ${lineChart({ data: solarData, color: '#fb923c', yUnit: '', forceYMin: 0 })}
-            </div>
-            <div class="chart-card">
-              <div class="chart-header">
-                <div class="chart-title">Rain Today</div>
-                <div class="chart-current">${totalRainToday.toFixed(2)}<span class="chart-current-unit"> in</span></div>
-              </div>
-              ${rainAccData.length > 2 && totalRainToday > 0
-                ? lineChart({ data: rainAccData, color: '#60a5fa', yUnit: '"', yDecimals: 2, forceYMin: 0 })
-                : '<div class="chart-empty">No rain today ☀️</div>'}
-            </div>
-          </div>
-
-          <div class="section-label">7-Day Forecast</div>
-          <div class="forecast">
-            ${daily.map((d, i) => `
-              <div class="forecast-day">
-                <div class="forecast-name">${dayNames[i]}</div>
-                <div class="forecast-icon">${iconToEmoji(d.icon)}</div>
-                <div class="forecast-high">${Math.round(d.air_temp_high)}°</div>
-                <div class="forecast-low">${Math.round(d.air_temp_low)}°</div>
-                ${d.precip_probability > 0 ? `<div class="forecast-rain">💧 ${d.precip_probability}%</div>` : ''}
-              </div>
-            `).join('')}
-          </div>
-
-          <div class="updated">Updated ${updatedAt} · WeatherFlow Tempest</div>
-        `;
-
-      } catch (err) {
-        console.error(err);
-        app.innerHTML = `
-          <div class="state-msg">
-            Couldn't load station data.<br>
-            <small style="color:#3a3a3a">${esc(err.message)}</small>
-          </div>`;
-      }
-    }
-
-    function uvLevel(uv) {
-      if (uv == null) return '';
-      if (uv < 3)  return 'Low';
-      if (uv < 6)  return 'Moderate';
-      if (uv < 8)  return 'High';
-      if (uv < 11) return 'Very High';
-      return 'Extreme';
-    }
-
-    // ── Modal system ──────────────────────────────────────────────────────────
-    function initModal() {
-      if (document.getElementById('chart-modal')) return;
-      const overlay = document.createElement('div');
-      overlay.id = 'chart-modal';
-      overlay.className = 'modal-overlay';
-      overlay.innerHTML = '<div class="modal-content" role="dialog" aria-modal="true"><button class="modal-close" aria-label="Close">&times;</button><div class="modal-body"></div></div>';
-      document.body.appendChild(overlay);
-
-      const body = overlay.querySelector('.modal-body');
-      const closeBtn = overlay.querySelector('.modal-close');
-
-      function close() { overlay.classList.remove('active'); }
-      overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
-      closeBtn.addEventListener('click', close);
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-
-      document.getElementById('app').addEventListener('click', (e) => {
-        const card = e.target.closest('.chart-card, .annual-card');
-        if (!card) return;
-        body.innerHTML = card.innerHTML;
-        overlay.classList.add('active');
-      });
-    }
-
-    // ── Dropdown menu ───────────────────────────────────────────────────────
-    const menuBtn = document.getElementById('yearMenuBtn');
-    const dropdown = menuBtn.parentElement;
-    menuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const open = dropdown.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded', open);
-    });
-    document.addEventListener('click', () => {
-      dropdown.classList.remove('open');
-      menuBtn.setAttribute('aria-expanded', 'false');
-    });
-
-    // ── Year view renderer ──────────────────────────────────────────────────
-    async function loadYearView(year) {
-      const app = document.getElementById('app');
-      app.innerHTML = '<div class="state-msg">Loading year data…</div>';
-      try {
-        const obs = await loadAnnual(year);
-        app.innerHTML = `
-          <a class="nav-back" href="#" style="display:inline-block;margin-bottom:20px">← Back to Dashboard</a>
-          ${renderAnnualSection(obs, year)}
-        `;
-      } catch (err) {
-        app.innerHTML = `<div class="state-msg">Couldn't load year data.<br><small style="color:#3a3a3a">${esc(err.message)}</small></div>`;
-      }
-    }
-
-    // ── Router ──────────────────────────────────────────────────────────────
-    let refreshInterval = null;
-
-    function route() {
-      dropdown.classList.remove('open');
-      const hash = location.hash;
-      const yearMatch = hash.match(/^#year\/(\d{4})$/);
-
-      if (yearMatch) {
-        clearInterval(refreshInterval);
-        refreshInterval = null;
-        loadYearView(parseInt(yearMatch[1])).then(initModal);
-      } else {
-        loadAll().then(initModal);
-        clearInterval(refreshInterval);
-        refreshInterval = setInterval(loadAll, 5 * 60 * 1000);
-      }
-    }
-
-    window.addEventListener('hashchange', route);
-    route();
-  </script>
-
+        // ── Go ───────────────────────────────────────────────────
+        S.year = new Date().getFullYear();
+        route();
+        loadAll();
+        setInterval(loadAll, 5 * 60 * 1000);
+    </script>
 </body>
 </html>
