@@ -310,7 +310,6 @@
   <main class="page">
     <header class="page-header">
       <h1>🛣️ Road Trip Cost Calculator</h1>
-      <p>Find out what your road trip really costs — fuel priced state by state along the way.</p>
     </header>
 
     <section class="card">
@@ -393,7 +392,6 @@
 
     <section class="card">
       <h2>3. Fuel Prices by State <span class="badge" id="price-source" hidden></span></h2>
-      <p class="hint" id="price-placeholder" style="margin-top: 0;">Find your route first — prices fill in for every state you'll drive through.</p>
       <div class="table-wrap" id="price-table-wrap" hidden>
         <table id="price-table" class="price-table">
           <thead>
@@ -408,7 +406,6 @@
           <tbody></tbody>
         </table>
       </div>
-      <p class="hint" id="price-hint" hidden>Auto-filled with each state's daily AAA average. Edit any price to match what you expect to pay there.</p>
     </section>
 
     <button class="btn-primary" id="calc-btn" disabled>Calculate My Road Trip Cost</button>
@@ -1196,9 +1193,7 @@
       const tbody = priceTable.querySelector('tbody');
       tbody.innerHTML = '';
       const has = route && route.order.length > 0;
-      $('price-placeholder').hidden = has;
       $('price-table-wrap').hidden = !has;
-      $('price-hint').hidden = !has;
       priceSourceBadge.hidden = !has;
       if (!has) return;
       for (const code of route.order) {

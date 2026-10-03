@@ -43,26 +43,22 @@
       margin: 0 auto;
       padding: 0 24px;
       height: 56px;
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      gap: 24px;
     }
-    .nav-logo {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      text-decoration: none;
-      letter-spacing: -0.02em;
-    }
-    .nav-logo span { opacity: 0.45; }
     .nav-back {
-      font-size: 0.85rem;
+      justify-self: start;
+      font-size: 13px;
       font-weight: 500;
       color: var(--text-secondary);
       text-decoration: none;
-      transition: color 0.15s;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
     }
-    .nav-back:hover { color: var(--text-primary); }
+    .nav-back:hover { color: var(--text-primary); background: var(--border); }
+    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
 
     main {
       max-width: 1280px;
@@ -267,17 +263,17 @@
 </head>
 <body>
 
-<nav>
+<nav aria-label="Main navigation">
   <div class="nav-inner">
-    <a href="/" class="nav-logo">aman<span>vg</span></a>
-    <a href="/" class="nav-back">← Back</a>
+    <a href="/" class="nav-back">← amanvg</a>
+    <span class="nav-title">US States</span>
+    <span></span>
   </div>
 </nav>
 
 <main>
   <div class="page-header">
     <h1>US States Visited</h1>
-    <p>States I've visited.</p>
   </div>
 
   <div class="stats">
