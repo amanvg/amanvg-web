@@ -37,11 +37,13 @@ A Reject means make no changes and ask what to adjust.
 
 ## Look and copy
 
-- Home page (`/`) and `/seattlesports/`: follow `DESIGN.md` (poster-inspired
-  bands, Barlow Condensed and Big Shoulders Display, cream sheet). Do not use
-  Inter, `.card`, or the blue accent there. Seattle Sports uses the teams'
-  official colours as flat panels, the only sanctioned exception to the five
-  band hues.
+- Home page (`/`): follows `DESIGN.md` (Federal Park Serigraph light, Nocturne
+  dark; Oswald, Vollkorn, Work Sans; 0px corners, hard print-strike shadows).
+  Light and dark follow the system setting with a sun/moon icon toggle. Do not
+  use Inter, `.card`, or the blue accent there.
+- `/seattlesports/`: keeps the earlier poster look (night-green ground, Barlow
+  Condensed, flat bands, teams' official colours as panels) until it is
+  migrated to `DESIGN.md`.
 - Other app pages: dark theme. Copy the `:root` tokens, nav (`← amanvg` back link,
   centered title), `.card`, and form styles from an existing page such as
   `commuteplanner/index.html` rather than inventing new ones. Inter from

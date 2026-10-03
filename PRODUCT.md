@@ -27,9 +27,9 @@ Served by GitHub Pages from `main`. No build step, no framework, no shared JS: o
 - Every change goes through the approval process in `CLAUDE.md`.
 
 ## Brand Commitments
-Home page (`/`): poster-inspired look defined in `DESIGN.md`. WPA / national-park posters inform colour and type only: flat saturated colour bands stepping cool to warm, condensed all-caps tracked lettering (Barlow Condensed, Big Shoulders Display), a cream sheet framing a real public-domain poster crop, accordion categories. No illustration, seals, emblems, AI-generated art, URLs on rows, or per-category counts. Dark night-green ground. Real assets only, credited in the Sources row; the owner handles any licensing.
+Home page (`/`): WPA serigraph look defined in `DESIGN.md`, in two modes that follow the system setting with a sun/moon icon toggle. Light is Federal Park Serigraph (parchment, pine, ochre, clay); dark is Nocturne Serigraph (midnight pine, campfire amber, terracotta). Oswald headings, Vollkorn body, Work Sans labels, 0px corners, hard print-strike shadows, a framed real public-domain poster crop, a flush stack of colour-banded accordion categories. No illustration, seals, emblems, AI-generated art, URLs on rows, or per-category counts. Real assets only, credited in the Sources row; the owner handles any licensing.
 
-`/seattlesports/` has been migrated to the poster look: masthead band, four flat team panels in the teams' official colours (an approved exception to the five band hues), Barlow Condensed throughout, ESPN credited in Sources.
+`/seattlesports/` keeps the earlier poster look (night-green ground, Barlow Condensed, flat bands, four team panels in the teams' official colours, ESPN credited in Sources) until it is migrated to `DESIGN.md`.
 
 Other app pages (`/commute/`, `/roadtrip/`, `/whichcar/`, `/commuteplanner/`, etc.): not yet migrated. They keep the earlier look until each is taken up one step at a time: dark theme, Inter, 20px card radius, accent `#3b82f6`, shared nav (`← amanvg` back link, centered title), shared `.card` and form styles.
 

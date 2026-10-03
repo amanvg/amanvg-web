@@ -1,105 +1,192 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>amanvg — projects &amp; dashboards</title>
   <meta name="description" content="Personal site of Aman Gandhi — live dashboards, maps, and tools.">
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Big+Shoulders+Display:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Vollkorn:ital,wght@0,400;0,600;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-/* Layout: nav, then one framed poster sheet holding five category bands that expand into project rows */
+/* Federal Park Serigraph (light) */
 :root{
-  color-scheme:dark;
-  --night:#0f2421; --paper:#f1e4c3; --ink:#10201d; --gold:#f0b43c;
-  --display:'Big Shoulders Display','Arial Narrow',sans-serif;
-  --label:'Barlow Condensed','Arial Narrow',sans-serif;
-  --gutter:max(40px,calc((100% - 1200px)/2));
+  color-scheme:light;
+  --canvas:#f6efe1; --card:#ede3ce; --row-a:#f6efe1; --row-b:#ede3ce;
+  --text:#181c16; --head-bg:#24422e; --head-text:#f6efe1; --head-line:#181c16;
+  --key:#4d5843; --frame:#24422e; --divider:rgba(77,88,67,.25);
+  --shadow:#181c16; --accent:#d9822b; --focus:#24422e; --sel-bg:#d9822b; --sel-fg:#181c16;
+  --hover-bg:#24422e; --hover-fg:#f6efe1; --btn-hover-bg:#ede3ce; --btn-hover-fg:#24422e;
+  --s1:#24422e; --s2:#d9822b; --s3:#a63a24;
+  --foot-bg:#1c2730; --foot-text:#f6efe1; --foot-line:#181c16; --foot-accent:#d9822b;
+  --b-sports:#24422e; --f-sports:#f6efe1;
+  --b-maps:#60888f;   --f-maps:#181c16;
+  --b-weather:#1c2730; --f-weather:#f6efe1;
+  --b-calc:#d9822b;   --f-calc:#181c16;
+  --b-plan:#a63a24;   --f-plan:#f6efe1;
+  --display:'Oswald','Arial Narrow',sans-serif;
+  --body:'Vollkorn',Georgia,serif;
+  --label:'Work Sans',system-ui,sans-serif;
+  --margin:max(40px,calc((100% - 1200px)/2));
   --ease:cubic-bezier(.16,1,.3,1);
 }
+/* Nocturne Serigraph (dark) */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --canvas:#0e1511; --card:#1a271f; --row-a:#141e17; --row-b:#1a271f;
+  --text:#f4ede2; --head-bg:#141e17; --head-text:#f4ede2; --head-line:#35483b;
+  --key:#35483b; --frame:#35483b; --divider:#233328;
+  --shadow:#060a08; --accent:#e5933a; --focus:#e5933a; --sel-bg:#e5933a; --sel-fg:#0e1511;
+  --hover-bg:#223329; --hover-fg:#f4ede2; --btn-hover-bg:#1a271f; --btn-hover-fg:#f4ede2;
+  --s1:#44805d; --s2:#e5933a; --s3:#c8523b;
+  --foot-bg:#0a0f0c; --foot-text:#ded5c5; --foot-line:#35483b; --foot-accent:#e5933a;
+  --b-sports:#2d4b38; --f-sports:#f4ede2;
+  --b-maps:#44805d;   --f-maps:#0e1511;
+  --b-weather:#141c26; --f-weather:#f4ede2;
+  --b-calc:#e5933a;   --f-calc:#0e1511;
+  --b-plan:#c8523b;   --f-plan:#f4ede2;
+}
 html{scrollbar-gutter:stable}
-body{background:var(--night);color:var(--paper);font-family:var(--label);min-height:100vh;-webkit-font-smoothing:antialiased}
-::selection{background:var(--gold);color:var(--ink)}
-:focus-visible{outline:3px solid var(--paper);outline-offset:-6px}
-.skip-link{position:absolute;top:-48px;left:16px;background:var(--paper);color:var(--ink);padding:8px 16px;z-index:200;font-size:16px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
+body{background:var(--canvas);color:var(--text);font-family:var(--body);min-height:100vh;-webkit-font-smoothing:antialiased}
+::selection{background:var(--sel-bg);color:var(--sel-fg)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+/* outer register frame */
+body::before{content:"";position:fixed;inset:10px;border:2px solid var(--key);pointer-events:none;z-index:100}
+
+
+.skip-link{position:absolute;top:-48px;left:16px;background:var(--head-text);color:var(--head-bg);padding:8px 16px;z-index:200;font-family:var(--label);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
 .skip-link:focus{top:8px}
-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--night);border-bottom:2px solid var(--paper)}
-.nav{height:60px;padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:var(--display);font-weight:900;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper);text-decoration:none}
-.nav a.link{display:inline-flex;align-items:center;min-height:44px;font-weight:700;font-size:17px;letter-spacing:.22em;text-transform:uppercase;color:var(--paper);text-decoration:none;padding:8px 14px;border:2px solid transparent}
-.nav a.link:hover{border-color:var(--gold);color:var(--gold)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50}
+header{background:var(--head-bg);border-bottom:3px solid var(--head-line);padding:0 var(--margin);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+h1{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text)}
+h1 a{color:inherit;text-decoration:none}
+.tools{display:flex;gap:12px}
+.btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s}
+:root[data-theme="dark"] .btn{border-color:var(--key)}
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+:root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.btn:focus-visible{outline-color:var(--head-text)}
+.icon-btn{width:44px;padding:0;justify-content:center}
+.icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn .sun{display:none}
+:root[data-theme="dark"] .icon-btn .sun{display:block}
+:root[data-theme="dark"] .icon-btn .moon{display:none}
+.stripes{height:7px;background:linear-gradient(var(--s1) 0 3px,var(--s2) 3px 5px,var(--s3) 5px 7px)}
 
-/* poster sheet: cream paper margin around the bands */
-.sheet{position:relative;margin:44px var(--gutter) 40px;border:10px solid var(--paper);border-top-width:10px;background:var(--paper);outline:2px solid var(--ink);outline-offset:-7px}
-/* screenprint grain over the whole sheet; multiply keeps band colours and text contrast intact */
-.sheet::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:multiply;opacity:.07;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.plate{display:block;width:100%;height:clamp(110px,16vw,200px);object-fit:cover;object-position:50% 12%}
-.cat{background:var(--c)}
-.cat+.cat{margin-top:0}
-.head{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr 32px;align-items:center;column-gap:24px;width:100%;height:76px;padding:0 28px;background:var(--c);color:var(--fg)}
+main{padding:40px var(--margin) 0}
+.plate{border:3px double var(--frame);padding:6px;background:var(--card)}
+:root[data-theme="dark"] .plate{border-color:var(--accent)}
+.plate img{display:block;width:100%;height:clamp(110px,13vw,150px);object-fit:cover;object-position:50% 12%;border:2px solid var(--shadow)}
+
+.grid{margin-top:40px;border:3px solid var(--frame);background:var(--card);box-shadow:4px 4px 0 0 var(--shadow)}
+.cat+.cat{border-top:2px solid var(--head-line)}
+.head{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr 24px;align-items:center;column-gap:16px;width:100%;min-height:76px;padding:0 28px;background:var(--c);color:var(--fg);border-bottom:2px solid var(--head-line)}
+.cat:not([data-open="true"]) .head{border-bottom-color:transparent}
 .head:focus-visible{outline:3px solid var(--fg);outline-offset:-8px}
-.cat h2{font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(32px,3.4vw,46px);line-height:1}
-.chev{width:28px;height:28px;transition:transform .45s var(--ease)}
-.cat[data-open="true"] .chev{transform:rotate(90deg)}
 .head:hover .chev{translate:3px 0}
+.cat h2{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
+.chev{width:22px;height:22px;transition:transform .4s var(--ease),translate .2s var(--ease)}
+.cat[data-open="true"] .chev{transform:rotate(90deg)}
 
-/* expand / contract */
-.panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
 .cat[data-open="true"] .panel{grid-template-rows:1fr}
 .panel>ul{overflow:hidden;list-style:none;min-height:0}
-.row{display:grid;grid-template-columns:1fr 28px;align-items:center;column-gap:24px;height:60px;padding:0 28px 0 56px;background:color-mix(in srgb,var(--c) var(--mix,80%),var(--tint,#000));color:var(--fg);text-decoration:none;opacity:0;transform:translateY(-10px);transition:opacity .35s ease,transform .45s var(--ease),box-shadow .25s var(--ease)}
-.cat[data-open="true"] .row{opacity:1;transform:none}
-.cat[data-open="true"] li:nth-child(2) .row{transition-delay:.06s,.06s,0s}
-.cat[data-open="true"] li:nth-child(3) .row{transition-delay:.12s,.12s,0s}
-.cat[data-open="true"] li:nth-child(4) .row{transition-delay:.18s,.18s,0s}
-.row:hover{box-shadow:inset 0 0 0 4px var(--fg)}
-.row:focus-visible{outline-color:var(--fg)}
-.row h3{font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-size:clamp(24px,2.4vw,32px);line-height:1;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 18px;min-width:0}
-.row h3 em{font-style:normal;font-weight:600;font-size:max(12px,.58em);letter-spacing:.32em}
-.go{width:26px;height:26px;transition:transform .3s var(--ease)}
-.row:hover .go{transform:translateX(7px)}
+li:nth-child(odd) .row{background:var(--row-a)}
+li:nth-child(even) .row{background:var(--row-b)}
+li+li{border-top:1px solid var(--divider)}
+.row{display:grid;grid-template-columns:18px 1fr 22px;align-items:center;column-gap:14px;min-height:60px;padding:0 28px 0 56px;color:var(--text);text-decoration:none;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s}
+.row:hover{background:var(--hover-bg)!important;color:var(--hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px);position:relative}
+.row:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.row:focus-visible{outline-offset:-6px}
+.pip{width:14px;height:14px;color:var(--c)}
+:root[data-theme="dark"] .pip{color:var(--accent)}
+.row:hover .pip{color:var(--accent)}
+.row h3{font-family:var(--display);font-weight:600;font-size:22px;line-height:28px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 12px}
+.row h3 em{font-family:var(--body);font-style:italic;font-weight:400;font-size:16px;letter-spacing:0;text-transform:none;opacity:.85}
+.go{width:20px;height:20px;transition:transform .2s var(--ease)}
+.row:hover .go{transform:translateX(5px)}
 
-.sources{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;padding:0 var(--gutter) 48px;font-weight:600;font-size:15px;letter-spacing:.2em;text-transform:uppercase}
-.sources b{font-family:var(--display);font-weight:900;font-size:20px;letter-spacing:.3em;color:var(--gold)}
+footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line);padding:32px var(--margin) 48px}
+footer .stripes{margin:-32px calc(-1*var(--margin)) 28px}
+.sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.sources b{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--foot-accent);margin-right:10px}
+.sources span{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px}
+.sources span.credit{border-radius:0;border-color:rgba(244,237,226,.4);text-transform:none;letter-spacing:.01em;font-family:var(--body);font-weight:400;font-size:14px}
 
-@media(max-width:700px){:root{--gutter:16px}.sheet{border-width:8px;outline-offset:-6px}.head{padding:0 16px;height:68px}.row{padding:0 16px 0 32px}.row h3 em{letter-spacing:.2em}}
-@media(forced-colors:active){.sheet::after{display:none}}
-@media(prefers-reduced-motion:reduce){.panel,.row,.chev,.go{transition:none}}
+@media(max-width:700px){:root{--margin:16px}header{height:56px}h1{font-size:24px;line-height:32px}.btn{padding:8px 14px}main{padding-top:24px}.grid{margin-top:24px}.cat h2{font-size:28px;line-height:36px}.head{padding:0 16px;min-height:64px}.row{padding:0 16px 0 28px}body::before{inset:6px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
   </style>
 </head>
 <body>
   <a class="skip-link" href="#projects">Skip to content</a>
-  <nav aria-label="Main navigation">
-    <div class="nav"><a class="logo" href="/">amanvg</a><a class="link" href="/trust/">Trust</a></div>
-  </nav>
+  <div class="top">
+    <header>
+      <h1><a href="/">amanvg</a></h1>
+      <nav class="tools" aria-label="Main navigation">
+        <button class="btn icon-btn" id="mode" type="button" aria-label="Switch to dark mode">
+          <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>
+          <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <a class="btn" href="/trust/">Trust</a>
+      </nav>
+    </header>
+    <div class="stripes"></div>
+  </div>
   <main id="projects">
-    <div class="sheet" id="sheet">
-      <img class="plate" alt="" src="/assets/banner.jpg">
-      <section class="cat" data-open="false" style="--c:#1b2f66;--fg:#f1e4c3">
-        <h2><button class="head" id="h0" aria-expanded="false" aria-controls="p0">Sports<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
-        <div class="panel" id="p0" inert><ul><li><a class="row" href="/seattlesports/"><h3>Seattle Sports</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/mlbstadiums/"><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+    <div class="plate"><img alt="" src="/assets/banner.jpg"></div>
+    <div class="grid">
+      <section class="cat" data-open="false" style="--c:var(--b-sports);--fg:var(--f-sports)">
+        <h2><button class="head" aria-expanded="false">Sports<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel"><ul>
+          <li><a class="row" href="/seattlesports/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Seattle Sports</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+          <li><a class="row" href="/mlbstadiums/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+        </ul></div>
       </section>
-      <section class="cat" data-open="false" style="--c:#2c5f9e;--fg:#f1e4c3">
-        <h2><button class="head" id="h1" aria-expanded="false" aria-controls="p1">Maps<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
-        <div class="panel" id="p1" inert><ul><li><a class="row" href="/USStates/"><h3>US States <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/worldmap/"><h3>Countries <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      <section class="cat" data-open="false" style="--c:var(--b-maps);--fg:var(--f-maps)">
+        <h2><button class="head" aria-expanded="false">Maps<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel"><ul>
+          <li><a class="row" href="/USStates/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>US States <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+          <li><a class="row" href="/worldmap/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Countries <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+        </ul></div>
       </section>
-      <section class="cat" data-open="false" style="--c:#1f5a45;--fg:#f1e4c3">
-        <h2><button class="head" id="h2" aria-expanded="false" aria-controls="p2">Weather<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
-        <div class="panel" id="p2" inert><ul><li><a class="row" href="/tempest/"><h3>Tempest Station</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      <section class="cat" data-open="false" style="--c:var(--b-weather);--fg:var(--f-weather)">
+        <h2><button class="head" aria-expanded="false">Weather<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel"><ul>
+          <li><a class="row" href="/tempest/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Tempest Station</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+        </ul></div>
       </section>
-      <section class="cat" data-open="false" style="--c:#e8742c;--fg:#10201d;--mix:90%;--tint:#fff">
-        <h2><button class="head" id="h3" aria-expanded="false" aria-controls="p3">Calculators<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
-        <div class="panel" id="p3" inert><ul><li><a class="row" href="/commute/"><h3>Commute Cost</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/roadtrip/"><h3>Road Trip Cost</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/tirepressure/"><h3>Tire Pressure</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/carafford/"><h3>Car Affordability</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      <section class="cat" data-open="false" style="--c:var(--b-calc);--fg:var(--f-calc)">
+        <h2><button class="head" aria-expanded="false">Calculators<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel"><ul>
+          <li><a class="row" href="/commute/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Commute Cost</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+          <li><a class="row" href="/roadtrip/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Road Trip Cost</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+          <li><a class="row" href="/tirepressure/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Tire Pressure</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+          <li><a class="row" href="/carafford/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Car Affordability</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+        </ul></div>
       </section>
-      <section class="cat" data-open="false" style="--c:#6b2f4a;--fg:#f1e4c3">
-        <h2><button class="head" id="h4" aria-expanded="false" aria-controls="p4">Planning<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
-        <div class="panel" id="p4" inert><ul><li><a class="row" href="/commuteplanner/"><h3>Commute Planner</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li><li><a class="row" href="/whichcar/"><h3>What car should I buy?</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li></ul></div>
+      <section class="cat" data-open="false" style="--c:var(--b-plan);--fg:var(--f-plan)">
+        <h2><button class="head" aria-expanded="false">Planning<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+        <div class="panel"><ul>
+          <li><a class="row" href="/commuteplanner/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Commute Planner</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+          <li><a class="row" href="/whichcar/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>What car should I buy?</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+        </ul></div>
       </section>
     </div>
-    <div class="sources"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span><span>OSRM</span><span>OpenStreetMap</span><span>Banner: North Cascades, Ivan Chermayeff, National Park Service, 1972 (Smithsonian Cooper Hewitt; Wikimedia Commons lists public domain)</span></div>
   </main>
+  <footer>
+    <div class="stripes"></div>
+    <div class="sources"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span><span>OSRM</span><span>OpenStreetMap</span><span class="credit">Banner: North Cascades, Ivan Chermayeff, National Park Service, 1972 (Smithsonian Cooper Hewitt; Wikimedia Commons lists public domain)</span></div>
+  </footer>
   <script>
     var still = matchMedia('(prefers-reduced-motion: reduce)');
     var follow = 0;
@@ -111,7 +198,7 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
       (function step() {
         if (stop || id !== follow) return;
         var over = panel.getBoundingClientRect().bottom - (innerHeight - 24);
-        var by = Math.min(over, cat.getBoundingClientRect().top - 72);
+        var by = Math.min(over, cat.getBoundingClientRect().top - 80);
         if (by > 0) scrollBy(0, by);
         if (performance.now() < end) requestAnimationFrame(step);
       })();
@@ -125,8 +212,17 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
         panel.inert = !open;
         if (open) reveal(cat);
       }
+      panel.inert = cat.dataset.open !== 'true';
       btn.addEventListener('click', function () { sync(cat.dataset.open !== 'true'); });
     });
+    var root = document.documentElement, mode = document.getElementById('mode');
+    function paint() { mode.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'); }
+    mode.addEventListener('click', function () {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+      paint();
+    });
+    paint();
   </script>
 </body>
 </html>
