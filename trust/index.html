@@ -121,6 +121,13 @@
     tr:last-child td { border-bottom: none; }
     td a { word-break: break-word; }
 
+    .reveal {
+      font: inherit; font-size: 13px; font-weight: 600; color: var(--accent-text);
+      background: var(--accent-soft); border: 1px solid var(--accent-border);
+      border-radius: 999px; padding: 5px 14px; cursor: pointer;
+    }
+    .reveal:hover { border-color: var(--accent); }
+
     .footer { margin-top: 28px; font-size: 12px; color: var(--text-tertiary); line-height: 1.6; }
 
     @media (max-width: 960px) {
@@ -215,7 +222,7 @@
           </tbody>
         </table>
       </div>
-      <p class="footer">Feedback: <a href="mailto:amanvg@gmail.com">amanvg@gmail.com</a></p>
+      <p class="footer">Feedback: <button type="button" class="reveal" data-u="amanvg" data-d="gmail.com">Show email</button></p>
     </section>
 
     <section class="card" id="security" aria-labelledby="security-h">
@@ -242,7 +249,8 @@
       <div class="table-wrap">
         <table>
           <tbody>
-            <tr><td>Security contact</td><td><a href="mailto:amanvg@gmail.com">amanvg@gmail.com</a></td></tr>
+            <tr><td>Report a vulnerability</td><td><a href="https://github.com/amanvg/amanvg-web/security/advisories/new" target="_blank" rel="noopener">GitHub private report</a></td></tr>
+            <tr><td>Security contact</td><td><button type="button" class="reveal" data-u="amanvg" data-d="gmail.com">Show email</button></td></tr>
             <tr><td>security.txt</td><td><a href="/.well-known/security.txt">/.well-known/security.txt</a></td></tr>
             <tr><td>Source</td><td><a href="https://github.com/amanvg/amanvg-web" target="_blank" rel="noopener">github.com/amanvg/amanvg-web</a></td></tr>
           </tbody>
@@ -273,5 +281,18 @@
       </div>
     </section>
   </main>
+
+  <script>
+    document.querySelectorAll('.reveal').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const addr = btn.dataset.u + '@' + btn.dataset.d;
+        const a = document.createElement('a');
+        a.href = 'mailto:' + addr;
+        a.textContent = addr;
+        btn.replaceWith(a);
+        a.focus();
+      });
+    });
+  </script>
 </body>
 </html>
