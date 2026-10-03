@@ -44,6 +44,8 @@ A Reject means make no changes and ask what to adjust.
 - `/seattlesports/`: follows `DESIGN.md` like the home page (same header,
   light/dark toggle, Sources footer). Team panels keep each team's official
   colour on the header band only; bodies sit on the card surface.
+- `/tirepressure/`: follows `DESIGN.md` like `/seattlesports/`; unit chips live
+  in the masthead, results sit on framed signboards.
 - Other app pages: dark theme. Copy the `:root` tokens, nav (`← amanvg` back link,
   centered title), `.card`, and form styles from an existing page such as
   `commuteplanner/index.html` rather than inventing new ones. Inter from
@@ -60,7 +62,9 @@ A Reject means make no changes and ask what to adjust.
 
 - Called directly from the browser: fueleconomy.gov REST (`/ws/rest`, cache
   responses in localStorage), Nominatim (max 1 request/second, sleep between
-  calls), the public OSRM demo router, zippopotam.us for zip → state.
+  calls), the public OSRM demo router, zippopotam.us for zip → state,
+  Open-Meteo (current temperature, elevation, 10-year daily archive; summary
+  cached in localStorage per day).
 - Sources without CORS are scraped by stdlib-only Python scripts into a
   committed `data/*.json` the page reads same-origin:
   - `commute/update_prices.py` → `commute/data/gas-prices.json`, daily AAA
@@ -89,5 +93,8 @@ A Reject means make no changes and ask what to adjust.
   a time, into a comparison of the modes of transport available for a commute;
   blue is reserved for driving. Turn-by-turn directions exist behind
   `SHOW_DIRECTIONS = false`.
+- `/tirepressure/` Tire Pressure: fill pressure that averages to the cold
+  placard over the next 30 days, from current temperature, 10-year climate
+  and altitude. Follows `DESIGN.md`; units °F/°C and PSI/kPa/bar.
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
   dashboards and maps; `carpicker/` is an older, unlinked page.
