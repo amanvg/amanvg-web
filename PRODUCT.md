@@ -19,11 +19,10 @@ A personal collection of single-purpose apps built for fun, not a product or por
 Served by GitHub Pages from `main`. No build step, no framework, no shared JS: one self-contained `index.html` per project. Data comes from public APIs called in the browser (fueleconomy.gov, Nominatim, OSRM, zippopotam.us, Open-Meteo) or from committed `data/*.json` files refreshed by scripts and GitHub Actions. Dates are ISO-8601, currency is USD, times are UTC.
 
 ## Capabilities and Constraints
-- Sections: `/commute/`, `/roadtrip/`, `/whichcar/`, `/commuteplanner/` (growing into a comparison of commute transport modes), `/tirepressure/`, `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`, `/trust/`. `carpicker/` is older and unlinked.
+- Sections: `/commute/`, `/tirepressure/`, `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`, `/trust/`. `carpicker/` is older and unlinked.
 - Desktop first: verify at 1440×900 and 1024×768, collapse to one column below 960px.
 - UI text is labels, questions, counts, and attribution only. No taglines, help text, or explanatory sentences.
 - Data sources are attributed in the page footer or map attribution.
-- EVs are shown by kWh/100 mi, never MPGe. Blue is reserved for driving in Commute Planner.
 - Every change goes through the approval process in `CLAUDE.md`.
 
 ## Brand Commitments
@@ -31,10 +30,10 @@ Home page (`/`): WPA serigraph look defined in `DESIGN.md`, in two modes that fo
 
 `/seattlesports/` and `/tirepressure/` follow `DESIGN.md` like the home page. `/seattlesports/`: pine Sports-band masthead over a flush 2×2 of team panels, each team's official colour on its header band only, ledger-striped standings, ESPN credited in Sources.
 
-Other app pages (`/commute/`, `/roadtrip/`, `/whichcar/`, `/commuteplanner/`, etc.): not yet migrated. They keep the earlier look until each is taken up one step at a time: dark theme, Inter, 20px card radius, accent `#3b82f6`, shared nav (`← amanvg` back link, centered title), shared `.card` and form styles.
+Other app pages (`/commute/`, etc.): not yet migrated. They keep the earlier look until each is taken up one step at a time: dark theme, Inter, 20px card radius, accent `#3b82f6`, shared nav (`← amanvg` back link, centered title), shared `.card` and form styles.
 
 ## Evidence on Hand
-Live data files: `commute/data/gas-prices.json`, `seattlesports/data/snapshot.json`, `commuteplanner/data/electricity-prices.json`, `whichcar/data/vehicles.json`. No testimonials, usage metrics, or customer claims exist and none should be invented.
+Live data files: `commute/data/gas-prices.json`, `seattlesports/data/snapshot.json`. No testimonials, usage metrics, or customer claims exist and none should be invented.
 
 ## Product Principles
 - One small app, one question, answered accurately with real data.
