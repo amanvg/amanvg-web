@@ -70,6 +70,13 @@
 
     .nav-logo span { color: var(--text-tertiary); }
 
+    .nav-link {
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-link:hover { color: var(--text-primary); background: var(--border); }
+
     /* ─────────────────────────────────────────
        PROJECTS
     ───────────────────────────────────────── */
@@ -303,6 +310,7 @@
   <nav aria-label="Main navigation">
     <div class="nav-inner">
       <a class="nav-logo" href="/">aman<span>vg</span></a>
+      <a class="nav-link" href="/trust/">Trust</a>
     </div>
   </nav>
 

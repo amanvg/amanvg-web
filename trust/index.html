@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trust Center — amanvg</title>
+  <meta name="description" content="Privacy, accessibility, security and data-source facts for amanvg.com.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: dark;
+      --bg: #141414;
+      --surface: #1e1e1e;
+      --surface-2: #232323;
+      --border: #2e2e2e;
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --text-tertiary: #8a8a8a;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.15);
+      --accent-border: rgba(59, 130, 246, 0.35);
+      --accent-text: #93c5fd;
+      --radius-card: 20px;
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent-text); }
+    :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
+
+    .skip-link {
+      position: absolute; top: -40px; left: 16px;
+      background: var(--surface); color: var(--text-primary);
+      padding: 8px 16px; border-radius: 8px; z-index: 2000;
+      font-size: 13px; font-weight: 500; text-decoration: none;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(13,13,13,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      padding: 0 32px; height: 56px;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    }
+    .nav-back {
+      justify-self: start;
+      font-size: 13px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-back:hover { color: var(--text-primary); background: var(--border); }
+    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
+
+    /* ── Page ── */
+    .page { max-width: 1120px; margin: 0 auto; padding: 40px 32px 80px; }
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; }
+    .page-header .meta { margin-top: 8px; font-size: 13px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+
+    .jump { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .jump a {
+      font-size: 13px; font-weight: 600; color: var(--text-secondary); text-decoration: none;
+      padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .jump a:hover { color: var(--text-primary); border-color: var(--accent-border); }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-md);
+      padding: 28px;
+      margin-bottom: 16px;
+      scroll-margin-top: 72px;
+    }
+    .card h2 {
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: 18px;
+    }
+    .card h3 {
+      font-size: 12px; font-weight: 600; color: var(--text-secondary);
+      margin: 22px 0 10px;
+    }
+
+    .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .fact { background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .fact dt { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    .fact dd { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+    .fact dd.ok { color: var(--accent-text); }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { font-size: 12px; font-weight: 600; color: var(--text-tertiary); white-space: nowrap; }
+    td:first-child { white-space: nowrap; font-weight: 600; }
+    td { color: var(--text-secondary); }
+    td:first-child { color: var(--text-primary); }
+    tr:last-child td { border-bottom: none; }
+    td a { word-break: break-word; }
+
+    .footer { margin-top: 28px; font-size: 12px; color: var(--text-tertiary); line-height: 1.6; }
+
+    @media (max-width: 960px) {
+      .facts { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .nav-inner { padding: 0 16px; }
+      .page { padding: 28px 16px 64px; }
+      .card { padding: 20px; }
+      .facts { grid-template-columns: 1fr; }
+      td:first-child { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#privacy">Skip to content</a>
+
+  <nav aria-label="Main navigation">
+    <div class="nav-inner">
+      <a class="nav-back" href="/">← amanvg</a>
+      <span class="nav-title">Trust Center</span>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="page-header">
+      <h1>Trust Center</h1>
+      <p class="meta">Last reviewed 2026-10-03</p>
+    </div>
+
+    <div class="jump" aria-label="Sections">
+      <a href="#privacy">Privacy</a>
+      <a href="#accessibility">Accessibility</a>
+      <a href="#security">Security</a>
+      <a href="#sources">Data sources</a>
+    </div>
+
+    <section class="card" id="privacy" aria-labelledby="privacy-h">
+      <h2 id="privacy-h">Privacy</h2>
+      <dl class="facts">
+        <div class="fact"><dt>Cookies set</dt><dd class="ok">None</dd></div>
+        <div class="fact"><dt>Analytics or ad trackers</dt><dd class="ok">None</dd></div>
+        <div class="fact"><dt>Accounts</dt><dd class="ok">None</dd></div>
+        <div class="fact"><dt>Pages using localStorage</dt><dd>5</dd></div>
+      </dl>
+
+      <h3>Stored in your browser</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Page</th><th>Key</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><td>/commute/, /roadtrip/, /carafford/, /commuteplanner/</td><td><code>epa:*</code></td><td>fueleconomy.gov vehicle responses</td></tr>
+            <tr><td>/commuteplanner/</td><td><code>commuteplanner:addresses</code></td><td>Home and destination addresses</td></tr>
+            <tr><td>/tirepressure/</td><td><code>tirepressure.inputs</code></td><td>Form inputs</td></tr>
+            <tr><td>/tirepressure/</td><td><code>tirepressure.hist.*</code></td><td>Open-Meteo history responses by rounded location</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Requests to third parties</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Page</th><th>Sent</th><th>Recipient</th></tr></thead>
+          <tbody>
+            <tr><td>All pages</td><td>Font request (IP address, browser)</td><td>Google Fonts</td></tr>
+            <tr><td>/commute/, /roadtrip/, /carafford/, /commuteplanner/</td><td>Vehicle selection</td><td>fueleconomy.gov</td></tr>
+            <tr><td>/commute/, /roadtrip/, /carafford/, /commuteplanner/, /tirepressure/</td><td>Zip code</td><td>zippopotam.us</td></tr>
+            <tr><td>/commute/, /roadtrip/, /commuteplanner/, /tirepressure/</td><td>Address or place name</td><td>Nominatim (OpenStreetMap)</td></tr>
+            <tr><td>/commute/, /roadtrip/, /commuteplanner/</td><td>Route coordinates</td><td>OSRM demo router</td></tr>
+            <tr><td>/commuteplanner/</td><td>Map tile requests; Leaflet files</td><td>OpenStreetMap tile servers; cdnjs</td></tr>
+            <tr><td>/tirepressure/</td><td>Place coordinates; device location when the location button is used</td><td>Open-Meteo; Nominatim</td></tr>
+            <tr><td>/seattlesports/</td><td>Live score requests</td><td>ESPN</td></tr>
+            <tr><td>/tempest/</td><td>Weather station requests</td><td>WeatherFlow</td></tr>
+            <tr><td>/USStates/, /worldmap/, /mlbstadiums/, /roadtrip/</td><td>Map library and boundary files</td><td>jsDelivr</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="accessibility" aria-labelledby="accessibility-h">
+      <h2 id="accessibility-h">Accessibility</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Practice</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td>Page language declared</td><td>14 of 14 pages</td></tr>
+            <tr><td>Responsive viewport; zoom not disabled</td><td>14 of 14 pages</td></tr>
+            <tr><td>Visible keyboard focus</td><td>13 of 14 pages</td></tr>
+            <tr><td>Skip-to-content link</td><td>Home, Trust Center</td></tr>
+            <tr><td>Labelled form fields</td><td>/commute/, /carafford/, /commuteplanner/</td></tr>
+            <tr><td>Images with alt text</td><td>All images</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="footer">Feedback: <a href="mailto:amanvg@gmail.com">amanvg@gmail.com</a></p>
+    </section>
+
+    <section class="card" id="security" aria-labelledby="security-h">
+      <h2 id="security-h">Security</h2>
+      <dl class="facts">
+        <div class="fact"><dt>Transport</dt><dd>HTTPS</dd></div>
+        <div class="fact"><dt>Hosting</dt><dd>GitHub Pages</dd></div>
+        <div class="fact"><dt>Automated data jobs</dt><dd>2</dd></div>
+        <div class="fact"><dt>Pages with a server</dt><dd class="ok">0</dd></div>
+      </dl>
+
+      <h3>Automated jobs</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Job</th><th>Schedule (UTC)</th><th>Output</th></tr></thead>
+          <tbody>
+            <tr><td>Seattle Sports snapshot</td><td>Every 30 minutes</td><td>/seattlesports/data/snapshot.json</td></tr>
+            <tr><td>Commute gas prices</td><td>Daily 12:00</td><td>/commute/data/gas-prices.json</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Disclosure</h3>
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr><td>Security contact</td><td><a href="mailto:amanvg@gmail.com">amanvg@gmail.com</a></td></tr>
+            <tr><td>security.txt</td><td><a href="/.well-known/security.txt">/.well-known/security.txt</a></td></tr>
+            <tr><td>Source</td><td><a href="https://github.com/amanvg/amanvg-web" target="_blank" rel="noopener">github.com/amanvg/amanvg-web</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="sources" aria-labelledby="sources-h">
+      <h2 id="sources-h">Data sources</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Source</th><th>Used for</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://www.fueleconomy.gov/" target="_blank" rel="noopener">fueleconomy.gov</a> (U.S. DOE and EPA)</td><td>Vehicle ratings</td></tr>
+            <tr><td><a href="https://gasprices.aaa.com/" target="_blank" rel="noopener">AAA</a></td><td>State gas price averages</td></tr>
+            <tr><td><a href="https://www.eia.gov/" target="_blank" rel="noopener">U.S. EIA</a></td><td>Residential electricity prices</td></tr>
+            <tr><td><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> (ODbL)</td><td>Geocoding and map tiles</td></tr>
+            <tr><td><a href="https://project-osrm.org/" target="_blank" rel="noopener">OSRM</a></td><td>Driving routes</td></tr>
+            <tr><td><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0)</td><td>Temperature and history</td></tr>
+            <tr><td><a href="https://www.zippopotam.us/" target="_blank" rel="noopener">Zippopotam.us</a></td><td>Zip code to state</td></tr>
+            <tr><td><a href="https://www.espn.com/" target="_blank" rel="noopener">ESPN</a></td><td>Seattle sports scores and schedules</td></tr>
+            <tr><td><a href="https://weatherflow.com/" target="_blank" rel="noopener">WeatherFlow Tempest</a></td><td>Weather station readings</td></tr>
+            <tr><td><a href="https://github.com/topojson/us-atlas" target="_blank" rel="noopener">us-atlas</a>, <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas</a></td><td>Map boundaries</td></tr>
+            <tr><td><a href="https://leafletjs.com/" target="_blank" rel="noopener">Leaflet</a>, <a href="https://d3js.org/" target="_blank" rel="noopener">D3</a></td><td>Mapping libraries</td></tr>
+            <tr><td><a href="https://rsms.me/inter/" target="_blank" rel="noopener">Inter</a> (OFL), served by Google Fonts</td><td>Typeface</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
