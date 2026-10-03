@@ -5,501 +5,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seattle Sports — amanvg</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Big+Shoulders+Display:wght@900&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg: #141414;
-            --surface: #1e1e1e;
-            --surface-hover: #252525;
-            --border: #2e2e2e;
-            --border-hover: #3d3d3d;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --text-tertiary: #8a8a8a;
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4), 0 10px 40px -4px rgba(0,0,0,0.5);
-            --radius-card: 20px;
-            --radius-pill: 999px;
-            --green: #22c55e;
-            --red: #ef4444;
-            --live-red: #ef4444;
-        }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ── Nav ─────────────────────────────────────────────────── */
-
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(13, 13, 13, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .nav-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 40px;
-            height: 56px;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-        }
-
-        .nav-back {
-            justify-self: start;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            transition: color 0.15s, background 0.15s;
-        }
-
-        .nav-back:hover {
-            color: var(--text-primary);
-            background: var(--border);
-        }
-
-        .nav-title {
-            font-size: 17px;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            text-align: center;
-        }
-
-        /* ── Page layout ─────────────────────────────────────────── */
-
-        .page-content {
-            max-width: 1280px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 40px 40px 80px;
-            flex: 1;
-        }
-
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 32px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .page-header h1 {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            color: var(--text-primary);
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .auto-refresh-label {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-        }
-
-        #last-updated {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        #refresh-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            padding: 6px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-            font-family: inherit;
-            transition: background 0.15s, border-color 0.15s, color 0.15s;
-        }
-
-        #refresh-btn:hover {
-            background: var(--surface-hover);
-            border-color: var(--border-hover);
-            color: var(--text-primary);
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .team-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: border-color 0.15s, box-shadow 0.15s;
-            box-shadow: var(--shadow-md);
-        }
-
-        .team-card:hover {
-            border-color: var(--border-hover);
-        }
-
-        .accent-bar {
-            height: 3px;
-        }
-
-        .team-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 16px 12px;
-        }
-
-        .team-logo {
-            width: 44px;
-            height: 44px;
-            object-fit: contain;
-        }
-
-        .team-info { flex: 1; }
-
-        .team-name {
-            font-weight: 700;
-            font-size: 1.05rem;
-            color: var(--text-primary);
-        }
-
-        .team-record {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-top: 2px;
-        }
-
-        .live-badge {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--live-red);
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 4px;
-            letter-spacing: 0.05em;
-        }
-
-        .live-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--live-red);
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .season-badge {
-            font-size: 0.6875rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 4px;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .season-badge.phase-regular {
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-        }
-
-        .season-badge.phase-pre {
-            background: rgba(245, 158, 11, 0.15);
-            color: #fbbf24;
-        }
-
-        .season-badge.phase-post {
-            background: rgba(168, 85, 247, 0.15);
-            color: #c084fc;
-        }
-
-        .season-badge.phase-off {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-tertiary);
-        }
-
-        /* ── Card body: two-column layout ─────────────────────── */
-
-        .team-body {
-            padding: 0 16px 16px;
-            display: flex;
-            gap: 16px;
-        }
-
-        .card-games {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            min-width: 0;
-        }
-
-        .card-standings {
-            width: 300px;
-            flex-shrink: 0;
-            border-left: 1px solid var(--border);
-            padding-left: 20px;
-        }
-
-        /* ── Game sections (left side, unchanged) ─────────────── */
-
-        .section-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-tertiary);
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .section-label.live-label {
-            color: var(--live-red);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .game-box {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            padding: 10px 12px;
-        }
-
-        .game-matchup {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .game-team-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-        }
-
-        .game-team-logo {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-            flex-shrink: 0;
-        }
-
-        .game-team-name {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .game-team-score {
-            font-variant-numeric: tabular-nums;
-            min-width: 20px;
-            text-align: right;
-            font-weight: 600;
-        }
-
-        .game-team-row.winner { font-weight: 700; }
-        .game-team-row.loser { color: var(--text-tertiary); }
-
-        .game-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 6px;
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-        }
-
-        .result-w { color: var(--green); font-weight: 700; }
-        .result-l { color: var(--red); font-weight: 700; }
-
-        .next-game-box {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            padding: 10px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .next-opponent {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            min-width: 0;
-        }
-
-        .next-details {
-            text-align: right;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .next-details .date {
-            font-size: 0.8rem;
-            color: var(--text-tertiary);
-            white-space: nowrap;
-        }
-
-        .no-data {
-            color: var(--text-tertiary);
-            font-size: 0.85rem;
-        }
-
-        .loading-text {
-            color: var(--text-tertiary);
-            font-size: 0.85rem;
-            padding: 20px 0;
-            text-align: center;
-        }
-
-        .error-text {
-            color: var(--red);
-            font-size: 0.85rem;
-        }
-
-        /* ── Standings table (right side) ─────────────────────── */
-
-        .standings-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.82rem;
-        }
-
-        .standings-table th {
-            color: var(--text-tertiary);
-            font-size: 0.6875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            padding: 4px 5px;
-            text-align: right;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .standings-table th.rank-col,
-        .standings-table th.s-team-col {
-            text-align: left;
-        }
-
-        .standings-table td {
-            padding: 5px 5px;
-            text-align: right;
-            font-variant-numeric: tabular-nums;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        .standings-table td.rank-col {
-            text-align: left;
-            color: var(--text-tertiary);
-            width: 18px;
-        }
-
-        .standings-table td.s-team-col {
-            text-align: left;
-        }
-
-        .standings-table tr.is-us td {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .standings-logo {
-            width: 16px;
-            height: 16px;
-            object-fit: contain;
-            vertical-align: middle;
-            margin-right: 3px;
-        }
-
-        /* ── Responsive ───────────────────────────────────────── */
-
-        @media (max-width: 900px) {
-            .dashboard { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 640px) {
-            .nav-inner { padding: 0 20px; }
-            .nav-title { font-size: 15px; }
-            .page-content { padding: 32px 20px 60px; }
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-            .team-body { flex-direction: column; }
-            .card-standings {
-                width: 100%;
-                border-left: none;
-                border-top: 1px solid var(--border);
-                padding-left: 0;
-                padding-top: 14px;
-            }
-        }
-        :focus-visible { outline: 2px solid #6366f1; outline-offset: 2px; }
-  </style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Layout: nav, then one framed poster sheet holding a masthead band and four team panels */
+:root{
+  color-scheme:dark;
+  --night:#0f2421; --paper:#f1e4c3; --ink:#10201d; --gold:#f0b43c; --orange:#e8742c; --navy:#1b2f66;
+  --display:'Big Shoulders Display','Arial Narrow',sans-serif;
+  --label:'Barlow Condensed','Arial Narrow',sans-serif;
+  --gutter:max(40px,calc((100% - 1200px)/2));
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html{scrollbar-gutter:stable}
+body{background:var(--night);color:var(--paper);font-family:var(--label);min-height:100vh;-webkit-font-smoothing:antialiased;text-transform:uppercase}
+::selection{background:var(--gold);color:var(--ink)}
+:focus-visible{outline:3px solid var(--paper);outline-offset:-6px}
+.skip-link{position:absolute;top:-48px;left:16px;background:var(--paper);color:var(--ink);padding:8px 16px;z-index:200;font-size:16px;font-weight:700;letter-spacing:.1em;text-decoration:none}
+.skip-link:focus{top:8px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--night);border-bottom:2px solid var(--paper)}
+.nav{height:60px;padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--display);font-weight:900;font-size:30px;letter-spacing:.06em;color:var(--paper);text-decoration:none}
+.nav a.link{display:inline-flex;align-items:center;min-height:44px;font-weight:700;font-size:17px;letter-spacing:.22em;color:var(--paper);text-decoration:none;padding:8px 14px;border:2px solid transparent}
+.nav a.link:hover{border-color:var(--gold);color:var(--gold)}
+
+/* poster sheet: cream paper margin, ink rule and screenprint grain, as on the home page */
+.sheet{position:relative;margin:24px var(--gutter) 40px;border:10px solid var(--paper);background:var(--paper);outline:2px solid var(--ink);outline-offset:-7px}
+.sheet::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:multiply;opacity:.07;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* masthead band: the home page's Sports navy */
+.masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--navy);color:var(--paper)}
+.masthead h1{font-weight:800;letter-spacing:.12em;font-size:clamp(32px,3.4vw,46px);line-height:1}
+.header-right{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;font-weight:600;font-size:15px;letter-spacing:.2em}
+#refresh-btn{font:inherit;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);background:transparent;border:2px solid var(--paper);min-height:44px;padding:8px 18px;cursor:pointer;transition:color .25s var(--ease),border-color .25s var(--ease)}
+#refresh-btn:hover{border-color:var(--gold);color:var(--gold)}
+#refresh-btn:focus-visible{outline-offset:3px}
+
+/* team panels: official team colours as flat fields (the one exception to the five band hues) */
+.dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.team-card{background:color-mix(in srgb,var(--c) 80%,#000);color:var(--paper);min-width:0;container-type:inline-size}
+.team-header{display:flex;align-items:center;gap:16px;min-height:68px;padding:10px 24px;background:var(--c)}
+.logo-tile{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:28px;height:28px}
+.logo-tile img{width:100%;height:100%;object-fit:contain}
+.team-header .logo-tile{width:52px;height:52px}
+.team-info{flex:1;min-width:0}
+.team-badges{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-left:auto}
+.team-name{text-wrap:balance;font-weight:800;font-size:clamp(24px,2vw,28px);letter-spacing:.1em;line-height:1}
+.team-record{font-weight:600;font-size:16px;letter-spacing:.2em;margin-top:6px;white-space:nowrap}
+.accent-bar{height:6px;background:var(--a)}
+.live-badge{display:flex;align-items:center;gap:8px;background:var(--orange);color:var(--ink);font-weight:800;font-size:15px;letter-spacing:.2em;padding:5px 10px}
+.live-dot{width:8px;height:8px;background:currentColor;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.season-badge{font-weight:700;font-size:13px;letter-spacing:.2em;padding:4px 10px;border:2px solid var(--paper);white-space:nowrap}
+.season-badge.phase-off{opacity:.75}
+
+.team-body{display:flex;gap:24px;padding:16px 24px 20px}
+.card-games{flex:1;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card-standings{width:250px;flex-shrink:0;border-left:2px solid color-mix(in srgb,var(--paper) 35%,transparent);padding-left:20px}
+.section-label{font-weight:700;font-size:13px;letter-spacing:.22em;opacity:.8;margin-bottom:8px}
+.section-label.live-label{display:flex;align-items:center;gap:8px;opacity:1}
+
+.game-box,.next-game-box{background:color-mix(in srgb,var(--paper) 9%,transparent);padding:12px 14px}
+.game-matchup{display:flex;flex-direction:column;gap:6px}
+.game-team-row{display:flex;align-items:center;gap:10px;font-weight:700;font-size:21px;letter-spacing:.08em;line-height:1.1}
+.game-team-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.game-team-score{font-weight:800;font-size:28px;font-variant-numeric:tabular-nums;min-width:28px;text-align:right}
+.game-team-row.winner{font-weight:800}
+.game-team-row.loser{font-weight:600;opacity:.75}
+.game-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-weight:600;font-size:15px;letter-spacing:.16em}
+.result-w,.result-l{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;font-weight:800;font-size:17px;letter-spacing:0}
+.result-w{background:var(--paper);color:var(--ink)}
+.result-l{border:2px solid var(--paper)}
+
+.next-game-box{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.next-opponent{display:flex;align-items:center;gap:10px;font-weight:800;font-size:24px;letter-spacing:.08em;min-width:0}
+.next-details{text-align:right;font-weight:600;font-size:16px;letter-spacing:.14em;line-height:1.25;flex-shrink:0}
+
+.no-data,.loading-text,.error-text{font-weight:600;font-size:16px;letter-spacing:.18em}
+.loading-text{padding:12px 0}
+.error-text{display:inline-block;background:var(--orange);color:var(--ink);padding:5px 10px}
+
+.standings-table{width:100%;border-collapse:collapse;font-size:16px;letter-spacing:.06em}
+.standings-table th{font-weight:700;font-size:13px;letter-spacing:.16em;padding:4px 4px;text-align:right;border-bottom:2px solid color-mix(in srgb,var(--paper) 35%,transparent)}
+.standings-table th.rank-col,.standings-table th.s-team-col{text-align:left}
+.standings-table td{padding:2px 4px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.standings-table td.rank-col{text-align:left;width:20px;opacity:.8}
+.standings-table td.s-team-col{text-align:left}
+.standings-table .logo-tile{width:20px;height:20px}
+.standings-table tr.is-us td{background:color-mix(in srgb,var(--paper) 16%,transparent);font-weight:800}
+.standings-table td.s-team-col .logo-tile{vertical-align:middle;margin-right:6px}
+
+.sources{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;padding:0 var(--gutter) 48px;font-weight:600;font-size:15px;letter-spacing:.2em}
+.sources b{font-family:var(--display);font-weight:900;font-size:20px;letter-spacing:.3em;color:var(--gold)}
+
+@media(max-width:960px){.dashboard{grid-template-columns:1fr}}
+@container (max-width:560px){
+  .team-body{flex-direction:column;gap:20px}
+  .card-standings{width:100%;border-left:none;border-top:2px solid color-mix(in srgb,var(--paper) 35%,transparent);padding:16px 0 0}
+}
+@media(max-width:700px){
+  :root{--gutter:16px}
+  .sheet{border-width:8px;outline-offset:-6px}
+  .masthead{padding:12px 16px}
+  .team-header{flex-wrap:wrap;padding:12px 16px}
+  .team-info{flex-basis:calc(100% - 72px)}
+  .team-badges{flex-basis:100%;justify-content:flex-start;margin-left:68px}
+  .team-body{flex-direction:column;gap:20px;padding:16px 16px 20px}
+  .card-standings{width:100%;border-left:none;border-top:2px solid color-mix(in srgb,var(--paper) 35%,transparent);padding:16px 0 0}
+}
+@media(forced-colors:active){.sheet::after{display:none}}
+@media(prefers-reduced-motion:reduce){.live-dot{animation:none}#refresh-btn{transition:none}}
+    </style>
 </head>
 <body>
-
-    <!-- NAV -->
+    <a class="skip-link" href="#dashboard">Skip to content</a>
     <nav aria-label="Main navigation">
-        <div class="nav-inner">
-            <a class="nav-back" href="/">← amanvg</a>
-            <span class="nav-title">Seattle Sports</span>
-            <span></span>
-        </div>
+        <div class="nav"><a class="logo" href="/">amanvg</a><a class="link" href="/trust/">Trust</a></div>
     </nav>
-
-    <!-- PAGE CONTENT -->
-    <main class="page-content">
-        <div class="page-header">
-            <h1>Seattle Sports</h1>
-            <div class="header-right">
-                <span class="auto-refresh-label">Auto-refreshes every 30s</span>
-                <span id="last-updated"></span>
-                <button id="refresh-btn" onclick="manualRefresh()">Refresh</button>
-            </div>
+    <main>
+        <div class="sheet">
+            <header class="masthead">
+                <h1>Seattle Sports</h1>
+                <div class="header-right">
+                    <span class="auto-refresh-label">Auto-refreshes every 30s</span>
+                    <span id="last-updated"></span>
+                    <button id="refresh-btn" onclick="manualRefresh()">Refresh</button>
+                </div>
+            </header>
+            <div id="dashboard" class="dashboard"></div>
         </div>
-        <div id="dashboard" class="dashboard"></div>
+        <div class="sources"><b>Sources</b><span>ESPN</span></div>
     </main>
 
     <script>
@@ -730,16 +366,16 @@
 
         function renderSkeletons() {
             document.getElementById('dashboard').innerHTML = TEAMS.map(t => `
-                <div class="team-card" id="card-${t.name}">
-                    <div class="accent-bar" style="background:${t.accentColor}"></div>
+                <section class="team-card" id="card-${t.name}" style="--c:${t.primaryColor};--a:${t.accentColor}">
                     <div class="team-header">
                         <div class="team-info">
-                            <div class="team-name">${t.name}</div>
-                            <div class="team-record" style="color:var(--text-tertiary)">Loading...</div>
+                            <h2 class="team-name">${t.name}</h2>
+                            <div class="team-record">Loading</div>
                         </div>
                     </div>
-                    <div class="team-body"><div class="loading-text">Fetching data...</div></div>
-                </div>
+                    <div class="accent-bar"></div>
+                    <div class="team-body"><div class="loading-text">Fetching data</div></div>
+                </section>
             `).join('');
         }
 
@@ -750,14 +386,14 @@
 
             if (d?.error) {
                 el.innerHTML = `
-                    <div class="accent-bar" style="background:${team.accentColor}"></div>
                     <div class="team-header">
-                        ${team.logo ? `<img class="team-logo" src="${team.logo}" alt="">` : ''}
+                        ${logoTile(team.logo)}
                         <div class="team-info">
-                            <div class="team-name">${team.displayName || team.name}</div>
+                            <h2 class="team-name">${team.displayName || team.name}</h2>
                         </div>
                     </div>
-                    <div class="team-body"><div class="error-text">${d.error}</div></div>`;
+                    <div class="accent-bar"></div>
+                    <div class="team-body"><div class="error-text">${esc(d.error)}</div></div>`;
                 return;
             }
 
@@ -791,16 +427,18 @@
             const standingsBody = renderStandings(team, standings);
 
             el.innerHTML = `
-                <div class="accent-bar" style="background:${team.accentColor}"></div>
                 <div class="team-header">
-                    ${team.logo ? `<img class="team-logo" src="${team.logo}" alt="">` : ''}
+                    ${logoTile(team.logo)}
                     <div class="team-info">
-                        <div class="team-name">${team.displayName || team.name}</div>
+                        <h2 class="team-name">${team.displayName || team.name}</h2>
                         <div class="team-record">${record || 'Record unavailable'}</div>
                     </div>
-                    ${liveGame ? '<div class="live-badge"><span class="live-dot"></span>LIVE</div>' : ''}
-                    ${seasonPhase ? `<div class="season-badge ${seasonPhase.cls}">${seasonPhase.label}</div>` : ''}
+                    <div class="team-badges">
+                        ${liveGame ? '<div class="live-badge"><span class="live-dot"></span>LIVE</div>' : ''}
+                        ${seasonPhase ? `<div class="season-badge ${seasonPhase.cls}">${seasonPhase.label}</div>` : ''}
+                    </div>
                 </div>
+                <div class="accent-bar"></div>
                 <div class="team-body">
                     <div class="card-games">${gamesBody}</div>
                     <div class="card-standings">${standingsBody}</div>
@@ -834,7 +472,7 @@
                 }
                 return `
                     <div class="${cls}">
-                        ${logo ? `<img class="game-team-logo" src="${logo}" alt="">` : ''}
+                        ${logoTile(logo)}
                         <span class="game-team-name">${esc(abbr)}</span>
                         <span class="game-team-score">${esc(score)}</span>
                     </div>`;
@@ -884,7 +522,7 @@
                     <div class="section-label">Next Game</div>
                     <div class="next-game-box">
                         <div class="next-opponent">
-                            ${oppLogo ? `<img class="game-team-logo" src="${oppLogo}" alt="">` : ''}
+                            ${logoTile(oppLogo)}
                             <span>${prefix} ${esc(oppName)}</span>
                         </div>
                         <div class="next-details">
@@ -905,7 +543,7 @@
             const cols = STANDINGS_COLUMNS[team.league] || [];
             const entries = standingsData.divisionEntries;
 
-            const headerCells = cols.map(c => `<th>${c.label}</th>`).join('');
+            const headerCells = cols.map(c => `<th scope="col">${c.label}</th>`).join('');
 
             const rows = entries.map((entry, i) => {
                 const isUs = String(entry.team?.id) === String(team.id);
@@ -920,7 +558,7 @@
                 return `
                     <tr class="${isUs ? 'is-us' : ''}">
                         <td class="rank-col">${i + 1}</td>
-                        <td class="s-team-col">${logo ? `<img class="standings-logo" src="${logo}" alt="">` : ''}${esc(abbr)}</td>
+                        <td class="s-team-col">${logoTile(logo)}${esc(abbr)}</td>
                         ${statCells}
                     </tr>`;
             }).join('');
@@ -930,13 +568,21 @@
                 <table class="standings-table">
                     <thead>
                         <tr>
-                            <th class="rank-col">#</th>
-                            <th class="s-team-col">Team</th>
+                            <th class="rank-col" scope="col">#</th>
+                            <th class="s-team-col" scope="col">Team</th>
                             ${headerCells}
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
                 </table>`;
+        }
+
+        // ESPN publishes a transparent 500-dark variant of each logo for dark grounds;
+        // fall back to the standard logo if a team has none.
+        function logoTile(url) {
+            if (!url) return '';
+            const dark = url.replace('/500/', '/500-dark/');
+            return `<span class="logo-tile"><img src="${esc(dark)}" data-fallback="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.fallback" alt=""></span>`;
         }
 
         function esc(str) {

@@ -1,6 +1,6 @@
 ---
 name: amanvg
-description: Home page of amanvg.com as a flat-colour poster sheet of five category bands on a night-green ground.
+description: Home page and Seattle Sports page of amanvg.com as flat-colour poster sheets on a night-green ground.
 colors:
   night-green: "#0f2421"
   paper-cream: "#f1e4c3"
@@ -11,6 +11,14 @@ colors:
   band-pine: "#1f5a45"
   band-orange: "#e8742c"
   band-plum: "#6b2f4a"
+  team-seahawks: "#002244"
+  team-seahawks-accent: "#69BE28"
+  team-mariners: "#0C2C56"
+  team-mariners-accent: "#005C5C"
+  team-kraken: "#001628"
+  team-kraken-accent: "#99D9D9"
+  team-sounders: "#005595"
+  team-sounders-accent: "#658D1B"
 typography:
   logo:
     fontFamily: "'Big Shoulders Display', 'Arial Narrow', sans-serif"
@@ -54,6 +62,56 @@ typography:
     fontWeight: 600
     lineHeight: "normal"
     letterSpacing: "0.2em"
+  team-name:
+    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
+    fontSize: "clamp(24px, 2vw, 28px)"
+    fontWeight: 800
+    lineHeight: 1
+    letterSpacing: "0.1em"
+  team-record:
+    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
+    fontSize: "16px"
+    fontWeight: 600
+    lineHeight: "normal"
+    letterSpacing: "0.2em"
+  section-label:
+    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
+    fontSize: "13px"
+    fontWeight: 700
+    lineHeight: "normal"
+    letterSpacing: "0.22em"
+  game-row:
+    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
+    fontSize: "21px"
+    fontWeight: 700
+    lineHeight: 1.1
+    letterSpacing: "0.08em"
+  game-score:
+    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
+    fontSize: "28px"
+    fontWeight: 800
+    lineHeight: "normal"
+    letterSpacing: "normal"
+    fontFeature: "tabular-nums"
+  next-opponent:
+    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
+    fontSize: "24px"
+    fontWeight: 800
+    lineHeight: "normal"
+    letterSpacing: "0.08em"
+  table:
+    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
+    fontSize: "16px"
+    fontWeight: 600
+    lineHeight: "normal"
+    letterSpacing: "0.06em"
+    fontFeature: "tabular-nums"
+  table-head:
+    fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
+    fontSize: "13px"
+    fontWeight: 700
+    lineHeight: "normal"
+    letterSpacing: "0.16em"
 rounded:
   none: "0px"
 spacing:
@@ -67,6 +125,11 @@ spacing:
   row-indent: "56px"
   content-max: "1200px"
   gutter-min: "40px"
+  panel-gap: "10px"
+  accent-stripe: "6px"
+  logo-tile-head: "52px"
+  logo-tile-game: "28px"
+  logo-tile-table: "20px"
 components:
   band-head:
     backgroundColor: "{colors.band-navy}"
@@ -95,11 +158,54 @@ components:
     backgroundColor: "{colors.paper-cream}"
     rounded: "{rounded.none}"
     padding: "10px"
+  masthead:
+    backgroundColor: "{colors.band-navy}"
+    textColor: "{colors.paper-cream}"
+    typography: "{typography.band-title}"
+    rounded: "{rounded.none}"
+    padding: "12px 28px"
+  refresh-button:
+    backgroundColor: "transparent"
+    textColor: "{colors.paper-cream}"
+    rounded: "{rounded.none}"
+    height: "44px"
+    padding: "8px 18px"
+  refresh-button-hover:
+    textColor: "{colors.trail-gold}"
+  team-panel-head:
+    backgroundColor: "{colors.team-seahawks}"
+    textColor: "{colors.paper-cream}"
+    typography: "{typography.team-name}"
+    rounded: "{rounded.none}"
+    padding: "10px 24px"
+  team-panel-stripe:
+    backgroundColor: "{colors.team-seahawks-accent}"
+    height: "6px"
+  team-panel-body:
+    textColor: "{colors.paper-cream}"
+    rounded: "{rounded.none}"
+    padding: "16px 24px 20px"
+  live-chip:
+    backgroundColor: "{colors.band-orange}"
+    textColor: "{colors.poster-ink}"
+    rounded: "{rounded.none}"
+    padding: "5px 10px"
+  result-chip-win:
+    backgroundColor: "{colors.paper-cream}"
+    textColor: "{colors.poster-ink}"
+    rounded: "{rounded.none}"
+    size: "26px"
+  logo-tile:
+    backgroundColor: "transparent"
+    rounded: "{rounded.none}"
+    size: "52px"
 ---
 
 # Design System: amanvg
 
-Scope: this system covers the home page (`/index.html`) only. The app pages (`/commute/`, `/roadtrip/`, `/commuteplanner/`, `/whichcar/`, `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`, `/tirepressure/`, `/carafford/`, `/trust/`) still use the older dark / Inter / `#3b82f6` accent / 20px-radius card style and are not yet part of this system. Do not mix the two on one page.
+Scope: this system covers the home page (`/index.html`) and `/seattlesports/`. The other app pages (`/commute/`, `/roadtrip/`, `/commuteplanner/`, `/whichcar/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`, `/tirepressure/`, `/carafford/`, `/trust/`) still use the older dark / Inter / `#3b82f6` accent / 20px-radius card style and are not yet part of this system. Do not mix the two on one page.
+
+`/seattlesports/` is the first migrated app page. It reuses the nav, cream sheet, ink rule, grain, Sports navy, type and gold hover of the home page, and adds one page pattern (a masthead band over a grid of team panels) plus the Team-Colour Exception below.
 
 ## Overview
 
@@ -115,6 +221,7 @@ The page is flat and printed-feeling: no gradients, no shadows at rest, no round
 - Cream paper frame (10px) around banner and bands; night-green ground outside it.
 - Square corners everywhere; depth comes only from colour steps and an inset keyline on hover.
 - Motion is limited to accordion expand, staggered row fade, and small arrow nudges, all on one easing.
+- On `/seattlesports/` the same sheet holds a navy masthead and four flat team-colour panels instead of bands; state is shown with orange, cream fills and cream outlines only.
 
 ## Colors
 
@@ -132,16 +239,28 @@ A night-green ground, cream paper, one gold accent, and five poster-flat band co
 - **Plum** (`band-plum`, #6b2f4a): Planning.
 - **Child rows** are the band colour mixed 80% with 20% black (`color-mix(in srgb, band 80%, #000)`). Computed shades: navy #162652, blue #234c7e, pine #194837, plum #56263b. The orange band is the exception: its rows are orange mixed 90% with 10% white (`--mix:90%; --tint:#fff`, #ea8241), because ink text on the darker mix measured 3.75:1. These are derived, not separate tokens; always compute from the band colour.
 
+### Team colours (`/seattlesports/` only)
+Official primary and accent colours, used as flat fields on that page and nowhere else.
+- **Seahawks** (`team-seahawks` #002244, accent `team-seahawks-accent` #69BE28)
+- **Mariners** (`team-mariners` #0C2C56, accent `team-mariners-accent` #005C5C)
+- **Kraken** (`team-kraken` #001628, accent `team-kraken-accent` #99D9D9)
+- **Sounders** (`team-sounders` #005595, accent `team-sounders-accent` #658D1B)
+- Panel head = primary; stripe = accent; panel body = primary mixed 80% with 20% black (`color-mix(in srgb, primary 80%, #000)`, the same rule as home child rows). Text is cream on all four. Measured contrast: heads 6.08 to 14.52:1, bodies 7.94 to 15.05:1, masthead 10.11:1, LIVE chip 5.59:1.
+
 ### Neutral
 - **Night Green** (`night-green`, #0f2421): page ground and sticky nav background.
 - **Poster Ink** (`poster-ink`, #10201d): text on the orange band and on cream/gold fills (skip link, selection).
 
 ### Named Rules
+**The Team-Colour Exception Rule.** Official team colours are used as flat fields on `/seattlesports/` only, as head, accent stripe and derived body. They are the one sanctioned exception to the five band hues. No other page may introduce hues this way without approval.
+
 **The Band-Owns-Its-Colour Rule.** A band sets one `--c` and one `--fg`; its head, its rows, its focus ring, and its hover keyline all derive from those two values. Nothing inside a band introduces another hue.
 
 **The Ink-On-Orange Rule.** Cream text on orange is too weak; the orange band uses ink (#10201d) for its text. Any new light band does the same; pick `--fg` per band, not globally.
 
-**The One Gold Rule.** Gold marks interaction on the dark ground (nav hover) and the Sources label only. It never fills a surface.
+**The One Gold Rule.** Gold marks interaction on the dark ground (nav hover, and the Refresh button hover on `/seattlesports/`) and the Sources label only. It never fills a surface.
+
+**The No-Extra-Hue State Rule.** On `/seattlesports/`, state uses no hue beyond the panel's own colour and the existing orange: live and error are orange with ink text, a win is a cream fill with an ink letter, a loss and a season badge are 2px cream outlines. Do not add green/red result colours.
 
 ## Typography
 
@@ -158,8 +277,18 @@ A night-green ground, cream paper, one gold accent, and five poster-flat band co
 - **Nav Link** (Barlow Condensed 700, 17px, tracking 0.22em, uppercase).
 - **Sources** (Barlow Condensed 600, 15px, tracking 0.2em, uppercase) with the **Sources Label** in Big Shoulders 900, 20px, tracking 0.3em, gold.
 
+`/seattlesports/` adds these steps, all Barlow Condensed, uppercase, minimum 13px:
+- **Masthead title** uses Band Title (the page `h1`); the status label ("auto-refreshes"), updated timestamp and Refresh button are 15px, 600/700, tracking 0.2em.
+- **Team Name** (800, clamp(24px, 2vw, 28px), line-height 1, tracking 0.1em, `text-wrap: balance`): panel `h2`.
+- **Team Record** (600, 16px, tracking 0.2em).
+- **Section Label** (700, 13px, tracking 0.22em, 80% opacity): "Last Game", "Next Game", division name.
+- **Game Row** (700, 21px, tracking 0.08em) with **Score** (800, 28px, tabular numerals) and **Next Opponent** (800, 24px, tracking 0.08em).
+- **Table** (600, 16px, tracking 0.06em, tabular numerals); head cells 13px, 700, tracking 0.16em.
+
 ### Named Rules
 **The All-Caps Tracked Rule.** Every piece of text on the page is uppercase with positive letter-spacing; tracking widens as size shrinks (0.12em at band size, 0.32em at qualifier size).
+
+**The Tabular Numerals Rule.** Scores, records and standings use tabular numerals so columns align.
 
 **The Two Display Marks Rule.** Big Shoulders Display 900 appears only on the logo and the Sources label. Do not extend it to headings.
 
@@ -168,6 +297,8 @@ A night-green ground, cream paper, one gold accent, and five poster-flat band co
 Single column, content centred with a fluid gutter of `max(40px, (100% - 1200px) / 2)`, so the nav, the sheet, and the Sources line share the same edges. At 700px and below the gutter drops to 16px, the sheet border to 8px, band height to 68px, band padding to 16px, and row indent to 32px.
 
 Vertical rhythm: sticky nav 60px with a 2px cream rule; 44px gap between nav and sheet; sheet bottom margin 40px; Sources padded 48px at the bottom. Bands are 76px tall closed; rows are 60px tall, indented 56px from the band edge so they read as children. Band head and row are grids with a flexible title column and a fixed icon column (32px and 28px) with 24px column gap. The banner is full sheet width at a height of clamp(110px, 16vw, 200px), cropped to fit with `object-fit: cover`, anchored at 50% 12% so the peaks and the light-blue notch stay in frame. `html` uses `scrollbar-gutter: stable` so expanding a band does not shift the layout.
+
+`/seattlesports/` keeps the nav, sheet and Sources gutters, with a 24px gap between nav and sheet. Inside the sheet, a navy masthead (min 76px) is followed by a 2x2 grid of team panels separated by 10px of cream (one column at 960px and below). Each panel is a container: its body is games on the left and a 250px standings column on the right, and when the panel is under 560px wide (for example 1024px viewport in 2x2) the standings stack under the games with a 2px divider. At 700px and below the panel head wraps with the badges under the name, the body is one column, and padding drops to 16px.
 
 Categories start collapsed. Accordions are independent (opening one does not close others).
 
@@ -198,6 +329,19 @@ Full-width button, 76px, band colour background, `--fg` text, title left and che
 ### Panel and Project Row
 Panel expands with a grid-rows transition (0fr to 1fr, 0.5s). Rows are 60px, darker band shade, title left and block arrow right. When a band opens, rows fade in and slide from -10px; the second to fourth rows delay by 0.06s, 0.12s, 0.18s (opacity and transform only). Hover adds the inset keyline and moves the arrow 7px right (0.3s). Row focus ring is 3px in `--fg`. Closed panels are `inert`, so their links are out of the tab order. Opening a band scrolls just enough to keep its last row 24px above the fold, never past 72px under the top edge, and stops if the visitor scrolls; under `prefers-reduced-motion` it applies at once. Easing for all expand, slide, and nudge motion: `cubic-bezier(.16, 1, .3, 1)`; the opacity fade is 0.35s `ease`. All of it is disabled under `prefers-reduced-motion`.
 
+### Masthead Band (`/seattlesports/`)
+Full-width Sports-navy band at the top of the sheet: `h1` at Band Title scale left; right side holds the status label, the updated timestamp and the Refresh button. Refresh is square, transparent, 2px cream border, 44px minimum height, 8px/18px padding; hover turns border and text gold (0.25s); focus ring offset 3px. Transitions are off under reduced motion.
+
+### Team Panel (`/seattlesports/`)
+A flat field in a team's official colours (see Team-Colour Exception Rule). Head: 52px team logo (the transparent dark-background variant, no tile fill), team name over record, badges right-aligned. Under the head, a 6px flat stripe in the team accent. Body: a "Last Game" or "Live" box and a "Next Game" box, each a cream 9% tint on the body (12px/14px padding), and a standings column. Game rows show a 28px logo, the abbreviation and a tabular score; the loser row is set at 75% opacity. The Seattle row in standings has a cream 16% tint and weight 800; the table uses a 20px logo tile. Standings and game boxes carry no hover state.
+
+### State Markers (`/seattlesports/`)
+- **LIVE chip:** orange fill, ink text, 15px 800 tracked caps, 5px/10px padding, with an 8px square dot that pulses (opacity 1 to 0.3, 1.5s); the dot animation is off under reduced motion.
+- **Season badge:** 2px cream outline, no fill, 13px 700 caps; off-season at 75% opacity.
+- **Result chip:** 26px square; a win is a cream fill with an ink letter, a loss is a 2px cream outline with a cream letter.
+- **Error:** orange chip with ink text.
+- **Logos:** ESPN's transparent `500-dark` variant sits directly on the panel colour, 52px in the head, 28px in games, 20px in standings. If a team has no dark variant the standard logo loads instead.
+
 ### Banner Plate
 A cropped poster image (`/assets/banner.jpg`, North Cascades, Ivan Chermayeff, National Park Service, 1972) at the top of the sheet, decorative (empty alt), credited in the Sources row. It is the only imagery on the page.
 
@@ -213,15 +357,20 @@ Wrapping row below the sheet, 8px/26px gaps: the gold Big Shoulders "Sources" la
 - **Do** keep cream (#f1e4c3) as the frame and text colour on dark grounds and gold (#f0b43c) as the only accent.
 - **Do** credit any outside image or data in the Sources line.
 - **Do** keep reduced-motion handling when adding transitions.
+- **Do** use state markers built from orange, cream fills and cream outlines on team-colour panels; derive each panel body with `color-mix(in srgb, <primary> 80%, #000)`.
+- **Do** use the transparent dark-background logo variant directly on the panel colour; never put a cream box behind a logo.
 
 ### Don't:
 - **Don't** add seals, emblems, fake scenery, AI-generated assets, or poster pastiche; the poster influence is colour and type only. (Rejected by the owner.)
 - **Don't** put the owner's name on a banner, URLs on rows, or per-category counts. (Rejected by the owner.)
 - **Don't** add rounded corners, gradients, or resting drop shadows.
 - **Don't** use gold as a surface fill or Big Shoulders Display for headings.
-- **Don't** carry the older Inter / blue accent / 20px-radius card style onto this page, or this system onto the app pages without an explicit decision.
+- **Don't** carry the older Inter / blue accent / 20px-radius card style onto this page, or this system onto the other app pages without an explicit decision.
+- **Don't** use team or any other off-palette colours outside `/seattlesports/` without approval.
 
 ## Open Notes
+- `/seattlesports/`: the Sounders standings table lists the whole 15-team Western Conference, so the second row of panels is taller than the first and falls partly below the fold at 1440x900. Not repaired.
+- `/seattlesports/`: loser rows (75%), section labels (80%), the off-season badge (75%) and standings rank cells (80%) are set with reduced opacity; the measured contrast figures above are for full-opacity text. Not canonized as a way to de-emphasise text.
 - The banner's public-domain status is unconfirmed (Wikimedia Commons lists it as public domain; the owner will handle licensing).
 - Text contrast measured 2026-10-03: heads 5.13 to 10.11:1; rows 6.24 to 11.66:1 (orange rows with the lighter mix 6.24:1). Orange rows are lighter than their head, the one place the child-darker step is inverted.
 - Not canonized: the calculator titles carry no qualifier; the remaining row qualifiers are phrase fragments ("I have been to", "I have seen a game in"), which strain the labels-and-titles-only copy rule; the stale CSS comment mentioning a "sun-and-rays cap" no longer matches the build.

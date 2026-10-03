@@ -4,35 +4,291 @@
   "title": "Design System: amanvg",
   "extensions": {
     "colorMeta": {
-      "night-green": { "role": "neutral", "displayName": "Night Green", "canonical": "#0f2421", "tonalRamp": ["#050e0d", "#0f2421", "#1a3f39", "#2a5c53", "#43786d", "#6b988d", "#9bbab1", "#cfe0db"] },
-      "paper-cream": { "role": "primary", "displayName": "Poster Cream", "canonical": "#f1e4c3", "tonalRamp": ["#5c5238", "#7d7050", "#a09068", "#c2b283", "#dccea6", "#f1e4c3", "#f7eed9", "#fcf8ec"] },
-      "poster-ink": { "role": "neutral", "displayName": "Poster Ink", "canonical": "#10201d", "tonalRamp": ["#060d0c", "#10201d", "#1d3a35", "#2d544d", "#46746b", "#6e988f", "#a2bfb8", "#d4e3df"] },
-      "trail-gold": { "role": "primary", "displayName": "Trail Gold", "canonical": "#f0b43c", "tonalRamp": ["#4d3508", "#7a5510", "#a8761a", "#d3962a", "#f0b43c", "#f5c765", "#f9dc9a", "#fdf0d2"] },
-      "band-navy": { "role": "secondary", "displayName": "Navy Band", "canonical": "#1b2f66", "tonalRamp": ["#0b1230", "#13214a", "#1b2f66", "#2a4488", "#4060ab", "#6a86c9", "#a0b3e0", "#d3dcf1"] },
-      "band-blue": { "role": "secondary", "displayName": "Blue Band", "canonical": "#2c5f9e", "tonalRamp": ["#0f2340", "#1a3d6d", "#2c5f9e", "#4379b8", "#6595cc", "#8fb2de", "#bcd0ec", "#e0eaf6"] },
-      "band-pine": { "role": "secondary", "displayName": "Pine Band", "canonical": "#1f5a45", "tonalRamp": ["#0a211a", "#133a2d", "#1f5a45", "#2f785d", "#4c9679", "#79b59b", "#aed1c0", "#d9eae1"] },
-      "band-orange": { "role": "secondary", "displayName": "Orange Band", "canonical": "#e8742c", "tonalRamp": ["#4a2108", "#7d3a12", "#b55a1f", "#e8742c", "#ee9255", "#f3ae82", "#f8cdb0", "#fce8da"] },
-      "band-plum": { "role": "secondary", "displayName": "Plum Band", "canonical": "#6b2f4a", "tonalRamp": ["#2a101d", "#451e30", "#6b2f4a", "#8a4764", "#a76683", "#c28ba3", "#d9b4c6", "#eed9e3"] }
+      "night-green": {
+        "role": "neutral",
+        "displayName": "Night Green",
+        "canonical": "#0f2421",
+        "tonalRamp": [
+          "#050e0d",
+          "#0f2421",
+          "#1a3f39",
+          "#2a5c53",
+          "#43786d",
+          "#6b988d",
+          "#9bbab1",
+          "#cfe0db"
+        ]
+      },
+      "paper-cream": {
+        "role": "primary",
+        "displayName": "Poster Cream",
+        "canonical": "#f1e4c3",
+        "tonalRamp": [
+          "#5c5238",
+          "#7d7050",
+          "#a09068",
+          "#c2b283",
+          "#dccea6",
+          "#f1e4c3",
+          "#f7eed9",
+          "#fcf8ec"
+        ]
+      },
+      "poster-ink": {
+        "role": "neutral",
+        "displayName": "Poster Ink",
+        "canonical": "#10201d",
+        "tonalRamp": [
+          "#060d0c",
+          "#10201d",
+          "#1d3a35",
+          "#2d544d",
+          "#46746b",
+          "#6e988f",
+          "#a2bfb8",
+          "#d4e3df"
+        ]
+      },
+      "trail-gold": {
+        "role": "primary",
+        "displayName": "Trail Gold",
+        "canonical": "#f0b43c",
+        "tonalRamp": [
+          "#4d3508",
+          "#7a5510",
+          "#a8761a",
+          "#d3962a",
+          "#f0b43c",
+          "#f5c765",
+          "#f9dc9a",
+          "#fdf0d2"
+        ]
+      },
+      "band-navy": {
+        "role": "secondary",
+        "displayName": "Navy Band",
+        "canonical": "#1b2f66",
+        "tonalRamp": [
+          "#0b1230",
+          "#13214a",
+          "#1b2f66",
+          "#2a4488",
+          "#4060ab",
+          "#6a86c9",
+          "#a0b3e0",
+          "#d3dcf1"
+        ]
+      },
+      "band-blue": {
+        "role": "secondary",
+        "displayName": "Blue Band",
+        "canonical": "#2c5f9e",
+        "tonalRamp": [
+          "#0f2340",
+          "#1a3d6d",
+          "#2c5f9e",
+          "#4379b8",
+          "#6595cc",
+          "#8fb2de",
+          "#bcd0ec",
+          "#e0eaf6"
+        ]
+      },
+      "band-pine": {
+        "role": "secondary",
+        "displayName": "Pine Band",
+        "canonical": "#1f5a45",
+        "tonalRamp": [
+          "#0a211a",
+          "#133a2d",
+          "#1f5a45",
+          "#2f785d",
+          "#4c9679",
+          "#79b59b",
+          "#aed1c0",
+          "#d9eae1"
+        ]
+      },
+      "band-orange": {
+        "role": "secondary",
+        "displayName": "Orange Band",
+        "canonical": "#e8742c",
+        "tonalRamp": [
+          "#4a2108",
+          "#7d3a12",
+          "#b55a1f",
+          "#e8742c",
+          "#ee9255",
+          "#f3ae82",
+          "#f8cdb0",
+          "#fce8da"
+        ]
+      },
+      "band-plum": {
+        "role": "secondary",
+        "displayName": "Plum Band",
+        "canonical": "#6b2f4a",
+        "tonalRamp": [
+          "#2a101d",
+          "#451e30",
+          "#6b2f4a",
+          "#8a4764",
+          "#a76683",
+          "#c28ba3",
+          "#d9b4c6",
+          "#eed9e3"
+        ]
+      },
+      "team-seahawks": {
+        "role": "secondary",
+        "displayName": "Seahawks Team Colour (/seattlesports/ only)",
+        "canonical": "#002244"
+      },
+      "team-seahawks-accent": {
+        "role": "secondary",
+        "displayName": "Seahawks Accent Stripe (/seattlesports/ only)",
+        "canonical": "#69BE28"
+      },
+      "team-mariners": {
+        "role": "secondary",
+        "displayName": "Mariners Team Colour (/seattlesports/ only)",
+        "canonical": "#0C2C56"
+      },
+      "team-mariners-accent": {
+        "role": "secondary",
+        "displayName": "Mariners Accent Stripe (/seattlesports/ only)",
+        "canonical": "#005C5C"
+      },
+      "team-kraken": {
+        "role": "secondary",
+        "displayName": "Kraken Team Colour (/seattlesports/ only)",
+        "canonical": "#001628"
+      },
+      "team-kraken-accent": {
+        "role": "secondary",
+        "displayName": "Kraken Accent Stripe (/seattlesports/ only)",
+        "canonical": "#99D9D9"
+      },
+      "team-sounders": {
+        "role": "secondary",
+        "displayName": "Sounders Team Colour (/seattlesports/ only)",
+        "canonical": "#005595"
+      },
+      "team-sounders-accent": {
+        "role": "secondary",
+        "displayName": "Sounders Accent Stripe (/seattlesports/ only)",
+        "canonical": "#658D1B"
+      }
     },
     "typographyMeta": {
-      "logo": { "displayName": "Logo", "purpose": "Wordmark in the nav. Big Shoulders Display 900 only." },
-      "sources-label": { "displayName": "Sources Label", "purpose": "Gold label that opens the Sources line. Big Shoulders Display 900 only." },
-      "band-title": { "displayName": "Band Title", "purpose": "Category name on each colour band (h2)." },
-      "row-title": { "displayName": "Row Title", "purpose": "Project name inside an expanded band (h3)." },
-      "row-qualifier": { "displayName": "Row Qualifier", "purpose": "Short trailing phrase inline with a row title." },
-      "nav-link": { "displayName": "Nav Link", "purpose": "Single right-hand navigation link." },
-      "sources": { "displayName": "Sources", "purpose": "Data and image attribution." }
+      "logo": {
+        "displayName": "Logo",
+        "purpose": "Wordmark in the nav. Big Shoulders Display 900 only."
+      },
+      "sources-label": {
+        "displayName": "Sources Label",
+        "purpose": "Gold label that opens the Sources line. Big Shoulders Display 900 only."
+      },
+      "band-title": {
+        "displayName": "Band Title",
+        "purpose": "Category name on each colour band (h2)."
+      },
+      "row-title": {
+        "displayName": "Row Title",
+        "purpose": "Project name inside an expanded band (h3)."
+      },
+      "row-qualifier": {
+        "displayName": "Row Qualifier",
+        "purpose": "Short trailing phrase inline with a row title."
+      },
+      "nav-link": {
+        "displayName": "Nav Link",
+        "purpose": "Single right-hand navigation link."
+      },
+      "sources": {
+        "displayName": "Sources",
+        "purpose": "Data and image attribution."
+      },
+      "team-name": {
+        "displayName": "Team Name",
+        "purpose": "Panel h2 on /seattlesports/. Balanced wrap."
+      },
+      "team-record": {
+        "displayName": "Team Record",
+        "purpose": "Record line under the team name."
+      },
+      "section-label": {
+        "displayName": "Section Label",
+        "purpose": "Last Game, Next Game and division labels; 13px minimum."
+      },
+      "game-row": {
+        "displayName": "Game Row",
+        "purpose": "Team abbreviation rows in the game box."
+      },
+      "game-score": {
+        "displayName": "Game Score",
+        "purpose": "Tabular score numerals."
+      },
+      "next-opponent": {
+        "displayName": "Next Opponent",
+        "purpose": "Opponent in the next-game box."
+      },
+      "table": {
+        "displayName": "Table",
+        "purpose": "Standings body cells, tabular numerals."
+      },
+      "table-head": {
+        "displayName": "Table Head",
+        "purpose": "Standings column heads."
+      }
     },
     "shadows": [
-      { "name": "inset-keyline", "value": "inset 0 0 0 4px var(--fg)", "purpose": "Row hover keyline in the band's text colour. No other shadows exist." }
+      {
+        "name": "inset-keyline",
+        "value": "inset 0 0 0 4px var(--fg)",
+        "purpose": "Row hover keyline in the band's text colour. No other shadows exist."
+      }
     ],
     "motion": [
-      { "name": "ease", "value": "cubic-bezier(.16, 1, .3, 1)", "purpose": "Accordion expand (0.5s), row slide (0.45s), chevron rotate (0.45s), arrow nudge (0.3s), keyline (0.25s)." },
-      { "name": "row-fade", "value": "opacity .35s ease", "purpose": "Row fade-in on open; rows 2-4 delay 0.06s, 0.12s, 0.18s." },
-      { "name": "reduced-motion", "value": "transition: none", "purpose": "Panel, row, chevron, and arrow transitions are disabled under prefers-reduced-motion." }
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Accordion expand (0.5s), row slide (0.45s), chevron rotate (0.45s), arrow nudge (0.3s), keyline (0.25s)."
+      },
+      {
+        "name": "row-fade",
+        "value": "opacity .35s ease",
+        "purpose": "Row fade-in on open; rows 2-4 delay 0.06s, 0.12s, 0.18s."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition: none",
+        "purpose": "Panel, row, chevron, and arrow transitions are disabled under prefers-reduced-motion."
+      },
+      {
+        "name": "live-pulse",
+        "value": "opacity 1 to .3, 1.5s ease-in-out infinite",
+        "purpose": "LIVE dot on /seattlesports/. Off under prefers-reduced-motion."
+      },
+      {
+        "name": "refresh-hover",
+        "value": "color/border-color .25s cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Refresh button gold hover. Off under prefers-reduced-motion."
+      }
     ],
     "breakpoints": [
-      { "name": "phone", "value": "700px (max-width): gutter 16px, sheet border 8px, band 68px, narrower padding" }
+      {
+        "name": "phone",
+        "value": "700px (max-width): gutter 16px, sheet border 8px, band 68px, narrower padding"
+      },
+      {
+        "name": "panels-one-column",
+        "value": "960px (max-width): /seattlesports/ team panels stack to one column"
+      },
+      {
+        "name": "panel-container",
+        "value": "560px (container max-width): standings stack under games inside a team panel"
+      }
     ]
   },
   "components": [
@@ -75,6 +331,30 @@
       "description": "Gold Big Shoulders label followed by tracked attribution names.",
       "html": "<div class=\"ds-sources\"><b>Sources</b><span>fueleconomy.gov</span><span>AAA</span><span>EIA</span></div>",
       "css": ".ds-sources{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:600;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:#f1e4c3;background:#0f2421;padding:16px} .ds-sources b{font-family:'Big Shoulders Display','Arial Narrow',sans-serif;font-weight:900;font-size:20px;letter-spacing:.3em;color:#f0b43c}"
+    },
+    {
+      "name": "Masthead Band",
+      "kind": "custom",
+      "refersTo": "masthead",
+      "description": "Sports-navy band atop the /seattlesports/ sheet: title, status label, timestamp, Refresh.",
+      "html": "<div class=\"ds-mast\"><h1>Seattle Sports</h1><div class=\"ds-mr\"><span>Auto-refreshes every 30s</span><button class=\"ds-refresh\">Refresh</button></div></div>",
+      "css": ".ds-mast{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:#1b2f66;color:#f1e4c3;font-family:'Barlow Condensed','Arial Narrow',sans-serif;text-transform:uppercase} .ds-mast h1{margin:0;font-weight:800;letter-spacing:.12em;font-size:40px;line-height:1} .ds-mr{display:flex;align-items:center;gap:8px 20px;font-weight:600;font-size:15px;letter-spacing:.2em} .ds-refresh{font:inherit;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#f1e4c3;background:transparent;border:2px solid #f1e4c3;min-height:44px;padding:8px 18px;border-radius:0;cursor:pointer;transition:color .25s cubic-bezier(.16,1,.3,1),border-color .25s cubic-bezier(.16,1,.3,1)} .ds-refresh:hover{border-color:#f0b43c;color:#f0b43c} .ds-refresh:focus-visible{outline:3px solid #f1e4c3;outline-offset:3px}"
+    },
+    {
+      "name": "Team Panel",
+      "kind": "card",
+      "refersTo": "team-panel-head",
+      "description": "Flat official team colour: head, 6px accent stripe, body mixed 80% with black. Sounders shown.",
+      "html": "<section class=\"ds-panel\"><div class=\"ds-ph\"><span class=\"ds-tile\">S</span><div><h2 class=\"ds-tn\" style=\"margin:0\">Sounders</h2><div class=\"ds-tr\">10-8-6 · 36 pts</div></div></div><div class=\"ds-stripe\"></div><div class=\"ds-pb\"><div class=\"ds-sl\">Next Game</div><div class=\"ds-gb\">LAFC</div></div></section>",
+      "css": ".ds-panel{--c:#005595;--a:#658D1B;width:360px;background:color-mix(in srgb,var(--c) 80%,#000);color:#f1e4c3;font-family:'Barlow Condensed','Arial Narrow',sans-serif;text-transform:uppercase} .ds-ph{display:flex;align-items:center;gap:16px;min-height:68px;padding:10px 24px;background:var(--c)} .ds-tile{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;padding:6px;background:transparent;color:#f1e4c3;font-weight:800} .ds-tn{font-weight:800;font-size:28px;letter-spacing:.1em;line-height:1} .ds-tr{font-weight:600;font-size:16px;letter-spacing:.2em;margin-top:6px} .ds-stripe{height:6px;background:var(--a)} .ds-pb{padding:16px 24px 20px} .ds-sl{font-weight:700;font-size:13px;letter-spacing:.22em;opacity:.8;margin-bottom:8px} .ds-gb{background:color-mix(in srgb,#f1e4c3 9%,transparent);padding:12px 14px;font-weight:700;font-size:21px;letter-spacing:.08em}"
+    },
+    {
+      "name": "State Markers",
+      "kind": "chip",
+      "refersTo": "live-chip",
+      "description": "LIVE chip, season badge, win and loss result chips; no hue beyond orange, cream and ink.",
+      "html": "<div class=\"ds-sm\"><span class=\"ds-live\"><i></i>LIVE</span><span class=\"ds-season\">Regular season</span><span class=\"ds-w\">W</span><span class=\"ds-l\">L</span></div>",
+      "css": ".ds-sm{display:flex;align-items:center;gap:8px;padding:12px;background:#005595;color:#f1e4c3;font-family:'Barlow Condensed','Arial Narrow',sans-serif;text-transform:uppercase} .ds-live{display:flex;align-items:center;gap:8px;background:#e8742c;color:#10201d;font-weight:800;font-size:15px;letter-spacing:.2em;padding:5px 10px} .ds-live i{width:8px;height:8px;background:currentColor;animation:ds-pulse 1.5s ease-in-out infinite} @keyframes ds-pulse{0%,100%{opacity:1}50%{opacity:.3}} @media(prefers-reduced-motion:reduce){.ds-live i{animation:none}} .ds-season{font-weight:700;font-size:13px;letter-spacing:.2em;padding:4px 10px;border:2px solid #f1e4c3} .ds-w,.ds-l{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;font-weight:800;font-size:17px} .ds-w{background:#f1e4c3;color:#10201d} .ds-l{border:2px solid #f1e4c3}"
     }
   ],
   "narrative": {
@@ -85,15 +365,55 @@
       "Condensed all-caps tracked lettering throughout (Barlow Condensed for text, Big Shoulders Display for the logo and the Sources label).",
       "Cream paper frame (10px) around banner and bands; night-green ground outside it.",
       "Square corners everywhere; depth comes only from colour steps and an inset keyline on hover.",
-      "Motion is limited to accordion expand, staggered row fade, and small arrow nudges, all on one easing."
+      "Motion is limited to accordion expand, staggered row fade, and small arrow nudges, all on one easing.",
+      "On /seattlesports/ the same sheet holds a navy masthead and four flat team-colour panels instead of bands; state is shown with orange, cream fills and cream outlines only."
     ],
     "rules": [
-      { "name": "The Band-Owns-Its-Colour Rule", "body": "A band sets one --c and one --fg; its head, its rows, its focus ring, and its hover keyline all derive from those two values. Nothing inside a band introduces another hue.", "section": "colors" },
-      { "name": "The Ink-On-Orange Rule", "body": "Cream text on orange is too weak; the orange band uses ink (#10201d) for its text. Any new light band does the same; pick --fg per band, not globally.", "section": "colors" },
-      { "name": "The One Gold Rule", "body": "Gold marks interaction on the dark ground (nav hover) and the Sources label only. It never fills a surface.", "section": "colors" },
-      { "name": "The All-Caps Tracked Rule", "body": "Every piece of text on the page is uppercase with positive letter-spacing; tracking widens as size shrinks (0.12em at band size, 0.32em at qualifier size).", "section": "typography" },
-      { "name": "The Two Display Marks Rule", "body": "Big Shoulders Display 900 appears only on the logo and the Sources label. Do not extend it to headings.", "section": "typography" },
-      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Hover is a keyline, never a drop shadow or a lift.", "section": "elevation" }
+      {
+        "name": "The Band-Owns-Its-Colour Rule",
+        "body": "A band sets one --c and one --fg; its head, its rows, its focus ring, and its hover keyline all derive from those two values. Nothing inside a band introduces another hue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink-On-Orange Rule",
+        "body": "Cream text on orange is too weak; the orange band uses ink (#10201d) for its text. Any new light band does the same; pick --fg per band, not globally.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Gold Rule",
+        "body": "Gold marks interaction on the dark ground (nav hover, and the Refresh button hover on /seattlesports/) and the Sources label only. It never fills a surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The All-Caps Tracked Rule",
+        "body": "Every piece of text on the page is uppercase with positive letter-spacing; tracking widens as size shrinks (0.12em at band size, 0.32em at qualifier size).",
+        "section": "typography"
+      },
+      {
+        "name": "The Two Display Marks Rule",
+        "body": "Big Shoulders Display 900 appears only on the logo and the Sources label. Do not extend it to headings.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces are flat at rest. Hover is a keyline, never a drop shadow or a lift.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Team-Colour Exception Rule",
+        "body": "Official team colours are used as flat fields on /seattlesports/ only, as head, accent stripe and derived body. They are the one sanctioned exception to the five band hues. No other page may introduce hues this way without approval.",
+        "section": "colors"
+      },
+      {
+        "name": "The No-Extra-Hue State Rule",
+        "body": "On /seattlesports/, state uses no hue beyond the panel's own colour and the existing orange: live and error are orange with ink text, a win is a cream fill with an ink letter, a loss and a season badge are 2px cream outlines. Do not add green/red result colours.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Numerals Rule",
+        "body": "Scores, records and standings use tabular numerals so columns align.",
+        "section": "typography"
+      }
     ],
     "dos": [
       "Do give each new category a flat saturated band colour and an explicit --fg, stepping along the cool-to-warm order, and derive its rows with color-mix(in srgb, <band> 80%, #000).",
@@ -101,14 +421,17 @@
       "Do keep text uppercase, Barlow Condensed, with the tracking steps above.",
       "Do keep cream (#f1e4c3) as the frame and text colour on dark grounds and gold (#f0b43c) as the only accent.",
       "Do credit any outside image or data in the Sources line.",
-      "Do keep reduced-motion handling when adding transitions."
+      "Do keep reduced-motion handling when adding transitions.",
+      "Do use state markers built from orange, cream fills and cream outlines on team-colour panels; derive each panel body with color-mix(in srgb, <primary> 80%, #000).",
+      "Do use the transparent dark-background logo variant directly on the panel colour; never put a cream box behind a logo."
     ],
     "donts": [
       "Don't add seals, emblems, fake scenery, AI-generated assets, or poster pastiche; the poster influence is colour and type only. (Rejected by the owner.)",
       "Don't put the owner's name on a banner, URLs on rows, or per-category counts. (Rejected by the owner.)",
       "Don't add rounded corners, gradients, or resting drop shadows.",
       "Don't use gold as a surface fill or Big Shoulders Display for headings.",
-      "Don't carry the older Inter / blue accent / 20px-radius card style onto this page, or this system onto the app pages without an explicit decision."
+      "Don't carry the older Inter / blue accent / 20px-radius card style onto this page, or this system onto the other app pages without an explicit decision.",
+      "Don't use team or any other off-palette colours outside /seattlesports/ without approval."
     ]
   }
 }
