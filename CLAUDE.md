@@ -41,9 +41,9 @@ A Reject means make no changes and ask what to adjust.
   dark; Oswald, Vollkorn, Work Sans; 0px corners, hard print-strike shadows).
   Light and dark follow the system setting with a sun/moon icon toggle. Do not
   use Inter, `.card`, or the blue accent there.
-- `/seattlesports/`: keeps the earlier poster look (night-green ground, Barlow
-  Condensed, flat bands, teams' official colours as panels) until it is
-  migrated to `DESIGN.md`.
+- `/seattlesports/`: follows `DESIGN.md` like the home page (same header,
+  light/dark toggle, Sources footer). Team panels keep each team's official
+  colour on the header band only; bodies sit on the card surface.
 - Other app pages: dark theme. Copy the `:root` tokens, nav (`← amanvg` back link,
   centered title), `.card`, and form styles from an existing page such as
   `commuteplanner/index.html` rather than inventing new ones. Inter from

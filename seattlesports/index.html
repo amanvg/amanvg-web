@@ -1,142 +1,215 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seattle Sports — amanvg</title>
+    <meta name="description" content="Seattle Seahawks, Mariners, Kraken and Sounders scores, schedules and standings.">
+    <meta name="theme-color" content="#24422e">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Seattle Sports — amanvg">
+    <meta property="og:description" content="Seattle Seahawks, Mariners, Kraken and Sounders scores, schedules and standings.">
+    <meta property="og:url" content="https://www.amanvg.com/seattlesports/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script>
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Big+Shoulders+Display:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Vollkorn:ital,wght@0,400;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
     <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-/* Layout: nav, then one framed poster sheet holding a masthead band and four team panels */
+/* Federal Park Serigraph (light) */
 :root{
-  color-scheme:dark;
-  --night:#0f2421; --paper:#f1e4c3; --ink:#10201d; --gold:#f0b43c; --orange:#e8742c; --navy:#1b2f66;
-  --display:'Big Shoulders Display','Arial Narrow',sans-serif;
-  --label:'Barlow Condensed','Arial Narrow',sans-serif;
-  --gutter:max(40px,calc((100% - 1200px)/2));
+  color-scheme:light;
+  --canvas:#f6efe1; --card:#ede3ce; --row-a:#f6efe1; --row-b:#ede3ce;
+  --text:#181c16; --muted:#4d5843; --head-bg:#24422e; --head-text:#f6efe1; --head-line:#181c16;
+  --key:#4d5843; --frame:#24422e; --divider:rgba(77,88,67,.25);
+  --shadow:#181c16; --accent:#d9822b; --focus:#24422e; --sel-bg:#d9822b; --sel-fg:#181c16;
+  --btn-hover-bg:#ede3ce; --btn-hover-fg:#24422e;
+  --well-bg:#f6efe1; --well-shadow:rgba(24,28,22,.15);
+  --live-bg:#a63a24; --live-fg:#f6efe1; --on-team:#f6efe1;
+  --s1:#24422e; --s2:#d9822b; --s3:#a63a24;
+  --foot-bg:#1c2730; --foot-text:#f6efe1; --foot-line:#181c16; --foot-accent:#d9822b;
+  --b-sports:#24422e; --f-sports:#f6efe1;
+  --display:'Oswald','Arial Narrow',sans-serif;
+  --body:'Vollkorn',Georgia,serif;
+  --label:'Work Sans',system-ui,sans-serif;
+  --margin:max(40px,calc((100% - 1200px)/2));
   --ease:cubic-bezier(.16,1,.3,1);
 }
+/* Nocturne Serigraph (dark) */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --canvas:#0e1511; --card:#1a271f; --row-a:#141e17; --row-b:#1a271f;
+  --text:#f4ede2; --muted:#96a498; --head-bg:#141e17; --head-text:#f4ede2; --head-line:#35483b;
+  --key:#35483b; --frame:#35483b; --divider:#233328;
+  --shadow:#060a08; --accent:#e5933a; --focus:#e5933a; --sel-bg:#e5933a; --sel-fg:#0e1511;
+  --btn-hover-bg:#1a271f; --btn-hover-fg:#f4ede2;
+  --well-bg:#0a0f0c; --well-shadow:#060a08;
+  --live-bg:#ff8168; --live-fg:#3e0400; --on-team:#f4ede2;
+  --s1:#44805d; --s2:#e5933a; --s3:#c8523b;
+  --foot-bg:#0a0f0c; --foot-text:#ded5c5; --foot-line:#35483b; --foot-accent:#e5933a;
+  --b-sports:#2d4b38; --f-sports:#f4ede2;
+}
 html{scrollbar-gutter:stable}
-body{background:var(--night);color:var(--paper);font-family:var(--label);min-height:100vh;-webkit-font-smoothing:antialiased;text-transform:uppercase}
-::selection{background:var(--gold);color:var(--ink)}
-:focus-visible{outline:3px solid var(--paper);outline-offset:-6px}
-.skip-link{position:absolute;top:-48px;left:16px;background:var(--paper);color:var(--ink);padding:8px 16px;z-index:200;font-size:16px;font-weight:700;letter-spacing:.1em;text-decoration:none}
+body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:10px;border:2px solid var(--key);min-height:calc(100vh - 20px);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+::selection{background:var(--sel-bg);color:var(--sel-fg)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+.skip-link{position:absolute;top:-48px;left:16px;background:var(--head-text);color:var(--head-bg);padding:8px 16px;z-index:200;font-family:var(--label);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
 .skip-link:focus{top:8px}
-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--night);border-bottom:2px solid var(--paper)}
-.nav{height:60px;padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:var(--display);font-weight:900;font-size:30px;letter-spacing:.06em;color:var(--paper);text-decoration:none}
-.nav a.link{display:inline-flex;align-items:center;min-height:44px;font-weight:700;font-size:17px;letter-spacing:.22em;color:var(--paper);text-decoration:none;padding:8px 14px;border:2px solid transparent}
-.nav a.link:hover{border-color:var(--gold);color:var(--gold)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50}
+header{background:var(--head-bg);border-bottom:3px solid var(--head-line);padding:0 var(--margin);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
+.tools{display:flex;gap:12px}
+.btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s,color .15s}
+:root[data-theme="dark"] .btn{border-color:var(--key)}
+@media(hover:hover){
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+:root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
+}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.btn:focus-visible{outline-color:var(--head-text)}
+.icon-btn{width:44px;padding:0;justify-content:center}
+.icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn .sun{display:none}
+:root[data-theme="dark"] .icon-btn .sun{display:block}
+:root[data-theme="dark"] .icon-btn .moon{display:none}
+.stripes{height:7px;background:linear-gradient(var(--s1) 0 3px,var(--s2) 3px 5px,var(--s3) 5px 7px)}
 
-/* poster sheet: cream paper margin, ink rule and screenprint grain, as on the home page */
-.sheet{position:relative;margin:24px var(--gutter) 40px;border:10px solid var(--paper);background:var(--paper);outline:2px solid var(--ink);outline-offset:-7px}
-.sheet::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:multiply;opacity:.07;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+main{flex:1;padding:40px var(--margin) 0}
+/* framed sheet: Sports band masthead over a flush 2x2 of team panels */
+.sheet{border:3px solid var(--frame);background:var(--card);box-shadow:4px 4px 0 0 var(--shadow)}
+.masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--b-sports);color:var(--f-sports);border-bottom:2px solid var(--head-line)}
+.masthead h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
+.header-right{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.masthead .btn{border-color:var(--f-sports);color:var(--f-sports)}
+@media(hover:hover){:root[data-theme="dark"] .masthead .btn:hover{border-color:var(--accent);color:var(--btn-hover-fg)}.masthead .btn:hover{color:var(--btn-hover-fg)}}
+.masthead .btn:focus-visible{outline-color:var(--f-sports)}
 
-/* masthead band: the home page's Sports navy */
-.masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--navy);color:var(--paper)}
-.masthead h1{font-weight:800;letter-spacing:.12em;font-size:clamp(32px,3.4vw,46px);line-height:1}
-.header-right{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;font-weight:600;font-size:15px;letter-spacing:.2em}
-#refresh-btn{font:inherit;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);background:transparent;border:2px solid var(--paper);min-height:44px;padding:8px 18px;cursor:pointer;transition:color .25s var(--ease),border-color .25s var(--ease)}
-#refresh-btn:hover{border-color:var(--gold);color:var(--gold)}
-#refresh-btn:focus-visible{outline-offset:3px}
-
-/* team panels: official team colours as flat fields (the one exception to the five band hues) */
-.dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-.team-card{background:color-mix(in srgb,var(--c) 80%,#000);color:var(--paper);min-width:0;container-type:inline-size}
-.team-header{display:flex;align-items:center;gap:16px;min-height:68px;padding:10px 24px;background:var(--c)}
+.dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;background:var(--head-line)}
+.team-card{background:var(--card);min-width:0;container-type:inline-size}
+.team-header{display:flex;align-items:center;gap:16px;min-height:72px;padding:10px 24px;background:var(--c);color:var(--on-team)}
 .logo-tile{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:28px;height:28px}
 .logo-tile img{width:100%;height:100%;object-fit:contain}
 .team-header .logo-tile{width:52px;height:52px}
 .team-info{flex:1;min-width:0}
 .team-badges{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-left:auto}
-.team-name{text-wrap:balance;font-weight:800;font-size:clamp(24px,2vw,28px);letter-spacing:.1em;line-height:1}
-.team-record{font-weight:600;font-size:16px;letter-spacing:.2em;margin-top:6px;white-space:nowrap}
-.accent-bar{height:6px;background:var(--a)}
-.live-badge{display:flex;align-items:center;gap:8px;background:var(--orange);color:var(--ink);font-weight:800;font-size:15px;letter-spacing:.2em;padding:5px 10px}
-.live-dot{width:8px;height:8px;background:currentColor;animation:pulse 1.5s ease-in-out infinite}
+.team-name{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance}
+.team-record{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.accent-bar{height:5px;background:var(--a);border-bottom:2px solid var(--head-line)}
+.live-badge{display:flex;align-items:center;gap:8px;background:var(--live-bg);color:var(--live-fg);font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:9999px}
+.live-dot{width:8px;height:8px;background:currentColor;border-radius:50%;animation:pulse 1.5s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.season-badge{font-weight:700;font-size:13px;letter-spacing:.2em;padding:4px 10px;border:2px solid var(--paper);white-space:nowrap}
-.season-badge.phase-off{opacity:.75}
+.season-badge{font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border:1.5px solid currentColor;border-radius:9999px;white-space:nowrap}
 
-.team-body{display:flex;gap:24px;padding:16px 24px 20px}
-.card-games{flex:1;display:flex;flex-direction:column;gap:12px;min-width:0}
-.card-standings{width:250px;flex-shrink:0;border-left:2px solid color-mix(in srgb,var(--paper) 35%,transparent);padding-left:20px}
-.section-label{font-weight:700;font-size:13px;letter-spacing:.22em;opacity:.8;margin-bottom:8px}
-.section-label.live-label{display:flex;align-items:center;gap:8px;opacity:1}
+.team-body{display:flex;gap:24px;padding:20px 24px 24px}
+.card-games{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0}
+.card-standings{width:250px;flex-shrink:0;border-left:1px solid var(--key);padding-left:24px}
+.section-label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.section-label.live-label{display:flex;align-items:center;gap:8px;color:var(--text)}
 
-.game-box,.next-game-box{background:color-mix(in srgb,var(--paper) 9%,transparent);padding:12px 14px}
+.game-box,.next-game-box{background:var(--well-bg);border:2px solid var(--key);box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:12px 14px}
 .game-matchup{display:flex;flex-direction:column;gap:6px}
-.game-team-row{display:flex;align-items:center;gap:10px;font-weight:700;font-size:21px;letter-spacing:.08em;line-height:1.1}
+.game-team-row{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:22px;line-height:28px;letter-spacing:.02em;text-transform:uppercase}
 .game-team-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.game-team-score{font-weight:800;font-size:28px;font-variant-numeric:tabular-nums;min-width:28px;text-align:right}
-.game-team-row.winner{font-weight:800}
-.game-team-row.loser{font-weight:600;opacity:.75}
-.game-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-weight:600;font-size:15px;letter-spacing:.16em}
-.result-w,.result-l{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;font-weight:800;font-size:17px;letter-spacing:0}
-.result-w{background:var(--paper);color:var(--ink)}
-.result-l{border:2px solid var(--paper)}
+.game-team-score{font-weight:700;font-size:28px;font-variant-numeric:tabular-nums;min-width:28px;text-align:right}
+.game-team-row.loser{opacity:.7}
+.game-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--divider);font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.result-w,.result-l{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;font-family:var(--label);font-weight:700;font-size:14px;letter-spacing:0}
+.result-w{background:var(--accent);color:var(--sel-fg)}
+.result-l{border:2px solid var(--text)}
 
 .next-game-box{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.next-opponent{display:flex;align-items:center;gap:10px;font-weight:800;font-size:24px;letter-spacing:.08em;min-width:0}
-.next-details{text-align:right;font-weight:600;font-size:16px;letter-spacing:.14em;line-height:1.25;flex-shrink:0}
+.next-opponent{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:22px;line-height:28px;letter-spacing:.02em;text-transform:uppercase;min-width:0}
+.next-details{text-align:right;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
 
-.no-data,.loading-text,.error-text{font-weight:600;font-size:16px;letter-spacing:.18em}
-.loading-text{padding:12px 0}
-.error-text{display:inline-block;background:var(--orange);color:var(--ink);padding:5px 10px}
+.no-data,.loading-text,.error-text{font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.loading-text{padding:12px 0;color:var(--muted)}
+.error-text{display:inline-block;background:var(--live-bg);color:var(--live-fg);padding:5px 12px}
 
-.standings-table{width:100%;border-collapse:collapse;font-size:16px;letter-spacing:.06em}
-.standings-table th{font-weight:700;font-size:13px;letter-spacing:.16em;padding:4px 4px;text-align:right;border-bottom:2px solid color-mix(in srgb,var(--paper) 35%,transparent)}
+.standings-table{width:100%;border-collapse:collapse;font-family:var(--label);font-size:14px;line-height:20px;letter-spacing:.02em}
+.standings-table th{background:var(--head-bg);color:var(--head-text);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:6px 6px;text-align:right}
 .standings-table th.rank-col,.standings-table th.s-team-col{text-align:left}
-.standings-table td{padding:2px 4px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
-.standings-table td.rank-col{text-align:left;width:20px;opacity:.8}
-.standings-table td.s-team-col{text-align:left}
+.standings-table td{padding:5px 6px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.standings-table tbody tr+tr{border-top:1px solid var(--divider)}
+.standings-table tbody tr:nth-child(odd){background:var(--row-a)}
+.standings-table tbody tr:nth-child(even){background:var(--row-b)}
+.standings-table td.rank-col{text-align:left;width:20px;color:var(--muted)}
+.standings-table td.s-team-col{text-align:left;font-weight:700}
 .standings-table .logo-tile{width:20px;height:20px}
-.standings-table tr.is-us td{background:color-mix(in srgb,var(--paper) 16%,transparent);font-weight:800}
+.standings-table tbody tr.is-us{background:var(--sel-bg);color:var(--sel-fg)}
+.standings-table tr.is-us td{font-weight:700;color:var(--sel-fg)}
 .standings-table td.s-team-col .logo-tile{vertical-align:middle;margin-right:6px}
 
-.sources{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;padding:0 var(--gutter) 48px;font-weight:600;font-size:15px;letter-spacing:.2em}
-.sources b{font-family:var(--display);font-weight:900;font-size:20px;letter-spacing:.3em;color:var(--gold)}
+footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
+.sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
+.sources b{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--foot-accent);margin-right:10px}
+.sources a{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px;color:inherit;text-decoration:none;transition:background .15s,color .15s}
+.sources a:focus-visible{outline-color:var(--foot-text)}
+@media(hover:hover){.sources a:hover{background:var(--foot-text);color:var(--foot-bg)}}
 
 @media(max-width:960px){.dashboard{grid-template-columns:1fr}}
 @container (max-width:560px){
   .team-body{flex-direction:column;gap:20px}
-  .card-standings{width:100%;border-left:none;border-top:2px solid color-mix(in srgb,var(--paper) 35%,transparent);padding:16px 0 0}
+  .card-standings{width:100%;border-left:none;border-top:1px solid var(--key);padding:20px 0 0}
 }
 @media(max-width:700px){
-  :root{--gutter:16px}
-  .sheet{border-width:8px;outline-offset:-6px}
+  :root{--margin:16px}
+  header{height:56px}
+  .brand{font-size:24px;line-height:32px}
+  .btn{padding:8px 14px}
+  main{padding-top:24px}
   .masthead{padding:12px 16px}
+  .masthead h1{font-size:28px;line-height:36px}
   .team-header{flex-wrap:wrap;padding:12px 16px}
   .team-info{flex-basis:calc(100% - 72px)}
   .team-badges{flex-basis:100%;justify-content:flex-start;margin-left:68px}
-  .team-body{flex-direction:column;gap:20px;padding:16px 16px 20px}
-  .card-standings{width:100%;border-left:none;border-top:2px solid color-mix(in srgb,var(--paper) 35%,transparent);padding:16px 0 0}
+  .team-name{font-size:22px;line-height:28px}
+  .team-body{padding:16px 16px 20px}
+  body{margin:6px;min-height:calc(100vh - 12px)}
 }
-@media(forced-colors:active){.sheet::after{display:none}}
-@media(prefers-reduced-motion:reduce){.live-dot{animation:none}#refresh-btn{transition:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.live-dot{animation:none}}
     </style>
 </head>
 <body>
     <a class="skip-link" href="#dashboard">Skip to content</a>
-    <nav aria-label="Main navigation">
-        <div class="nav"><a class="logo" href="/">amanvg</a><a class="link" href="/trust/">Trust</a></div>
-    </nav>
+    <div class="top">
+        <header>
+            <a class="brand" href="/">amanvg</a>
+            <nav class="tools" aria-label="Main navigation">
+                <button class="btn icon-btn" id="mode" type="button" aria-label="Switch to dark mode">
+                    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>
+                    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                </button>
+                <a class="btn" href="/trust/">Trust</a>
+            </nav>
+        </header>
+        <div class="stripes"></div>
+    </div>
     <main>
         <div class="sheet">
-            <header class="masthead">
+            <div class="masthead">
                 <h1>Seattle Sports</h1>
                 <div class="header-right">
                     <span class="auto-refresh-label">Auto-refreshes every 30s</span>
                     <span id="last-updated"></span>
-                    <button id="refresh-btn" onclick="manualRefresh()">Refresh</button>
+                    <button class="btn" id="refresh-btn" type="button" onclick="manualRefresh()">Refresh</button>
                 </div>
-            </header>
+            </div>
             <div id="dashboard" class="dashboard"></div>
         </div>
-        <div class="sources"><b>Sources</b><span>ESPN</span></div>
     </main>
+    <footer>
+        <div class="stripes"></div>
+        <div class="sources"><b>Sources</b><a href="/trust/#sources">ESPN</a></div>
+    </footer>
 
     <script>
         // ── Configuration ───────────────────────────────────────
@@ -387,7 +460,7 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
             if (d?.error) {
                 el.innerHTML = `
                     <div class="team-header">
-                        ${logoTile(team.logo)}
+                        ${logoTile(team.logo, true)}
                         <div class="team-info">
                             <h2 class="team-name">${team.displayName || team.name}</h2>
                         </div>
@@ -428,7 +501,7 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
 
             el.innerHTML = `
                 <div class="team-header">
-                    ${logoTile(team.logo)}
+                    ${logoTile(team.logo, true)}
                     <div class="team-info">
                         <h2 class="team-name">${team.displayName || team.name}</h2>
                         <div class="team-record">${record || 'Record unavailable'}</div>
@@ -577,12 +650,14 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
                 </table>`;
         }
 
-        // ESPN publishes a transparent 500-dark variant of each logo for dark grounds;
-        // fall back to the standard logo if a team has none.
-        function logoTile(url) {
+        // ESPN publishes a transparent 500-dark variant of each logo for dark grounds
+        // (the team-colour header bands and the dark theme); light cards use the
+        // standard logo. Falls back to the standard logo if a team has no dark one.
+        function logoTile(url, onBand) {
             if (!url) return '';
-            const dark = url.replace('/500/', '/500-dark/');
-            return `<span class="logo-tile"><img src="${esc(dark)}" data-fallback="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.fallback" alt=""></span>`;
+            const dark = onBand || document.documentElement.dataset.theme === 'dark';
+            const src = dark ? url.replace('/500/', '/500-dark/') : url;
+            return `<span class="logo-tile"><img src="${esc(src)}" data-fallback="${esc(url)}" onerror="this.onerror=null;this.src=this.dataset.fallback" alt=""></span>`;
         }
 
         function esc(str) {
@@ -590,6 +665,28 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
             d.textContent = str;
             return d.innerHTML;
         }
+
+        // ── Theme ───────────────────────────────────────────────
+
+        const root = document.documentElement, mode = document.getElementById('mode');
+        function paint() {
+            mode.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+            // Body logos depend on the theme, so redraw any card that has data.
+            TEAMS.forEach(t => { if (teamCache[t.name]) renderCard(t); });
+        }
+        mode.addEventListener('click', () => {
+            root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+            try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+            paint();
+        });
+        matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            let saved = null;
+            try { saved = localStorage.getItem('theme'); } catch (x) {}
+            if (saved === 'light' || saved === 'dark') return;
+            root.dataset.theme = e.matches ? 'dark' : 'light';
+            paint();
+        });
+        mode.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
 
         // ── Go ──────────────────────────────────────────────────
         initialize();

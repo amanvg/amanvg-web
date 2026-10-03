@@ -29,7 +29,7 @@ Served by GitHub Pages from `main`. No build step, no framework, no shared JS: o
 ## Brand Commitments
 Home page (`/`): WPA serigraph look defined in `DESIGN.md`, in two modes that follow the system setting with a sun/moon icon toggle. Light is Federal Park Serigraph (parchment, pine, ochre, clay); dark is Nocturne Serigraph (midnight pine, campfire amber, terracotta). Oswald headings, Vollkorn body, Work Sans labels, 0px corners, hard print-strike shadows, a framed real public-domain poster crop, a flush stack of colour-banded accordion categories. No illustration, seals, emblems, AI-generated art, URLs on rows, or per-category counts. Real assets only, credited in the Sources row; the owner handles any licensing.
 
-`/seattlesports/` keeps the earlier poster look (night-green ground, Barlow Condensed, flat bands, four team panels in the teams' official colours, ESPN credited in Sources) until it is migrated to `DESIGN.md`.
+`/seattlesports/` follows `DESIGN.md` like the home page: pine Sports-band masthead over a flush 2×2 of team panels, each team's official colour on its header band only, ledger-striped standings, ESPN credited in Sources.
 
 Other app pages (`/commute/`, `/roadtrip/`, `/whichcar/`, `/commuteplanner/`, etc.): not yet migrated. They keep the earlier look until each is taken up one step at a time: dark theme, Inter, 20px card radius, accent `#3b82f6`, shared nav (`← amanvg` back link, centered title), shared `.card` and form styles.
 
