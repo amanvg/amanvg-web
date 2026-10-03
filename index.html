@@ -32,8 +32,10 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
 .nav a.link:hover{border-color:var(--gold);color:var(--gold)}
 
 /* poster sheet: cream paper margin around the bands */
-.sheet{margin:44px var(--gutter) 40px;border:10px solid var(--paper);border-top-width:10px;background:var(--paper)}
-.plate{display:block;width:100%;height:clamp(110px,16vw,200px);object-fit:cover;object-position:50% 50%}
+.sheet{position:relative;margin:44px var(--gutter) 40px;border:10px solid var(--paper);border-top-width:10px;background:var(--paper);outline:2px solid var(--ink);outline-offset:-7px}
+/* screenprint grain over the whole sheet; multiply keeps band colours and text contrast intact */
+.sheet::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:multiply;opacity:.07;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.plate{display:block;width:100%;height:clamp(110px,16vw,200px);object-fit:cover;object-position:50% 12%}
 .cat{background:var(--c)}
 .cat+.cat{margin-top:0}
 .head{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr 32px;align-items:center;column-gap:24px;width:100%;height:76px;padding:0 28px;background:var(--c);color:var(--fg)}
@@ -62,7 +64,8 @@ nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(-
 .sources{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;padding:0 var(--gutter) 48px;font-weight:600;font-size:15px;letter-spacing:.2em;text-transform:uppercase}
 .sources b{font-family:var(--display);font-weight:900;font-size:20px;letter-spacing:.3em;color:var(--gold)}
 
-@media(max-width:700px){:root{--gutter:16px}.sheet{border-width:8px}.head{padding:0 16px;height:68px}.row{padding:0 16px 0 32px}.row h3 em{letter-spacing:.2em}}
+@media(max-width:700px){:root{--gutter:16px}.sheet{border-width:8px;outline-offset:-6px}.head{padding:0 16px;height:68px}.row{padding:0 16px 0 32px}.row h3 em{letter-spacing:.2em}}
+@media(forced-colors:active){.sheet::after{display:none}}
 @media(prefers-reduced-motion:reduce){.panel,.row,.chev,.go{transition:none}}
   </style>
 </head>

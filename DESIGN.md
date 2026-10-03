@@ -167,7 +167,7 @@ A night-green ground, cream paper, one gold accent, and five poster-flat band co
 
 Single column, content centred with a fluid gutter of `max(40px, (100% - 1200px) / 2)`, so the nav, the sheet, and the Sources line share the same edges. At 700px and below the gutter drops to 16px, the sheet border to 8px, band height to 68px, band padding to 16px, and row indent to 32px.
 
-Vertical rhythm: sticky nav 60px with a 2px cream rule; 44px gap between nav and sheet; sheet bottom margin 40px; Sources padded 48px at the bottom. Bands are 76px tall closed; rows are 60px tall, indented 56px from the band edge so they read as children. Band head and row are grids with a flexible title column and a fixed icon column (32px and 28px) with 24px column gap. The banner is full sheet width at a height of clamp(110px, 16vw, 200px), cropped to fit with `object-fit: cover`, centred. `html` uses `scrollbar-gutter: stable` so expanding a band does not shift the layout.
+Vertical rhythm: sticky nav 60px with a 2px cream rule; 44px gap between nav and sheet; sheet bottom margin 40px; Sources padded 48px at the bottom. Bands are 76px tall closed; rows are 60px tall, indented 56px from the band edge so they read as children. Band head and row are grids with a flexible title column and a fixed icon column (32px and 28px) with 24px column gap. The banner is full sheet width at a height of clamp(110px, 16vw, 200px), cropped to fit with `object-fit: cover`, anchored at 50% 12% so the peaks and the light-blue notch stay in frame. `html` uses `scrollbar-gutter: stable` so expanding a band does not shift the layout.
 
 Categories start collapsed. Accordions are independent (opening one does not close others).
 
@@ -179,11 +179,13 @@ Flat. There are no resting shadows. Depth is conveyed by the colour step from ba
 - **Inset Keyline** (`box-shadow: inset 0 0 0 4px var(--fg)`): row hover, drawn in the band's own text colour.
 
 ### Named Rules
+**The Print-Grain Rule.** One screenprint texture sits over the whole sheet: a `.sheet::after` overlay of inline SVG fractal noise at 7% opacity with `mix-blend-mode: multiply`, so band colours and text keep their contrast within about 0.4:1 and no extra file loads. It is hidden under `forced-colors`. It is texture, not shadow or gradient; nothing else on the page is textured.
+
 **The Flat-By-Default Rule.** Surfaces are flat at rest. Hover is a keyline, never a drop shadow or a lift.
 
 ## Shapes
 
-Square and printed. No border radius anywhere (0px). The sheet is a 10px cream border (8px under 700px); bands and rows are full-bleed rectangles inside it. The nav link has a 2px transparent border that turns gold on hover. Icons are two small solid SVG glyphs filled with `currentColor`: a chevron (28px, rotates 90deg when open) on band heads and a block arrow (26px) on rows.
+Square and printed. No border radius anywhere (0px). The sheet is a 10px cream border (8px under 700px) with a 2px ink rule 3px inside its edge (`outline`, offset -7px, -6px under 700px); bands and rows are full-bleed rectangles inside it. The nav link has a 2px transparent border that turns gold on hover. Icons are two small solid SVG glyphs filled with `currentColor`: a chevron (28px, rotates 90deg when open) on band heads and a block arrow (26px) on rows.
 
 ## Components
 
