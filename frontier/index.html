@@ -108,7 +108,7 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar .grow{flex:1 1 auto}
 .bar .grow:empty{display:none}
 .bar-actions{display:flex;flex-wrap:nowrap;gap:8px 12px;margin-left:auto}
-body:not(.rw) #pane-fuel{grid-template-columns:1fr}
+body:not(.rw) #pane-fuel,#pane-history{grid-template-columns:1fr}
 body:not(.rw) #pane-fuel>.inputs,body:not(.rw) #svc-form,body:not(.rw) .act-col,body:not(.rw) td.act-cell{display:none}
 .bar.connect{border-top:0;gap:12px}
 .bar.connect label{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px}
@@ -350,7 +350,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             </div>
             <div class="bar">
                 <div class="chips tabs" id="panes" role="tablist" aria-label="Section">
-                    <button type="button" role="tab" id="tab-maint" data-pane="maint" aria-controls="pane-maint" aria-selected="true" class="active">Maintenance<span class="badge" id="tab-over" hidden><span id="tab-over-n">0</span><span class="sr-only"> overdue</span></span></button><button type="button" role="tab" id="tab-fuel" data-pane="fuel" aria-controls="pane-fuel" aria-selected="false" tabindex="-1">Fuel</button>
+                    <button type="button" role="tab" id="tab-maint" data-pane="maint" aria-controls="pane-maint" aria-selected="true" class="active">Maintenance<span class="badge" id="tab-over" hidden><span id="tab-over-n">0</span><span class="sr-only"> overdue</span></span></button><button type="button" role="tab" id="tab-fuel" data-pane="fuel" aria-controls="pane-fuel" aria-selected="false" tabindex="-1">Fuel</button><button type="button" role="tab" id="tab-history" data-pane="history" aria-controls="pane-history" aria-selected="false" tabindex="-1">History</button>
                 </div>
                 <span class="note" id="saved" role="status" aria-live="polite">Loading</span>
                 <span class="grow note" id="data-status" role="status" aria-live="polite"></span>
@@ -529,6 +529,16 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <tbody id="fuel-body"></tbody>
                             </table>
                             <button class="btn" id="fuel-more" type="button" hidden></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="body" id="pane-history" role="tabpanel" aria-labelledby="tab-history" hidden>
+                <div class="panel">
+                    <div class="results">
+                        <div class="ledger-wrap">
+                            <h2 class="section-label" id="miles-chart-l">Miles by month</h2>
+                            <div class="chart" id="miles-chart" role="group" aria-labelledby="miles-chart-l"></div>
                         </div>
                     </div>
                 </div>
@@ -776,9 +786,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const odometer = readings.length ? Math.max(...readings) : null;
       return { version: 1, truck: { year: t.year, drive: t.drive, odometer, use: t.use || 'standard' }, services, fuel, exportedOn: o.exportedOn };
     }
-    // MPG per calendar month for the `count` months ending with the month of
-    // `today` (yyyy-mm-dd): each month's miles over its gallons, by fill-up date.
-    // Months with no fill-up have mpg null.
+    // MPG and miles per calendar month for the `count` months ending with the month
+    // of `today` (yyyy-mm-dd): each month's miles over its gallons, by fill-up date.
+    // Months with no fill-up have mpg and mi null.
     function monthlyMpg(tanks, today, count) {
       const y = Number(today.slice(0, 4)), m = Number(today.slice(5, 7));
       const months = [];
@@ -791,7 +801,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         const o = byKey.get(t.date.slice(0, 7));
         if (o) { o.mi += t.dm; o.gal += t.gallons; o.fills++; }
       }
-      return months.map((o) => ({ key: o.key, year: o.year, month: o.month, fills: o.fills, mpg: o.gal > 0 ? o.mi / o.gal : null }));
+      return months.map((o) => ({ key: o.key, year: o.year, month: o.month, fills: o.fills, mpg: o.gal > 0 ? o.mi / o.gal : null, mi: o.fills ? o.mi : null }));
     }
     // </pure>
 
@@ -932,7 +942,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return el('td', { class: tier ? `mpg-${tier}` : null, 'data-label': 'MPG' }, shown, tier ? el('span', { class: 'sr-only', text: ` ${tier}` }) : null);
     }
 
-    // --- MPG by month: column chart, last 12 months -----------------------------
+    // --- MPG and miles by month: column charts, last 12 months --------------------
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const CHART_MONTHS = 12;
     const SVGNS = 'http://www.w3.org/2000/svg';
@@ -942,91 +952,97 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       if (text != null) n.textContent = text;
       return n;
     };
+    // Each chart: its box, the monthly field it plots and how values read.
+    const CHARTS = [
+      { box: 'mpg-chart', title: 'MPG by month', head: 'MPG', field: 'mpg', fmt: dec1, tick: String, tip: (v) => `${dec1(v)} MPG`, step: () => 4, min: 24, left: 30 },
+      { box: 'miles-chart', title: 'Miles by month', head: 'Miles', field: 'mi', fmt: (v) => int.format(v), tick: (v) => int.format(v), tip: (v) => `${int.format(v)} mi`, step: niceStep, min: 0, left: 44 },
+    ];
+    // Gridline step near a fifth of the top value: 1, 2 or 5 times a power of ten.
+    function niceStep(max) {
+      const raw = Math.max(max, 1) / 5, p = 10 ** Math.floor(Math.log10(raw)), f = raw / p;
+      return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+    }
     let chartMonths = [];
-    let tip = null;
 
-    function drawChart() {
-      const box = $('mpg-chart');
+    function drawChart(c) {
+      const box = $(c.box);
       const W = box.clientWidth - 12; // minus side padding
       if (W < 120) return; // hidden pane or not laid out yet
       const H = W < 480 ? 200 : 240;
-      const M = { top: 22, right: 6, bottom: 40, left: 30 };
+      const M = { top: 22, right: 6, bottom: 40, left: c.left };
       const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
       const band = plotW / chartMonths.length;
       const barW = Math.min(24, band - 6);
-      const vals = chartMonths.filter((m) => m.mpg != null);
-      const top = Math.max(24, Math.ceil(Math.max(0, ...vals.map((m) => m.mpg)) / 4) * 4);
+      const val = (m) => m[c.field];
+      const vals = chartMonths.filter((m) => val(m) != null);
+      const max = Math.max(0, ...vals.map(val));
+      const step = c.step(max);
+      const top = Math.max(c.min, Math.ceil(max / step) * step || step);
       const y = (v) => M.top + plotH - (v / top) * plotH;
       const names = band < 30 ? MONTHS.map((n) => n[0]) : MONTHS;
 
       const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
-      svg.setAttribute('aria-label', 'MPG by month, last 12 months: ' + chartMonths.map((m) => `${MONTHS[m.month]} ${m.year} ${m.mpg == null ? 'no fill-ups' : dec1(m.mpg)}`).join(', '));
-      svg.append(svgEl('title', null, 'MPG by month'));
+      svg.setAttribute('aria-label', `${c.title}, last 12 months: ` + chartMonths.map((m) => `${MONTHS[m.month]} ${m.year} ${val(m) == null ? 'no fill-ups' : c.fmt(val(m))}`).join(', '));
+      svg.append(svgEl('title', null, c.title));
 
-      for (let v = 0; v <= top; v += 4) {
+      for (let v = 0; v <= top; v += step) {
         svg.append(svgEl('line', { class: 'grid', x1: M.left, x2: W - M.right, y1: y(v), y2: y(v) }));
-        svg.append(svgEl('text', { class: 'tick', x: M.left - 6, y: y(v) + 4, 'text-anchor': 'end' }, String(v)));
+        svg.append(svgEl('text', { class: 'tick', x: M.left - 6, y: y(v) + 4, 'text-anchor': 'end' }, c.tick(v)));
       }
 
       // Label only the highest and lowest month, and only where the label fits.
-      const hi = vals.reduce((a, m) => (!a || m.mpg > a.mpg ? m : a), null);
-      const lo = vals.reduce((a, m) => (!a || m.mpg < a.mpg ? m : a), null);
+      const hi = vals.reduce((a, m) => (!a || val(m) > val(a) ? m : a), null);
+      const lo = vals.reduce((a, m) => (!a || val(m) < val(a) ? m : a), null);
       const labelled = new Set(band >= 30 ? [hi, lo].filter(Boolean) : []);
+
+      const tip = el('div', { class: 'chart-tip', hidden: true, 'aria-hidden': 'true' });
+      const hide = () => { tip.hidden = true; for (const g of box.querySelectorAll('.col.hot')) g.classList.remove('hot'); };
+      const show = (g, m, cx, yTop) => {
+        hide();
+        g.classList.add('hot');
+        tip.replaceChildren(el('b', { text: val(m) == null ? '—' : c.tip(val(m)) }), el('span', { text: `${MONTHS[m.month]} ${m.year} · ${m.fills ? plural(m.fills, 'fill-up') : 'No fill-ups'}` }));
+        tip.hidden = false;
+        const half = tip.offsetWidth / 2;
+        tip.style.left = `${Math.min(Math.max(cx + 6, half + 2), box.clientWidth - half - 2)}px`; // +6: chart padding
+        tip.style.top = `${Math.max(yTop + 2, tip.offsetHeight + 2)}px`;
+      };
 
       // A year label under the first month and each January, unless two would collide.
       const jan = chartMonths.findIndex((m) => m.month === 0);
       chartMonths.forEach((m, i) => {
         const cx = M.left + band * i + band / 2;
         const g = svgEl('g', { class: 'col', tabindex: '0', 'data-i': String(i) });
-        if (m.mpg != null) {
-          const x = cx - barW / 2, yt = y(m.mpg), yb = M.top + plotH, r = Math.min(4, barW / 2, yb - yt);
+        if (val(m) != null) {
+          const x = cx - barW / 2, yt = y(val(m)), yb = M.top + plotH, r = Math.min(4, barW / 2, yb - yt);
           g.append(svgEl('path', { class: 'bar', d: `M${x},${yb} V${yt + r} Q${x},${yt} ${x + r},${yt} H${x + barW - r} Q${x + barW},${yt} ${x + barW},${yt + r} V${yb} Z` }));
-          if (labelled.has(m)) g.append(svgEl('text', { class: 'val', x: cx, y: yt - 5 }, dec1(m.mpg)));
+          if (labelled.has(m)) g.append(svgEl('text', { class: 'val', x: cx, y: yt - 5 }, c.fmt(val(m))));
         }
         g.append(svgEl('rect', { class: 'hit', x: M.left + band * i, y: M.top, width: band, height: plotH + M.bottom - 4 }));
         svg.append(g);
         svg.append(svgEl('text', { class: 'tick', x: cx, y: H - 22, 'text-anchor': 'middle' }, names[m.month]));
         const yearHere = m.month === 0 || (i === 0 && !(jan > 0 && jan * band < 40));
         if (yearHere) svg.append(svgEl('text', { class: 'tick year', x: i === 0 ? M.left + band * i + 2 : cx, y: H - 6, 'text-anchor': i === 0 ? 'start' : 'middle' }, String(m.year)));
-        g.addEventListener('pointerenter', () => showTip(g, i, cx, y(m.mpg == null ? 0 : m.mpg), M));
-        g.addEventListener('pointermove', () => showTip(g, i, cx, y(m.mpg == null ? 0 : m.mpg), M));
-        g.addEventListener('pointerleave', hideTip);
-        g.addEventListener('focus', () => showTip(g, i, cx, y(m.mpg == null ? 0 : m.mpg), M));
-        g.addEventListener('blur', hideTip);
+        const on = () => show(g, m, cx, y(val(m) == null ? 0 : val(m)));
+        g.addEventListener('pointerenter', on);
+        g.addEventListener('pointermove', on);
+        g.addEventListener('pointerleave', hide);
+        g.addEventListener('focus', on);
+        g.addEventListener('blur', hide);
       });
 
       // Table view for screen readers (the values the tooltip shows).
-      const table = el('table', { class: 'sr-only' }, el('caption', { text: 'MPG by month' }),
-        el('thead', null, el('tr', null, el('th', { scope: 'col', text: 'Month' }), el('th', { scope: 'col', text: 'MPG' }), el('th', { scope: 'col', text: 'Fill-ups' }))),
-        el('tbody', null, ...chartMonths.map((m) => el('tr', null, el('td', { text: m.key }), el('td', { text: m.mpg == null ? '—' : dec1(m.mpg) }), el('td', { text: String(m.fills) })))));
+      const table = el('table', { class: 'sr-only' }, el('caption', { text: c.title }),
+        el('thead', null, el('tr', null, el('th', { scope: 'col', text: 'Month' }), el('th', { scope: 'col', text: c.head }), el('th', { scope: 'col', text: 'Fill-ups' }))),
+        el('tbody', null, ...chartMonths.map((m) => el('tr', null, el('td', { text: m.key }), el('td', { text: val(m) == null ? '—' : c.fmt(val(m)) }), el('td', { text: String(m.fills) })))));
 
-      tip = el('div', { class: 'chart-tip', hidden: true, 'aria-hidden': 'true' });
       box.replaceChildren(svg, table, tip);
-    }
-
-    function showTip(g, i, cx, yTop, M) {
-      const m = chartMonths[i];
-      for (const c of g.parentNode.querySelectorAll('.col.hot')) c.classList.remove('hot');
-      g.classList.add('hot');
-      tip.replaceChildren(el('b', { text: m.mpg == null ? '—' : `${dec1(m.mpg)} MPG` }), el('span', { text: `${MONTHS[m.month]} ${m.year} · ${m.fills ? plural(m.fills, 'fill-up') : 'No fill-ups'}` }));
-      tip.hidden = false;
-      const box = $('mpg-chart');
-      const half = tip.offsetWidth / 2;
-      const x = Math.min(Math.max(cx + 6, half + 2), box.clientWidth - half - 2); // +6: chart padding
-      tip.style.left = `${x}px`;
-      tip.style.top = `${Math.max(yTop + 10 - 8, tip.offsetHeight + 2)}px`;
-    }
-    function hideTip() {
-      if (!tip) return;
-      tip.hidden = true;
-      for (const c of document.querySelectorAll('#mpg-chart .col.hot')) c.classList.remove('hot');
     }
 
     function renderChart(tanks) {
       chartMonths = monthlyMpg(tanks, todayISO(), CHART_MONTHS);
-      drawChart();
+      for (const c of CHARTS) drawChart(c);
     }
-    new ResizeObserver(() => drawChart()).observe($('mpg-chart'));
+    for (const c of CHARTS) new ResizeObserver(() => drawChart(c)).observe($(c.box));
 
     function renderFuel() {
       const stats = mpgStats(data.fuel);
@@ -1253,7 +1269,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     });
     paintMode();
 
-    // Panes: Maintenance | Fuel. Saved choice, overridden by #fuel in the URL.
+    // Panes: Maintenance | Fuel | History. Saved choice, overridden by #fuel or #history in the URL.
     const PANE_KEY = 'frontier:pane';
     const tabEls = [...document.querySelectorAll('#panes [role=tab]')];
     function setPane(p, focus) {
@@ -1266,7 +1282,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         if (on && focus) t.focus();
       }
       try { localStorage.setItem(PANE_KEY, p); } catch (e) {}
-      history.replaceState(null, '', p === 'fuel' ? '#fuel' : location.pathname + location.search);
+      history.replaceState(null, '', p === 'maint' ? location.pathname + location.search : `#${p}`);
     }
     $('panes').addEventListener('click', (e) => {
       const t = e.target.closest('[role=tab]');
@@ -1280,10 +1296,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       e.preventDefault();
       setPane(tabEls[next].dataset.pane, true);
     });
-    window.addEventListener('hashchange', () => { if (location.hash === '#fuel') setPane('fuel'); else if (location.hash === '') setPane('maint'); });
+    const PANES = ['maint', 'fuel', 'history'];
+    const hashPane = () => (location.hash === '' ? 'maint' : PANES.find((p) => p !== 'maint' && location.hash === `#${p}`));
+    window.addEventListener('hashchange', () => { const p = hashPane(); if (p) setPane(p); });
     let startPane = 'maint';
-    try { if (localStorage.getItem(PANE_KEY) === 'fuel') startPane = 'fuel'; } catch (e) {}
-    if (location.hash === '#fuel') startPane = 'fuel';
+    try { const p = localStorage.getItem(PANE_KEY); if (PANES.includes(p)) startPane = p; } catch (e) {}
+    if (location.hash && hashPane()) startPane = hashPane();
     setPane(startPane);
 
     async function loadSite() {

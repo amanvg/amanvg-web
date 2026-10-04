@@ -68,7 +68,9 @@ A Reject means make no changes and ask what to adjust.
   calendar months ending this month, inline SVG, one hue, best and worst
   labelled), then the 10 newest fill-ups (with miles per
   tank; MPG red below 16, green above 20) sit right. No cost is shown on Fuel
-  (fill-ups save cost 0).
+  (fill-ups save cost 0). History (`#history`) is one full-width column of
+  ownership charts, starting with Miles by month (same chart as MPG, miles
+  from fill-up odometer distance by fill date).
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
   `data/visited.json`; a "Create your own" button switches to a blank,
   browser-saved copy with Export/Import in the same schema. No personal name
