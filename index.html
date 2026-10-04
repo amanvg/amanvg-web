@@ -52,7 +52,7 @@
   --text:#f4ede2; --head-bg:#141e17; --head-text:#f4ede2; --head-line:#35483b;
   --key:#35483b; --frame:#35483b; --divider:#233328;
   --shadow:#060a08; --accent:#e5933a; --focus:#e5933a; --sel-bg:#e5933a; --sel-fg:#0e1511;
-  --hover-bg:#223329; --hover-fg:#f4ede2; --btn-hover-bg:#1a271f; --btn-hover-fg:#f4ede2;
+  --hover-bg:#24422e; --hover-fg:#f4ede2; --btn-hover-bg:#1a271f; --btn-hover-fg:#f4ede2;
   --s1:#44805d; --s2:#e5933a; --s3:#c8523b;
   --foot-bg:#0a0f0c; --foot-text:#ded5c5; --foot-line:#35483b; --foot-accent:#e5933a;
   --b-sports:#2d4b38; --f-sports:#f4ede2;
@@ -122,6 +122,7 @@ li+li{border-top:1px solid var(--divider)}
 .row h3 em{font-family:var(--body);font-style:italic;font-weight:400;font-size:16px;letter-spacing:0;text-transform:none;opacity:.85}
 .go{width:20px;height:20px;transition:transform .2s var(--ease)}
 @media(hover:hover){.row:hover .go{transform:translateX(5px)}}
+@media(hover:hover){:root[data-theme="dark"] .row:hover h3,:root[data-theme="dark"] .row:hover .go{color:var(--accent)}}
 
 footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
 .sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
