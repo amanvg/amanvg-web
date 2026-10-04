@@ -59,6 +59,7 @@ body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:1
 ::selection{background:var(--sel-bg);color:var(--sel-fg)}
 :focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 button{font:inherit}
+[hidden]{display:none!important}
 
 .skip-link{position:absolute;top:-48px;left:16px;background:var(--head-text);color:var(--head-bg);padding:8px 16px;z-index:200;font-family:var(--label);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
 .skip-link:focus{top:8px}
@@ -90,6 +91,21 @@ main{flex:1;padding:28px var(--margin) 0}
 .chips button.active{background:var(--accent);border-color:var(--accent);color:var(--sel-fg)}
 .chips button:focus-visible{outline-color:var(--f-sports)}
 @media(hover:hover){.chips button:not(.active):hover{background:var(--chip-hover)}}
+.mast-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 16px}
+.mine{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 18px;border:2px solid var(--chip-line);background:transparent;color:var(--f-sports);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.mine.active{background:var(--accent);border-color:var(--accent);color:var(--sel-fg)}
+.mine:focus-visible{outline-color:var(--f-sports)}
+.mine:disabled{opacity:.5;cursor:default}
+@media(hover:hover){.mine:not(.active):hover{background:var(--chip-hover)}}
+.ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 28px;background:var(--well-bg);border-bottom:2px solid var(--head-line)}
+.ctrl-label{font-family:var(--display);font-weight:700;font-size:20px;line-height:26px;letter-spacing:.06em;text-transform:uppercase;margin-right:8px}
+.ctrl-btns{display:flex;flex-wrap:wrap;gap:8px 12px}
+.ctrl .btn{border-color:var(--frame);color:var(--text);padding:8px 16px}
+.ctrl .btn:focus-visible{outline-color:var(--focus)}
+.ctrl .btn.armed,.ctrl .btn.armed:hover{background:var(--s3);border-color:var(--s3);color:#f6efe1}
+.status{padding:8px 28px;background:var(--well-bg);border-bottom:2px solid var(--head-line);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
+.status:empty{display:none}
+.status.err{color:var(--s3)}
 
 .body{display:grid;grid-template-columns:minmax(340px,4fr) minmax(0,7fr);gap:2px;background:var(--head-line)}
 .panel{background:var(--card);min-width:0;padding:24px 28px 28px}
@@ -119,6 +135,7 @@ main{flex:1;padding:28px var(--margin) 0}
 .land.visited{fill:var(--seen)}
 .land.unvisited{fill:var(--land)}
 @media(hover:hover){.land:hover{opacity:.75}}
+.land:focus-visible{outline:3px solid var(--focus);outline-offset:1px}
 .borders{fill:none;stroke:var(--land-line);stroke-width:.8;vector-effect:non-scaling-stroke;pointer-events:none}
 .ocean{fill:var(--well-bg);stroke:var(--land-line);stroke-width:.8;vector-effect:non-scaling-stroke}
 .graticule{fill:none;stroke:var(--divider);stroke-width:.5;vector-effect:non-scaling-stroke}
@@ -135,6 +152,9 @@ main{flex:1;padding:28px var(--margin) 0}
 .ledger{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));background:var(--row-a)}
 .row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--row-a);box-shadow:inset -1px -1px 0 var(--divider)}
 .row.visited{background:var(--row-b)}
+button.row{width:100%;border:0;color:inherit;text-align:left;cursor:pointer}
+button.row:focus-visible{outline-offset:-3px}
+@media(hover:hover){button.row:hover{box-shadow:inset 0 0 0 2px var(--accent)}}
 .row b{font-family:var(--label);font-weight:700;font-size:13px;line-height:18px;letter-spacing:.06em;text-transform:uppercase}
 .row.unvisited b{font-weight:600;color:var(--muted)}
 
@@ -162,6 +182,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .btn{padding:8px 14px}
   main{padding-top:24px}
   .masthead{padding:12px 16px}
+  .mast-tools{justify-content:flex-start}
+  .ctrl,.status{padding-left:16px;padding-right:16px}
   .masthead h1{font-size:28px;line-height:36px}
   .panel{padding:20px 16px 24px}
   .map-well{padding:4px}
@@ -192,8 +214,22 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     <div class="sheet">
       <div class="masthead">
         <h1>Countries</h1>
-        <div class="chips" id="continent-tabs" role="group" aria-label="Continent"></div>
+        <div class="mast-tools">
+          <div class="chips" id="continent-tabs" role="group" aria-label="Continent"></div>
+          <button class="mine" id="mine" type="button" aria-pressed="false" disabled>Create your own</button>
+        </div>
       </div>
+      <div class="ctrl" id="ctrl" hidden>
+        <span class="ctrl-label">Your map</span>
+        <div class="ctrl-btns">
+          <button class="btn" id="back" type="button">Back to original</button>
+          <button class="btn" id="export" type="button">Export</button>
+          <button class="btn" id="import" type="button">Import</button>
+          <button class="btn" id="clear" type="button">Clear</button>
+        </div>
+        <input type="file" id="import-file" accept=".json,application/json" hidden />
+      </div>
+      <div class="status" id="status" role="status"></div>
       <div class="body">
         <div class="panel side">
           <div class="signs">
@@ -245,26 +281,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
 
   <script>
-// ── EDIT THIS LIST ────────────────────────────────────────────────────────
-const VISITED = new Set([
-  "United States of America",
-  "Canada",
-  "Mexico",
-  "Ireland",
-  "United Kingdom",
-  "France",
-  "Belgium",
-  "Germany",
-  "Netherlands",
-  "Switzerland",
-  "Austria",
-  "Italy",
-  "Greece",
-  "United Arab Emirates",
-  "India",
-  "Kenya",
-]);
-// ─────────────────────────────────────────────────────────────────────────
+const STORE_KEY = 'worldmap:mine';
+const DATA_URL = '/worldmap/data/visited.json';
+let visited = new Set();   // the set currently shown (default or personal)
+let defaultSet = new Set();
+let mineSet = new Set();
+let personal = false, mineExists = false;
+let allNames = [], landSel = null;
 
 // ISO numeric → country name (Natural Earth names used in world-atlas)
 const ID_TO_NAME = {
@@ -374,7 +397,7 @@ const tipName = document.getElementById('tip-name');
 const tipStatus = document.getElementById('tip-status');
 
 function showTip(e, name) {
-  const isV = VISITED.has(name);
+  const isV = visited.has(name);
   tipName.textContent = name;
   tipStatus.textContent = isV ? 'Visited' : 'Not visited';
   tipStatus.className = `tip-status ${isV ? 'visited' : 'unvisited'}`;
@@ -460,45 +483,245 @@ const tabsEl = document.getElementById('continent-tabs');
 });
 // ─────────────────────────────────────────────────────────────────────────
 
-function renderGroup(title, names) {
-  // Visited first, then alphabetical
-  const sorted = [...names.filter(n => VISITED.has(n)), ...names.filter(n => !VISITED.has(n))];
-  const visitedInGroup = sorted.filter(n => VISITED.has(n)).length;
-  const card = document.createElement('section');
-  card.className = 'group';
-  const head = document.createElement('h2');
-  head.className = 'group-head';
-  head.innerHTML = `<span>${title}</span><span class="count">${visitedInGroup} / ${sorted.length} visited</span>`;
-  card.appendChild(head);
-  const ledger = document.createElement('div');
-  ledger.className = 'ledger';
-  sorted.forEach(name => {
-    const row = document.createElement('div');
-    row.className = `row ${VISITED.has(name) ? 'visited' : 'unvisited'}`;
-    row.innerHTML = `<span class="dot"></span><b>${name}</b>`;
-    ledger.appendChild(row);
+const rowEls = new Map();
+let groups = [];
+
+function renderLists() {
+  const host = document.getElementById('lists');
+  host.textContent = '';
+  rowEls.clear();
+  groups = [];
+  CONTINENT_ORDER.forEach(continent => {
+    const base = allNames.filter(n => (CONTINENT_OF[n] || 'Other') === continent);
+    if (!base.length) return;
+    // Default view: visited first, then alphabetical. Personal view stays alphabetical so rows do not jump.
+    const names = personal ? base : [...base.filter(n => visited.has(n)), ...base.filter(n => !visited.has(n))];
+    const card = document.createElement('section');
+    card.className = 'group';
+    const head = document.createElement('h2');
+    head.className = 'group-head';
+    const title = document.createElement('span');
+    title.textContent = continent;
+    const count = document.createElement('span');
+    count.className = 'count';
+    head.append(title, count);
+    card.appendChild(head);
+    const ledger = document.createElement('div');
+    ledger.className = 'ledger';
+    names.forEach(name => {
+      const row = document.createElement(personal ? 'button' : 'div');
+      row.className = 'row';
+      if (personal) {
+        row.type = 'button';
+        row.addEventListener('click', () => toggle(name));
+      }
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      const b = document.createElement('b');
+      b.textContent = name;
+      row.append(dot, b);
+      ledger.appendChild(row);
+      rowEls.set(name, row);
+    });
+    card.appendChild(ledger);
+    host.appendChild(card);
+    groups.push({ names, countEl: count });
   });
-  card.appendChild(ledger);
-  document.getElementById('lists').appendChild(card);
 }
 
-d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(world => {
+function updateAll(animate) {
+  const total = allNames.length;
+  const vc = allNames.filter(n => visited.has(n)).length;
+  landSel.each(function (d) {
+    const name = ID_TO_NAME[+d.id];
+    const v = !!(name && visited.has(name));
+    this.classList.toggle('visited', v);
+    this.classList.toggle('unvisited', !v);
+    if (personal && name) this.setAttribute('aria-pressed', v);
+  });
+  rowEls.forEach((el, name) => {
+    const v = visited.has(name);
+    el.classList.toggle('visited', v);
+    el.classList.toggle('unvisited', !v);
+    if (personal) el.setAttribute('aria-pressed', v);
+  });
+  groups.forEach(g => {
+    g.countEl.textContent = `${g.names.filter(n => visited.has(n)).length} / ${g.names.length} visited`;
+  });
+  ['visited-count', 'unvisited-count', 'pct'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.textContent = [vc, total - vc, (total ? Math.round(vc / total * 100) : 0) + '%'][i];
+    if (animate) {
+      el.classList.remove('strike');
+      void el.offsetWidth;
+      el.classList.add('strike');
+    }
+  });
+}
+
+// ── Default (config) view and personal copy ──────────────────────────────
+const mineBtn = document.getElementById('mine');
+const ctrl = document.getElementById('ctrl');
+const statusEl = document.getElementById('status');
+const clearBtn = document.getElementById('clear');
+const importFile = document.getElementById('import-file');
+let master = new Set();
+
+function setStatus(msg, err) {
+  statusEl.textContent = msg || '';
+  statusEl.classList.toggle('err', !!err);
+}
+
+function parseVisited(obj) {
+  if (!obj || typeof obj !== 'object' || obj.version !== 1 || !Array.isArray(obj.visited)) return null;
+  if (!obj.visited.every(v => typeof v === 'string')) return null;
+  return new Set(obj.visited.filter(n => master.has(n)));
+}
+function payload(set) { return { version: 1, visited: [...set].sort() }; }
+
+function loadMine() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw === null) return null;
+    return parseVisited(JSON.parse(raw));
+  } catch (e) { return null; }
+}
+function saveMine() {
+  mineExists = true;
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(payload(mineSet))); } catch (e) {}
+}
+function dropMine() {
+  mineExists = false;
+  try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+}
+function setMine(set) { mineSet = set; if (personal) visited = mineSet; }
+
+function paintPersonal() {
+  mineBtn.textContent = personal || mineExists ? 'Your map' : 'Create your own';
+  mineBtn.classList.toggle('active', personal);
+  mineBtn.setAttribute('aria-pressed', personal);
+  ctrl.hidden = !personal;
+  svg.attr('role', personal ? 'group' : 'img');
+  landSel.each(function (d) {
+    const name = ID_TO_NAME[+d.id];
+    if (personal && name) {
+      this.setAttribute('role', 'button');
+      this.setAttribute('tabindex', '0');
+      this.setAttribute('aria-label', name);
+    } else {
+      this.removeAttribute('role');
+      this.removeAttribute('tabindex');
+      this.removeAttribute('aria-label');
+      this.removeAttribute('aria-pressed');
+    }
+  });
+}
+
+function setMode(on) {
+  personal = on;
+  visited = on ? mineSet : defaultSet;
+  resetClear();
+  setStatus('');
+  hideTip();
+  renderLists();
+  paintPersonal();
+  updateAll(true);
+}
+
+function toggle(name) {
+  if (!personal || !master.has(name)) return;
+  if (mineSet.has(name)) mineSet.delete(name); else mineSet.add(name);
+  saveMine();
+  setStatus('');
+  updateAll(false);
+  paintPersonal();
+}
+
+let clearTimer = null;
+function resetClear() {
+  clearTimeout(clearTimer);
+  clearTimer = null;
+  clearBtn.textContent = 'Clear';
+  clearBtn.classList.remove('armed');
+}
+
+mineBtn.addEventListener('click', () => { if (!personal) setMode(true); });
+document.getElementById('back').addEventListener('click', () => { setMode(false); mineBtn.focus(); });
+clearBtn.addEventListener('click', () => {
+  if (clearTimer === null) {
+    clearBtn.textContent = 'Confirm clear';
+    clearBtn.classList.add('armed');
+    clearTimer = setTimeout(resetClear, 4000);
+  } else {
+    resetClear();
+    setMine(new Set());
+    dropMine();
+    setStatus('');
+    updateAll(false);
+  }
+});
+clearBtn.addEventListener('blur', resetClear);
+document.getElementById('export').addEventListener('click', () => {
+  resetClear();
+  const blob = new Blob([JSON.stringify(payload(mineSet), null, 2) + '\n'], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `worldmap-visited-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+document.getElementById('import').addEventListener('click', () => { resetClear(); importFile.click(); });
+importFile.addEventListener('change', () => {
+  const file = importFile.files && importFile.files[0];
+  importFile.value = '';
+  if (!file) return;
+  const fail = () => setStatus('Import failed: invalid file', true);
+  if (file.size > 1000000) { fail(); return; }
+  file.text().then(text => {
+    const set = parseVisited(JSON.parse(text));
+    if (!set) { fail(); return; }
+    setMine(set);
+    saveMine();
+    setStatus(`Imported ${set.size}`);
+    updateAll(false);
+    paintPersonal();
+  }).catch(fail);
+});
+
+const visitedReq = fetch(DATA_URL).then(r => {
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}).catch(() => null);
+
+Promise.all([d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'), visitedReq]).then(([world, cfg]) => {
   const countries = topojson.feature(world, world.objects.countries);
 
-  mapLayer.selectAll('.land')
+  landSel = mapLayer.selectAll('.land')
     .data(countries.features)
     .enter()
     .append('path')
-    .attr('class', d => {
-      const name = ID_TO_NAME[+d.id];
-      return `land ${name && VISITED.has(name) ? 'visited' : 'unvisited'}`;
-    })
+    .attr('class', 'land unvisited')
     .attr('d', pathGen)
     .on('mousemove', (e, d) => {
       const name = ID_TO_NAME[+d.id];
       if (name) showTip(e, name);
     })
-    .on('mouseleave', hideTip);
+    .on('mouseleave', hideTip)
+    .on('click', (e, d) => {
+      const name = ID_TO_NAME[+d.id];
+      if (!personal || !name) return;
+      toggle(name);
+      showTip(e, name);
+    })
+    .on('keydown', (e, d) => {
+      const name = ID_TO_NAME[+d.id];
+      if (!personal || !name || (e.key !== 'Enter' && e.key !== ' ')) return;
+      e.preventDefault();
+      toggle(name);
+    });
 
   // Borders
   mapLayer.append('path')
@@ -507,22 +730,23 @@ d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(w
     .attr('d', pathGen);
 
   // Build unique sorted country name list from what's actually in the map
-  const allNames = [...new Set(
+  allNames = [...new Set(
     countries.features.map(d => ID_TO_NAME[+d.id]).filter(Boolean)
   )].sort();
+  master = new Set(allNames);
 
-  const visitedCount = allNames.filter(n => VISITED.has(n)).length;
-  const total = allNames.length;
-  ['visited-count', 'unvisited-count', 'pct'].forEach((id, i) => {
-    const el = document.getElementById(id);
-    el.textContent = [visitedCount, total - visitedCount, Math.round(visitedCount / total * 100) + '%'][i];
-    el.classList.add('strike');
-  });
+  const parsed = parseVisited(cfg);
+  if (parsed) defaultSet = parsed;
+  else setStatus('Visited list unavailable', true);
 
-  CONTINENT_ORDER.forEach(continent => {
-    const group = allNames.filter(n => (CONTINENT_OF[n] || 'Other') === continent);
-    if (group.length) renderGroup(continent, group);
-  });
+  const saved = loadMine();
+  if (saved) { mineSet = saved; mineExists = true; }
+
+  visited = defaultSet;
+  renderLists();
+  paintPersonal();
+  updateAll(true);
+  mineBtn.disabled = false;
 });
 
 // ── Theme ─────────────────────────────────────────────────────────────────

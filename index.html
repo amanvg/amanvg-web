@@ -35,7 +35,7 @@
   --s1:#24422e; --s2:#d9822b; --s3:#a63a24;
   --foot-bg:#1c2730; --foot-text:#f6efe1; --foot-line:#181c16; --foot-accent:#d9822b;
   --b-sports:#24422e; --f-sports:#f6efe1;
-  --b-maps:#60888f;   --f-maps:#181c16;
+  --b-personal:#60888f;   --f-personal:#181c16;
   --b-weather:#1c2730; --f-weather:#f6efe1;
   --b-calc:#d9822b;   --f-calc:#181c16;
   --b-sec:#a63a24;    --f-sec:#f6efe1;
@@ -56,7 +56,7 @@
   --s1:#44805d; --s2:#e5933a; --s3:#c8523b;
   --foot-bg:#0a0f0c; --foot-text:#ded5c5; --foot-line:#35483b; --foot-accent:#e5933a;
   --b-sports:#2d4b38; --f-sports:#f4ede2;
-  --b-maps:#44805d;   --f-maps:#0e1511;
+  --b-personal:#44805d;   --f-personal:#0e1511;
   --b-weather:#141c26; --f-weather:#f4ede2;
   --b-calc:#e5933a;   --f-calc:#0e1511;
   --b-sec:#86301f;    --f-sec:#f4ede2;
@@ -155,14 +155,15 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         <h2><button class="head" aria-expanded="false">Sports<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
         <div class="panel"><ul>
           <li><a class="row" href="/seattlesports/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Seattle Sports</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
-          <li><a class="row" href="/mlbstadiums/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
         </ul></div>
       </section>
-      <section class="cat" data-open="false" style="--c:var(--b-maps);--fg:var(--f-maps)">
-        <h2><button class="head" aria-expanded="false">Maps<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
+      <section class="cat" data-open="false" style="--c:var(--b-personal);--fg:var(--f-personal)">
+        <h2><button class="head" aria-expanded="false">Personal<svg class="chev" viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3l12 11-12 11-3-3 8-8-8-8z" fill="currentColor"/></svg></button></h2>
         <div class="panel"><ul>
+          <li><a class="row" href="/frontier/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Frontier Maintenance</h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
           <li><a class="row" href="/USStates/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>US States <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
           <li><a class="row" href="/worldmap/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>Countries <em>I have been to</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
+          <li><a class="row" href="/mlbstadiums/"><svg class="pip" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 0l7 14H0z" fill="currentColor"/></svg><h3>MLB Stadiums <em>I have seen a game in</em></h3><svg class="go" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11h14l-5-6h5l8 9-8 9h-5l5-6H3z" fill="currentColor"/></svg></a></li>
         </ul></div>
       </section>
       <section class="cat" data-open="false" style="--c:var(--b-weather);--fg:var(--f-weather)">

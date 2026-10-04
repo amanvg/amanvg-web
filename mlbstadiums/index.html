@@ -19,6 +19,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Vollkorn:ital,wght@0,400;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet" />
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 /* Federal Park Serigraph (light) */
 :root{
   color-scheme:light;
@@ -85,7 +86,17 @@ main{flex:1;padding:28px var(--margin) 0}
 .sheet{border:3px solid var(--frame);background:var(--card);box-shadow:4px 4px 0 0 var(--shadow)}
 .masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--b-sports);color:var(--f-sports);border-bottom:2px solid var(--head-line)}
 .masthead h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
+.mast-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 18px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
+#mine-btn{min-height:44px}
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 28px;background:var(--card);border-bottom:2px solid var(--head-line)}
+.ctl-tag{font-family:var(--display);font-weight:700;font-size:20px;line-height:26px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);border-left:6px solid var(--accent);padding-left:10px}
+.ctl-tools{display:flex;flex-wrap:wrap;gap:8px}
+.ctl-msg{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--s3)}
+:root .ctl .btn{color:var(--text);border-color:var(--frame);padding:6px 16px}
+:root .ctl .btn:focus-visible{outline-color:var(--focus)}
+@media(hover:hover){:root .ctl .btn:hover{background:var(--accent);color:var(--sel-fg);border-color:var(--frame)}}
+:root .ctl .btn.arm{background:var(--s3);border-color:var(--s3);color:#f6efe1}
 .chips button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px 14px;border:1.5px solid var(--chip-line);background:transparent;color:var(--f-sports);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .chips button.active{background:var(--accent);border-color:var(--accent);color:var(--sel-fg)}
 .chips button:focus-visible{outline-color:var(--f-sports)}
@@ -126,6 +137,8 @@ main{flex:1;padding:28px var(--margin) 0}
 .stadium-dot.former.visited{fill:var(--well-bg);stroke:var(--seen)}
 .stadium-dot.former.toured{fill:var(--well-bg);stroke:var(--toured)}
 .stadium-dot:hover{opacity:.75}
+.stadium-dot.gone{display:none}
+.stadium-dot:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .stadium-dot.hidden{opacity:0;pointer-events:none}
 
 #tooltip{position:fixed;background:var(--card);border:2px solid var(--frame);box-shadow:4px 4px 0 0 var(--shadow);padding:8px 14px;font-family:var(--label);font-weight:700;font-size:13px;line-height:18px;letter-spacing:.04em;text-transform:uppercase;color:var(--text);pointer-events:none;opacity:0;transition:opacity .1s;z-index:200;white-space:nowrap}
@@ -148,6 +161,10 @@ main{flex:1;padding:28px var(--margin) 0}
 .who{display:flex;flex-direction:column;min-width:0}
 .who b{font-family:var(--label);font-weight:700;font-size:13px;line-height:18px;letter-spacing:.06em;text-transform:uppercase}
 .who i{font-style:normal;font-size:15px;line-height:20px;color:var(--muted)}
+.row.pick{cursor:pointer}
+.row.pick:focus-visible{outline-offset:-3px}
+@media(hover:hover){.row.pick:hover{box-shadow:inset 4px 0 0 0 var(--accent)}}
+.signs.mine .sign:last-child{grid-column:1/-1}
 .former-card{grid-column:1/-1}
 .former-card .ledger{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 .former-card .row+.row{border-top:0;border-left:1px solid var(--divider)}
@@ -167,6 +184,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .body{grid-template-columns:1fr}
   .map-panel{order:-1}
   .signs{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .signs.mine{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .signs.mine .sign:last-child{grid-column:auto}
   #stadium-list{grid-template-columns:repeat(2,minmax(0,1fr))}
   .former-card{grid-column:1/-1}
 }
@@ -180,7 +199,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .masthead h1{font-size:28px;line-height:36px}
   .panel{padding:20px 16px 24px}
   .map-well{padding:4px}
-  .signs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .signs,.signs.mine{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .signs.mine .sign:last-child{grid-column:1/-1}
+  .ctl{padding:10px 16px}
+  .mast-tools{justify-content:flex-start}
   #stadium-list{grid-template-columns:1fr}
   .former-card .ledger{grid-template-columns:1fr}
   .former-card .row+.row{border-left:0;border-top:1px solid var(--divider)}
@@ -208,16 +230,30 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     <div class="sheet">
       <div class="masthead">
         <h1>MLB Stadiums</h1>
-        <div class="chips" id="region-tabs" role="group" aria-label="Division"></div>
+        <div class="mast-tools">
+          <div class="chips" id="region-tabs" role="group" aria-label="Division"></div>
+          <div class="chips"><button type="button" id="mine-btn">Create your own</button></div>
+        </div>
+      </div>
+      <div class="ctl" id="ctl" hidden>
+        <span class="ctl-tag" id="ctl-tag" hidden>Your map</span>
+        <div class="ctl-tools" id="ctl-tools" hidden>
+          <button class="btn" type="button" id="back-btn">Back to original</button>
+          <button class="btn" type="button" id="export-btn">Export</button>
+          <button class="btn" type="button" id="import-btn">Import</button>
+          <button class="btn" type="button" id="clear-btn">Clear</button>
+          <input type="file" id="file-in" accept="application/json,.json" hidden />
+        </div>
+        <span class="ctl-msg" id="msg" role="status"></span>
       </div>
       <div class="body">
         <div class="panel side">
-          <div class="signs">
+          <div class="signs" id="signs">
             <div class="sign hot">
               <div class="sign-head">Seen a game</div>
               <div class="sign-body"><div class="num" id="visited-count">—</div></div>
             </div>
-            <div class="sign">
+            <div class="sign" id="sign-toured">
               <div class="sign-head">Been to, no game yet</div>
               <div class="sign-body"><div class="num" id="toured-count">—</div></div>
             </div>
@@ -232,9 +268,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
           </div>
           <div class="keys">
             <div class="key"><span class="dot visited"></span>Seen a game</div>
-            <div class="key"><span class="dot toured"></span>Been to, no game yet</div>
+            <div class="key" id="key-toured"><span class="dot toured"></span>Been to, no game yet</div>
             <div class="key"><span class="dot unvisited"></span>Not yet</div>
-            <div class="key"><span class="dot former toured"></span>Former park</div>
+            <div class="key" id="key-former"><span class="dot former toured"></span>Former park</div>
           </div>
         </div>
         <div class="panel map-panel" id="map">
@@ -270,17 +306,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
 
   <script>
-// ── EDIT THIS LIST ────────────────────────────────────────────────────────
-const VISITED = new Set([
-  "T-Mobile Park",
-  "Oracle Park",
-  "Citizens Bank Park",
-  "PNC Park",
-  "Yankee Stadium",
-  "Nationals Park",
-]);
+// Default view: the visited set lives in /mlbstadiums/data/visited.json
+let VISITED = new Set();
+let loadError = false;
 
-// Stadiums I've been inside, but haven't seen a game at
+// Stadiums I've been inside, but haven't seen a game at (default view only)
 const BEEN_TO = new Set([
   "Coors Field",
   "Wrigley Field",
@@ -289,7 +319,7 @@ const BEEN_TO = new Set([
   "Oriole Park at Camden Yards",
 ]);
 
-// Parks that are no longer a team's home, but that I've been to.
+// Parks that are no longer a team's home, but that I've been to (default view only).
 // status: 'visited' = saw a game there, 'toured' = been inside only
 const FORMER_PARKS = [
   { stadium: "Oakland Coliseum", team: "Oakland Athletics", city: "Oakland, CA",
@@ -299,9 +329,15 @@ const FORMER_PARKS = [
     era: "Rangers home 1994–2019", status: "toured", division: "AL West",
     coords: [-97.0832, 32.7512] },
 ];
-// ─────────────────────────────────────────────────────────────────────────
+
+// Personal mode: a blank set kept in localStorage under STORE_KEY
+const STORE_KEY = 'mlbstadiums:mine';
+let personal = false;
+let mine = new Set();
+let stored = false;
 
 function statusOf(s) {
+  if (personal) return mine.has(s.stadium) ? 'visited' : 'unvisited';
   if (s.status) return s.status; // former parks carry their own status
   if (VISITED.has(s.stadium)) return 'visited';
   if (BEEN_TO.has(s.stadium)) return 'toured';
@@ -358,16 +394,56 @@ const DIVISION_GROUPS = {
 const ALL_STADIUMS = Object.entries(DIVISION_GROUPS)
   .flatMap(([division, list]) => list.map(s => ({ ...s, division })));
 
+const NAMES = new Set(ALL_STADIUMS.map(s => s.stadium));
+
+// {"version":1,"visited":[...]} -> sorted unique known names, or null when the schema is wrong
+function parseVisited(text) {
+  let o;
+  try { o = JSON.parse(text); } catch (e) { return null; }
+  if (!o || typeof o !== 'object' || o.version !== 1 || !Array.isArray(o.visited)) return null;
+  if (!o.visited.every(v => typeof v === 'string')) return null;
+  return [...new Set(o.visited.filter(v => NAMES.has(v)))].sort();
+}
+const payload = set => ({ version: 1, visited: [...set].sort() });
+
+function loadMine() {
+  try {
+    const t = localStorage.getItem(STORE_KEY);
+    const a = t === null ? null : parseVisited(t);
+    if (a) { stored = true; return new Set(a); }
+  } catch (e) {}
+  return new Set();
+}
+function saveMine() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(payload(mine))); stored = true; } catch (e) {}
+}
+function toggleMine(name) {
+  if (!personal || !NAMES.has(name)) return;
+  if (mine.has(name)) mine.delete(name); else mine.add(name);
+  importMsg = '';
+  saveMine();
+  render();
+}
+
 // Stats — the league counts track the 30 current parks; the "been to" count
-// includes former parks I've been inside
+// includes former parks
 const total = ALL_STADIUMS.length;
-const visitedCount = VISITED.size;
-const touredCount = BEEN_TO.size + FORMER_PARKS.filter(s => s.status === 'toured').length;
-['visited-count', 'toured-count', 'unvisited-count', 'pct'].forEach((id, i) => {
+function setNum(id, text) {
   const el = document.getElementById(id);
-  el.textContent = [visitedCount, touredCount, total - visitedCount, Math.round(visitedCount / total * 100) + '%'][i];
+  if (el.textContent === text) return;
+  el.textContent = text;
+  el.classList.remove('strike');
+  void el.offsetWidth;
   el.classList.add('strike');
-});
+}
+function renderStats() {
+  const visitedCount = personal ? mine.size : ALL_STADIUMS.filter(s => VISITED.has(s.stadium)).length;
+  const touredCount = personal ? 0 : BEEN_TO.size + FORMER_PARKS.filter(s => s.status === 'toured').length;
+  setNum('visited-count', String(visitedCount));
+  setNum('toured-count', String(touredCount));
+  setNum('unvisited-count', String(total - visitedCount));
+  setNum('pct', Math.round(visitedCount / total * 100) + '%');
+}
 
 // Stadium list: one ledger per division — seen a game first, then been-to, then the rest
 const STATUS_RANK = { visited: 0, toured: 1, unvisited: 2 };
@@ -378,33 +454,61 @@ function ledgerCard(title, count, rows, extra) {
   card.className = 'div-card' + (extra ? ' ' + extra : '');
   const head = document.createElement('h2');
   head.className = 'div-head';
-  head.innerHTML = `<span>${title}</span><span class="count">${count}</span>`;
+  const t = document.createElement('span'); t.textContent = title;
+  const c = document.createElement('span'); c.className = 'count'; c.textContent = count;
+  head.append(t, c);
   card.appendChild(head);
   const ledger = document.createElement('div');
   ledger.className = 'ledger';
   rows.forEach(r => {
     const row = document.createElement('div');
     row.className = `row ${r.cls}`;
-    row.innerHTML = `<span class="dot"></span><span class="who"><b>${r.name}</b><i>${r.sub}</i></span>`;
+    row.dataset.key = r.name;
+    const dot = document.createElement('span'); dot.className = 'dot';
+    const who = document.createElement('span'); who.className = 'who';
+    const b = document.createElement('b'); b.textContent = r.name;
+    const i = document.createElement('i'); i.textContent = r.sub;
+    who.append(b, i);
+    row.append(dot, who);
+    if (r.pick) {
+      row.classList.add('pick');
+      row.setAttribute('role', 'button');
+      row.tabIndex = 0;
+      row.setAttribute('aria-pressed', r.cls === 'visited');
+      row.addEventListener('click', () => toggleMine(r.name));
+      row.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMine(r.name); }
+      });
+    }
     ledger.appendChild(row);
   });
   card.appendChild(ledger);
   listContainer.appendChild(card);
 }
 
-Object.keys(DIVISION_GROUPS).forEach(division => {
-  const sorted = [...DIVISION_GROUPS[division]]
-    .sort((a, b) => STATUS_RANK[statusOf(a)] - STATUS_RANK[statusOf(b)] || a.team.localeCompare(b.team));
-  const visitedInGroup = sorted.filter(s => statusOf(s) === 'visited').length;
-  const touredInGroup = sorted.filter(s => statusOf(s) === 'toured').length;
-  const touredNote = touredInGroup ? ` · ${touredInGroup} been to` : '';
-  ledgerCard(division, `${visitedInGroup} / ${sorted.length} visited${touredNote}`,
-    sorted.map(s => ({ cls: statusOf(s), name: s.stadium, sub: `${s.team} · ${s.city}` })));
-});
-
-// Former parks section
-ledgerCard('Former Parks', `${FORMER_PARKS.length} been to`,
-  FORMER_PARKS.map(s => ({ cls: `former ${s.status}`, name: s.stadium, sub: `${s.era} · ${s.city}` })), 'former-card');
+function renderList() {
+  const ae = document.activeElement;
+  const keep = ae && ae.dataset && ae.dataset.key && listContainer.contains(ae) ? ae.dataset.key : null;
+  listContainer.replaceChildren();
+  Object.keys(DIVISION_GROUPS).forEach(division => {
+    const sorted = [...DIVISION_GROUPS[division]]
+      .sort((a, b) => STATUS_RANK[statusOf(a)] - STATUS_RANK[statusOf(b)] || a.team.localeCompare(b.team));
+    const visitedInGroup = sorted.filter(s => statusOf(s) === 'visited').length;
+    const touredInGroup = sorted.filter(s => statusOf(s) === 'toured').length;
+    const touredNote = touredInGroup ? ` · ${touredInGroup} been to` : '';
+    ledgerCard(division, `${visitedInGroup} / ${sorted.length} visited${touredNote}`,
+      sorted.map(s => ({ cls: statusOf(s), name: s.stadium, sub: `${s.team} · ${s.city}`, pick: personal })));
+  });
+  // Former parks section
+  if (!personal) {
+    ledgerCard('Former Parks', `${FORMER_PARKS.length} been to`,
+      FORMER_PARKS.map(s => ({ cls: `former ${s.status}`, name: s.stadium, sub: `${s.era} · ${s.city}` })), 'former-card');
+  }
+  if (keep) {
+    const again = [...listContainer.querySelectorAll('.row')].find(r => r.dataset.key === keep);
+    if (again) again.focus();
+  }
+}
 
 // Tooltip
 const tooltip = document.getElementById('tooltip');
@@ -445,8 +549,11 @@ const BASE_R = 7;
 
 // ── Division zoom ─────────────────────────────────────────────────────────
 let currentK = 1;
+let curDivision = 'All MLB';
+let dotSel = null;
 
 function focusDivision(name) {
+  curDivision = name;
   let transform;
   if (name === 'All MLB') {
     currentK = 1;
@@ -470,6 +577,31 @@ function focusDivision(name) {
     .transition().duration(750).ease(d3.easeCubicInOut)
     .attr('r', BASE_R / Math.sqrt(currentK))
     .attr('stroke-width', 1.5 / Math.sqrt(currentK));
+  syncDots();
+}
+
+// Marker state follows the active set; markers are buttons only in personal mode
+function syncDots() {
+  if (!dotSel) return;
+  const had = document.activeElement;
+  dotSel
+    .classed('visited', s => statusOf(s) === 'visited')
+    .classed('toured', s => statusOf(s) === 'toured')
+    .classed('unvisited', s => statusOf(s) === 'unvisited')
+    .classed('gone', s => personal && !!s.era)
+    .sort((a, b) => STATUS_RANK[statusOf(b)] - STATUS_RANK[statusOf(a)])
+    .each(function (s) {
+      const live = personal && !s.era && (curDivision === 'All MLB' || s.division === curDivision);
+      if (personal && !s.era) {
+        this.setAttribute('role', 'button');
+        this.setAttribute('aria-label', `${s.stadium}, ${s.team}`);
+        this.setAttribute('aria-pressed', statusOf(s) === 'visited');
+        this.setAttribute('tabindex', live ? '0' : '-1');
+      } else {
+        ['role', 'aria-label', 'aria-pressed', 'tabindex'].forEach(a => this.removeAttribute(a));
+      }
+    });
+  if (had && had !== document.activeElement && had.isConnected && had.getAttribute('tabindex') === '0') had.focus();
 }
 
 const tabsEl = document.getElementById('region-tabs');
@@ -502,21 +634,121 @@ d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(us => {
 
   // Stadium markers (current + former parks), colored dots on top so they
   // never hide under gray ones
-  const sorted = [...ALL_STADIUMS, ...FORMER_PARKS].sort((a, b) =>
-    STATUS_RANK[statusOf(b)] - STATUS_RANK[statusOf(a)]);
-
-  mapLayer.selectAll('.stadium-dot')
-    .data(sorted)
+  dotSel = mapLayer.selectAll('.stadium-dot')
+    .data([...ALL_STADIUMS, ...FORMER_PARKS])
     .enter()
     .append('circle')
-    .attr('class', s => `stadium-dot ${statusOf(s)}${s.era ? ' former' : ''}`)
+    .attr('class', s => `stadium-dot${s.era ? ' former' : ''}`)
     .attr('cx', s => { const p = projection(s.coords); return p ? p[0] : -100; })
     .attr('cy', s => { const p = projection(s.coords); return p ? p[1] : -100; })
     .attr('r', BASE_R)
     .attr('stroke-width', 1.5)
     .on('mousemove', (e, s) => { showTip(e, s); moveTip(e); })
-    .on('mouseleave', hideTip);
+    .on('mouseleave', hideTip)
+    .on('click', (e, s) => { if (!s.era) toggleMine(s.stadium); })
+    .on('keydown', (e, s) => {
+      if ((e.key === 'Enter' || e.key === ' ') && !s.era) { e.preventDefault(); toggleMine(s.stadium); }
+    });
+  syncDots();
 });
+
+// ── Personal copy ─────────────────────────────────────────────────────────
+let importMsg = '';
+let armed = null;
+const $ = id => document.getElementById(id);
+const mineBtn = $('mine-btn'), ctl = $('ctl'), msgEl = $('msg');
+const clearBtn = $('clear-btn'), fileIn = $('file-in');
+
+function disarm() {
+  clearTimeout(armed);
+  armed = null;
+  clearBtn.classList.remove('arm');
+  clearBtn.textContent = 'Clear';
+}
+function render() {
+  $('signs').classList.toggle('mine', personal);
+  $('sign-toured').hidden = personal;
+  $('key-toured').hidden = personal;
+  $('key-former').hidden = personal;
+  mineBtn.textContent = stored ? 'Your map' : 'Create your own';
+  mineBtn.classList.toggle('active', personal);
+  if (personal) mineBtn.setAttribute('aria-current', 'true'); else mineBtn.removeAttribute('aria-current');
+  $('ctl-tag').hidden = !personal;
+  $('ctl-tools').hidden = !personal;
+  msgEl.textContent = importMsg || (loadError ? 'Visited list failed to load' : '');
+  ctl.hidden = !personal && !msgEl.textContent;
+  if (!personal) disarm();
+  renderStats();
+  renderList();
+  syncDots();
+}
+
+mineBtn.addEventListener('click', () => {
+  if (personal) return;
+  personal = true;
+  importMsg = '';
+  render();
+});
+$('back-btn').addEventListener('click', () => {
+  personal = false;
+  importMsg = '';
+  render();
+  mineBtn.focus();
+});
+$('export-btn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(payload(mine), null, 2) + '\n'], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `mlbstadiums-visited-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$('import-btn').addEventListener('click', () => fileIn.click());
+fileIn.addEventListener('change', () => {
+  const f = fileIn.files && fileIn.files[0];
+  fileIn.value = '';
+  if (!f) return;
+  const fail = () => { importMsg = 'Import failed: invalid file'; render(); };
+  if (f.size > 1000000) return fail();
+  f.text().then(t => {
+    const list = parseVisited(t);
+    if (!list) return fail();
+    mine = new Set(list);
+    importMsg = '';
+    saveMine();
+    render();
+  }, fail);
+});
+clearBtn.addEventListener('click', () => {
+  if (!armed) {
+    clearBtn.classList.add('arm');
+    clearBtn.textContent = 'Confirm clear';
+    armed = setTimeout(disarm, 4000);
+    return;
+  }
+  disarm();
+  mine = new Set();
+  stored = false;
+  try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+  importMsg = '';
+  render();
+});
+clearBtn.addEventListener('blur', disarm);
+
+// Default view reads the committed config; personal data stays in this browser
+mine = loadMine();
+mineBtn.textContent = stored ? 'Your map' : 'Create your own';
+fetch('/mlbstadiums/data/visited.json', { cache: 'no-cache' })
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+  .then(t => {
+    const a = parseVisited(t);
+    if (!a) throw new Error('schema');
+    VISITED = new Set(a);
+  })
+  .catch(() => { loadError = true; })
+  .then(render);
 
 // ── Theme ─────────────────────────────────────────────────────────────────
 const root = document.documentElement, mode = document.getElementById('mode');

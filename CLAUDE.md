@@ -55,6 +55,13 @@ A Reject means make no changes and ask what to adjust.
 - `/tempest/`, `/mlbstadiums/`, `/USStates/`, `/worldmap/`, `/trust/`: follow
   `DESIGN.md` like `/seattlesports/`; region, division and section chips live in
   the masthead, counts sit on signboards, lists are ledgers.
+- `/frontier/`: follows `DESIGN.md` like `/commute/`; odometer and setup
+  inputs and the service and fill-up logs sit left, due-status signboards and
+  schedule, history, cost and fuel ledgers sit right; everything saves on change.
+- `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
+  `data/visited.json`; a "Create your own" button switches to a blank,
+  browser-saved copy with Export/Import in the same schema. No personal name
+  appears in these or any new UI text.
 - `/carpicker/` (unlinked): still the old dark theme. Copy the `:root` tokens,
   nav (`← amanvg` back link, centered title), `.card`, and form styles from the
   page itself rather than inventing new ones. Inter from Google Fonts, 20px
@@ -81,6 +88,11 @@ A Reject means make no changes and ask what to adjust.
     run by `.github/workflows/seattlesports-snapshot.yml`.
   - `cve/update.py` → `cve/data/snapshot.json`, CISA KEV, FIRST EPSS, NVD and
     CVE.org (CISA SSVC), run every 6 hours by `.github/workflows/cve-snapshot.yml`.
+- `USStates/data/visited.json`, `worldmap/data/visited.json` and
+  `mlbstadiums/data/visited.json` are hand-edited config (`{"version":1,
+  "visited":[...]}`), read same-origin; a browser Export uses the same schema.
+- `/frontier/` and the "Create your own" map copies save to `localStorage`
+  (`frontier:v1`, `<folder>:mine`) with Export/Import; there is no backend.
 - Workflows only commit when real data moved (they ignore timestamp-only diffs).
 
 ## Sections
@@ -93,5 +105,10 @@ A Reject means make no changes and ask what to adjust.
 - `/cve/` CVE Triage: recent CISA KEV and likely-exploited CVEs tiered Act,
   Attend, Track*, Track from exploitation, EPSS, exposure, environment and a
   browser-saved watchlist. Follows `DESIGN.md`.
+- `/frontier/` Frontier Maintenance: service and fill-up log for a 2022+ Nissan
+  Frontier, due status from odometer and date against Nissan's schedule, cost
+  and MPG ledgers. Browser-saved, Export/Import.
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
   dashboards and maps; `carpicker/` is an older, unlinked page.
+- Home categories: Sports, Personal (Frontier, US States, Countries, MLB
+  Stadiums), Weather, Security, Calculators.

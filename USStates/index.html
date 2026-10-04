@@ -90,6 +90,13 @@ main{flex:1;padding:28px var(--margin) 0}
 .chips button.active{background:var(--accent);border-color:var(--accent);color:var(--sel-fg)}
 .chips button:focus-visible{outline-color:var(--f-sports)}
 @media(hover:hover){.chips button:not(.active):hover{background:var(--chip-hover)}}
+[hidden]{display:none!important}
+.mast-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 20px}
+.chips.tall button{min-height:44px;padding:8px 16px}
+.chips button.armed{background:var(--s3);border-color:var(--s3);color:#fff}
+.mine-bar{display:flex;flex-wrap:wrap;gap:8px;padding:10px 28px;background:var(--b-sports);border-bottom:2px solid var(--head-line)}
+.statusline{padding:10px 28px;background:var(--well-bg);color:var(--text);border-bottom:2px solid var(--head-line);border-left:6px solid var(--s3);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
+.statusline:empty{display:none}
 
 .body{display:grid;grid-template-columns:minmax(340px,4fr) minmax(0,7fr);gap:2px;background:var(--head-line)}
 .panel{background:var(--card);min-width:0;padding:24px 28px 28px}
@@ -115,7 +122,11 @@ main{flex:1;padding:28px var(--margin) 0}
 .map-panel{display:flex}
 .map-well{flex:1;display:flex;align-items:center;border:2px solid var(--key);background:var(--well-bg);box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:8px}
 #us-map{width:100%;height:auto;display:block}
-.land{stroke:var(--land-line);stroke-width:.8;stroke-linejoin:round;vector-effect:non-scaling-stroke;cursor:pointer;transition:opacity .15s}
+.land{stroke:var(--land-line);stroke-width:.8;stroke-linejoin:round;vector-effect:non-scaling-stroke;transition:opacity .15s}
+.sheet[data-mode="mine"] .land,.sheet[data-mode="mine"] .row{cursor:pointer}
+.sheet[data-mode="mine"] .map-well{border-style:dashed}
+.land:focus-visible{outline:none;stroke:var(--focus);stroke-width:3}
+.row:focus-visible{outline-offset:-3px}
 .land.visited{fill:var(--seen)}
 .land.unvisited{fill:var(--land)}
 @media(hover:hover){.land:hover{opacity:.75}}
@@ -162,6 +173,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .btn{padding:8px 14px}
   main{padding-top:24px}
   .masthead{padding:12px 16px}
+  .mine-bar,.statusline{padding-left:16px;padding-right:16px}
+  .mast-controls{justify-content:flex-start}
   .masthead h1{font-size:28px;line-height:36px}
   .panel{padding:20px 16px 24px}
   .map-well{padding:4px}
@@ -189,11 +202,22 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   </div>
 
   <main>
-    <div class="sheet">
+    <div class="sheet" id="sheet" data-mode="default">
       <div class="masthead">
         <h1>US States</h1>
-        <div class="chips" id="region-tabs" role="group" aria-label="Region"></div>
+        <div class="mast-controls">
+          <div class="chips" id="region-tabs" role="group" aria-label="Region"></div>
+          <div class="chips tall"><button type="button" id="mine-btn" aria-pressed="false">Create your own</button></div>
+        </div>
       </div>
+      <div class="mine-bar chips tall" id="mine-bar" role="group" aria-label="Your map" hidden>
+        <button type="button" id="mine-back">Back to original</button>
+        <button type="button" id="mine-export">Export</button>
+        <button type="button" id="mine-import">Import</button>
+        <button type="button" id="mine-clear">Clear</button>
+        <input type="file" id="mine-file" accept="application/json,.json" hidden />
+      </div>
+      <div class="statusline" id="status" role="status"></div>
       <div class="body">
         <div class="panel side">
           <div class="signs">
@@ -245,32 +269,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
 
   <script>
-// ── EDIT THIS LIST ────────────────────────────────────────────────────────
-const VISITED = new Set([
-  "Washington",
-  "Oregon",
-  "California",
-  "Idaho",
-  "Montana",
-  "Nevada",
-  "Wyoming",
-  "Colorado",
-  "North Dakota",
-  "South Dakota",
-  "Minnesota",
-  "Wisconsin",
-  "Illinois",
-  "Indiana",
-  "Ohio",
-  "Pennsylvania",
-  "New York",
-  "New Jersey",
-  "Texas",
-  "Alaska",
-  "Maryland",
-  "Delaware",
-]);
-// ─────────────────────────────────────────────────────────────────────────
+const VISITED_URL = '/USStates/data/visited.json';
+const MINE_KEY = 'USStates:mine';
 
 const ALL_STATES = [
   "Alabama","Alaska","Arizona","Arkansas","California","Colorado",
@@ -311,38 +311,231 @@ for (const [region, names] of Object.entries(REGION_GROUPS)) {
   names.forEach(n => { REGION_OF[n] = region; });
 }
 
-// Stats
-const total = ALL_STATES.length;
-const visitedCount = VISITED.size;
-['visited-count', 'unvisited-count', 'pct'].forEach((id, i) => {
-  const el = document.getElementById(id);
-  el.textContent = [visitedCount, total - visitedCount, Math.round(visitedCount / total * 100) + '%'][i];
-  el.classList.add('strike');
-});
+const ALL_SET = new Set(ALL_STATES);
 
-function renderGroup(title, names) {
-  // Visited first, then alphabetical
-  const sorted = [...names.filter(n => VISITED.has(n)), ...names.filter(n => !VISITED.has(n))];
-  const visitedInGroup = sorted.filter(n => VISITED.has(n)).length;
-  const card = document.createElement('section');
-  card.className = 'group';
-  const head = document.createElement('h2');
-  head.className = 'group-head';
-  head.innerHTML = `<span>${title}</span><span class="count">${visitedInGroup} / ${sorted.length} visited</span>`;
-  card.appendChild(head);
-  const ledger = document.createElement('div');
-  ledger.className = 'ledger';
-  sorted.forEach(name => {
-    const row = document.createElement('div');
-    row.className = `row ${VISITED.has(name) ? 'visited' : 'unvisited'}`;
-    row.innerHTML = `<span class="dot"></span><b>${name}</b>`;
-    ledger.appendChild(row);
+// ── State ─────────────────────────────────────────────────────────────────
+let mode = 'default';          // 'default' (config file) | 'mine' (personal, localStorage)
+let defaultSet = new Set();
+let mine = null;               // Set once a personal map exists (stored or this session)
+let loadFailed = false;
+
+const sheet = document.getElementById('sheet');
+const statusEl = document.getElementById('status');
+const mineBtn = document.getElementById('mine-btn');
+const mineBar = document.getElementById('mine-bar');
+const current = () => (mode === 'mine' && mine) ? mine : defaultSet;
+
+// {"version":1,"visited":[...]} -> { set, dropped } or null when the shape is wrong
+function parseDoc(doc) {
+  if (!doc || typeof doc !== 'object' || doc.version !== 1 || !Array.isArray(doc.visited)) return null;
+  const set = new Set();
+  let dropped = 0;
+  doc.visited.forEach(n => { if (typeof n === 'string' && ALL_SET.has(n)) set.add(n); else dropped++; });
+  if (doc.visited.length > 0 && set.size === 0) return null;
+  return { set, dropped };
+}
+const toDoc = set => ({ version: 1, visited: [...set].sort() });
+
+function loadMine() {
+  try {
+    const raw = localStorage.getItem(MINE_KEY);
+    if (raw == null) return null;
+    const r = parseDoc(JSON.parse(raw));
+    return r ? r.set : null;
+  } catch (e) { return null; }
+}
+function saveMine() {
+  try { localStorage.setItem(MINE_KEY, JSON.stringify(toDoc(mine))); } catch (e) {}
+}
+function setStatus(text) { statusEl.textContent = text || ''; }
+
+// ── Rendering ─────────────────────────────────────────────────────────────
+const total = ALL_STATES.length;
+const statEls = ['visited-count', 'unvisited-count', 'pct'].map(id => document.getElementById(id));
+const groups = [];   // { names, rows: {name: el}, countEl }
+
+function paintStats(animate) {
+  const n = current().size;
+  [n, total - n, Math.round(n / total * 100) + '%'].forEach((val, i) => {
+    const el = statEls[i];
+    el.textContent = val;
+    if (animate) { el.classList.remove('strike'); void el.offsetWidth; el.classList.add('strike'); }
   });
-  card.appendChild(ledger);
-  document.getElementById('lists').appendChild(card);
 }
 
-Object.keys(REGION_GROUPS).forEach(region => renderGroup(region, [...REGION_GROUPS[region]].sort()));
+function paintRow(row, name) {
+  const on = current().has(name);
+  row.className = `row ${on ? 'visited' : 'unvisited'}`;
+  if (mode === 'mine') {
+    row.setAttribute('role', 'button');
+    row.tabIndex = 0;
+    row.setAttribute('aria-pressed', on ? 'true' : 'false');
+  } else {
+    row.removeAttribute('role'); row.removeAttribute('tabindex'); row.removeAttribute('aria-pressed');
+  }
+}
+function paintRows() {
+  groups.forEach(g => {
+    g.names.forEach(n => paintRow(g.rows[n], n));
+    g.countEl.textContent = `${g.names.filter(n => current().has(n)).length} / ${g.names.length} visited`;
+  });
+}
+
+function renderLists() {
+  const host = document.getElementById('lists');
+  host.textContent = '';
+  groups.length = 0;
+  Object.keys(REGION_GROUPS).forEach(region => {
+    const names = [...REGION_GROUPS[region]].sort();
+    // Default view: visited first. Personal view stays alphabetical so rows don't jump while toggling.
+    const ordered = mode === 'mine' ? names : [...names.filter(n => current().has(n)), ...names.filter(n => !current().has(n))];
+    const card = document.createElement('section');
+    card.className = 'group';
+    const head = document.createElement('h2');
+    head.className = 'group-head';
+    const title = document.createElement('span');
+    title.textContent = region;
+    const countEl = document.createElement('span');
+    countEl.className = 'count';
+    head.append(title, countEl);
+    const ledger = document.createElement('div');
+    ledger.className = 'ledger';
+    const rows = {};
+    ordered.forEach(name => {
+      const row = document.createElement('div');
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      const label = document.createElement('b');
+      label.textContent = name;
+      row.append(dot, label);
+      row.addEventListener('click', () => toggle(name));
+      row.addEventListener('keydown', e => {
+        if (mode === 'mine' && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggle(name); }
+      });
+      rows[name] = row;
+      ledger.appendChild(row);
+    });
+    card.append(head, ledger);
+    host.appendChild(card);
+    groups.push({ names: ordered, rows, countEl });
+  });
+  paintRows();
+}
+
+function paintMap() {
+  const svgEl = document.getElementById('us-map');
+  if (mode === 'mine') { svgEl.setAttribute('role', 'group'); svgEl.setAttribute('aria-label', 'States'); }
+  else { svgEl.setAttribute('role', 'img'); svgEl.setAttribute('aria-label', 'Map of US states visited'); }
+  svg.selectAll('.land').each(function () {
+    const name = this.getAttribute('data-name');
+    const on = current().has(name);
+    this.setAttribute('class', `land ${on ? 'visited' : 'unvisited'}`);
+    if (mode === 'mine') {
+      this.setAttribute('role', 'button');
+      this.setAttribute('tabindex', '0');
+      this.setAttribute('aria-label', name);
+      this.setAttribute('aria-pressed', on ? 'true' : 'false');
+    } else {
+      ['role', 'tabindex', 'aria-label', 'aria-pressed'].forEach(a => this.removeAttribute(a));
+    }
+  });
+}
+
+function paintAll() { paintStats(false); paintRows(); paintMap(); }
+
+function toggle(name, e) {
+  if (mode !== 'mine' || !mine || !ALL_SET.has(name)) return;
+  disarmClear();
+  if (mine.has(name)) mine.delete(name); else mine.add(name);
+  saveMine();
+  paintAll();
+  if (e && e.clientX !== undefined) showTip(e, name);
+}
+
+function paintMineBtn() {
+  mineBtn.textContent = mine ? 'Your map' : 'Create your own';
+  mineBtn.classList.toggle('active', mode === 'mine');
+  mineBtn.setAttribute('aria-pressed', mode === 'mine' ? 'true' : 'false');
+}
+function setMode(m) {
+  mode = m;
+  sheet.dataset.mode = m;
+  mineBar.hidden = m !== 'mine';
+  disarmClear();
+  setStatus(m === 'default' && loadFailed ? 'Visited list failed to load' : '');
+  paintMineBtn();
+  renderLists();
+  paintStats(true);
+  paintMap();
+  hideTip();
+}
+
+// ── Personal-copy controls ────────────────────────────────────────────────
+mineBtn.addEventListener('click', () => {
+  if (mode === 'mine') return;
+  const stored = loadMine();
+  if (stored) mine = stored;
+  else if (!mine) mine = new Set();
+  setMode('mine');
+});
+document.getElementById('mine-back').addEventListener('click', () => { setMode('default'); mineBtn.focus(); });
+
+document.getElementById('mine-export').addEventListener('click', () => {
+  disarmClear();
+  const blob = new Blob([JSON.stringify(toDoc(mine), null, 2) + '\n'], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `USStates-visited-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setStatus('');
+});
+
+const fileEl = document.getElementById('mine-file');
+document.getElementById('mine-import').addEventListener('click', () => { disarmClear(); fileEl.value = ''; fileEl.click(); });
+fileEl.addEventListener('change', () => {
+  const f = fileEl.files && fileEl.files[0];
+  if (!f) return;
+  const fail = () => setStatus('Import failed: invalid file');
+  if (f.size > 1048576) return fail();
+  const reader = new FileReader();
+  reader.onerror = fail;
+  reader.onload = () => {
+    let r = null;
+    try { r = parseDoc(JSON.parse(String(reader.result))); } catch (e) {}
+    if (!r || mode !== 'mine') return fail();
+    mine = r.set;
+    saveMine();
+    paintAll();
+    setStatus('');
+  };
+  reader.readAsText(f);
+});
+
+const clearBtn = document.getElementById('mine-clear');
+let armTimer = null;
+function disarmClear() {
+  clearTimeout(armTimer);
+  clearBtn.classList.remove('armed');
+  clearBtn.textContent = 'Clear';
+}
+clearBtn.addEventListener('click', () => {
+  if (!clearBtn.classList.contains('armed')) {
+    clearBtn.classList.add('armed');
+    clearBtn.textContent = 'Confirm clear';
+    armTimer = setTimeout(disarmClear, 4000);
+    return;
+  }
+  disarmClear();
+  mine = new Set();
+  saveMine();
+  paintAll();
+  setStatus('');
+});
+clearBtn.addEventListener('blur', disarmClear);
 
 // Tooltip
 const tooltip = document.getElementById('tooltip');
@@ -350,7 +543,7 @@ const tipName = document.getElementById('tip-name');
 const tipStatus = document.getElementById('tip-status');
 
 function showTip(e, name) {
-  const isV = VISITED.has(name);
+  const isV = current().has(name);
   tipName.textContent = name;
   tipStatus.textContent = isV ? 'Visited' : 'Not visited';
   tipStatus.className = `tip-status ${isV ? 'visited' : 'unvisited'}`;
@@ -429,16 +622,22 @@ d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(us => {
     .data(states.features)
     .enter()
     .append('path')
-    .attr('class', d => {
-      const name = fipsToName[String(d.id).padStart(2,'0')];
-      return `land ${VISITED.has(name) ? 'visited' : 'unvisited'}`;
-    })
+    .attr('class', 'land unvisited')
+    .attr('data-name', d => fipsToName[String(d.id).padStart(2,'0')])
     .attr('d', path)
     .on('mousemove', (e, d) => {
       const name = fipsToName[String(d.id).padStart(2,'0')];
       if (name) showTip(e, name);
     })
-    .on('mouseleave', hideTip);
+    .on('mouseleave', hideTip)
+    .on('click', (e, d) => toggle(fipsToName[String(d.id).padStart(2,'0')], e))
+    .on('keydown', (e, d) => {
+      if (mode === 'mine' && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        toggle(fipsToName[String(d.id).padStart(2,'0')]);
+      }
+    });
+  paintMap();
 
   // State borders
   mapLayer.append('path')
@@ -457,10 +656,18 @@ d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json').then(us => {
   }
 });
 
+// ── Default view (config file) ────────────────────────────────────────────
+mine = loadMine();
+fetch(VISITED_URL)
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(doc => { const r = parseDoc(doc); if (!r) throw new Error('shape'); defaultSet = r.set; })
+  .catch(() => { loadFailed = true; })
+  .then(() => setMode('default'));
+
 // ── Theme ─────────────────────────────────────────────────────────────────
-const root = document.documentElement, mode = document.getElementById('mode');
-const paintMode = () => mode.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-mode.addEventListener('click', () => {
+const root = document.documentElement, modeBtn = document.getElementById('mode');
+const paintMode = () => modeBtn.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+modeBtn.addEventListener('click', () => {
   root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
   try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
   paintMode();

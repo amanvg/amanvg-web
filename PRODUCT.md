@@ -19,7 +19,7 @@ A personal collection of single-purpose apps built for fun, not a product or por
 Served by GitHub Pages from `main`. No build step, no framework, no shared JS: one self-contained `index.html` per project. Data comes from public APIs called in the browser (fueleconomy.gov, Nominatim, OSRM, zippopotam.us, Open-Meteo) or from committed `data/*.json` files refreshed by scripts and GitHub Actions. Dates are ISO-8601, currency is USD, times are UTC.
 
 ## Capabilities and Constraints
-- Sections: `/commute/`, `/tirepressure/`, `/cve/`, `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`, `/trust/`. `carpicker/` is older and unlinked.
+- Sections: `/frontier/`, `/commute/`, `/tirepressure/`, `/cve/`, `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`, `/trust/`. `carpicker/` is older and unlinked.
 - Desktop first: verify at 1440×900 and 1024×768, collapse to one column below 960px.
 - UI text is labels, questions, counts, and attribution only. No taglines, help text, or explanatory sentences.
 - Data sources are attributed in the page footer or map attribution.
@@ -28,7 +28,7 @@ Served by GitHub Pages from `main`. No build step, no framework, no shared JS: o
 ## Brand Commitments
 Home page (`/`): WPA serigraph look defined in `DESIGN.md`, in two modes that follow the system setting with a sun/moon icon toggle. Light is Federal Park Serigraph (parchment, pine, ochre, clay); dark is Nocturne Serigraph (midnight pine, campfire amber, terracotta). Oswald headings, Vollkorn body, Work Sans labels, 0px corners, hard print-strike shadows, a framed real public-domain poster crop, a flush stack of colour-banded accordion categories. No illustration, seals, emblems, AI-generated art, URLs on rows, or per-category counts. Real assets only, credited in the Sources row; the owner handles any licensing.
 
-`/seattlesports/`, `/tirepressure/`, `/cve/` and `/commute/` follow `DESIGN.md` like the home page. `/commute/`: pine masthead over car, route and pump-price inputs on the left and framed fare signboards with cost, miles and hours ledgers on the right; results update live. `/seattlesports/`: pine Sports-band masthead over a flush 2×2 of team panels, each team's official colour on its header band only, ledger-striped standings, ESPN credited in Sources.
+`/seattlesports/`, `/tirepressure/`, `/cve/`, `/commute/` and `/frontier/` follow `DESIGN.md` like the home page. The home page groups Frontier, US States, Countries and MLB Stadiums in a Personal band; the three maps open on a committed `data/visited.json` and offer a browser-saved "Create your own" copy. New UI text never carries a personal name. `/commute/`: pine masthead over car, route and pump-price inputs on the left and framed fare signboards with cost, miles and hours ledgers on the right; results update live. `/seattlesports/`: pine Sports-band masthead over a flush 2×2 of team panels, each team's official colour on its header band only, ledger-striped standings, ESPN credited in Sources.
 
 Other app pages (`/USStates/`, `/worldmap/`, `/mlbstadiums/`, `/trust/`): not yet migrated. They keep the earlier look until each is taken up one step at a time: dark theme, Inter, 20px card radius, accent `#3b82f6`, shared nav (`← amanvg` back link, centered title), shared `.card` and form styles.
 

@@ -20,6 +20,15 @@
         ],
         "createdAt": "2026-10-03T16:42:52.968Z",
         "reason": "user confirmed: DESIGN.md canvas #f6efe1, owner-chosen"
+      },
+      {
+        "rule": "all-caps-body",
+        "value": "*",
+        "files": [
+          "frontier/index.html"
+        ],
+        "createdAt": "2026-10-04T14:51:46.581Z",
+        "reason": "Short ledger item labels (<=44 chars, Work Sans label style) match the uppercase ledger rows on the other DESIGN.md pages; judged by the assistant, not user-confirmed"
       }
     ]
   }

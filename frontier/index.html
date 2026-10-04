@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontier Maintenance — amanvg</title>
+    <meta name="description" content="Service intervals, history, fuel economy and costs for a 2022 and newer Nissan Frontier.">
+    <meta name="theme-color" content="#24422e">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Frontier Maintenance — amanvg">
+    <meta property="og:description" content="Service intervals, history, fuel economy and costs for a 2022 and newer Nissan Frontier.">
+    <meta property="og:url" content="https://www.amanvg.com/frontier/">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script>
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Vollkorn:ital,wght@0,400;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Federal Park Serigraph (light) */
+:root{
+  color-scheme:light;
+  --canvas:#f6efe1; --card:#ede3ce; --row-a:#f6efe1; --row-b:#ede3ce;
+  --text:#181c16; --muted:#4d5843; --head-bg:#24422e; --head-text:#f6efe1; --head-line:#181c16;
+  --key:#4d5843; --frame:#24422e; --divider:rgba(77,88,67,.25);
+  --shadow:#181c16; --accent:#d9822b; --focus:#24422e; --sel-bg:#d9822b; --sel-fg:#181c16;
+  --btn-hover-bg:#ede3ce; --btn-hover-fg:#24422e;
+  --well-bg:#f6efe1; --well-shadow:rgba(24,28,22,.15);
+  --live-bg:#a63a24; --live-fg:#f6efe1;
+  --act-fg:#24422e; --act-line:#24422e; --act-hover:#f6efe1;
+  --pri-bg:#24422e; --pri-fg:#f6efe1; --pri-line:#181c16;
+  --over-bg:#a63a24; --over-fg:#f6efe1; --soon-bg:#d9822b; --soon-fg:#181c16; --ok-bg:#24422e; --ok-fg:#f6efe1;
+  --band-line:rgba(246,239,225,.28);
+  --s1:#24422e; --s2:#d9822b; --s3:#a63a24;
+  --foot-bg:#1c2730; --foot-text:#f6efe1; --foot-line:#181c16;
+  --b-sports:#24422e; --f-sports:#f6efe1;
+  --display:'Oswald','Arial Narrow',sans-serif;
+  --body:'Vollkorn',Georgia,serif;
+  --label:'Work Sans',system-ui,sans-serif;
+  --margin:max(40px,calc((100% - 1200px)/2));
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+/* Nocturne Serigraph (dark) */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --canvas:#0e1511; --card:#1a271f; --row-a:#141e17; --row-b:#1a271f;
+  --text:#f4ede2; --muted:#96a498; --head-bg:#141e17; --head-text:#f4ede2; --head-line:#35483b;
+  --key:#35483b; --frame:#35483b; --divider:#233328;
+  --shadow:#060a08; --accent:#e5933a; --focus:#e5933a; --sel-bg:#e5933a; --sel-fg:#0e1511;
+  --btn-hover-bg:#1a271f; --btn-hover-fg:#f4ede2;
+  --well-bg:#0a0f0c; --well-shadow:#060a08;
+  --live-bg:#ff8168; --live-fg:#3e0400;
+  --act-fg:#f4ede2; --act-line:#35483b; --act-hover:#223329;
+  --pri-bg:#e5933a; --pri-fg:#0e1511; --pri-line:#060a08;
+  --over-bg:#ff8168; --over-fg:#3e0400; --soon-bg:#e5933a; --soon-fg:#0e1511; --ok-bg:#2d4b38; --ok-fg:#f4ede2;
+  --band-line:#35483b;
+  --s1:#44805d; --s2:#e5933a; --s3:#c8523b;
+  --foot-bg:#0a0f0c; --foot-text:#ded5c5; --foot-line:#35483b;
+  --b-sports:#2d4b38; --f-sports:#f4ede2;
+}
+html{scrollbar-gutter:stable;scrollbar-color:var(--key) var(--canvas)}
+body{background:var(--canvas);color:var(--text);font-family:var(--body);margin:10px;border:2px solid var(--key);min-height:calc(100vh - 20px);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+::selection{background:var(--sel-bg);color:var(--sel-fg)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+button{font:inherit}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.skip-link{position:absolute;top:-48px;left:16px;background:var(--head-text);color:var(--head-bg);padding:8px 16px;z-index:200;font-family:var(--label);font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
+.skip-link:focus{top:8px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50}
+header{background:var(--head-bg);border-bottom:3px solid var(--head-line);padding:0 var(--margin);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
+.tools{display:flex;gap:12px}
+.btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s,color .15s}
+:root[data-theme="dark"] .btn{border-color:var(--key)}
+@media(hover:hover){
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+:root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
+}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.btn:focus-visible{outline-color:var(--head-text)}
+.icon-btn{width:44px;padding:0}
+.icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn .sun{display:none}
+:root[data-theme="dark"] .icon-btn .sun{display:block}
+:root[data-theme="dark"] .icon-btn .moon{display:none}
+.stripes{height:7px;background:linear-gradient(var(--s1) 0 3px,var(--s2) 3px 5px,var(--s3) 5px 7px)}
+
+main{flex:1;padding:28px var(--margin) 0}
+.sheet{border:3px solid var(--frame);background:var(--card);box-shadow:4px 4px 0 0 var(--shadow)}
+.masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--b-sports);color:var(--f-sports)}
+.masthead h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
+.odo{display:flex;align-items:center;gap:12px}
+.odo label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
+.odo input[type=number]{width:200px;min-height:52px;text-align:right;font-family:var(--display);font-weight:700;font-size:34px;line-height:40px;letter-spacing:.02em;border-color:var(--head-line)}
+.odo .unit{font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 28px;background:var(--b-sports);color:var(--f-sports);border-top:1px solid var(--band-line);border-bottom:2px solid var(--head-line)}
+.bar .btn{padding:8px 18px}
+:root[data-theme="dark"] .bar .btn{border-color:var(--f-sports)}
+.bar .grow{flex:1 1 auto}
+.bar .note{color:inherit}
+.bar .error-text{display:inline-block}
+
+.body{display:grid;grid-template-columns:minmax(380px,4fr) minmax(0,7fr);gap:2px;background:var(--head-line)}
+.panel{background:var(--card);min-width:0;padding:24px 28px 28px}
+.inputs{display:flex;flex-direction:column;gap:18px}
+.group{display:flex;flex-direction:column;gap:8px}
+.group-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 12px;min-height:28px}
+.section-label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>label,.field>.lbl{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
+
+.sel{position:relative;min-width:0}
+.sel::after{content:'';position:absolute;right:14px;top:50%;margin-top:-3px;border:6px solid transparent;border-top:7px solid var(--text);border-bottom:0;pointer-events:none}
+select,input[type=text],input[type=number]{width:100%;min-width:0;min-height:44px;background:var(--well-bg);color:var(--text);border:2px solid var(--key);border-radius:0;box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:6px 12px;font-family:var(--body);font-size:20px;line-height:28px;font-variant-numeric:lining-nums tabular-nums;caret-color:var(--accent);transition:border-color .15s,box-shadow .15s}
+select{-webkit-appearance:none;appearance:none;padding-right:36px;cursor:pointer;text-overflow:ellipsis}
+select option{background:var(--card);color:var(--text)}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input::placeholder{color:var(--muted);opacity:.65}
+select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2px 0 0 var(--focus)}
+.masthead input:focus{border-color:var(--accent);box-shadow:2px 2px 0 0 var(--accent)}
+
+.act{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:8px 20px;border:2px solid var(--act-line);background:transparent;color:var(--act-fg);transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s}
+.act.pri{background:var(--pri-bg);color:var(--pri-fg);border-color:var(--pri-line)}
+@media(hover:hover){
+.act:hover{background:var(--act-hover);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+.act.pri:hover{background:var(--pri-bg);filter:brightness(1.12)}
+:root[data-theme="dark"] .act:hover{border-color:var(--accent)}
+}
+.act:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.group .act{align-self:flex-start}
+
+.note{font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;overflow-wrap:anywhere}
+.pills{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pill{font-family:var(--label);font-weight:700;font-size:12px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border:1.5px solid var(--accent);border-radius:9999px;font-variant-numeric:tabular-nums;white-space:nowrap}
+:root:not([data-theme="dark"]) .pill{border-color:var(--frame)}
+.error-text{display:block;background:var(--live-bg);color:var(--live-fg);padding:6px 12px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.msg:empty{display:none}
+
+.chips{display:flex}
+.chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 14px;border:2px solid var(--key);background:var(--well-bg);color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.chips button+button{margin-left:-2px}
+.chips button.active{background:var(--accent);border-color:var(--accent);color:var(--sel-fg);position:relative}
+@media(hover:hover){.chips button:not(.active):hover{background:var(--act-hover)}}
+
+.results{display:flex;flex-direction:column;gap:24px}
+.signs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.sign{border:3px solid var(--frame);background:var(--well-bg);box-shadow:4px 4px 0 0 var(--shadow);min-width:0}
+.sign-head{background:var(--head-bg);color:var(--head-text);border-bottom:2px solid var(--head-line);padding:8px 14px;font-family:var(--display);font-weight:700;font-size:20px;line-height:26px;letter-spacing:.06em;text-transform:uppercase}
+.sign.over .sign-head{background:var(--over-bg);color:var(--over-fg)}
+.sign.soon .sign-head{background:var(--soon-bg);color:var(--soon-fg)}
+.sign.ok .sign-head{background:var(--ok-bg);color:var(--ok-fg)}
+.sign-body{display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 10px 14px}
+.num{display:flex;align-items:center;justify-content:center;text-align:center;min-height:clamp(48px,4.6vw,66px);font-family:var(--display);font-weight:700;font-size:clamp(44px,4.4vw,64px);line-height:1;font-variant-numeric:tabular-nums;color:var(--text)}
+.num.strike{animation:strike .34s var(--ease)}
+@keyframes strike{from{opacity:.15;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sign-unit{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:center}
+
+.ledger-wrap{display:flex;flex-direction:column;gap:8px;min-width:0}
+.ledger{width:100%;border-collapse:collapse;font-family:var(--label);font-size:15px;line-height:20px;letter-spacing:.02em;border:2px solid var(--key)}
+.ledger th{background:var(--head-bg);color:var(--head-text);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;text-align:right}
+.ledger th:first-child,.ledger td:first-child{text-align:left}
+.ledger td{padding:8px 10px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:middle}
+.ledger tbody tr+tr,.ledger tfoot tr{border-top:1px solid var(--divider)}
+.ledger tbody tr:nth-child(odd){background:var(--row-a)}
+.ledger tbody tr:nth-child(even){background:var(--row-b)}
+.ledger tfoot td{background:var(--head-bg);color:var(--head-text);font-weight:700}
+.ledger td:first-child{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+.ledger td.empty{text-align:left;color:var(--muted);white-space:normal}
+.ledger .wrap{white-space:normal}
+.ledger .sub{display:block;font-weight:600;font-size:13px;letter-spacing:.02em;text-transform:none;color:var(--muted)}
+.ledger .late{color:var(--live-bg);font-weight:700}
+.duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+
+.stamp{display:inline-flex;align-items:center;justify-content:center;min-width:76px;padding:4px 10px;border:1.5px solid var(--key);border-radius:9999px;font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stamp.over{background:var(--over-bg);color:var(--over-fg);border-color:var(--over-bg)}
+.stamp.soon{background:var(--soon-bg);color:var(--soon-fg);border-color:var(--soon-bg)}
+.stamp.ok{background:var(--ok-bg);color:var(--ok-fg);border-color:var(--ok-bg)}
+.del{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 10px;border:2px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;transition:background .15s,color .15s,border-color .15s}
+.del svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media(hover:hover){.del:hover{color:var(--text);border-color:var(--key)}}
+.del.armed{background:var(--live-bg);color:var(--live-fg);border-color:var(--live-bg)}
+.ledger td.act-cell{padding:0 4px;text-align:right}
+
+footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
+.sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
+.sources a{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px;color:inherit;text-decoration:none;transition:background .15s,color .15s;min-height:32px;display:inline-flex;align-items:center}
+.sources a:focus-visible{outline-color:var(--foot-text)}
+@media(hover:hover){.sources a:hover{background:var(--foot-text);color:var(--foot-bg)}}
+
+@media(max-width:1180px){
+  .body{grid-template-columns:minmax(340px,4fr) minmax(0,7fr)}
+  .signs{gap:12px}
+  .sign-body{padding-left:6px;padding-right:6px}
+  .num{font-size:clamp(38px,4vw,64px)}
+  .odo input[type=number]{width:170px}
+}
+@media(max-width:960px){
+  .body{grid-template-columns:1fr}
+  .signs{gap:18px}
+}
+@media(max-width:700px){
+  :root{--margin:16px}
+  header{height:56px}
+  .brand{font-size:24px;line-height:32px}
+  main{padding-top:24px}
+  .masthead{padding:12px 16px}
+  .masthead h1{font-size:28px;line-height:36px}
+  .odo{width:100%}
+  .odo input[type=number]{width:auto;flex:1;min-width:0}
+  .bar{padding:10px 16px}
+  .panel{padding:20px 16px 24px}
+  .signs{gap:10px}
+  .sign-head{font-size:16px;padding:6px 8px}
+  .sign-body{padding:12px 4px 10px}
+  .num{font-size:40px;min-height:44px}
+  .ledger.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .ledger.stack,.ledger.stack tbody{display:block}
+  .ledger.stack tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 12px;padding:10px 12px;align-items:center}
+  .ledger.stack td{display:block;padding:0;text-align:left;white-space:normal}
+  .ledger.stack td:first-child{grid-column:1;grid-row:1}
+  .ledger.stack td.k-stat{grid-column:2;grid-row:1;text-align:right}
+  .ledger.stack td.k-wide{grid-column:1/-1}
+  .ledger.stack td[data-label]::before{content:attr(data-label) " ";color:var(--muted);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+  .ledger.stack td.empty{grid-column:1/-1}
+  .ledger.stack tfoot{display:block}
+  .ledger.stack tfoot tr{display:grid}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}.num.strike{animation:none}}
+    </style>
+</head>
+<body>
+    <a class="skip-link" href="#inputs">Skip to content</a>
+    <div class="top">
+        <header>
+            <a class="brand" href="/">amanvg</a>
+            <nav class="tools" aria-label="Main navigation">
+                <button class="btn icon-btn" id="mode" type="button" aria-label="Switch to dark mode">
+                    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>
+                    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                </button>
+            </nav>
+        </header>
+        <div class="stripes"></div>
+    </div>
+    <main>
+        <div class="sheet">
+            <div class="masthead">
+                <h1>Frontier Maintenance</h1>
+                <div class="odo">
+                    <label for="odo">Odometer</label>
+                    <input type="number" id="odo" min="0" step="1" placeholder="—" inputmode="numeric" autocomplete="off">
+                    <span class="unit">mi</span>
+                </div>
+            </div>
+            <div class="bar">
+                <span class="note" id="saved">Saved in this browser</span>
+                <span class="note" id="exported">Never exported</span>
+                <span class="grow note" id="data-status" role="status" aria-live="polite"></span>
+                <button class="btn" id="export" type="button">Export</button>
+                <button class="btn" id="import" type="button">Import</button>
+                <button class="btn" id="import-cancel" type="button" hidden>Cancel</button>
+                <input type="file" id="import-file" accept="application/json,.json" hidden>
+            </div>
+            <div class="body">
+                <div class="panel inputs" id="inputs">
+                    <div class="group">
+                        <h2 class="section-label">Truck</h2>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="year">Year</label>
+                                <div class="sel"><select id="year" autocomplete="off"></select></div>
+                            </div>
+                            <div class="field">
+                                <label for="drive">Drivetrain</label>
+                                <div class="sel">
+                                    <select id="drive" autocomplete="off"><option value="">—</option><option value="2WD">2WD</option><option value="4WD">4WD</option></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form class="group" id="svc-form" novalidate aria-labelledby="svc-h">
+                        <h2 class="section-label" id="svc-h">Log service</h2>
+                        <div class="field">
+                            <label for="svc-item">Item</label>
+                            <div class="sel"><select id="svc-item" autocomplete="off"></select></div>
+                        </div>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="svc-date">Date</label>
+                                <input type="text" id="svc-date" inputmode="numeric" maxlength="10" placeholder="yyyy-mm-dd" autocomplete="off">
+                            </div>
+                            <div class="field">
+                                <label for="svc-miles">Odometer</label>
+                                <input type="number" id="svc-miles" min="0" step="1" inputmode="numeric" placeholder="mi" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="svc-cost">Cost, USD</label>
+                                <input type="number" id="svc-cost" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
+                            </div>
+                            <div class="field">
+                                <span class="lbl" id="by-l">Done by</span>
+                                <div class="chips" id="svc-by" role="group" aria-labelledby="by-l">
+                                    <button type="button" data-by="diy" class="active" aria-pressed="true">DIY</button><button type="button" data-by="shop" aria-pressed="false">Shop</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="svc-notes">Notes</label>
+                            <input type="text" id="svc-notes" maxlength="200" autocomplete="off">
+                        </div>
+                        <div class="error-text msg" id="svc-msg" role="status" aria-live="polite"></div>
+                        <button class="act pri" type="submit">Add service</button>
+                    </form>
+                    <form class="group" id="fuel-form" novalidate aria-labelledby="fuel-h">
+                        <h2 class="section-label" id="fuel-h">Log fill-up</h2>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="fuel-date">Date</label>
+                                <input type="text" id="fuel-date" inputmode="numeric" maxlength="10" placeholder="yyyy-mm-dd" autocomplete="off">
+                            </div>
+                            <div class="field">
+                                <label for="fuel-miles">Odometer</label>
+                                <input type="number" id="fuel-miles" min="0" step="1" inputmode="numeric" placeholder="mi" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="fuel-gal">Gallons</label>
+                                <input type="number" id="fuel-gal" min="0" step="0.001" inputmode="decimal" placeholder="0.000" autocomplete="off">
+                            </div>
+                            <div class="field">
+                                <label for="fuel-cost">Cost, USD</label>
+                                <input type="number" id="fuel-cost" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="error-text msg" id="fuel-msg" role="status" aria-live="polite"></div>
+                        <button class="act pri" type="submit">Add fill-up</button>
+                    </form>
+                </div>
+                <div class="panel">
+                    <div class="results">
+                        <div class="signs">
+                            <section class="sign over" aria-labelledby="sign-over-h">
+                                <h2 class="sign-head" id="sign-over-h">Overdue</h2>
+                                <div class="sign-body"><output class="num" id="n-over">0</output><div class="sign-unit">items</div></div>
+                            </section>
+                            <section class="sign soon" aria-labelledby="sign-soon-h">
+                                <h2 class="sign-head" id="sign-soon-h">Due soon</h2>
+                                <div class="sign-body"><output class="num" id="n-soon">0</output><div class="sign-unit">items</div></div>
+                            </section>
+                            <section class="sign ok" aria-labelledby="sign-ok-h">
+                                <h2 class="sign-head" id="sign-ok-h">OK</h2>
+                                <div class="sign-body"><output class="num" id="n-ok">0</output><div class="sign-unit">items</div></div>
+                            </section>
+                        </div>
+                        <div class="ledger-wrap">
+                            <div class="group-head">
+                                <h2 class="section-label" id="sched-l">Schedule</h2>
+                                <span class="pill" id="n-none">0 not logged</span>
+                            </div>
+                            <table class="ledger stack" aria-labelledby="sched-l">
+                                <thead><tr><th scope="col">Item</th><th scope="col">Last done</th><th scope="col">Next due</th><th scope="col">Status</th></tr></thead>
+                                <tbody id="sched-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="ledger-wrap">
+                            <h2 class="section-label" id="hist-l">History</h2>
+                            <table class="ledger stack" aria-labelledby="hist-l">
+                                <thead><tr><th scope="col">Item</th><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Cost</th><th scope="col">Delete</th></tr></thead>
+                                <tbody id="hist-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="duo">
+                            <div class="ledger-wrap">
+                                <h2 class="section-label" id="cost-l">Costs</h2>
+                                <table class="ledger" aria-labelledby="cost-l">
+                                    <thead><tr><th scope="col">Year</th><th scope="col">Service</th><th scope="col">Fuel</th><th scope="col">Total</th></tr></thead>
+                                    <tbody id="cost-body"></tbody>
+                                    <tfoot id="cost-foot"></tfoot>
+                                </table>
+                            </div>
+                            <div class="ledger-wrap">
+                                <h2 class="section-label" id="mpg-l">Fuel economy</h2>
+                                <table class="ledger" aria-labelledby="mpg-l">
+                                    <thead><tr><th scope="col">Measure</th><th scope="col">MPG</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>Average</td><td id="mpg-avg">—</td></tr>
+                                        <tr><td>Last fill-up</td><td id="mpg-last">—</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="ledger-wrap">
+                            <h2 class="section-label" id="fuel-l">Fill-ups</h2>
+                            <table class="ledger stack" aria-labelledby="fuel-l">
+                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col">Cost</th><th scope="col">MPG</th><th scope="col">Delete</th></tr></thead>
+                                <tbody id="fuel-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="stripes"></div>
+        <div class="sources">
+            <a href="https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/frontier/2022/2022-nissan-frontier-owner-manual.pdf" target="_blank" rel="noopener">Nissan owner's manual &amp; maintenance guide</a>
+            <a href="/trust/">Trust &amp; Sources</a>
+        </div>
+    </footer>
+
+  <script>
+    'use strict';
+
+    // ---------------------------------------------------------------------------
+    // Schedule — Nissan Frontier 3.8L V6 (VQ38DD), normal-use schedule
+    // ---------------------------------------------------------------------------
+
+    // Source: Nissan owner's manual, "Maintenance and schedules" (2022-2025
+    // manuals agree on every item below). `then` is the repeat interval once the
+    // item has been done; null means the manual gives no limit of that kind.
+    // <pure>
+    const SCHEDULE = [
+      { id: 'oil',        label: 'Engine oil & filter',                  miles: 7500,   months: 6,  source: 'Replace at 7,500 mi / 6 mo (severe use: 5,000 mi / 6 mo)' },
+      { id: 'rotate',     label: 'Tire rotation',                        miles: 7500,   months: 6,  source: 'Rotate at each normal oil interval, 7,500 mi / 6 mo' },
+      { id: 'brakes',     label: 'Brake pads & rotors inspection',       miles: 15000,  months: 12, source: 'Inspect at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo' },
+      { id: 'cabin',      label: 'In-cabin microfilter',                 miles: 15000,  months: 12, source: 'Replace at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo' },
+      { id: 'fluids',     label: 'Transmission & differential fluid inspection', miles: 15000, months: 12, source: 'Inspect automatic transmission fluid and differential gear oil every 15,000 mi / 12 mo' },
+      { id: 'transfer',   label: 'Transfer case fluid inspection',       miles: 15000,  months: 12, only: '4WD', source: 'Inspect transfer fluid every 15,000 mi / 12 mo (4WD)' },
+      { id: 'prop',       label: 'Propeller shaft lubrication',          miles: 15000,  months: 12, only: '4WD', source: 'Lubricate every 15,000 mi / 12 mo (4WD models)' },
+      { id: 'air',        label: 'Engine air filter',                    miles: 30000,  months: 24, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo' },
+      { id: 'brakefluid', label: 'Brake fluid',                          miles: 30000,  months: 24, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo' },
+      { id: 'belt',       label: 'Drive belt inspection',                miles: 60000,  months: 48, then: { miles: 15000, months: 12 }, source: 'First inspection 60,000 mi / 48 mo, then every 15,000 mi / 12 mo' },
+      { id: 'plugs',      label: 'Spark plugs',                          miles: 105000, months: 84, source: 'Replace at 105,000 mi / 84 mo; also when gap exceeds 0.053 in' },
+      { id: 'coolant',    label: 'Engine coolant',                       miles: 105000, months: 84, then: { miles: 75000, months: 60 }, source: 'First replacement 105,000 mi / 84 mo, then every 75,000 mi / 60 mo' },
+    ];
+
+    // ---------------------------------------------------------------------------
+    // Pure logic (no DOM): dates, due status, fuel economy, totals, validation
+    // ---------------------------------------------------------------------------
+
+    const KEY = 'frontier:v1';
+    const MIN_YEAR = 2022;
+    const DUE_MILES = 500; // due soon: within this many miles ...
+    const DUE_DAYS = 30;   // ... or this many days
+    const DAY_MS = 86400000;
+
+    const isNum = (n) => typeof n === 'number' && Number.isFinite(n);
+    const pad2 = (n) => String(n).padStart(2, '0');
+    const blankData = () => ({ version: 1, truck: { year: null, drive: null, odometer: null }, services: [], fuel: [], exportedOn: null });
+
+    // Typed text to a finite number, or null for empty / unparseable.
+    function toNum(v) {
+      const s = String(v == null ? '' : v).trim();
+      if (s === '') return null;
+      const n = Number(s);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    // Today as a local calendar date; all other date math is UTC on ISO strings.
+    function todayISO(d = new Date()) {
+      return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    }
+
+    // yyyy-mm-dd to UTC milliseconds, or null when not a real calendar date.
+    function parseISO(s) {
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof s === 'string' ? s : '');
+      if (!m) return null;
+      const t = Date.UTC(+m[1], +m[2] - 1, +m[3]);
+      const d = new Date(t);
+      return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3] ? t : null;
+    }
+
+    // Digits only (iOS numeric pad has no hyphen): 8 digits become yyyy-mm-dd.
+    function normDate(s) {
+      const t = String(s == null ? '' : s).trim();
+      const d = t.replace(/\D/g, '');
+      return /^\d{4}-\d{2}-\d{2}$/.test(t) || d.length !== 8 ? t : `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6)}`;
+    }
+
+    // Add whole months, clamping to the last day (Aug 31 + 6 mo = Feb 28/29).
+    function addMonths(iso, n) {
+      const t = parseISO(iso);
+      if (t === null) return null;
+      const d = new Date(t);
+      const total = d.getUTCMonth() + n;
+      const y = d.getUTCFullYear() + Math.floor(total / 12);
+      const mo = ((total % 12) + 12) % 12;
+      const day = Math.min(d.getUTCDate(), new Date(Date.UTC(y, mo + 1, 0)).getUTCDate());
+      return `${String(y).padStart(4, '0')}-${pad2(mo + 1)}-${pad2(day)}`;
+    }
+
+    const diffDays = (a, b) => Math.round((parseISO(a) - parseISO(b)) / DAY_MS);
+
+    // Most recent entry for an item: latest date, then highest odometer.
+    function latestEntry(services, itemId) {
+      let best = null;
+      for (const s of services) {
+        if (s.item !== itemId) continue;
+        if (!best || s.date > best.date || (s.date === best.date && s.miles > best.miles)) best = s;
+      }
+      return best;
+    }
+
+    // Interval in force: the first one until the item has been logged, then `then`.
+    const intervalFor = (item, logged) => (logged && item.then ? item.then : item);
+
+    // Status from the last entry. Miles and days are put on one scale by the
+    // due-soon thresholds (500 mi, 30 days); the smaller score is the limit that
+    // comes first, and label, stamp and sort all read the same score.
+    function dueStatus(item, last, odometer, today) {
+      if (!last) return { state: 'none' };
+      const iv = intervalFor(item, true);
+      const cands = [];
+      if (iv.miles != null && odometer != null) {
+        const rem = last.miles + iv.miles - odometer;
+        cands.push({ kind: 'mi', rem, score: rem / DUE_MILES });
+      }
+      if (iv.months != null) {
+        const rem = diffDays(addMonths(last.date, iv.months), today);
+        cands.push({ kind: 'days', rem, score: rem / DUE_DAYS });
+      }
+      if (!cands.length) return { state: 'unknown' };
+      const c = cands.reduce((a, b) => (b.score < a.score ? b : a));
+      return { state: c.score < 0 ? 'over' : c.score <= 1 ? 'soon' : 'ok', kind: c.kind, rem: c.rem, score: c.score };
+    }
+
+    // One row per applicable schedule item, sorted: scored (worst first), then
+    // logged-but-unscorable, then never logged.
+    function scheduleRows(data, today) {
+      const drive = data.truck.drive;
+      const rank = { over: 0, soon: 0, ok: 0, unknown: 1, none: 2 };
+      const rows = SCHEDULE
+        .filter((it) => !it.only || drive !== '2WD')
+        .map((item, i) => {
+          const last = latestEntry(data.services, item.id);
+          return { item, last, i, interval: intervalFor(item, !!last), ...dueStatus(item, last, data.truck.odometer, today) };
+        });
+      rows.sort((a, b) => rank[a.state] - rank[b.state] || (rank[a.state] === 0 ? a.score - b.score : 0) || a.i - b.i);
+      return rows;
+    }
+
+    // MPG between consecutive fill-ups (full tank assumed). Average is total
+    // miles over the gallons of every fill after the first; needs two fill-ups.
+    function mpgStats(fuel) {
+      const f = fuel.slice().sort((a, b) => a.miles - b.miles || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+      const perId = {};
+      let mi = 0, gal = 0, last = null;
+      for (let i = 1; i < f.length; i++) {
+        const dm = f[i].miles - f[i - 1].miles;
+        if (dm <= 0 || !(f[i].gallons > 0)) continue;
+        perId[f[i].id] = dm / f[i].gallons;
+        mi += dm; gal += f[i].gallons;
+        last = perId[f[i].id];
+      }
+      return { average: gal > 0 ? mi / gal : null, last, perId };
+    }
+
+    // Calendar-year totals, newest year first, plus the grand total.
+    function costTotals(services, fuel) {
+      const years = {};
+      const add = (list, k) => { for (const e of list) { const y = e.date.slice(0, 4); (years[y] = years[y] || { year: y, service: 0, fuel: 0 })[k] += e.cost; } };
+      add(services, 'service'); add(fuel, 'fuel');
+      const rows = Object.values(years).sort((a, b) => (a.year < b.year ? 1 : -1));
+      const service = rows.reduce((s, r) => s + r.service, 0);
+      const fuelSum = rows.reduce((s, r) => s + r.fuel, 0);
+      return { rows, service, fuel: fuelSum, total: service + fuelSum };
+    }
+
+    // Returns a clean copy of a stored/imported object, or null when invalid.
+    function validateData(o) {
+      const str = (v, max) => typeof v === 'string' && v.length <= max;
+      const nn = (v) => isNum(v) && v >= 0;
+      if (!o || typeof o !== 'object' || o.version !== 1) return null;
+      const t = o.truck;
+      if (!t || typeof t !== 'object') return null;
+      if (!(t.year === null || (Number.isInteger(t.year) && t.year >= MIN_YEAR && t.year <= 2100))) return null;
+      if (!(t.drive === null || t.drive === '2WD' || t.drive === '4WD')) return null;
+      if (!(t.odometer === null || nn(t.odometer))) return null;
+      if (!Array.isArray(o.services) || !Array.isArray(o.fuel) || o.services.length > 5000 || o.fuel.length > 5000) return null;
+      if (!(o.exportedOn === null || parseISO(o.exportedOn) !== null)) return null;
+      const ids = new Set();
+      const uniq = (id) => { if (typeof id !== 'string' || !/^[\w-]{1,64}$/.test(id) || ids.has(id)) return false; ids.add(id); return true; };
+      const services = [];
+      for (const s of o.services) {
+        if (!s || typeof s !== 'object' || !uniq(s.id)) return null;
+        if (!str(s.item, 80) || !s.item || parseISO(s.date) === null || !nn(s.miles) || !nn(s.cost)) return null;
+        if (s.by !== 'diy' && s.by !== 'shop') return null;
+        if (!str(s.notes, 200)) return null;
+        services.push({ id: s.id, item: s.item, date: s.date, miles: s.miles, cost: s.cost, by: s.by, notes: s.notes });
+      }
+      const fuel = [];
+      for (const f of o.fuel) {
+        if (!f || typeof f !== 'object' || !uniq(f.id)) return null;
+        if (parseISO(f.date) === null || !nn(f.miles) || !(isNum(f.gallons) && f.gallons > 0) || !nn(f.cost)) return null;
+        fuel.push({ id: f.id, date: f.date, miles: f.miles, gallons: f.gallons, cost: f.cost });
+      }
+      return { version: 1, truck: { year: t.year, drive: t.drive, odometer: t.odometer }, services, fuel, exportedOn: o.exportedOn };
+    }
+    // </pure>
+
+    // ---------------------------------------------------------------------------
+    // Storage (every read and write guarded; works in memory when blocked)
+    // ---------------------------------------------------------------------------
+
+    let storageOk = true;
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (raw) return validateData(JSON.parse(raw)) || blankData();
+      } catch (e) { /* blocked or corrupt: start blank */ }
+      return blankData();
+    }
+
+    function paintSaved() { $('saved').textContent = storageOk ? 'Saved in this browser' : 'Storage unavailable'; }
+
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(data)); storageOk = true; } catch (e) { storageOk = false; }
+      paintSaved();
+    }
+
+    // Startup probe: never touches the stored data, so a corrupt or invalid
+    // value is only replaced when the user next makes a change.
+    function probeStorage() {
+      try { localStorage.setItem('frontier:probe', '1'); localStorage.removeItem('frontier:probe'); } catch (e) { storageOk = false; }
+      paintSaved();
+    }
+
+    // ---------------------------------------------------------------------------
+    // DOM
+    // ---------------------------------------------------------------------------
+
+    const $ = (id) => document.getElementById(id);
+    const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    const int = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+    const dec1 = (n) => n.toFixed(1);
+    const plural = (n, w) => `${int.format(n)} ${w}${n === 1 ? '' : 's'}`;
+    const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+    const labelOf = (id) => { const s = SCHEDULE.find((x) => x.id === id); return s ? s.label : id === 'other' ? 'Other' : id; };
+
+    // Build elements without innerHTML so user text only ever goes in as text.
+    function el(tag, props, ...kids) {
+      const n = document.createElement(tag);
+      for (const [k, v] of Object.entries(props || {})) {
+        if (v == null || v === false) continue;
+        if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v; else n.setAttribute(k, v === true ? '' : v);
+      }
+      n.append(...kids.filter((k) => k != null && k !== false));
+      return n;
+    }
+
+    const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+
+    let data = load();
+    let armed = null; // key of the row whose delete is waiting for a second click
+    let pendingImport = null;
+
+    const odo = $('odo'), yearSel = $('year'), driveSel = $('drive');
+    const svcItem = $('svc-item'), svcDate = $('svc-date'), svcMiles = $('svc-miles'), svcCost = $('svc-cost'), svcNotes = $('svc-notes');
+    const fuelDate = $('fuel-date'), fuelMiles = $('fuel-miles'), fuelGal = $('fuel-gal'), fuelCost = $('fuel-cost');
+    let svcBy = 'diy';
+
+    function option(value, text) { return el('option', { value, text }); }
+
+    function renderYears() {
+      const top = Math.max(new Date().getFullYear() + 1, data.truck.year || 0);
+      const opts = [option('', '—')];
+      for (let y = top; y >= MIN_YEAR; y--) opts.push(option(String(y), String(y)));
+      yearSel.replaceChildren(...opts);
+      yearSel.value = data.truck.year ? String(data.truck.year) : '';
+    }
+
+    function renderItems() {
+      const keep = svcItem.value;
+      const opts = SCHEDULE.filter((it) => !it.only || data.truck.drive !== '2WD').map((it) => option(it.id, it.label));
+      opts.push(option('other', 'Other'));
+      svcItem.replaceChildren(...opts);
+      svcItem.value = [...svcItem.options].some((o) => o.value === keep) ? keep : opts[0].value;
+    }
+
+    // Log-form odometers follow the truck odometer until typed in.
+    function syncOdometers() {
+      const v = data.truck.odometer == null ? '' : String(data.truck.odometer);
+      for (const input of [svcMiles, fuelMiles]) if (!input.dataset.typed) input.value = v;
+    }
+
+    function intervalText(iv) {
+      return [iv.miles != null ? `${int.format(iv.miles)} mi` : null, iv.months != null ? `${iv.months} mo` : null].filter(Boolean).join(' · ');
+    }
+
+    function dueText(r) {
+      const n = Math.abs(r.rem);
+      const unit = r.kind === 'mi' ? `${int.format(n)} mi` : plural(n, 'day');
+      return r.state === 'over' ? `Overdue ${unit}` : `Due in ${unit}`;
+    }
+
+    function setNum(id, n) {
+      const node = $(id);
+      const text = String(n);
+      if (node.textContent === text) return;
+      node.textContent = text;
+      node.classList.remove('strike');
+      void node.offsetWidth; // restart the animation
+      node.classList.add('strike');
+    }
+
+    function renderSchedule() {
+      const rows = scheduleRows(data, todayISO());
+      const count = { over: 0, soon: 0, ok: 0, none: 0 };
+      const trs = rows.map((r) => {
+        if (count[r.state] !== undefined) count[r.state]++;
+        const stampText = r.state === 'over' ? 'Overdue' : r.state === 'soon' ? 'Due soon' : r.state === 'ok' ? 'OK' : '—';
+        const plain = r.state === 'none' || r.state === 'unknown';
+        const stamp = el('span', { class: `stamp ${r.state}` },
+          plain ? el('span', { 'aria-hidden': 'true', text: stampText }) : stampText,
+          plain ? el('span', { class: 'sr-only', text: 'No status' }) : null);
+        const next = r.state === 'none' ? 'Not logged' : r.state === 'unknown' ? '—' : dueText(r);
+        return el('tr', null,
+          el('td', { class: 'wrap' }, r.item.label, el('span', { class: 'sub', text: intervalText(r.interval) })),
+          el('td', { class: 'wrap k-r', 'data-label': 'Last' }, r.last ? `${r.last.date}` : '—', r.last ? el('span', { class: 'sub', text: `${int.format(r.last.miles)} mi` }) : null),
+          el('td', { class: `wrap k-r${r.state === 'over' ? ' late' : ''}`, 'data-label': 'Next' }, next),
+          el('td', { class: 'k-stat' }, stamp));
+      });
+      $('sched-body').replaceChildren(...trs);
+      setNum('n-over', count.over); setNum('n-soon', count.soon); setNum('n-ok', count.ok);
+      $('n-none').textContent = `${count.none} not logged`;
+    }
+
+    // Icon delete button; the first click arms it, the second deletes.
+    function delButton(key, what) {
+      const on = armed === key;
+      const b = el('button', { class: `del${on ? ' armed' : ''}`, type: 'button', 'data-key': key, 'aria-label': `${on ? 'Confirm delete' : 'Delete'} ${what}` });
+      if (on) b.textContent = 'Delete'; else b.innerHTML = TRASH; // TRASH is a static literal
+      return b;
+    }
+
+    function byDateDesc(a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.miles - a.miles; }
+
+    function renderHistory() {
+      const rows = data.services.slice().sort(byDateDesc);
+      if (!rows.length) { $('hist-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 5, text: 'No services' }))); return; }
+      $('hist-body').replaceChildren(...rows.map((s) => el('tr', null,
+        el('td', { class: 'wrap' }, labelOf(s.item),
+          el('span', { class: 'sub', text: [s.by === 'diy' ? 'DIY' : 'Shop', s.notes].filter(Boolean).join(' · ') })),
+        el('td', { class: 'k-r', 'data-label': 'Date', text: s.date }),
+        el('td', { class: 'k-r', 'data-label': 'Odometer', text: `${int.format(s.miles)} mi` }),
+        el('td', { class: 'k-r k-wide', 'data-label': 'Cost', text: usd.format(s.cost) }),
+        el('td', { class: 'act-cell k-stat' }, delButton(`s:${s.id}`, `${s.date} ${labelOf(s.item)}`)))));
+    }
+
+    function renderFuel() {
+      const stats = mpgStats(data.fuel);
+      $('mpg-avg').textContent = stats.average == null ? '—' : dec1(stats.average);
+      $('mpg-last').textContent = stats.last == null ? '—' : dec1(stats.last);
+      const rows = data.fuel.slice().sort(byDateDesc);
+      if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 6, text: 'No fill-ups' }))); return; }
+      $('fuel-body').replaceChildren(...rows.map((f) => el('tr', null,
+        el('td', { text: f.date }),
+        el('td', { 'data-label': 'Odometer', text: `${int.format(f.miles)} mi` }),
+        el('td', { 'data-label': 'Gallons', text: f.gallons.toFixed(3) }),
+        el('td', { 'data-label': 'Cost', text: usd.format(f.cost) }),
+        el('td', { 'data-label': 'MPG', text: stats.perId[f.id] == null ? '—' : dec1(stats.perId[f.id]) }),
+        el('td', { class: 'act-cell k-stat' }, delButton(`f:${f.id}`, `${f.date} fill-up`)))));
+    }
+
+    function renderCosts() {
+      const t = costTotals(data.services, data.fuel);
+      $('cost-body').replaceChildren(...t.rows.map((r) => el('tr', null,
+        el('td', { text: r.year }), el('td', { text: usd.format(r.service) }), el('td', { text: usd.format(r.fuel) }), el('td', { text: usd.format(r.service + r.fuel) }))));
+      $('cost-foot').replaceChildren(el('tr', null,
+        el('td', { text: 'Total' }), el('td', { text: usd.format(t.service) }), el('td', { text: usd.format(t.fuel) }), el('td', { text: usd.format(t.total) })));
+    }
+
+    function renderBar() {
+      $('exported').textContent = data.exportedOn ? `Last exported ${data.exportedOn}` : 'Never exported';
+    }
+
+    function renderAll() {
+      renderSchedule(); renderHistory(); renderFuel(); renderCosts(); renderBar(); syncOdometers();
+    }
+
+    function restoreFocus(key) {
+      const b = key && document.querySelector(`button[data-key="${key}"]`);
+      if (b) b.focus();
+    }
+
+    // Replace every control from `data` (startup and import).
+    function renderControls() {
+      renderYears(); renderItems();
+      driveSel.value = data.truck.drive || '';
+      odo.value = data.truck.odometer == null ? '' : String(data.truck.odometer);
+      for (const input of [svcMiles, fuelMiles]) delete input.dataset.typed;
+      renderAll();
+    }
+
+    // ---------------------------------------------------------------------------
+    // Events
+    // ---------------------------------------------------------------------------
+
+    function say(id, text) { $(id).textContent = text; }
+
+    function bumpOdometer(miles) {
+      if (data.truck.odometer == null || miles > data.truck.odometer) {
+        data.truck.odometer = miles;
+        odo.value = String(miles);
+      }
+    }
+
+    odo.addEventListener('input', () => {
+      if (odo.validity.badInput) return;
+      const raw = odo.value.trim();
+      const n = toNum(raw);
+      if (raw === '') data.truck.odometer = null;
+      else if (n !== null && n >= 0) data.truck.odometer = Math.round(n);
+      else return;
+      save(); renderAll();
+    });
+
+    yearSel.addEventListener('change', () => { data.truck.year = yearSel.value ? Number(yearSel.value) : null; save(); });
+    driveSel.addEventListener('change', () => { data.truck.drive = driveSel.value || null; save(); renderItems(); renderAll(); });
+
+    for (const input of [svcMiles, fuelMiles]) input.addEventListener('input', () => { input.dataset.typed = '1'; });
+
+    $('svc-by').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-by]');
+      if (!b) return;
+      svcBy = b.dataset.by;
+      for (const x of $('svc-by').children) { const on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-pressed', String(on)); }
+    });
+
+    $('svc-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const date = normDate(svcDate.value);
+      const miles = toNum(svcMiles.value);
+      const cost = svcCost.value.trim() === '' ? 0 : toNum(svcCost.value);
+      if (parseISO(date) === null) return say('svc-msg', 'Invalid date');
+      if (miles === null || miles < 0) return say('svc-msg', 'Odometer required');
+      if (cost === null || cost < 0) return say('svc-msg', 'Invalid cost');
+      const m = Math.round(miles);
+      data.services.push({ id: newId(), item: svcItem.value, date, miles: m, cost, by: svcBy, notes: svcNotes.value.trim().slice(0, 200) });
+      bumpOdometer(m);
+      svcCost.value = ''; svcNotes.value = '';
+      delete svcMiles.dataset.typed;
+      say('svc-msg', '');
+      save(); renderAll();
+    });
+
+    $('fuel-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const date = normDate(fuelDate.value);
+      const miles = toNum(fuelMiles.value);
+      const gallons = toNum(fuelGal.value);
+      const cost = fuelCost.value.trim() === '' ? 0 : toNum(fuelCost.value);
+      if (parseISO(date) === null) return say('fuel-msg', 'Invalid date');
+      if (miles === null || miles < 0) return say('fuel-msg', 'Odometer required');
+      if (gallons === null || gallons <= 0) return say('fuel-msg', 'Invalid gallons');
+      if (cost === null || cost < 0) return say('fuel-msg', 'Invalid cost');
+      const m = Math.round(miles);
+      data.fuel.push({ id: newId(), date, miles: m, gallons, cost });
+      bumpOdometer(m);
+      fuelGal.value = ''; fuelCost.value = '';
+      delete fuelMiles.dataset.typed;
+      say('fuel-msg', '');
+      save(); renderAll();
+    });
+
+    // Delete: first click arms the row's button, second click removes the entry.
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('button.del');
+      if (!b) { if (armed) { armed = null; renderHistory(); renderFuel(); } return; }
+      const key = b.dataset.key;
+      if (armed === key) {
+        armed = null;
+        if (key.startsWith('s:')) data.services = data.services.filter((s) => `s:${s.id}` !== key);
+        else data.fuel = data.fuel.filter((f) => `f:${f.id}` !== key);
+        save(); renderAll();
+        return;
+      }
+      armed = key;
+      renderHistory(); renderFuel(); restoreFocus(key);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && armed) { const k = armed; armed = null; renderHistory(); renderFuel(); restoreFocus(k); }
+    });
+
+    // Export / import
+    function fail(text) { const s = $('data-status'); s.replaceChildren(el('span', { class: 'error-text', text })); }
+
+    $('export').addEventListener('click', () => {
+      const today = todayISO();
+      data.exportedOn = today;
+      save(); renderBar();
+      const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      const a = el('a', { href: url, download: `frontier-maintenance-${today}.json` });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      $('data-status').textContent = 'Exported';
+    });
+
+    function clearPending() {
+      pendingImport = null;
+      $('import').textContent = 'Import';
+      $('import-cancel').hidden = true;
+    }
+
+    $('import').addEventListener('click', () => {
+      if (!pendingImport) { $('import-file').click(); return; }
+      data = pendingImport;
+      clearPending();
+      save(); renderControls();
+      $('data-status').textContent = 'Imported';
+    });
+    $('import-cancel').addEventListener('click', () => { clearPending(); $('data-status').textContent = ''; });
+
+    $('import-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      e.target.value = '';
+      clearPending();
+      if (!file) return;
+      let parsed = null;
+      try { parsed = file.size <= 5e6 ? validateData(JSON.parse(await file.text())) : null; } catch (err) { /* invalid JSON */ }
+      if (!parsed) return fail('Import failed: invalid file');
+      pendingImport = parsed;
+      $('import').textContent = 'Replace data';
+      $('import-cancel').hidden = false;
+      $('data-status').textContent = `${plural(parsed.services.length, 'service')} · ${plural(parsed.fuel.length, 'fill-up')}`;
+    });
+
+    // ── Theme ──────────────────────────────────────────────────────────────────
+
+    const root = document.documentElement, mode = $('mode');
+    const paintMode = () => mode.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    mode.addEventListener('click', () => {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+      paintMode();
+    });
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      let saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (x) {}
+      if (saved === 'light' || saved === 'dark') return;
+      root.dataset.theme = e.matches ? 'dark' : 'light';
+      paintMode();
+    });
+    paintMode();
+
+    svcDate.value = fuelDate.value = todayISO();
+    renderControls();
+    probeStorage();
+  </script>
+</body>
+</html>
