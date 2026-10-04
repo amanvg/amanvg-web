@@ -39,6 +39,7 @@
   --over-bg:#a63a24; --over-fg:#f6efe1; --soon-bg:#d9822b; --soon-fg:#181c16; --ok-bg:#24422e; --ok-fg:#f6efe1;
   --band-line:rgba(246,239,225,.28);
   --s1:#24422e; --s2:#d9822b; --s3:#a63a24;
+  --moon-sky:#24422e; --moon-ridge:#13241a; --moon-face:#f6efe1; --moon-crater:#e3d2b0; --moon-ink:#f6efe1; --moon-path:#d9822b;
   --foot-bg:#1c2730; --foot-text:#f6efe1; --foot-line:#181c16;
   --b-sports:#24422e; --f-sports:#f6efe1;
   --display:'Oswald','Arial Narrow',sans-serif;
@@ -62,6 +63,7 @@
   --over-bg:#ff8168; --over-fg:#3e0400; --soon-bg:#e5933a; --soon-fg:#0e1511; --ok-bg:#2d4b38; --ok-fg:#f4ede2;
   --band-line:#35483b;
   --s1:#44805d; --s2:#e5933a; --s3:#c8523b;
+  --moon-sky:#0a0f0c; --moon-ridge:#1f3326; --moon-face:#ded5c5; --moon-crater:#c4b8a2; --moon-ink:#ded5c5; --moon-path:#e5933a;
   --foot-bg:#0a0f0c; --foot-text:#ded5c5; --foot-line:#35483b;
   --b-sports:#2d4b38; --f-sports:#f4ede2;
 }
@@ -210,6 +212,28 @@ fieldset{border:0;min-width:0}
 .chart .tick{fill:var(--muted);font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.02em}
 .chart .tick.year{font-weight:700;letter-spacing:.06em}
 .chart .bar{fill:var(--s1);transition:fill-opacity .15s}
+.moon{position:relative;border:1px solid var(--key);background:var(--moon-sky);line-height:0}
+.moon svg{display:block;width:100%}
+.moon .star{fill:var(--moon-ink)}
+.moon .ridge{fill:var(--moon-ridge)}
+.moon .face{fill:var(--moon-face)}
+.moon .crater{fill:var(--moon-crater)}
+.moon .route{fill:none;stroke:var(--moon-ink);stroke-width:1.5;stroke-dasharray:2 6;stroke-linecap:round;opacity:.55}
+.moon .done{fill:none;stroke:var(--moon-path);stroke-width:4;stroke-linecap:round}
+.moon .done.draw{animation:moon-draw 1.6s var(--ease) both}
+@keyframes moon-draw{from{stroke-dashoffset:var(--len)}}
+.moon .tick{stroke:var(--moon-ink);stroke-width:1.5;opacity:.7}
+.moon .lbl{fill:var(--moon-ink);font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.04em}
+.moon .lbl.dim{opacity:.7;font-weight:600}
+.moon .here{fill:var(--moon-path);font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:.04em}
+.moon .truck{outline:none;cursor:default}
+.moon .truck .body{fill:var(--moon-face)}
+.moon .truck .wheel{fill:var(--moon-sky);stroke:var(--moon-face);stroke-width:1.5}
+.moon .truck .ring{fill:none;stroke:none}
+.moon .truck:focus-visible .ring{stroke:var(--focus);stroke-width:2}
+.signs.moon-tally{margin-top:12px}
+@media(prefers-reduced-motion:reduce){.moon .done.draw{animation:none}}
+@media(max-width:600px){.signs.moon-tally{gap:10px}.moon-tally .num{font-size:clamp(22px,7vw,30px);min-height:36px}.moon-tally .sign-head{font-size:15px;line-height:20px;padding:6px 8px}}
 .chart .avg{stroke:var(--s2);stroke-width:1;stroke-dasharray:4 3}
 .chart .avg-l{fill:var(--text);font-family:var(--label);font-weight:700;font-size:12px;paint-order:stroke;stroke:var(--row-a);stroke-width:3px;stroke-linejoin:round}
 .chart .line{fill:none;stroke:var(--s1);stroke-width:2;stroke-linejoin:round}
@@ -543,6 +567,24 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             <div class="body" id="pane-history" role="tabpanel" aria-labelledby="tab-history" hidden>
                 <div class="panel">
                     <div class="results">
+                        <div class="ledger-wrap">
+                            <h2 class="section-label" id="moon-l">To the Moon</h2>
+                            <div class="moon" id="moon" role="group" aria-labelledby="moon-l"></div>
+                            <div class="signs moon-tally">
+                                <section class="sign" aria-labelledby="moon-done-h">
+                                    <h2 class="sign-head" id="moon-done-h">Driven</h2>
+                                    <div class="sign-body"><output class="num" id="moon-done">—</output><div class="sign-unit" id="moon-done-u">mi</div></div>
+                                </section>
+                                <section class="sign" aria-labelledby="moon-left-h">
+                                    <h2 class="sign-head" id="moon-left-h">To go</h2>
+                                    <div class="sign-body"><output class="num" id="moon-left">—</output><div class="sign-unit">mi</div></div>
+                                </section>
+                                <section class="sign" aria-labelledby="moon-eta-h">
+                                    <h2 class="sign-head" id="moon-eta-h">Arrival</h2>
+                                    <div class="sign-body"><output class="num" id="moon-eta">—</output><div class="sign-unit" id="moon-eta-u">At current pace</div></div>
+                                </section>
+                            </div>
+                        </div>
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="miles-chart-l">Miles by month</h2>
                             <div class="chart" id="miles-chart" role="group" aria-labelledby="miles-chart-l"></div>
@@ -1073,6 +1115,120 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
     for (const c of CHARTS) new ResizeObserver(() => drawChart(c)).observe($(c.box));
 
+    // --- To the Moon: odometer against the average Earth-Moon distance -------------
+    const MOON_MI = 238855;
+    // Progress, miles left and arrival at the pace from the first reading to the latest.
+    function moonTrip(points, odometer) {
+      const at = Math.max(odometer || 0, ...points.map((p) => p.miles), 0);
+      const first = points[0], last = points[points.length - 1];
+      const days = first && last ? (last.t - first.t) / DAY_MS : 0;
+      const pace = days > 0 ? (last.miles - first.miles) / days : null;
+      const left = Math.max(0, MOON_MI - at);
+      const arrive = !left ? 'done' : pace > 0 ? new Date(last.t + (left / pace) * DAY_MS) : null;
+      return { at, frac: Math.min(1, at / MOON_MI), left, pace, arrive };
+    }
+    let moonDrawn = false;
+
+    function drawMoon() {
+      const box = $('moon');
+      const W = box.clientWidth;
+      if (W < 120) return;
+      const trip = moonTrip(odoPoints, data.truck.odometer);
+      const H = W < 560 ? 240 : 300;
+      const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
+      svg.setAttribute('aria-label', `To the Moon: ${int.format(trip.at)} of ${int.format(MOON_MI)} mi, ${(trip.frac * 100).toFixed(1)}%`);
+      svg.append(svgEl('title', null, 'To the Moon'));
+
+      // Stars: the same field every draw (seeded), thinner on narrow screens.
+      let seed = 7;
+      const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+      for (let k = Math.round(W / 14); k > 0; k--) {
+        const x = rnd() * W, y = rnd() * H * 0.82, r = 0.6 + rnd() * 1.1;
+        svg.append(svgEl('circle', { class: 'star', cx: x.toFixed(1), cy: y.toFixed(1), r: r.toFixed(2), opacity: (0.3 + rnd() * 0.6).toFixed(2) }));
+      }
+
+      // Moon, upper right, with flat craters.
+      const R = Math.min(H * 0.27, W * 0.13), mx = W - R - Math.max(18, W * 0.05), my = H * 0.4;
+      svg.append(svgEl('circle', { class: 'face', cx: mx, cy: my, r: R }));
+      for (const [dx, dy, cr] of [[-0.38, -0.3, 0.2], [0.28, -0.42, 0.11], [0.12, 0.18, 0.26], [-0.42, 0.38, 0.12], [0.52, 0.12, 0.08]])
+        svg.append(svgEl('circle', { class: 'crater', cx: mx + dx * R, cy: my + dy * R, r: cr * R }));
+      svg.append(svgEl('text', { class: 'lbl dim', x: mx, y: my + R + 20, 'text-anchor': 'middle' }, `${int.format(MOON_MI)} mi`));
+
+      // Earth: a ridge of pines along the lower left.
+      const gy = H * 0.86;
+      svg.append(svgEl('path', { class: 'ridge', d: `M0,${H} V${gy - H * 0.05} Q${W * 0.1},${gy - H * 0.13} ${W * 0.22},${gy - H * 0.04} T${W * 0.46},${gy + H * 0.02} Q${W * 0.7},${gy + H * 0.04} ${W},${gy + H * 0.11} V${H} Z` }));
+      const tree = (x, h) => {
+        const w = h * 0.42, b = gy - H * 0.06 + (x / W) * H * 0.07;
+        svg.append(svgEl('path', { class: 'ridge', d: `M${x},${b - h} L${x + w},${b - h * 0.42} H${x + w * 0.55} L${x + w * 1.1},${b} H${x - w * 1.1} L${x - w * 0.55},${b - h * 0.42} H${x - w} Z` }));
+      };
+      for (const [fx, fh] of [[0.03, 0.2], [0.07, 0.27], [0.12, 0.18], [0.27, 0.15], [0.31, 0.21], [0.36, 0.13]]) tree(W * fx, H * fh * Math.min(1, W / 760));
+
+      // Route: a launch arc from the ridge to the moon's limb, sampled for distance.
+      const A = { x: W * 0.17, y: gy - H * 0.1 }, B = { x: mx - R * 1.05, y: my + R * 0.15 }, C = { x: W * 0.42, y: -H * 0.06 };
+      const at = (t) => ({ x: (1 - t) ** 2 * A.x + 2 * (1 - t) * t * C.x + t * t * B.x, y: (1 - t) ** 2 * A.y + 2 * (1 - t) * t * C.y + t * t * B.y });
+      const pts = [], acc = [0];
+      for (let k = 0; k <= 240; k++) { pts.push(at(k / 240)); if (k) acc.push(acc[k - 1] + Math.hypot(pts[k].x - pts[k - 1].x, pts[k].y - pts[k - 1].y)); }
+      const total = acc[acc.length - 1];
+      const along = (f) => {
+        const d = f * total; let k = acc.findIndex((v) => v >= d); if (k <= 0) k = 1;
+        const a = pts[k - 1], b = pts[k], u = (d - acc[k - 1]) / (acc[k] - acc[k - 1] || 1);
+        return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u, ang: Math.atan2(b.y - a.y, b.x - a.x) };
+      };
+      const line = (f0, f1) => { const out = []; for (let k = 0; k <= 120; k++) { const q = along(f0 + (f1 - f0) * (k / 120)); out.push(`${k ? 'L' : 'M'}${q.x.toFixed(1)},${q.y.toFixed(1)}`); } return out.join(' '); };
+      svg.append(svgEl('path', { class: 'route', d: line(0, 1) }));
+
+      // Every 50,000 mi: a tick across the route and its label outside the arc.
+      for (let m = 50000; m < MOON_MI; m += 50000) {
+        const q = along(m / MOON_MI), nx = Math.sin(q.ang), ny = -Math.cos(q.ang);
+        svg.append(svgEl('line', { class: 'tick', x1: q.x - nx * 6, y1: q.y - ny * 6, x2: q.x + nx * 6, y2: q.y + ny * 6 }));
+        svg.append(svgEl('text', { class: 'lbl dim', x: q.x + nx * 20, y: q.y + ny * 20 + 4, 'text-anchor': 'middle' }, `${m / 1000}k`));
+      }
+
+      // Driven so far, then the truck at the head of it.
+      const done = svgEl('path', { class: 'done', d: line(0, Math.max(trip.frac, 0.001)) });
+      svg.append(done);
+      const q = along(trip.frac);
+      const truck = svgEl('g', { class: 'truck', tabindex: '0', transform: `translate(${q.x.toFixed(1)},${q.y.toFixed(1)}) rotate(${(q.ang * 180 / Math.PI).toFixed(1)}) scale(${W < 560 ? 1.1 : 1.45})` });
+      truck.append(svgEl('rect', { class: 'ring', x: -19, y: -21, width: 38, height: 26 }));
+      truck.append(svgEl('path', { class: 'body', d: 'M-15,-4 V-11 H-2 V-17 H6 L10,-11 H15 V-4 Z' }));
+      truck.append(svgEl('circle', { class: 'wheel', cx: -8, cy: -3, r: 3.5 }), svgEl('circle', { class: 'wheel', cx: 9, cy: -3, r: 3.5 }));
+      svg.append(truck);
+      const nx = Math.sin(q.ang), ny = -Math.cos(q.ang);
+      // Odometer label: above the route on wide screens, in the open sky beside the truck on narrow ones.
+      const narrow = W < 560;
+      const hx = narrow ? q.x + 22 : Math.min(Math.max(q.x + nx * 44, 48), W - 48);
+      const hy = narrow ? q.y + 22 : Math.max(q.y + ny * 44 + 6, 20);
+      svg.append(svgEl('text', { class: 'here', x: hx, y: hy, 'text-anchor': narrow ? 'start' : 'middle' }, `${int.format(trip.at)} mi`));
+
+      const tip = el('div', { class: 'chart-tip', hidden: true, 'aria-hidden': 'true' });
+      const show = () => {
+        tip.replaceChildren(el('b', { text: `${(trip.frac * 100).toFixed(1)}%` }), el('span', { text: `${int.format(trip.at)} of ${int.format(MOON_MI)} mi` }));
+        tip.hidden = false;
+        const half = tip.offsetWidth / 2;
+        tip.style.left = `${Math.min(Math.max(q.x, half + 2), W - half - 2)}px`;
+        tip.style.top = `${Math.max(q.y + 30 + tip.offsetHeight, tip.offsetHeight + 2)}px`;
+      };
+      const hide = () => { tip.hidden = true; };
+      for (const [ev, fn] of [['pointerenter', show], ['pointerleave', hide], ['focus', show], ['blur', hide]]) truck.addEventListener(ev, fn);
+      box.replaceChildren(svg, tip);
+
+      // Draw the driven arc in once, on the first paint only.
+      if (!moonDrawn) {
+        const len = done.getTotalLength();
+        done.style.strokeDasharray = `${len} ${len}`;
+        done.style.setProperty('--len', len);
+        done.classList.add('draw');
+        moonDrawn = true;
+      }
+
+      $('moon-done').textContent = int.format(trip.at);
+      $('moon-done-u').textContent = `mi · ${(trip.frac * 100).toFixed(1)}%`;
+      $('moon-left').textContent = int.format(trip.left);
+      $('moon-eta').textContent = trip.arrive === 'done' ? 'Landed' : trip.arrive ? String(trip.arrive.getUTCFullYear()) : '—';
+      $('moon-eta-u').textContent = trip.arrive && trip.arrive !== 'done' ? `At ${int.format(trip.pace)} mi/day` : '';
+    }
+    new ResizeObserver(() => drawMoon()).observe($('moon'));
+
     // --- Odometer over time: line chart, every fill-up and service reading ---------
     let odoPoints = [];
     // One point per date (its highest reading), oldest first.
@@ -1164,6 +1320,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       renderChart(stats.tanks);
       odoPoints = odometerPoints(data.fuel, data.services);
       drawOdo();
+      drawMoon();
       const num1 = (n) => (n == null ? '—' : dec1(n));
       const delta = (d) => { if (d == null) return ''; const r = Number(d.toFixed(1)); return r === 0 ? '0.0' : `${r > 0 ? '+' : '−'}${Math.abs(r).toFixed(1)}`; };
       const withDelta = (d) => (d == null ? 'MPG' : `MPG · ${delta(d)}`);
