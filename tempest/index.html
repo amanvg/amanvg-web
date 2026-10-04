@@ -191,10 +191,7 @@ main{flex:1;padding:40px var(--margin) 0}
 .tile:focus-visible{outline-offset:-3px}
 @media(hover:hover){.tile[aria-pressed="false"]:hover{background:var(--row-b)}}
 
-.signs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.signs .sign-head{font-size:18px;padding:6px 12px}
-.signs .sign-body{padding:12px 8px 10px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.tiles.odd .tile:last-child{grid-column:span 2}
 .bar-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 .state{padding:56px 24px;text-align:center;font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -214,7 +211,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 }
 @media(max-width:960px){
   .body{grid-template-columns:1fr}
-  .signs{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:700px){
   :root{--margin:16px}
@@ -228,7 +224,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .masthead .chips{width:100%}
   .panel{padding:20px 16px 24px}
   .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .grid2{grid-template-columns:1fr}
   .sign-head{font-size:18px;padding:6px 12px}
   .stat{padding:10px 10px}
   .stat .v{font-size:24px;line-height:30px}
@@ -376,10 +371,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 : `M${f(sx(pts[0].x))},${f(base)}L` + pts.map(p => `${f(sx(p.x))},${f(sy(p.y))}`).join('L') + `L${f(sx(pts[pts.length - 1].x))},${f(base)}Z`;
             let mk = '';
             if (marks) {
+                const yHi = p => band ? p.hi : p.y, yLo = p => band ? p.lo : p.y;
                 let hi = pts[0], lo = pts[0];
-                for (const p of pts) { if (p.y > hi.y) hi = p; if (p.y < lo.y) lo = p; }
+                for (const p of pts) { if (yHi(p) > yHi(hi)) hi = p; if (yLo(p) < yLo(lo)) lo = p; }
                 const last = pts[pts.length - 1];
-                mk = [hi, lo, last].map(p => `<circle class="dot" cx="${f(sx(p.x))}" cy="${f(sy(p.y))}" r="5"/>`).join('');
+                mk = [[hi, yHi(hi)], [lo, yLo(lo)], [last, yLine(last)]].map(([p, v]) => `<circle class="dot" cx="${f(sx(p.x))}" cy="${f(sy(v))}" r="5"/>`).join('');
             }
             const html = `<svg viewBox="0 0 ${w} ${h}" style="--c:var(${color})" role="img" aria-label="${esc(o.label || 'Chart')}">
                 ${sc.ticks.map((v, i) => `<line class="g" x1="${pad.l}" x2="${pad.l + cw}" y1="${f(sy(v))}" y2="${f(sy(v))}"/><text class="t" x="${pad.l - 8}" y="${f(sy(v) + 4)}" text-anchor="end">${labels[i]}</text>`).join('')}
@@ -449,7 +445,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             { id: 'solar', label: 'Solar',       short: 'Solar',    unit: 'W/m²', tick: '',     dec: 0, color: '--ser-solar', min: 0 },
             { id: 'rain',  label: 'Rain Today',  short: 'Rain',     unit: 'in',   tick: '',     dec: 2, color: '--ser-rain', min: 0 }
         ];
-        const S = { tab: '24h', metric: 'temp', year: null, data: null, error: null, years: {} };
+        const S = { tab: '24h', metric: 'temp', yearMetric: 'temp', hist: null, year: null, data: null, error: null, years: {} };
         let stageSeq = 0;
 
         async function loadAll() {
@@ -596,29 +592,34 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     xTicks: hourTicks(m.id === 'rain' ? x0 : cp[0]?.x ?? 0, m.id === 'rain' ? x1 : cp[cp.length - 1]?.x ?? 0, w),
                     marks: m.id !== 'rain', label: `${m.label}, last 24 hours` });
                 el.innerHTML = r.html;
-                if (!r.sx) return;
-                const svg = el.querySelector('svg'), cross = svg.querySelector('.cross'), cdot = svg.querySelector('.cdot');
-                const cell = $('stat-now');
-                const nowK = cell?.querySelector('.k'), nowV = cell?.querySelector('.v');
-                const k0 = nowK?.textContent, v0 = nowV?.innerHTML;
                 const unit = m.unit ? `<small>${m.unit}</small>` : '';
-                const show = e => {
-                    const box = svg.getBoundingClientRect();
-                    const x = (e.clientX - box.left) * (r.w / box.width);
-                    let best = cp[0], bd = Infinity;
-                    for (const p of cp) { const dd = Math.abs(r.sx(p.x) - x); if (dd < bd) { bd = dd; best = p; } }
-                    const px = r.sx(best.x), py = r.sy(best.y);
-                    cross.setAttribute('x1', px); cross.setAttribute('x2', px);
-                    cdot.setAttribute('cx', px); cdot.setAttribute('cy', py);
-                    svg.classList.add('on');
-                    if (nowK) { nowK.textContent = timeFmt(best.x); nowV.innerHTML = fmtVal(m, best.y) + unit; }
-                };
-                const hide = () => { svg.classList.remove('on'); if (nowK) { nowK.textContent = k0; nowV.innerHTML = v0; } };
-                svg.addEventListener('pointermove', show);
-                svg.addEventListener('pointerdown', show);
-                svg.addEventListener('pointerleave', hide);
+                crosshair(el, r, p => ({ k: timeFmt(p.x), v: fmtVal(m, p.y) + unit }));
             };
             paintPlots();
+        }
+
+        // Hovering a plot moves the crosshair and shows the point in the first stat cell.
+        function crosshair(el, r, read) {
+            if (!r.sx) return;
+            const svg = el.querySelector('svg'), cross = svg.querySelector('.cross'), cdot = svg.querySelector('.cdot');
+            const cell = $('stat-now');
+            const nowK = cell?.querySelector('.k'), nowV = cell?.querySelector('.v');
+            const k0 = nowK?.textContent, v0 = nowV?.innerHTML;
+            const show = e => {
+                const box = svg.getBoundingClientRect();
+                const x = (e.clientX - box.left) * (r.w / box.width);
+                let best = r.pts[0], bd = Infinity;
+                for (const p of r.pts) { const dd = Math.abs(r.sx(p.x) - x); if (dd < bd) { bd = dd; best = p; } }
+                const px = r.sx(best.x), py = r.sy(best.y ?? best.avg);
+                cross.setAttribute('x1', px); cross.setAttribute('x2', px);
+                cdot.setAttribute('cx', px); cdot.setAttribute('cy', py);
+                svg.classList.add('on');
+                if (nowK) { const o = read(best); nowK.textContent = o.k; nowV.innerHTML = o.v; }
+            };
+            const hide = () => { svg.classList.remove('on'); if (nowK) { nowK.textContent = k0; nowV.innerHTML = v0; } };
+            svg.addEventListener('pointermove', show);
+            svg.addEventListener('pointerdown', show);
+            svg.addEventListener('pointerleave', hide);
         }
 
         function render24() {
@@ -684,54 +685,88 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return `<div class="bar-head"><div class="section-label" id="year-label">Year</div><div class="chips on-card" role="group" aria-labelledby="year-label">${ys.map(y => `<button type="button" data-year="${y}" aria-pressed="${y === S.year}">${y}</button>`).join('')}</div></div>`;
         }
 
-        function annualPanel(id, title, headRight, h) {
-            return `<section class="sign"><h3 class="sign-head"><span>${title}</span>${headRight ? `<span class="hv">${headRight}</span>` : ''}</h3><div class="plot" data-plot="${id}" data-h="${h}"></div></section>`;
-        }
+        const YEAR_METRICS = [
+            { id: 'temp',  label: 'Temperature', short: 'Temp',     sub: 'Daily high / low', unit: '°F',   tick: '°', dec: 0, color: '--ser-temp', band: true },
+            { id: 'hum',   label: 'Humidity',    short: 'Humidity', sub: 'Daily range',      unit: '%',    tick: '%', dec: 0, color: '--ser-hum',  band: true, min: 0 },
+            { id: 'rain',  label: 'Rain',        short: 'Rain',     sub: 'Cumulative',       unit: 'in',   tick: '',  dec: 2, color: '--ser-rain', min: 0 },
+            { id: 'wind',  label: 'Wind Speed',  short: 'Wind',     sub: 'Daily avg',        unit: 'mph',  tick: '',  dec: 1, color: '--ser-wind', min: 0 },
+            { id: 'gust',  label: 'Wind Gust',   short: 'Gust',     sub: 'Daily max',        unit: 'mph',  tick: '',  dec: 0, color: '--ser-gust', min: 0 },
+            { id: 'press', label: 'Pressure',    short: 'Pressure', sub: 'Daily avg',        unit: 'inHg', tick: '',  dec: 2, color: '--ser-press' },
+            { id: 'solar', label: 'Solar',       short: 'Solar',    sub: 'Daily peak',       unit: 'W/m²', tick: '',  dec: 0, color: '--ser-solar', min: 0 }
+        ];
+        const yearMetricById = id => YEAR_METRICS.find(m => m.id === id);
+        const dayFmt = d => `${MONTHS[+d.slice(5, 7) - 1]} ${+d.slice(8, 10)}`;
+        const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
 
         function renderHistoryBody(obs, year) {
-            if (!obs || obs.length < 7) return '<div class="state">Not enough data yet</div>';
-            const temp = obs.map(o => {
-                const hi = c2f(o[DF.TEMP_MAX]), lo = c2f(o[DF.TEMP_MIN]), avg = c2f(o[DF.TEMP_AVG]);
-                return { date: o[DF.DATE], hi, lo: (avg - lo > 40) ? avg : lo, avg };
-            });
-            const hum = obs.map(o => ({ date: o[DF.DATE], hi: o[DF.HUM_MAX], lo: o[DF.HUM_MIN], avg: o[DF.HUM_AVG] }));
-            const single = f => obs.map(o => ({ date: o[DF.DATE], y: f(o) }));
+            if (!obs || obs.length < 7) { S.hist = null; return '<div class="state">Not enough data yet</div>'; }
+            const band = (hi, lo, avg) => obs.map((o, i) => ({ x: i, date: o[DF.DATE], hi: hi(o), lo: lo(o), avg: avg(o) }));
+            const single = f => obs.map((o, i) => ({ x: i, date: o[DF.DATE], y: f(o) }));
             let acc = 0;
-            const rain = obs.map(o => { acc += mm2in(o[DF.RAIN] ?? 0); return { date: o[DF.DATE], y: +acc.toFixed(2) }; });
-            const set = {
+            const ser = {
+                temp: obs.map((o, i) => {
+                    const hi = c2f(o[DF.TEMP_MAX]), lo = c2f(o[DF.TEMP_MIN]), avg = c2f(o[DF.TEMP_AVG]);
+                    return { x: i, date: o[DF.DATE], hi, lo: (avg - lo > 40) ? avg : lo, avg };
+                }),
+                hum:   band(o => o[DF.HUM_MAX], o => o[DF.HUM_MIN], o => o[DF.HUM_AVG]),
+                rain:  obs.map((o, i) => { const day = mm2in(o[DF.RAIN] ?? 0); acc += day; return { x: i, date: o[DF.DATE], y: +acc.toFixed(2), day }; }),
                 wind:  single(o => ms2mph(o[DF.WIND_AVG])),
                 gust:  single(o => ms2mph(o[DF.WIND_GUST])),
                 press: single(o => mb2inhg(o[DF.PRES_AVG])),
                 solar: single(o => { const v = o[DF.SOLAR_MAX] ?? 0; return v > 1500 ? 0 : v; })
             };
-            const yHi = Math.round(Math.max(...temp.map(d => d.hi))), yLo = Math.round(Math.min(...temp.map(d => d.lo)));
-            const yAvg = Math.round(temp.reduce((s, d) => s + d.avg, 0) / temp.length), total = rain[rain.length - 1].y;
-
-            const line = (id, data, m, label, w) => {
-                const pts = data.map((d, i) => ({ x: i, y: d.y }));
-                return chart({ w, h: 190, pts, color: m.color, tickUnit: m.tick, dec: m.dec, min: m.min, xTicks: monthTicks(data, w), label });
-            };
-            const wire = (id, fn) => { plots[id] = (el, w) => { el.innerHTML = fn(w); }; };
-            wire('h-temp', w => chart({ w, h: 240, pts: temp.map((d, i) => ({ x: i, hi: d.hi, lo: d.lo, avg: d.avg })), band: true, color: '--ser-temp', tickUnit: '°', min: 0, max: 100, xTicks: monthTicks(temp, w), label: `Daily temperature range ${year}` }).html);
-            wire('h-hum', w => chart({ w, h: 190, pts: hum.map((d, i) => ({ x: i, hi: d.hi, lo: d.lo, avg: d.avg })), band: true, color: '--ser-hum', tickUnit: '%', min: 0, xTicks: monthTicks(hum, w), label: `Daily humidity range ${year}` }).html);
-            wire('h-rain', w => line('h-rain', rain, metricById('rain'), `Cumulative rain ${year}`, w).html);
-            wire('h-wind', w => line('h-wind', set.wind, metricById('wind'), `Daily average wind ${year}`, w).html);
-            wire('h-gust', w => line('h-gust', set.gust, metricById('gust'), `Daily peak gust ${year}`, w).html);
-            wire('h-press', w => line('h-press', set.press, metricById('press'), `Daily average pressure ${year}`, w).html);
-            wire('h-solar', w => line('h-solar', set.solar, metricById('solar'), `Daily peak solar ${year}`, w).html);
-
-            const sign = (k, v) => `<section class="sign"><h3 class="sign-head">${k}</h3><div class="sign-body"><output class="num sm">${v}</output></div></section>`;
+            S.hist = { year, ser };
             return `
-                <div class="signs">${sign('High', yHi + '°')}${sign('Low', yLo + '°')}${sign('Average', yAvg + '°')}${sign('Rain', total.toFixed(1) + '"')}</div>
-                ${annualPanel('h-temp', 'Temperature', 'Daily high / low', 240)}
-                <div class="grid2">
-                    ${annualPanel('h-hum', 'Humidity', 'Daily range', 190)}
-                    ${annualPanel('h-rain', 'Rain', 'Cumulative · in', 190)}
-                    ${annualPanel('h-wind', 'Wind Speed', 'Daily avg · mph', 190)}
-                    ${annualPanel('h-gust', 'Wind Gust', 'Daily max · mph', 190)}
-                    ${annualPanel('h-press', 'Pressure', 'Daily avg · inHg', 190)}
-                    ${annualPanel('h-solar', 'Solar', 'Daily peak · W/m²', 190)}
+                <section class="sign" id="big" aria-live="polite"></section>
+                <div class="tiles odd" role="group" aria-label="Metric">
+                    ${YEAR_METRICS.map(m => `
+                        <button type="button" class="tile" data-m="${m.id}" aria-pressed="${m.id === S.yearMetric}" style="--c:var(${m.color})">
+                            <span class="k">${m.short}</span>
+                            <span class="v">${n(yearSummary(m, ser[m.id]), m.dec)}${m.unit ? `<small>${m.unit}</small>` : ''}</span>
+                            ${miniChart(ser[m.id].map(p => ({ x: p.x, y: p.y ?? p.avg })), m.min === 0)}
+                        </button>`).join('')}
                 </div>`;
+        }
+
+        // Tile value: the year total for rain, the peak for gust and solar, the mean otherwise.
+        function yearSummary(m, pts) {
+            if (m.id === 'rain') return pts[pts.length - 1].y;
+            if (m.id === 'gust' || m.id === 'solar') return Math.max(...pts.map(p => p.y));
+            return mean(pts.map(p => p.y ?? p.avg));
+        }
+
+        function yearStats(m, pts) {
+            const unit = m.unit ? `<small>${m.unit}</small>` : '';
+            const cell = (k, v, extra, id) => `<div class="stat"${id ? ` id="${id}"` : ''}><span class="k">${k}</span><span class="v">${n(v, m.dec)}${unit}</span>${extra ? `<span class="k">${extra}</span>` : ''}</div>`;
+            if (m.id === 'rain') {
+                let wet = pts[0];
+                for (const p of pts) if (p.day > wet.day) wet = p;
+                const days = pts.filter(p => p.day >= 0.01).length;
+                return `<div class="stat-row">${cell('Total', pts[pts.length - 1].y, '', 'stat-now')}${cell('Wettest', wet.day, dayFmt(wet.date))}<div class="stat"><span class="k">Rain days</span><span class="v">${days}</span></div></div>`;
+            }
+            const yHi = p => m.band ? p.hi : p.y, yLo = p => m.band ? p.lo : p.y;
+            let hi = pts[0], lo = pts[0];
+            for (const p of pts) { if (yHi(p) > yHi(hi)) hi = p; if (yLo(p) < yLo(lo)) lo = p; }
+            return `<div class="stat-row">${cell('Average', mean(pts.map(p => p.y ?? p.avg)), '', 'stat-now')}${cell('High', yHi(hi), dayFmt(hi.date))}${cell('Low', yLo(lo), dayFmt(lo.date))}</div>`;
+        }
+
+        function renderYearBig() {
+            const m = yearMetricById(S.yearMetric), { year, ser } = S.hist, pts = ser[m.id];
+            const unit = m.unit ? `<small>${m.unit}</small>` : '';
+            $('big').innerHTML = `
+                <h2 class="sign-head"><span>${m.label}</span><span class="hv">${m.sub}</span></h2>
+                ${yearStats(m, pts)}
+                <div class="plot hov" data-plot="big"></div>`;
+            plots.big = (el, w) => {
+                const r = chart({ w, h: w < 520 ? 220 : 256, pts, band: m.band, color: m.color, tickUnit: m.tick, dec: m.dec, min: m.min,
+                    xTicks: monthTicks(pts, w), marks: m.id !== 'rain', label: `${m.label}, ${m.sub.toLowerCase()} ${year}` });
+                el.innerHTML = r.html;
+                crosshair(el, r, p => ({
+                    k: dayFmt(p.date),
+                    v: (m.band ? `${n(p.hi, m.dec)} / ${n(p.lo, m.dec)}` : n(m.id === 'rain' ? p.day : p.y, m.dec)) + unit
+                }));
+            };
+            paintPlots();
         }
 
         async function renderHistory() {
@@ -743,7 +778,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 const obs = await loadAnnual(S.year);
                 if (seq !== stageSeq) return;
                 st.innerHTML = head + renderHistoryBody(obs, S.year);
-                paintPlots();
+                if (S.hist) renderYearBig();
             } catch (err) {
                 console.error(err);
                 if (seq !== stageSeq) return;
@@ -812,9 +847,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         $('stage').addEventListener('click', e => {
             const tile = e.target.closest('.tile');
             if (tile) {
-                S.metric = tile.dataset.m;
+                const hist = S.tab === 'history';
+                if (hist) S.yearMetric = tile.dataset.m; else S.metric = tile.dataset.m;
                 document.querySelectorAll('.tile').forEach(t => t.setAttribute('aria-pressed', t === tile));
-                renderBig();
+                if (hist) renderYearBig(); else renderBig();
                 return;
             }
             const yr = e.target.closest('[data-year]');
