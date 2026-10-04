@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-04T02:33:04Z",
+ "generatedAt": "2026-10-04T21:23:34Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.02",
- "kevCount": 1733,
- "epssDate": "2026-10-03",
+ "kevCatalogVersion": "2026.10.04",
+ "kevCount": 1734,
+ "epssDate": "2026-10-04",
  "items": [
   {
    "id": "CVE-2025-25249",
@@ -762,6 +762,27 @@
    "cwe": "Improper Restriction of Operations within the Bounds of a Memory Buffer"
   },
   {
+   "id": "CVE-2026-88779",
+   "vendor": "Citrix",
+   "product": "NetScaler",
+   "name": "Citrix NetScaler Improper Restriction of Operations within the Bounds of a Memory Buffer Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-04",
+    "due": "2026-10-07",
+    "ransomware": false
+   },
+   "epss": 0.003,
+   "percentile": 0.182,
+   "cvss": 8.7,
+   "cvssVersion": "4.0",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "partial",
+   "cweId": "CWE-119",
+   "cwe": "Improper Restriction of Operations within the Bounds of a Memory Buffer"
+  },
+  {
    "id": "CVE-2026-93616",
    "vendor": "Check Point",
    "product": "Multiple Products",
@@ -1180,23 +1201,6 @@
    "impact": "total",
    "cweId": "CWE-77",
    "cwe": "Command Injection"
-  },
-  {
-   "id": "CVE-2026-85672",
-   "vendor": "getomni-ai",
-   "product": "zerox",
-   "name": "zerox 1.1.20 OS Command Injection via Document URL File Extension",
-   "published": "2026-09-04",
-   "kev": null,
-   "epss": 0.026,
-   "percentile": 0.847,
-   "cvss": 9.3,
-   "cvssVersion": "4.0",
-   "exploitation": "poc",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-86151",
