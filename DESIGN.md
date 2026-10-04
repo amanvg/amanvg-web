@@ -242,6 +242,7 @@ The typographic hierarchy balances hand-carved poster display lettering with boo
 - **Body & Continuous Reading (Vollkorn):** A robust, warm, slightly sturdy serif designed by Friedrich Althausen. Its deep ink traps, hefty serifs, and high legibility mimic classic letterpress books and field guides without tiring the eye on high-resolution displays.
 - **Labels, Captions & Badges (Work Sans):** A balanced, unpretentious grotesque sans serif reminiscent of mid-century civil service technical documents, trail markers, and survey plots. Its geometric bone structure complements the organic serif body.
 - **Typesetting Rule:** Headings should always maintain a tight vertical grid. Never float large Oswald headers over low-contrast images; frame them within dedicated color bands or bounded signboards.
+- **Uppercase Rule:** Uppercase with tracking is reserved for Oswald titles, color-band and signboard headers, table headers, buttons and masthead chips. Labels, metadata, legends, counts, tags and status read in sentence case Work Sans at 13–14px. No text is set below 12px.
 
 ## Layout & Spacing
 

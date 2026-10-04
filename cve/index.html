@@ -239,9 +239,9 @@ tr.r td:last-child{white-space:nowrap}
 
 footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
 .sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
-.sources a{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px;color:inherit;text-decoration:none;transition:background .15s,color .15s}
+.sources a{display:inline-flex;align-items:center;min-height:32px;font-family:var(--label);font-weight:600;font-size:14px;color:inherit;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:4px;text-decoration-color:color-mix(in srgb,currentColor 45%,transparent);transition:text-decoration-color .15s}
 .sources a:focus-visible{outline-color:var(--foot-text)}
-@media(hover:hover){.sources a:hover{background:var(--foot-text);color:var(--foot-bg)}}
+@media(hover:hover){.sources a:hover{text-decoration-color:currentColor}}
 
 @media(max-width:1160px){.stamp .src{display:none}.nums{gap:14px;padding:14px 16px}.num{min-width:48px}.num b{font-size:28px;line-height:32px}td{padding:8px}th button{padding:6px 8px}.body{grid-template-columns:minmax(0,1fr) 280px}}
 @media(max-width:1040px) and (min-width:961px){.body{grid-template-columns:minmax(0,1fr) 240px}table{font-size:13px}td{padding:8px 6px}td .idb{font-size:16px}}
