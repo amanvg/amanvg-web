@@ -996,8 +996,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const max = Math.max(0, ...vals.map(val));
       const step = c.step(max);
       const top = Math.max(c.min, Math.ceil(max / step) * step || step);
-      // Average of the months that have a value (the reference line, `avg` charts only).
-      const avg = c.avg && vals.length ? vals.reduce((a, m) => a + val(m), 0) / vals.length : null;
+      // Average of the months that have a value, without the highest and lowest month
+      // once there are three or more (the reference line, `avg` charts only).
+      const sorted = vals.map(val).sort((p, q) => p - q), kept = sorted.length >= 3 ? sorted.slice(1, -1) : sorted;
+      const avg = c.avg && kept.length ? kept.reduce((a, v) => a + v, 0) / kept.length : null;
       const y = (v) => M.top + plotH - (v / top) * plotH;
       // Month names when they fit, then initials, then every 2nd / 3rd / 6th / 12th month.
       const names = band < 30 && band >= 14 ? MONTHS.map((n) => n[0]) : MONTHS;
