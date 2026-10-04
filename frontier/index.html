@@ -668,10 +668,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // comes first, and label, stamp and sort all read the same score.
     function dueStatus(item, last, odometer, today) {
       // `due`: where each limit falls, as the target and what is left (negative = past).
-      // Never logged, only the first mileage is known: there is no in-service date.
+      // Never logged, only the first mileage is known: there is no in-service date,
+      // so it is scored on miles alone.
       if (!last) {
         const mi = item.miles != null && odometer != null ? { at: item.miles, rem: item.miles - odometer } : null;
-        return { state: 'none', due: { mi, days: null } };
+        if (!mi) return { state: 'none', due: { mi, days: null } };
+        const score = mi.rem / DUE_MILES;
+        return { state: score < 0 ? 'over' : score <= 1 ? 'soon' : 'ok', kind: 'mi', rem: mi.rem, score, due: { mi, days: null } };
       }
       const iv = intervalFor(item, true);
       const cands = [];
@@ -870,7 +873,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const parts = [r.due.days && duePart(r.due.days, 'days'), r.due.mi && duePart(r.due.mi, 'mi')].filter(Boolean);
       const body = parts.length ? parts.flatMap((p, i) => (i ? [' / ', p] : [p])) : ['\u2014'];
       return el('td', { class: 'k-c k-due', 'data-label': 'Next' }, el('span', { class: 'nw' }, ...body),
-        r.state === 'none' ? el('span', { class: 'sr-only', text: 'Not logged' }) : null);
+        !r.last ? el('span', { class: 'sr-only', text: 'Not logged' }) : null);
     };
 
     function setNum(id, n) {
@@ -887,7 +890,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const rows = scheduleRows(data, todayISO());
       const count = { over: 0, soon: 0, ok: 0, none: 0 };
       const trs = rows.map((r) => {
-        if (count[r.state] !== undefined) count[r.state]++;
+        if (r.state !== 'none' && count[r.state] !== undefined) count[r.state]++;
+        if (!r.last) count.none++;
         const stampText = r.state === 'over' ? 'Overdue' : r.state === 'soon' ? 'Due soon' : r.state === 'ok' ? 'OK' : '—';
         const plain = r.state === 'none' || r.state === 'unknown';
         const stamp = el('span', { class: `stamp ${r.state}` },
