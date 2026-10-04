@@ -105,9 +105,19 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 28px;background:var(--b-sports);color:var(--f-sports);border-top:1px solid var(--band-line);border-bottom:2px solid var(--head-line)}
 .bar .btn{padding:8px 18px}
 :root[data-theme="dark"] .bar .btn{border-color:var(--f-sports)}
+.masthead .btn{padding:8px 18px}
+:root[data-theme="dark"] .masthead .btn{border-color:var(--f-sports)}
 .bar .grow{flex:1 1 auto}
 .bar .grow:empty{display:none}
 .bar #export{margin-left:auto}
+.bar.connect{border-top:0;gap:12px}
+.bar.connect label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
+.bar.connect input{flex:1 1 220px;max-width:460px}
+.bar #connect-msg:empty{display:none}
+.ro #svc-form,.ro #fuel-form{display:none}
+.ro #pane-fuel{grid-template-columns:1fr}
+.ro #pane-fuel>.inputs{display:none}
+.ro #use{pointer-events:none}
 .bar .note{color:inherit}
 .bar .error-text{display:inline-block}
 
@@ -123,7 +133,7 @@ main{flex:1;padding:28px var(--margin) 0}
 
 .sel{position:relative;min-width:0}
 .sel::after{content:'';position:absolute;right:14px;top:50%;margin-top:-3px;border:6px solid transparent;border-top:7px solid var(--text);border-bottom:0;pointer-events:none}
-select,input[type=text],input[type=number],input[type=date]{width:100%;min-width:0;min-height:44px;background:var(--well-bg);color:var(--text);border:2px solid var(--key);border-radius:0;box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:6px 12px;font-family:var(--body);font-size:20px;line-height:28px;font-variant-numeric:lining-nums tabular-nums;caret-color:var(--accent);transition:border-color .15s,box-shadow .15s}
+select,input[type=text],input[type=number],input[type=date],input[type=password]{width:100%;min-width:0;min-height:44px;background:var(--well-bg);color:var(--text);border:2px solid var(--key);border-radius:0;box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:6px 12px;font-family:var(--body);font-size:20px;line-height:28px;font-variant-numeric:lining-nums tabular-nums;caret-color:var(--accent);transition:border-color .15s,box-shadow .15s}
 select{-webkit-appearance:none;appearance:none;padding-right:36px;cursor:pointer;text-overflow:ellipsis}
 select option{background:var(--card);color:var(--text)}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
@@ -155,7 +165,7 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2
 .chips{display:flex}
 .chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 14px;border:2px solid var(--key);background:transparent;color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .chips button+button{margin-left:-2px}
-.bar .chips button{border-color:var(--f-sports);color:var(--f-sports);min-width:104px;padding:6px 12px}
+.bar .chips button{flex:1 0 auto;border-color:var(--f-sports);color:var(--f-sports);min-width:104px;padding:6px 12px}
 .bar .chips button.active{background:var(--f-sports);border-color:var(--f-sports);color:var(--b-sports)}
 @media(hover:hover){.bar .chips button:not(.active):hover{background:color-mix(in srgb,var(--f-sports) 16%,transparent)}}
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:10px;padding:0 6px;border:1.5px solid var(--over-fg);border-radius:9999px;background:var(--over-bg);color:var(--over-fg);font-size:11px;line-height:1}
@@ -205,17 +215,19 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2
 
 footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
 .sources{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:28px var(--margin) 48px}
-.sources a{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px;color:inherit;text-decoration:none;transition:background .15s,color .15s;min-height:32px;display:inline-flex;align-items:center}
-.sources a:focus-visible{outline-color:var(--foot-text)}
-@media(hover:hover){.sources a:hover{background:var(--foot-text);color:var(--foot-bg)}}
+.sources a,.sources button{background:transparent;cursor:pointer;font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--foot-text);padding:6px 14px;border-radius:9999px;color:inherit;text-decoration:none;transition:background .15s,color .15s;min-height:32px;display:inline-flex;align-items:center}
+.sources a:focus-visible,.sources button:focus-visible{outline-color:var(--foot-text)}
+@media(hover:hover){.sources a:hover,.sources button:hover{background:var(--foot-text);color:var(--foot-bg)}}
 
 @media(max-width:1180px){
   .body{grid-template-columns:minmax(340px,4fr) minmax(0,7fr)}
   .signs{gap:12px}
   .sign-body{padding-left:6px;padding-right:6px}
   .num{font-size:clamp(38px,4vw,64px)}
-  .odo input[type=number]{width:170px}
+  .odo input[type=number]{width:150px}
   .bar{gap:8px 14px}
+  .masthead{gap:12px 16px}
+  .masthead h1{font-size:32px;line-height:40px}
 }
 @media(max-width:960px){
   .body{grid-template-columns:1fr}
@@ -229,6 +241,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .masthead{padding:12px 16px}
   .masthead h1{font-size:28px;line-height:36px}
   input[type=date]{font-size:17px;padding-left:10px;padding-right:6px}
+  .masthead .btn{width:100%;justify-content:center}
   .bar .chips{width:100%}
   .bar .chips button{flex:1;min-width:0}
   .odo{width:100%}
@@ -272,6 +285,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         <div class="sheet">
             <div class="masthead">
                 <h1>Frontier Maintenance</h1>
+                <button class="btn" id="view-btn" type="button" hidden>Create your own</button>
                 <div class="odo">
                     <label for="odo">Odometer</label>
                     <input type="number" id="odo" min="0" step="1" placeholder="—" inputmode="numeric" autocomplete="off">
@@ -282,14 +296,25 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <div class="chips tabs" id="panes" role="tablist" aria-label="Section">
                     <button type="button" role="tab" id="tab-maint" data-pane="maint" aria-controls="pane-maint" aria-selected="true" class="active">Maintenance<span class="badge" id="tab-over" hidden><span id="tab-over-n">0</span><span class="sr-only"> overdue</span></span></button><button type="button" role="tab" id="tab-fuel" data-pane="fuel" aria-controls="pane-fuel" aria-selected="false" tabindex="-1">Fuel</button>
                 </div>
-                <span class="note" id="saved">Saved in this browser</span>
+                <span class="note" id="saved" role="status" aria-live="polite">Loading</span>
                 <span class="note" id="exported">Never exported</span>
                 <span class="grow note" id="data-status" role="status" aria-live="polite"></span>
+                <button class="btn" id="retry" type="button" hidden>Retry</button>
+                <button class="btn" id="reload" type="button" hidden>Reload</button>
+                <button class="btn" id="overwrite" type="button" hidden>Overwrite</button>
+                <button class="btn" id="upload" type="button" hidden>Upload browser copy</button>
                 <button class="btn" id="export" type="button">Export</button>
                 <button class="btn" id="import" type="button">Import</button>
                 <button class="btn" id="import-cancel" type="button" hidden>Cancel</button>
                 <input type="file" id="import-file" accept="application/json,.json" hidden>
             </div>
+            <form class="bar connect" id="connect-form" novalidate hidden>
+                <label for="token">Token</label>
+                <input type="password" id="token" autocomplete="off" spellcheck="false" aria-describedby="connect-msg">
+                <button class="btn" type="submit">Connect</button>
+                <button class="btn" type="button" id="connect-cancel">Cancel</button>
+                <span class="note error-text" id="connect-msg" role="status" aria-live="polite"></span>
+            </form>
             <div class="body" id="pane-maint" role="tabpanel" aria-labelledby="tab-maint">
                 <div class="panel inputs" id="inputs">
                     <div class="group">
@@ -451,6 +476,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         <div class="sources">
             <a href="https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/frontier/2022/2022-nissan-frontier-owner-manual.pdf" target="_blank" rel="noopener">Nissan owner's manual &amp; maintenance guide</a>
             <a href="/trust/">Trust &amp; Sources</a>
+            <button id="connect" type="button">Connect</button>
         </div>
     </footer>
 
@@ -501,7 +527,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     const isNum = (n) => typeof n === 'number' && Number.isFinite(n);
     const pad2 = (n) => String(n).padStart(2, '0');
-    const blankData = () => ({ version: 1, truck: { year: null, drive: null, odometer: null, use: 'standard' }, services: [], fuel: [], exportedOn: null });
+    const blankData = () => ({ version: 1, truck: { year: null, drive: null, odometer: null, use: 'standard' }, services: [], fuel: [], exportedOn: null, savedOn: null });
 
     // Typed text to a finite number, or null for empty / unparseable.
     function toNum(v) {
@@ -666,7 +692,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         if (parseISO(f.date) === null || !nn(f.miles) || !(isNum(f.gallons) && f.gallons > 0) || !nn(f.cost)) return null;
         fuel.push({ id: f.id, date: f.date, miles: f.miles, gallons: f.gallons, cost: f.cost });
       }
-      return { version: 1, truck: { year: t.year, drive: t.drive, odometer: t.odometer, use: t.use || 'standard' }, services, fuel, exportedOn: o.exportedOn };
+      return { version: 1, truck: { year: t.year, drive: t.drive, odometer: t.odometer, use: t.use || 'standard' }, services, fuel, exportedOn: o.exportedOn, savedOn: typeof o.savedOn === 'string' && parseISO(o.savedOn) !== null ? o.savedOn : null };
     }
     // </pure>
 
@@ -684,18 +710,111 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return blankData();
     }
 
-    function paintSaved() { $('saved').textContent = storageOk ? 'Saved in this browser' : 'Storage unavailable'; }
+    // Where the data lives. Site view: the log in the data repo, read by anyone,
+    // written only with a token. Own view: this browser's copy.
+    const RAW_URL = 'https://raw.githubusercontent.com/amanvg/frontier-data/main/log.json';
+    const API_URL = 'https://api.github.com/repos/amanvg/frontier-data';
+    const FILE_URL = `${API_URL}/contents/log.json`;
+    const TOKEN_KEY = 'frontier:gh';
+
+    let view = 'site';         // 'site' | 'mine'
+    let mine = load();         // this browser's own copy
+    let siteData = null;       // the site log once loaded
+    let data = blankData();    // whichever is on screen
+    let token = null;
+    try { token = localStorage.getItem(TOKEN_KEY) || null; } catch (e) { /* blocked */ }
+    let sha = null;            // blob sha of the site log at the last sync
+    let sync = 'loading';      // loading | idle | saving | saved | failed | conflict | error
+    let syncNote = '';
+
+    const canEdit = () => view === 'mine' || (view === 'site' && !!token && siteData !== null && sync !== 'loading');
+    const hasMine = () => mine.services.length > 0 || mine.fuel.length > 0 || mine.truck.odometer !== null;
+    function setData(d) { data = d; if (view === 'site') siteData = d; else mine = d; }
 
     function save() {
-      try { localStorage.setItem(KEY, JSON.stringify(data)); storageOk = true; } catch (e) { storageOk = false; }
-      paintSaved();
+      if (view === 'mine') {
+        try { localStorage.setItem(KEY, JSON.stringify(data)); storageOk = true; } catch (e) { storageOk = false; }
+        paintStatus();
+      } else if (token) queuePush();
     }
 
     // Startup probe: never touches the stored data, so a corrupt or invalid
     // value is only replaced when the user next makes a change.
     function probeStorage() {
       try { localStorage.setItem('frontier:probe', '1'); localStorage.removeItem('frontier:probe'); } catch (e) { storageOk = false; }
-      paintSaved();
+      paintStatus();
+    }
+
+    // --- GitHub (data repo) ---------------------------------------------------
+    const ghFetch = (url, init = {}) => fetch(url, {
+      cache: 'no-store',
+      ...init,
+      headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${token}`, ...(init.body ? { 'Content-Type': 'application/json' } : {}) },
+    });
+    function toB64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      return btoa(bin);
+    }
+    const fromB64 = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, '')), (c) => c.charCodeAt(0)));
+
+    function dropToken() {
+      token = null;
+      try { localStorage.removeItem(TOKEN_KEY); } catch (e) { /* ignore */ }
+    }
+
+    // Read the site log: through the API when connected (fresh, gives the sha),
+    // otherwise from the public raw file.
+    async function loadSite() {
+      sync = 'loading'; syncNote = ''; paintStatus();
+      try {
+        let text;
+        if (token) {
+          const r = await ghFetch(`${FILE_URL}?ref=main`);
+          if (r.status === 404) { sha = null; siteData = blankData(); sync = 'idle'; if (view === 'site') data = siteData; return; }
+          if (r.status === 401 || r.status === 403) { dropToken(); await loadSite(); syncNote = 'Token rejected'; return; }
+          if (!r.ok) throw new Error(String(r.status));
+          const j = await r.json();
+          sha = j.sha; text = fromB64(j.content);
+        } else {
+          const r = await fetch(`${RAW_URL}?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
+          if (!r.ok) throw new Error(String(r.status));
+          text = await r.text();
+        }
+        const parsed = validateData(JSON.parse(text));
+        if (!parsed) throw new Error('invalid');
+        siteData = parsed; sync = 'idle';
+        if (view === 'site') data = siteData;
+      } catch (e) {
+        siteData = null; sync = 'error';
+        if (view === 'site') data = blankData();
+      }
+    }
+
+    // Save the site log: debounced, one request at a time, optimistic on the sha.
+    let pushTimer = null, pushing = false, again = false;
+    function queuePush() {
+      sync = 'saving'; syncNote = ''; paintStatus();
+      clearTimeout(pushTimer);
+      pushTimer = setTimeout(push, 1200);
+    }
+    async function push() {
+      if (pushing) { again = true; return; }
+      pushing = true; again = false;
+      data.savedOn = todayISO();
+      try {
+        const body = { message: 'frontier: update log', content: toB64(JSON.stringify(data, null, 2) + '\n'), branch: 'main' };
+        if (sha) body.sha = sha;
+        const r = await ghFetch(FILE_URL, { method: 'PUT', body: JSON.stringify(body) });
+        if (r.ok) { sha = (await r.json()).content.sha; sync = again ? 'saving' : 'saved'; syncNote = ''; }
+        else if (r.status === 409 || r.status === 422) sync = 'conflict';
+        else if (r.status === 401 || r.status === 403) { dropToken(); sync = 'failed'; syncNote = 'Token rejected'; }
+        else { sync = 'failed'; syncNote = `Error ${r.status}`; }
+      } catch (e) { sync = 'failed'; syncNote = 'Offline'; }
+      pushing = false;
+      if (again && sync === 'saving') { push(); return; }
+      paintStatus();
     }
 
     // ---------------------------------------------------------------------------
@@ -724,7 +843,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
 
-    let data = load();
     let armed = null; // key of the row whose delete is waiting for a second click
     let pendingImport = null;
 
@@ -802,6 +920,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     // Icon delete button; the first click arms it, the second deletes.
     function delButton(key, what) {
+      if (!canEdit()) return null;
       const on = armed === key;
       const b = el('button', { class: `del${on ? ' armed' : ''}`, type: 'button', 'data-key': key, 'aria-label': `${on ? 'Confirm delete' : 'Delete'} ${what}` });
       if (on) b.textContent = 'Delete'; else b.innerHTML = TRASH; // TRASH is a static literal
@@ -852,6 +971,34 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('exported').textContent = data.exportedOn ? `Last exported ${data.exportedOn}` : 'Never exported';
     }
 
+    // Everything that depends on view, token and sync state.
+    function paintStatus() {
+      const site = view === 'site';
+      const edit = canEdit();
+      let note;
+      if (!site) note = storageOk ? 'Saved in this browser' : 'Storage unavailable';
+      else if (sync === 'loading') note = 'Loading';
+      else if (sync === 'error') note = 'Log unavailable';
+      else if (!token) note = data.savedOn ? `Updated ${data.savedOn}` : 'Not updated yet';
+      else note = { idle: 'Saved to site', saving: 'Saving', saved: 'Saved to site', failed: 'Save failed', conflict: 'Out of sync' }[sync] || '';
+      $('saved').textContent = syncNote && site ? `${note} · ${syncNote}` : note;
+      $('exported').hidden = site;
+      $('retry').hidden = !(site && (sync === 'error' || sync === 'failed'));
+      $('reload').hidden = !(site && token && sync === 'conflict');
+      $('overwrite').hidden = !(site && token && sync === 'conflict');
+      $('upload').hidden = !(site && token && edit && sync !== 'saving' && !data.services.length && !data.fuel.length && data.truck.odometer === null && hasMine());
+      $('import').hidden = !edit;
+      $('export').hidden = site && sync === 'loading';
+      const own = $('view-btn');
+      own.hidden = site && !!token;
+      own.textContent = site ? (hasMine() ? 'Your copy' : 'Create your own') : 'Back to original';
+      $('connect').textContent = token ? 'Disconnect' : 'Connect';
+      document.body.classList.toggle('ro', !edit);
+      $('odo').readOnly = !edit;
+      for (const id of ['year', 'drive']) $(id).disabled = !edit;
+    }
+
+
     function renderAll() {
       renderSchedule(); renderHistory(); renderFuel(); renderCosts(); renderBar(); syncOdometers();
     }
@@ -872,7 +1019,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       paintUse();
       odo.value = data.truck.odometer == null ? '' : String(data.truck.odometer);
       for (const input of [svcMiles, fuelMiles]) delete input.dataset.typed;
-      renderAll();
+      renderAll(); paintStatus();
     }
 
     // ---------------------------------------------------------------------------
@@ -889,7 +1036,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     odo.addEventListener('input', () => {
-      if (odo.validity.badInput) return;
+      if (!canEdit() || odo.validity.badInput) return;
       const raw = odo.value.trim();
       const n = toNum(raw);
       if (raw === '') data.truck.odometer = null;
@@ -898,12 +1045,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       save(); renderAll();
     });
 
-    yearSel.addEventListener('change', () => { data.truck.year = yearSel.value ? Number(yearSel.value) : null; save(); });
-    driveSel.addEventListener('change', () => { data.truck.drive = driveSel.value || null; save(); renderItems(); renderAll(); });
+    yearSel.addEventListener('change', () => { if (!canEdit()) return; data.truck.year = yearSel.value ? Number(yearSel.value) : null; save(); });
+    driveSel.addEventListener('change', () => { if (!canEdit()) return; data.truck.drive = driveSel.value || null; save(); renderItems(); renderAll(); });
 
     $('use').addEventListener('click', (e) => {
       const b = e.target.closest('button[data-use]');
-      if (!b || b.dataset.use === data.truck.use) return;
+      if (!canEdit() || !b || b.dataset.use === data.truck.use) return;
       data.truck.use = b.dataset.use;
       paintUse(); save(); renderItems(); renderAll();
     });
@@ -919,6 +1066,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     $('svc-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!canEdit()) return;
       const date = normDate(svcDate.value);
       const miles = toNum(svcMiles.value);
       const cost = svcCost.value.trim() === '' ? 0 : toNum(svcCost.value);
@@ -936,6 +1084,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     $('fuel-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!canEdit()) return;
       const date = normDate(fuelDate.value);
       const miles = toNum(fuelMiles.value);
       const gallons = toNum(fuelGal.value);
@@ -956,6 +1105,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // Delete: first click arms the row's button, second click removes the entry.
     document.addEventListener('click', (e) => {
       const b = e.target.closest('button.del');
+      if (!canEdit()) return;
       if (!b) { if (armed) { armed = null; renderHistory(); renderFuel(); } return; }
       const key = b.dataset.key;
       if (armed === key) {
@@ -977,8 +1127,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     $('export').addEventListener('click', () => {
       const today = todayISO();
-      data.exportedOn = today;
-      save(); renderBar();
+      if (view === 'mine') { data.exportedOn = today; save(); renderBar(); }
       const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
       const a = el('a', { href: url, download: `frontier-maintenance-${today}.json` });
       document.body.append(a); a.click(); a.remove();
@@ -993,9 +1142,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     $('import').addEventListener('click', () => {
+      if (!canEdit()) return;
       if (!pendingImport) { $('import-file').click(); return; }
-      data = pendingImport;
+      const next = pendingImport;
       clearPending();
+      if (!canEdit()) return;
+      setData(next);
       save(); renderControls();
       $('data-status').textContent = 'Imported';
     });
@@ -1033,6 +1185,62 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     });
     paintMode();
 
+    // Site log vs the browser's own copy.
+    $('view-btn').addEventListener('click', () => {
+      clearPending(); $('data-status').textContent = '';
+      view = view === 'site' ? 'mine' : 'site';
+      data = view === 'site' ? (siteData || blankData()) : mine;
+      renderControls();
+    });
+    $('retry').addEventListener('click', async () => {
+      if (siteData === null) { await loadSite(); renderControls(); } else { push(); }
+    });
+    $('reload').addEventListener('click', async () => { await loadSite(); renderControls(); });
+    $('overwrite').addEventListener('click', async () => {
+      try {
+        const r = await ghFetch(`${FILE_URL}?ref=main`);
+        sha = r.ok ? (await r.json()).sha : null;
+      } catch (e) { sync = 'failed'; syncNote = 'Offline'; paintStatus(); return; }
+      queuePush();
+    });
+    $('upload').addEventListener('click', () => {
+      setData(JSON.parse(JSON.stringify(mine)));
+      save(); renderControls();
+    });
+
+    // Connect: a fine-grained token for the data repo, kept in this browser.
+    function showConnect(on) {
+      $('connect-form').hidden = !on;
+      $('connect-msg').textContent = '';
+      if (on) { $('token').value = ''; window.scrollTo({ top: 0 }); $('token').focus(); }
+    }
+    $('connect').addEventListener('click', async () => {
+      if (token) {
+        dropToken(); clearTimeout(pushTimer);
+        view = 'site'; await loadSite(); renderControls();
+      } else showConnect($('connect-form').hidden);
+    });
+    $('connect-cancel').addEventListener('click', () => showConnect(false));
+    $('connect-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const t = $('token').value.trim();
+      if (!t) return;
+      const msg = $('connect-msg');
+      msg.textContent = '';
+      try {
+        const r = await fetch(API_URL, { cache: 'no-store', headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${t}` } });
+        if (r.status === 401 || r.status === 403 || r.status === 404) { msg.textContent = 'Token rejected'; return; }
+        if (!r.ok) { msg.textContent = `Error ${r.status}`; return; }
+        const info = await r.json();
+        if (!info.permissions || !info.permissions.push) { msg.textContent = 'No write access'; return; }
+      } catch (err) { msg.textContent = 'Offline'; return; }
+      token = t;
+      try { localStorage.setItem(TOKEN_KEY, t); } catch (err) { /* kept for this tab only */ }
+      showConnect(false);
+      view = 'site';
+      await loadSite(); renderControls();
+    });
+
     // Panes: Maintenance | Fuel. Saved choice, overridden by #fuel in the URL.
     const PANE_KEY = 'frontier:pane';
     const tabEls = [...document.querySelectorAll('#panes [role=tab]')];
@@ -1069,6 +1277,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     svcDate.value = fuelDate.value = todayISO();
     renderControls();
     probeStorage();
+    loadSite().then(renderControls);
   </script>
 </body>
 </html>

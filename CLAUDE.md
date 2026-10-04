@@ -55,9 +55,11 @@ A Reject means make no changes and ask what to adjust.
 - `/tempest/`, `/mlbstadiums/`, `/USStates/`, `/worldmap/`, `/trust/`: follow
   `DESIGN.md` like `/seattlesports/`; region, division and section chips live in
   the masthead, counts sit on signboards, lists are ledgers.
-- `/frontier/`: follows `DESIGN.md` like `/commute/`; odometer and setup
-  inputs and the service and fill-up logs sit left, due-status signboards and
-  schedule, history, cost and fuel ledgers sit right; everything saves on change.
+- `/frontier/`: follows `DESIGN.md` like `/commute/`; Maintenance | Fuel panes
+  switch from the strip under the masthead. Setup and the service or fill-up
+  forms sit left, signboards and ledgers sit right; edits save on change.
+  Visitors see the site log read-only (forms hidden) with a "Create your own"
+  button.
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
   `data/visited.json`; a "Create your own" button switches to a blank,
   browser-saved copy with Export/Import in the same schema. No personal name
@@ -91,8 +93,14 @@ A Reject means make no changes and ask what to adjust.
 - `USStates/data/visited.json`, `worldmap/data/visited.json` and
   `mlbstadiums/data/visited.json` are hand-edited config (`{"version":1,
   "visited":[...]}`), read same-origin; a browser Export uses the same schema.
-- `/frontier/` and the "Create your own" map copies save to `localStorage`
-  (`frontier:v1`, `<folder>:mine`) with Export/Import; there is no backend.
+- `/frontier/` reads its log from a separate public repo,
+  `amanvg/frontier-data` (`log.json`, via raw.githubusercontent.com), and is
+  read-only for visitors. Connecting (footer button) stores a fine-grained
+  token for that repo only (Contents read/write) in the owner's browser
+  (`frontier:gh`); edits then auto-save to `log.json` through the GitHub API,
+  so the repo's git history is the backup. "Create your own" switches to a
+  browser-saved copy (`frontier:v1`) with Export/Import. The maps'
+  "Create your own" copies save to `<folder>:mine`. There is no other backend.
 - Workflows only commit when real data moved (they ignore timestamp-only diffs).
 
 ## Sections
@@ -107,7 +115,7 @@ A Reject means make no changes and ask what to adjust.
   browser-saved watchlist. Follows `DESIGN.md`.
 - `/frontier/` Frontier Maintenance: service and fill-up log for a 2022+ Nissan
   Frontier, due status from odometer and date against Nissan's schedule, cost
-  and MPG ledgers. Browser-saved, Export/Import.
+  and MPG ledgers. Stored in the `amanvg/frontier-data` repo.
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
   dashboards and maps; `carpicker/` is an older, unlinked page.
 - Home categories: Sports, Personal (Frontier, US States, Countries, MLB
