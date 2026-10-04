@@ -231,9 +231,8 @@ fieldset{border:0;min-width:0}
 .ledger .wrap{white-space:normal}
 .ledger .sub{display:block;font-weight:600;font-size:13px;letter-spacing:.02em;text-transform:none;color:var(--muted)}
 .ledger .late{color:var(--live-bg);font-weight:700}
-.ledger .due{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.ledger .due-line,.ledger .nw{white-space:nowrap}
-.ledger .due-line .sub{display:inline;margin-left:8px}
+.ledger th.c,.ledger td.k-c{text-align:center}
+.ledger .nw{white-space:nowrap}
 .ledger .mpg-low{color:var(--live-bg);font-weight:700}
 .ledger .mpg-high{color:var(--good);font-weight:700}
 
@@ -241,7 +240,7 @@ fieldset{border:0;min-width:0}
 .stamp::before{content:'';flex:none;width:8px;height:8px;background:var(--mk,transparent);box-shadow:inset 0 0 0 1.5px var(--mk,var(--key))}
 .stamp.over{--mk:var(--over-bg);color:var(--live-bg)}
 .stamp.soon{--mk:var(--soon-bg)}
-.stamp.ok{--mk:var(--ok-bg);color:var(--muted)}
+.stamp.ok{--mk:var(--good);color:var(--good)}
 .del{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 10px;border:2px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--label);font-weight:600;font-size:13px;transition:background .15s,color .15s,border-color .15s}
 .del svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media(hover:hover){.del:hover{color:var(--text);border-color:var(--key)}}
@@ -302,7 +301,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .ledger.stack td.k-stat{grid-column:2;grid-row:1;text-align:right}
   .ledger.stack td.k-wide{grid-column:1/-1}
   .ledger.stack td.k-due{grid-column:1/-1}
-  .ledger.stack .due{align-items:flex-start}
   .ledger.stack td[data-label]::before{content:attr(data-label) " ";color:var(--muted);font-weight:600;font-size:13px}
   .ledger.stack td.empty{grid-column:1/-1}
   .ledger.stack tfoot{display:block}
@@ -444,7 +442,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <span class="pill" id="n-none">0 not logged</span>
                             </div>
                             <table class="ledger stack" aria-labelledby="sched-l">
-                                <thead><tr><th scope="col">Item</th><th scope="col">Last done</th><th scope="col">Next due</th><th scope="col">Status</th></tr></thead>
+                                <thead><tr><th scope="col">Item</th><th scope="col">Last done</th><th scope="col" class="c">Next due</th><th scope="col">Status</th></tr></thead>
                                 <tbody id="sched-body"></tbody>
                             </table>
                         </div>
@@ -585,7 +583,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // ---------------------------------------------------------------------------
 
     const MIN_YEAR = 2022;
-    const DUE_MILES = 500; // due soon: within this many miles ...
+    const DUE_MILES = 1000; // due soon: within this many miles ...
     const DUE_DAYS = 30;   // ... or this many days
     const DAY_MS = 86400000;
 
@@ -666,7 +664,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const intervalFor = (item, logged) => (logged && item.then ? item.then : item);
 
     // Status from the last entry. Miles and days are put on one scale by the
-    // due-soon thresholds (500 mi, 30 days); the smaller score is the limit that
+    // due-soon thresholds (1,000 mi, 30 days); the smaller score is the limit that
     // comes first, and label, stamp and sort all read the same score.
     function dueStatus(item, last, odometer, today) {
       // `due`: where each limit falls, as the target and what is left (negative = past).
@@ -863,19 +861,15 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return [iv.miles != null ? `${int.format(iv.miles)} mi` : null, iv.months != null ? `${iv.months} mo` : null].filter(Boolean).join(' · ');
     }
 
-    // One line of the Next due cell: what is left (or past) and where the limit falls.
-    function dueLine(d, kind) {
-      if (!d) return el('span', { class: 'due-line', text: '—' });
-      const n = Math.abs(d.rem);
-      const unit = kind === 'mi' ? `${int.format(n)} mi` : plural(n, 'day');
-      const at = kind === 'mi' ? `${int.format(d.at)} mi` : d.at;
-      return el('span', { class: `due-line${d.rem < 0 ? ' late' : ''}` }, d.rem < 0 ? `${unit} past` : `${unit} left`, el('span', { class: 'sub', text: at }));
+    // Next due cell: days and miles left, compact; a passed limit is negative and red.
+    function duePart(d, kind) {
+      const n = kind === 'mi' ? `${int.format(Math.abs(d.rem))} mi` : `${Math.abs(d.rem)}d`;
+      return el('span', { class: d.rem < 0 ? 'late' : null, text: d.rem < 0 ? `\u2212${n}` : n });
     }
-    // Only the limit that comes first; never-logged rows only know their mileage.
     const dueCell = (r) => {
-      const kind = r.kind || (r.due.mi ? 'mi' : 'days');
-      return el('td', { class: 'k-r k-due', 'data-label': 'Next' },
-        el('span', { class: 'due' }, dueLine(kind === 'mi' ? r.due.mi : r.due.days, kind)),
+      const parts = [r.due.days && duePart(r.due.days, 'days'), r.due.mi && duePart(r.due.mi, 'mi')].filter(Boolean);
+      const body = parts.length ? parts.flatMap((p, i) => (i ? [' / ', p] : [p])) : ['\u2014'];
+      return el('td', { class: 'k-c k-due', 'data-label': 'Next' }, el('span', { class: 'nw' }, ...body),
         r.state === 'none' ? el('span', { class: 'sr-only', text: 'Not logged' }) : null);
     };
 
