@@ -181,6 +181,8 @@ a.tag{color:inherit;text-decoration:none;transition:background .15s,color .15s}
 .field::placeholder{color:var(--muted);opacity:.7}
 .field:focus{outline:none;border-color:var(--focus);box-shadow:inset 2px 2px 0 0 var(--well-shadow),2px 2px 0 0 var(--focus)}
 .count{font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-left:auto;white-space:nowrap}
+.toolbar .btn{min-height:36px;padding:4px 12px;border-color:var(--text);color:var(--text)}
+:root[data-theme="dark"] .toolbar .btn{border-color:var(--key)}
 .wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-family:var(--label);font-size:14px;line-height:20px;letter-spacing:.02em}
 th{background:var(--head-bg);color:var(--head-text);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;text-align:left;white-space:nowrap;padding:0}
@@ -240,7 +242,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 .sources a:focus-visible{outline-color:var(--foot-text)}
 @media(hover:hover){.sources a:hover{background:var(--foot-text);color:var(--foot-bg)}}
 
-@media(max-width:1100px){.stamp .src{display:none}.nums{gap:14px;padding:14px 16px}.num{min-width:48px}.num b{font-size:28px;line-height:32px}td{padding:8px}th button{padding:6px 8px}.body{grid-template-columns:minmax(0,1fr) 280px}}
+@media(max-width:1160px){.stamp .src{display:none}.nums{gap:14px;padding:14px 16px}.num{min-width:48px}.num b{font-size:28px;line-height:32px}td{padding:8px}th button{padding:6px 8px}.body{grid-template-columns:minmax(0,1fr) 280px}}
 @media(max-width:1040px) and (min-width:961px){.body{grid-template-columns:minmax(0,1fr) 240px}table{font-size:13px}td{padding:8px 6px}td .idb{font-size:16px}}
 @media(max-width:960px){
   .body{grid-template-columns:1fr}
@@ -315,6 +317,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="toolbar">
                             <input class="field" id="filter" type="search" placeholder="Filter" aria-label="Filter by CVE, vendor or product" autocomplete="off" spellcheck="false">
                             <span class="count" id="count"></span>
+                            <button class="btn" type="button" id="x-link">Link</button>
+                            <button class="btn" type="button" id="x-copy">Copy</button>
+                            <button class="btn" type="button" id="x-csv">CSV</button>
                         </div>
                         <div class="wrap">
                             <table>
@@ -507,7 +512,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 if (!d.products.length) body = '<p class="dstat">Versions not listed</p>';
                 body += d.solutions.map(t => '<p class="note"><span class="k">Solution</span>' + esc(t) + '</p>').join('');
                 body += d.workarounds.map(t => '<p class="note"><span class="k">Workaround</span>' + esc(t) + '</p>').join('');
-                body += '<div class="dlinks"><a class="tag" href="' + idUrl(id) + '" target="_blank" rel="noopener">NVD</a>' +
+                body += '<div class="dlinks"><button class="tag" type="button" data-link="' + id + '">Link</button><a class="tag" href="' + idUrl(id) + '" target="_blank" rel="noopener">NVD</a>' +
                     d.refs.map(x => '<a class="tag" href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.host) + '</a>').join('') + '</div>';
             }
             return '<div class="detail" id="d-' + view + '-' + id + '" role="region" aria-label="' + id + ' versions">' + body + '</div>';
@@ -531,8 +536,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
         async function retry(id) { const p = loadRecord(id); render(); await p; render(); }
         function onDetailClick(e) {
-            const t = e.target.closest('[data-toggle]'), r = e.target.closest('[data-retry]');
-            if (t) toggle(t.dataset.toggle);
+            const t = e.target.closest('[data-toggle]'), r = e.target.closest('[data-retry]'), l = e.target.closest('[data-link]');
+            if (l) { if (/^CVE-\d{4}-\d{4,}$/.test(l.dataset.link)) flash(l, copyText(location.origin + location.pathname + '#tab=ledger&win=30&open=' + l.dataset.link)); }
+            else if (t) toggle(t.dataset.toggle);
             else if (r) retry(r.dataset.retry);
         }
 
@@ -622,6 +628,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 const c = x < y ? -1 : x > y ? 1 : 0;
                 return c ? c * dir : rank(a, b);
             });
+            state.shown = list;
             document.getElementById('count').textContent = list.length + (list.length === 1 ? ' CVE' : ' CVEs');
             document.getElementById('tbody').innerHTML = list.length ? list.map((i, n) => (
                 '<tr class="r ' + (n % 2 ? 'rb' : 'ra') + '">' +
@@ -671,7 +678,76 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             renderHead();
             renderLedger(rows);
             renderStamp();
+            syncHash();
         }
+
+        // ── URL state and export ────────────────────────────────
+
+        const SORT_KEYS = ['tier', 'id', 'prod', 'exp', 'epss', 'cvss', 'due'];
+        const ID_RE = /^CVE-\d{4}-\d{4,}$/;
+        function syncHash() {
+            const p = new URLSearchParams();
+            if (state.tab === 'ledger') p.set('tab', 'ledger');
+            if (state.days !== 7) p.set('win', state.days);
+            if (!state.net) p.set('exp', 'int');
+            if (!state.prod) p.set('env', 'dev');
+            if (state.q) p.set('q', state.q);
+            if (state.sort.k !== 'tier' || state.sort.dir !== -1) { p.set('sort', state.sort.k); p.set('dir', state.sort.dir); }
+            const open = [...state.open].filter(id => ID_RE.test(id)).slice(0, 10);
+            if (open.length) p.set('open', open.join(','));
+            const h = p.toString();
+            try { history.replaceState(null, '', location.pathname + location.search + (h ? '#' + h : '')); } catch (e) {}
+        }
+        function readHash() {
+            const raw = location.hash.slice(1);
+            if (!raw) return false;
+            const p = new URLSearchParams(ID_RE.test(raw) ? 'open=' + raw : raw);
+            const win = Number(p.get('win'));
+            if (win === 7 || win === 30) state.days = win;
+            if (p.get('exp') === 'int') state.net = false; else if (p.get('exp') === 'net') state.net = true;
+            if (p.get('env') === 'dev') state.prod = false; else if (p.get('env') === 'prod') state.prod = true;
+            if (p.get('tab') === 'ledger') state.tab = 'ledger';
+            if (SORT_KEYS.includes(p.get('sort'))) state.sort = { k: p.get('sort'), dir: p.get('dir') === '1' ? 1 : -1 };
+            state.q = (p.get('q') || '').slice(0, 80);
+            (p.get('open') || '').split(',').filter(id => ID_RE.test(id)).slice(0, 10).forEach(id => state.open.add(id));
+            return true;
+        }
+
+        window.addEventListener('hashchange', () => location.reload());
+
+        async function copyText(t) {
+            try { await navigator.clipboard.writeText(t); return true; } catch (e) { return false; }
+        }
+        function flash(btn, pending) {
+            const label = btn.textContent;
+            Promise.resolve(pending).then(ok => {
+                btn.textContent = ok === false ? 'Failed' : 'Copied';
+                setTimeout(() => { btn.textContent = label; }, 1500);
+            });
+        }
+        const CSV_HEAD = ['CVE', 'Tier', 'Vendor', 'Product', 'Exploit', 'EPSS', 'CVSS', 'KEV due', 'CWE'];
+        function exportRows() {
+            return (state.shown || []).map(i => [
+                i.id, TIER_NAMES[i.t], i.vendor || '', i.product || '',
+                i.kev ? (i.kev.ransomware ? 'KEV Ransomware' : 'KEV') : i.exploitation === 'poc' ? 'PoC' : '',
+                i.epss == null ? '' : i.epss, i.cvss == null ? '' : i.cvss,
+                i.kev ? i.kev.due : '', i.cweId || ''
+            ].map(v => String(v)));
+        }
+        const csvCell = v => { const t = /^[=+\-@\t\r]/.test(v) ? "'" + v : v; return /[",\r\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+        document.getElementById('x-link').addEventListener('click', e => { syncHash(); flash(e.currentTarget, copyText(location.href)); });
+        document.getElementById('x-copy').addEventListener('click', e => {
+            const lines = [CSV_HEAD].concat(exportRows()).map(r => r.map(v => v.replace(/[\t\r\n]+/g, ' ')).join('\t'));
+            flash(e.currentTarget, copyText(lines.join('\n')));
+        });
+        document.getElementById('x-csv').addEventListener('click', () => {
+            const text = [CSV_HEAD].concat(exportRows()).map(r => r.map(csvCell).join(',')).join('\r\n') + '\r\n';
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+            a.download = 'cve-triage-' + today() + '.csv';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        });
 
         // ── Controls ────────────────────────────────────────────
 
@@ -685,7 +761,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             document.getElementById('p-short').hidden = !short;
             document.getElementById('p-ledger').hidden = short;
             if (focus) document.getElementById(short ? 'tab-short' : 'tab-ledger').focus();
-            if (!short) render();
+            if (!short) render(); else syncHash();
         }
         document.getElementById('tab-short').addEventListener('click', () => setTab('short'));
         document.getElementById('tab-ledger').addEventListener('click', () => setTab('ledger'));
@@ -712,7 +788,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         });
         document.getElementById('p-short').addEventListener('click', onDetailClick);
         document.getElementById('tbody').addEventListener('click', onDetailClick);
-        document.getElementById('filter').addEventListener('input', e => { state.q = e.target.value; renderLedger(visible()); });
+        document.getElementById('filter').addEventListener('input', e => { state.q = e.target.value; renderLedger(visible()); syncHash(); });
 
         document.getElementById('wl-form').addEventListener('submit', e => {
             e.preventDefault();
@@ -765,6 +841,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             document.querySelector('input[name=exp][value=' + (state.net ? 'net' : 'int') + ']').checked = true;
             document.querySelector('input[name=env][value=' + (state.prod ? 'prod' : 'dev') + ']').checked = true;
             document.querySelector('input[name=win][value="' + state.days + '"]').checked = true;
+            const fromHash = readHash();
+            document.querySelector('input[name=exp][value=' + (state.net ? 'net' : 'int') + ']').checked = true;
+            document.querySelector('input[name=env][value=' + (state.prod ? 'prod' : 'dev') + ']').checked = true;
+            document.querySelector('input[name=win][value="' + state.days + '"]').checked = true;
+            document.getElementById('filter').value = state.q;
             renderWatch();
             try {
                 const res = await fetch(SNAPSHOT, { cache: 'no-cache' });
@@ -772,6 +853,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 state.snap = await res.json();
                 state.items = state.snap.items;
                 render();
+                if (fromHash) {
+                    if (state.tab === 'ledger') setTab('ledger');
+                    await Promise.all([...state.open].map(loadRecord));
+                    render();
+                }
             } catch (e) {
                 document.getElementById('p-short').innerHTML = '<div class="fail"><span>Snapshot failed to load</span><button class="btn" type="button" id="retry">Retry</button></div>';
                 document.getElementById('retry').addEventListener('click', start);
