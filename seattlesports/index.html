@@ -71,10 +71,10 @@ header{background:var(--head-bg);border-bottom:3px solid var(--head-line);paddin
 .btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s,color .15s}
 :root[data-theme="dark"] .btn{border-color:var(--key)}
 @media(hover:hover){
-.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:none}
 :root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
 }
-.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.btn:active{box-shadow:none}
 .btn:focus-visible{outline-color:var(--head-text)}
 .icon-btn{width:44px;padding:0;justify-content:center}
 .icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -85,10 +85,10 @@ header{background:var(--head-bg);border-bottom:3px solid var(--head-line);paddin
 
 main{flex:1;padding:40px var(--margin) 0}
 /* framed sheet: Sports band masthead over a flush 2x2 of team panels */
-.sheet{border:3px solid var(--frame);background:var(--card);box-shadow:4px 4px 0 0 var(--shadow)}
+.sheet{border:2px solid var(--frame);background:var(--card);box-shadow:none}
 .masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--b-sports);color:var(--f-sports);border-bottom:2px solid var(--head-line)}
 .masthead h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
-.header-right{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.header-right{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;font-family:var(--label);font-weight:600;font-size:14px;line-height:20px}
 .masthead .btn{border-color:var(--f-sports);color:var(--f-sports)}
 @media(hover:hover){:root[data-theme="dark"] .masthead .btn:hover{border-color:var(--accent);color:var(--btn-hover-fg)}.masthead .btn:hover{color:var(--btn-hover-fg)}}
 .masthead .btn:focus-visible{outline-color:var(--f-sports)}
@@ -102,39 +102,39 @@ main{flex:1;padding:40px var(--margin) 0}
 .team-info{flex:1;min-width:0}
 .team-badges{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-left:auto}
 .team-name{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance}
-.team-record{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.team-record{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;white-space:nowrap}
 .accent-bar{height:5px;background:var(--a);border-bottom:2px solid var(--head-line)}
-.live-badge{display:flex;align-items:center;gap:8px;background:var(--live-bg);color:var(--live-fg);font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:9999px}
-.live-dot{flex:none;width:8px;height:8px;background:currentColor;border-radius:50%}
-.season-badge{font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border:1.5px solid currentColor;border-radius:9999px;white-space:nowrap}
+.live-badge{display:flex;align-items:center;gap:8px;color:inherit;font-family:var(--label);font-weight:700;font-size:13px;line-height:19px}
+.live-dot{flex:none;width:8px;height:8px;background:#ff8168;border-radius:50%}
+.season-badge{font-family:var(--label);font-weight:600;font-size:13px;line-height:19px;white-space:nowrap;opacity:.85}
 
 .team-body{display:flex;gap:24px;padding:20px 24px 24px}
 .card-games{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0}
 .card-standings{width:250px;flex-shrink:0;border-left:1px solid var(--key);padding-left:24px}
-.section-label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.section-label{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;color:var(--muted);margin-bottom:8px}
 .section-label.live-label{display:flex;align-items:center;gap:8px;color:var(--text)}
 
-.game-box,.next-game-box{background:var(--well-bg);border:2px solid var(--key);box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:12px 14px}
+.game-box,.next-game-box{background:var(--well-bg);border:1px solid var(--key);box-shadow:none;padding:12px 14px}
 .game-matchup{display:flex;flex-direction:column;gap:6px}
 .game-team-row{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:22px;line-height:28px;letter-spacing:.02em;text-transform:uppercase}
 .game-team-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .game-team-score{font-weight:700;font-size:28px;font-variant-numeric:tabular-nums;min-width:28px;text-align:right}
 .game-team-row.loser{opacity:.7}
-.game-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--divider);font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.game-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--divider);font-family:var(--label);font-weight:600;font-size:14px;line-height:20px}
 .result-w,.result-l{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;font-family:var(--label);font-weight:700;font-size:14px;letter-spacing:0}
 .result-w{background:var(--accent);color:var(--sel-fg)}
 .result-l{border:2px solid var(--text)}
 
 .next-game-box{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .next-opponent{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:22px;line-height:28px;letter-spacing:.02em;text-transform:uppercase;min-width:0}
-.next-details{text-align:right;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
+.next-details{text-align:right;font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;flex-shrink:0}
 
-.no-data,.loading-text,.error-text{font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
+.no-data,.loading-text,.error-text{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px}
 .loading-text{padding:12px 0;color:var(--muted)}
 .error-text{display:inline-block;background:var(--live-bg);color:var(--live-fg);padding:5px 12px}
 
-.standings-table{width:100%;border-collapse:collapse;border:2px solid var(--key);font-family:var(--label);font-size:14px;line-height:20px;letter-spacing:.02em}
-.standings-table th{background:var(--head-bg);color:var(--head-text);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:6px 6px;text-align:right}
+.standings-table{width:100%;border-collapse:collapse;border:1px solid var(--key);font-family:var(--label);font-size:14px;line-height:20px;letter-spacing:.02em}
+.standings-table th{background:var(--head-bg);color:var(--head-text);font-weight:700;font-size:12px;line-height:17px;letter-spacing:.08em;text-transform:uppercase;padding:6px 6px;text-align:right}
 .standings-table th.rank-col,.standings-table th.s-team-col{text-align:left}
 .standings-table td{padding:5px 6px;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 .standings-table tbody tr+tr{border-top:1px solid var(--divider)}
@@ -174,6 +174,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   body{margin:6px;min-height:calc(100vh - 12px)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.live-label .live-dot{background:var(--live-bg)}
+/* Scores as ruled rows, not boxes */
+.game-box,.next-game-box{background:none;border:0;border-top:1px solid var(--key);border-bottom:1px solid var(--key);padding:10px 0}
     </style>
 </head>
 <body>
