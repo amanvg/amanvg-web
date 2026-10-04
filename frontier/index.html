@@ -105,6 +105,7 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 28px;background:var(--b-sports);color:var(--f-sports);border-top:1px solid var(--band-line);border-bottom:2px solid var(--head-line)}
 .bar .btn{padding:8px 18px}
 :root[data-theme="dark"] .bar .btn{border-color:var(--f-sports)}
+.bar .btn.on{background:var(--f-sports);border-color:var(--f-sports);color:var(--b-sports)}
 .bar .grow{flex:1 1 auto}
 .bar .grow:empty{display:none}
 .bar #export{margin-left:auto}
@@ -113,6 +114,9 @@ main{flex:1;padding:28px var(--margin) 0}
 .ro #svc-form,.ro #fuel-form,.ro .act-col,.ro td.act-cell{display:none}
 .ro #pane-fuel{grid-template-columns:1fr}
 .ro #pane-fuel>.inputs{display:none}
+.nocost .c-cost{display:none}
+.nocost .signs{grid-template-columns:repeat(2,minmax(0,1fr))}
+#fuel-more{margin-top:12px;align-self:flex-start}
 .bar .note{color:inherit}
 .bar .error-text{display:inline-block}
 
@@ -292,6 +296,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <span class="note" id="saved" role="status" aria-live="polite">Loading</span>
                 <span class="note" id="exported">Never exported</span>
                 <span class="grow note" id="data-status" role="status" aria-live="polite"></span>
+                <button class="btn" id="cost-btn" type="button" aria-pressed="false" hidden>Cost</button>
                 <button class="btn" id="export" type="button">Export</button>
                 <button class="btn" id="import" type="button">Import</button>
                 <button class="btn" id="import-cancel" type="button" hidden>Cancel</button>
@@ -408,7 +413,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <label for="fuel-gal">Gallons</label>
                                 <input type="number" id="fuel-gal" min="0" step="0.001" inputmode="decimal" placeholder="0.000" autocomplete="off">
                             </div>
-                            <div class="field">
+                            <div class="field c-cost">
                                 <label for="fuel-cost">Cost, USD</label>
                                 <input type="number" id="fuel-cost" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
                             </div>
@@ -428,7 +433,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <h2 class="sign-head" id="fs-last-h">Last fill-up</h2>
                                 <div class="sign-body"><output class="num" id="mpg-last">—</output><div class="sign-unit">MPG</div></div>
                             </section>
-                            <section class="sign" aria-labelledby="fs-year-h">
+                            <section class="sign c-cost" aria-labelledby="fs-year-h">
                                 <h2 class="sign-head" id="fs-year-h">Fuel</h2>
                                 <div class="sign-body"><output class="num" id="fuel-year">—</output><div class="sign-unit" id="fuel-year-u">USD</div></div>
                             </section>
@@ -436,11 +441,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="fuel-l">Fill-ups</h2>
                             <table class="ledger stack" aria-labelledby="fuel-l">
-                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col">Cost</th><th scope="col">MPG</th><th scope="col" class="act-col">Delete</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col" class="c-cost">Cost</th><th scope="col">MPG</th><th scope="col" class="act-col">Delete</th></tr></thead>
                                 <tbody id="fuel-body"></tbody>
                             </table>
+                            <button class="btn" id="fuel-more" type="button" hidden></button>
                         </div>
-                        <div class="ledger-wrap">
+                        <div class="ledger-wrap c-cost">
                                 <h2 class="section-label" id="cost-l">Costs</h2>
                                 <table class="ledger" aria-labelledby="cost-l">
                                     <thead><tr><th scope="col">Year</th><th scope="col">Service</th><th scope="col">Fuel</th><th scope="col">Total</th></tr></thead>
@@ -838,6 +844,24 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         el('td', { class: 'act-cell k-stat' }, delButton(`s:${s.id}`, `${s.date} ${labelOf(s.item)}`)))));
     }
 
+    const RECENT = 10;
+    const COST_KEY = 'frontier:cost';
+    let showAll = false;
+    let costOn = false;
+    try { costOn = localStorage.getItem(COST_KEY) === '1'; } catch (e) { /* blocked */ }
+    function paintCost() {
+      $('pane-fuel').classList.toggle('nocost', !costOn);
+      const b = $('cost-btn');
+      b.setAttribute('aria-pressed', String(costOn));
+      b.classList.toggle('on', costOn);
+    }
+    $('cost-btn').addEventListener('click', () => {
+      costOn = !costOn;
+      try { localStorage.setItem(COST_KEY, costOn ? '1' : '0'); } catch (e) { /* blocked */ }
+      paintCost();
+    });
+    $('fuel-more').addEventListener('click', () => { showAll = !showAll; renderFuel(); });
+
     function renderFuel() {
       const stats = mpgStats(data.fuel);
       $('mpg-avg').textContent = stats.average == null ? '—' : dec1(stats.average);
@@ -845,13 +869,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const year = todayISO().slice(0, 4);
       $('fuel-year').textContent = usd0.format(data.fuel.reduce((n, f) => n + (f.date.slice(0, 4) === year ? f.cost : 0), 0));
       $('fuel-year-u').textContent = `USD · ${year}`;
-      const rows = data.fuel.slice().sort(byDateDesc);
+      const all = data.fuel.slice().sort(byDateDesc);
+      const more = $('fuel-more');
+      more.hidden = all.length <= RECENT;
+      more.textContent = showAll ? `Show recent ${RECENT}` : `Show all ${all.length}`;
+      const rows = showAll ? all : all.slice(0, RECENT);
       if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 6, text: 'No fill-ups' }))); return; }
       $('fuel-body').replaceChildren(...rows.map((f) => el('tr', null,
         el('td', { text: f.date }),
         el('td', { 'data-label': 'Odometer', text: `${int.format(f.miles)} mi` }),
         el('td', { 'data-label': 'Gallons', text: f.gallons.toFixed(3) }),
-        el('td', { 'data-label': 'Cost', text: usd.format(f.cost) }),
+        el('td', { class: 'c-cost', 'data-label': 'Cost', text: usd.format(f.cost) }),
         el('td', { 'data-label': 'MPG', text: stats.perId[f.id] == null ? '—' : dec1(stats.perId[f.id]) }),
         el('td', { class: 'act-cell k-stat' }, delButton(`f:${f.id}`, `${f.date} fill-up`)))));
     }
@@ -1079,6 +1107,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         $(`pane-${t.dataset.pane}`).hidden = !on;
         if (on && focus) t.focus();
       }
+      $('cost-btn').hidden = p !== 'fuel';
       try { localStorage.setItem(PANE_KEY, p); } catch (e) {}
       history.replaceState(null, '', p === 'fuel' ? '#fuel' : location.pathname + location.search);
     }
@@ -1122,6 +1151,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     svcDate.value = fuelDate.value = todayISO();
+    paintCost();
     renderControls();
     probeStorage();
     loadSite();
