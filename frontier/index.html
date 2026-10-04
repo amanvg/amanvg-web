@@ -148,11 +148,12 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2
 .msg:empty{display:none}
 
 .chips{display:flex}
-.chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 14px;border:2px solid var(--key);background:var(--well-bg);color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 14px;border:2px solid var(--key);background:transparent;color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .chips button+button{margin-left:-2px}
 .use-chips{margin-left:auto}
 .use-chips button{min-width:112px}
-.chips button.active{background:var(--accent);border-color:var(--accent);color:var(--sel-fg);position:relative}
+.chips button.active{background:var(--pri-bg);border-color:var(--pri-line);color:var(--pri-fg);position:relative}
+.chips button.active::before{content:'';flex:none;width:5px;height:9px;margin:-3px 10px 0 0;border:solid currentColor;border-width:0 2px 2px 0;transform:rotate(45deg)}
 @media(hover:hover){.chips button:not(.active):hover{background:var(--act-hover)}}
 
 .results{display:flex;flex-direction:column;gap:24px}
