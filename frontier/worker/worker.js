@@ -1,5 +1,5 @@
 // Frontier log API: Cloudflare Worker + D1.
-// GET /log (public) · GET /auth · POST /fuel · DELETE /fuel/:id (Bearer FRONTIER_KEY)
+// GET /log (public) · GET /auth · POST /fuel · DELETE /fuel/:id · PUT /truck (Bearer FRONTIER_KEY)
 
 const ORIGINS = ['https://www.amanvg.com', 'https://amanvg.com', 'http://localhost:8765'];
 const MAX_FUEL = 5000;
@@ -37,7 +37,7 @@ export default {
     if (origin && ORIGINS.includes(origin)) {
       headers['Access-Control-Allow-Origin'] = origin;
       headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Type';
-      headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, OPTIONS';
+      headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
       headers['Access-Control-Max-Age'] = '86400';
     }
     const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...headers, 'Content-Type': 'application/json' } });
@@ -68,6 +68,21 @@ export default {
         env.DB.prepare('INSERT INTO truck (id, odometer) VALUES (1, ?) ON CONFLICT (id) DO UPDATE SET odometer = MAX(COALESCE(odometer, 0), excluded.odometer)').bind(b.miles),
       ]);
       return json(await readLog(env), 201);
+    }
+
+    if (req.method === 'PUT' && pathname === '/truck') {
+      let b;
+      try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
+      if (!b || typeof b !== 'object') return fail(400, 'Invalid body');
+      const cur = (await readLog(env)).truck;
+      const year = 'year' in b ? b.year : cur.year;
+      const drive = 'drive' in b ? b.drive : cur.drive;
+      const use = 'use' in b ? b.use : cur.use;
+      if (!(year === null || (Number.isInteger(year) && year >= 2022 && year <= 2100))) return fail(400, 'Invalid year');
+      if (!(drive === null || drive === '2WD' || drive === '4WD')) return fail(400, 'Invalid drivetrain');
+      if (use !== 'standard' && use !== 'severe') return fail(400, 'Invalid use');
+      await env.DB.prepare('INSERT INTO truck (id, year, drive, use) VALUES (1, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET year = excluded.year, drive = excluded.drive, use = excluded.use').bind(year, drive, use).run();
+      return json(await readLog(env));
     }
 
     const del = pathname.match(/^\/fuel\/([\w-]{1,64})$/);

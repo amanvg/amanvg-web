@@ -992,6 +992,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('connect').textContent = apiKey ? 'Disconnect' : 'Connect';
       document.body.classList.toggle('rw', canEdit());
       $('fuel-add').disabled = saveState === 'saving';
+      const lock = !canEdit() || saveState === 'saving';
+      yearSel.disabled = driveSel.disabled = lock;
+      for (const x of $('use').children) x.disabled = lock;
     }
 
     function renderAll() {
@@ -1064,6 +1067,18 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       fuelGal.value = ''; fuelDate.value = todayISO();
       delete fuelMiles.dataset.typed;
       renderControls();
+    });
+
+    // Truck setup: year, drivetrain and use save on change; a failed save restores the stored values.
+    async function saveTruck(patch) {
+      if (!canEdit() || saveState === 'saving') return;
+      if (!(await save('PUT', '/truck', patch))) renderControls();
+    }
+    yearSel.addEventListener('change', () => saveTruck({ year: yearSel.value ? Number(yearSel.value) : null }));
+    driveSel.addEventListener('change', () => saveTruck({ drive: driveSel.value || null }));
+    $('use').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-use]');
+      if (b && b.dataset.use !== data.truck.use) saveTruck({ use: b.dataset.use });
     });
 
     // Delete: first click arms the row's button, second click removes the entry.
