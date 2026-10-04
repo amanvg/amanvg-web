@@ -460,7 +460,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     <div class="team-header">
                         ${logoTile(team.logo, true)}
                         <div class="team-info">
-                            <h2 class="team-name">${team.displayName || team.name}</h2>
+                            <h2 class="team-name">${esc(team.displayName || team.name)}</h2>
                         </div>
                     </div>
                     <div class="accent-bar"></div>
@@ -501,12 +501,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <div class="team-header">
                     ${logoTile(team.logo, true)}
                     <div class="team-info">
-                        <h2 class="team-name">${team.displayName || team.name}</h2>
-                        <div class="team-record">${record || 'Record unavailable'}</div>
+                        <h2 class="team-name">${esc(team.displayName || team.name)}</h2>
+                        <div class="team-record">${esc(record || 'Record unavailable')}</div>
                     </div>
                     <div class="team-badges">
                         ${liveGame ? '<div class="live-badge"><span class="live-dot"></span>LIVE</div>' : ''}
-                        ${seasonPhase ? `<div class="season-badge ${seasonPhase.cls}">${seasonPhase.label}</div>` : ''}
+                        ${seasonPhase ? `<div class="season-badge ${esc(seasonPhase.cls)}">${esc(seasonPhase.label)}</div>` : ''}
                     </div>
                 </div>
                 <div class="accent-bar"></div>
@@ -661,7 +661,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         function esc(str) {
             const d = document.createElement('div');
             d.textContent = str;
-            return d.innerHTML;
+            return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
         // ── Theme ───────────────────────────────────────────────
