@@ -38,24 +38,25 @@ A Reject means make no changes and ask what to adjust.
 ## Look and copy
 
 - Home page (`/`): follows `DESIGN.md` (Federal Park Serigraph light, Nocturne
-  dark; Oswald, Vollkorn, Work Sans; 0px corners, hard print-strike shadows).
+  dark; Oswald, Vollkorn, Work Sans; 0px corners, 1px rules, no offset shadows,
+  pills or nested boxes; uppercase only for titles, bands, buttons, chips and
+  table heads).
   Light and dark follow the system setting with a sun/moon icon toggle. Do not
   use Inter, `.card`, or the blue accent there.
 - `/seattlesports/`: follows `DESIGN.md` like the home page (same header,
   light/dark toggle, Sources footer). Team panels keep each team's official
   colour on the header band only; bodies sit on the card surface.
 - `/tirepressure/`: follows `DESIGN.md` like `/seattlesports/`; unit chips live
-  in the masthead, results sit on framed signboards.
+  in the masthead, results sit on a tally strip.
 - `/cve/`: follows `DESIGN.md` like `/tirepressure/`; exposure, environment and
   window chips live in the masthead, tier blocks (Act, Attend, Track*, Track)
   carry the result.
 - `/commute/`: follows `DESIGN.md` like `/tirepressure/`; car, route and pump
-  price inputs sit left, fare signboards and cost, miles, hours ledgers sit
+  price inputs sit left, a fare tally strip and cost, miles, hours ledgers sit
   right, and results update live (no Calculate button).
 - `/tempest/`, `/mlbstadiums/`, `/USStates/`, `/worldmap/`, `/trust/`: follow
   `DESIGN.md` like `/seattlesports/`; region, division and section chips live in
-  the masthead, counts sit on signboards (tally strips on `/mlbstadiums/`,
-  `/USStates/`, `/worldmap/`, `/trust/`), lists are ledgers.
+  the masthead, counts sit on tally strips, lists are ledgers.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services.

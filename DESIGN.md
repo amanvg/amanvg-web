@@ -259,14 +259,13 @@ Layouts follow a **framed broadsheet grid** inspired by physical print sheets, p
 
 ## Elevation & Depth
 
-This design system deliberately rejects ambient digital drop shadows, multi-tier blurred elevations, and semi-transparent glassmorphism. Hand-pulled screen prints express depth through physical pigment density, distinct color overlapping, and mechanical hard offsets.
+This design system deliberately rejects ambient digital drop shadows, multi-tier blurred elevations, and semi-transparent glassmorphism. Hand-pulled screen prints express depth through pigment density and colour overlap, never through offset shadows.
 
 ### Depth Paradigms
-- **Flat Litho Stacking:** Surfaces step forward purely through color contrast (`#f6efe1` canvas base to `#ede3ce` card wash) paired with crisp `2px` borders in Ranger Pine (`#24422e`) or Muted Olive (`#4d5843`).
-- **The "Print Strike" Hard Shadow:** When an element must physically elevate (e.g., hover states on primary buttons, interactive cards, floating modal alerts), use a hard, un-blurred offset:
-  `box-shadow: 4px 4px 0px 0px #181c16` (or `#24422e`).
-- **Registration Offset:** Active or pressed states shift the element visually by adjusting translation (`transform: translate(2px, 2px)`) and reducing the hard shadow to `2px 2px 0px 0px`, simulating the mechanical depression of a stamp or printing press.
-- **Inner Deboss Framing:** Recessed areas (such as code blocks, inset input wells, or data grids) use a crisp `1px` or `2px` inset line (`box-shadow: inset 2px 2px 0px 0px rgba(24, 28, 22, 0.15)`) coupled with a darker paper surface wash (`#ede3ce`).
+- **Flat Litho Stacking:** Surfaces step forward purely through color contrast (`#f6efe1` canvas base to `#ede3ce` card wash). The page sheet takes a `2px` Ranger Pine (`#24422e`) frame; everything inside it divides with `1px` keyline rules (`#4d5843`), never nested frames.
+- **No Offset Shadows:** Zero-blur block shadows read as a costume, not depth. Hover and pressed states change fill or border colour instead; nothing translates.
+- **Focus Ring:** Focused inputs swap their border to Ranger Pine and add a `1px` ring of the same colour (`box-shadow: 0 0 0 1px`).
+- **Flat Wells:** Inputs and data grids sit on the parchment wash (`#f6efe1`) with a `1.5px` keyline border; no inset deboss shadow.
 
 ## Shapes
 
@@ -274,36 +273,33 @@ The shape language reflects hand-trimmed paper, guillotine paper cutters, chisel
 
 - **Primary Geometry (Sharp / 0px):** Form fields, action buttons, image cards, and structural panels utilize strict 0px square corners. This preserves the graphic punch of geometric WPA poster layouts.
 - **Notched & Chamfered Signboards:** High-tier hero components and featured badges may feature 45-degree corner chamfers (`clip-path: polygon(...)` or 6px–8px notched corners), reminiscent of historical CCC (Civilian Conservation Corps) trail signage.
-- **Stamp & Pill Exceptions:** Small status markers and auxiliary tags use full circular or pill shapes (`9999px`) to emulate embossed metal ranger pins, trail trailheads, and inked ink-stamp validation seals.
+- **No Pills or Stamps:** Status markers and tags are plain sentence-case text with a small square colour mark (`8–10px`) before them. Only map and legend dots stay circular.
 - **Border Weight System:** Borders are visible, intentional design elements:
-  - Standard container boundary: `2px solid #4d5843`
-  - Heavy hero border / active focus: `3px solid #24422e`
+  - Page sheet: `2px solid #24422e`
+  - Inputs: `1.5px solid #4d5843`
+  - Everything else (strips, ledgers, wells, panels): `1px solid #4d5843`
   - Internal divider: `1px solid rgba(77, 88, 67, 0.35)`
-  - Double-line framing: `3px double #24422e` on commemorative certificates and high-priority cards.
 
 ## Components
 
 ### Buttons
-- **Primary Button:** Solid `#24422e` background, `#f6efe1` uppercase text (Oswald Bold, `label-lg`), `2px solid #181c16` border. Zero border-radius. Padding: `0.75rem 1.75rem`. Hover state creates a `4px 4px 0px 0px #181c16` hard strike shadow. Pressed state translates `2px 2px` with a `2px 2px 0px 0px` shadow.
-- **Secondary Button (Ochre Amber):** Solid `#d9822b` background, `#181c16` text, `2px solid #181c16` border. Hard offset shadow on hover.
+- **Primary Button:** Solid `#24422e` background, `#f6efe1` uppercase text (Work Sans Bold, `label-lg`), `2px solid #181c16` border. Zero border-radius. Padding: `0.75rem 1.75rem`. Hover lightens the fill; no shadow, no translation.
+- **Secondary Button (Ochre Amber):** Solid `#d9822b` background, `#181c16` text, `2px solid #181c16` border. Hover shifts the fill; no shadow.
 - **Terracotta Accent Button:** Solid `#a63a24` background with `#f6efe1` text for critical actions or urgent trail alerts.
 - **Outlined / Broadside Button:** Transparent background, `#24422e` text, `2px solid #24422e` border. On hover, background fills with `#ede3ce` wash.
 
 ### Cards & Placards
-- **Standard Card:** Background in `#ede3ce`, bordered with `2px solid #4d5843`. Padding: `1.5rem`.
-- **Framed Field Card:** Inset nested frame using a `1px solid #4d5843` keyline placed `6px` inside the main `2px solid #24422e` outer boundary, echoing framed park boundary signs.
-- **Header Banding:** Card headers frequently use solid background blocks (e.g., `#24422e` banner across the top) with contrasting light typography to divide sections cleanly.
+- **Panels, not cards:** Content sits directly on the sheet surface, grouped by `1px` rules and headings. Do not wrap a group in its own bordered box, and never put a box inside a box.
+- **Ruled Rows:** Repeating items (scores, readings, list entries) are rows separated by `1px` rules, not individual boxes.
+- **Header Banding:** Solid colour bands (`#24422e`) with light Oswald titling are reserved for the page masthead, home category bands, list/group headers and table heads. Figures and small groups never get their own band.
 - **Tally Strip:** Counts and headline figures sit side by side in one unboxed row, split by `1px` vertical rules in the keyline colour with a single `1px` rule beneath. Each figure is a muted Oswald uppercase label over a left-aligned Oswald number; no header bands, frames or shadows. A lead figure may take its own row at a larger size; status figures carry a small colour square before the label.
 
-### Badges, Stamps & Chips
-- **Ranger Stamp Badge:** Circular or chamfered pill shape. Uppercase `label-sm` in Work Sans Bold with `0.08em` tracking. Uses high-contrast foreground/background pairs:
-  - *Standard:* `#24422e` on `#f6efe1` with a `1.5px solid #24422e` border.
-  - *Alert / Fire Warning:* `#a63a24` on `#f6efe1` with a `1.5px solid #a63a24` border.
-  - *Advisory / Sunset:* `#d9822b` on `#181c16`.
+### Tags & Chips
+- **Status Tag:** Sentence-case Work Sans `13–14px`, weight 600, preceded by an `8px` square in the status colour (clay alert, ochre advisory, pine ok). Alerts also set the text in clay. No border, fill or radius.
 - **Selection Chips:** Sharp corners, `1.5px solid #4d5843` outline on `#ede3ce`. When selected, inverts to solid `#24422e` with `#f6efe1` text.
 
 ### Form Inputs & Controls
-- **Text Inputs:** Sharp 0px corners, background `#f6efe1`, border `2px solid #4d5843`, padding `0.75rem 1rem`. Typography uses Vollkorn for user entry. Focus state swaps border to `2px solid #24422e` with a `2px 2px 0px 0px #24422e` hard shadow. Placeholder text is tinted in `#4d5843` at 65% opacity.
+- **Text Inputs:** Sharp 0px corners, background `#f6efe1`, border `1.5px solid #4d5843`, padding `0.75rem 1rem`. Typography uses Vollkorn for user entry. Focus state swaps the border to `#24422e` with a `1px` ring of the same colour. Placeholder text is tinted in `#4d5843` at 65% opacity.
 - **Checkboxes:** Square 18px × 18px box, `2px solid #24422e`, sharp corners. Checked state fills with `#24422e` and renders a crisp, geometric `#f6efe1` check glyph.
 - **Radio Buttons:** Circular 18px × 18px, `2px solid #24422e`. Checked state features a solid `#24422e` inner pip with `3px` white space separation.
 
@@ -317,7 +313,7 @@ The shape language reflects hand-trimmed paper, guillotine paper cutters, chisel
 
 ## Dark Mode: Nocturne Serigraph
 
-Dark mode shares the light system's type scale, spacing, 12/8/4-column grid, 0px corners, and hard-shadow mechanics. What follows records only the dark palette and where its rules differ. Follow the user's system setting (`prefers-color-scheme`); a page may also offer a manual toggle.
+Dark mode shares the light system's type scale, spacing, 12/8/4-column grid, 0px corners, rule-based structure and shadow-free states. What follows records only the dark palette and where its rules differ. Follow the user's system setting (`prefers-color-scheme`); a page may also offer a manual toggle.
 
 ### Brand & Style
 
@@ -327,7 +323,7 @@ The visual style blends **Tactile Silkscreen Printmaking** with **Atmospheric Mi
 - **Pigment Over Obsidian:** Instead of sterile, synthetic digital pure-black `#000000`, the dark canvas is built from deep botanical midnight pine, charcoal-tinted printer's pitch, and cold mineral slate.
 - **Luminous Starlight Contrast:** Typography and line art emerge like unbleached parchment and pale bone cardstock illuminated by starlight or campfire embers, providing restful yet commanding legibility without harsh eye strain.
 - **Silkscreen Luminescence:** Accent colors retain the flat, non-gradient matte density of oil-based block inks, recalibrated to glow vibrantly against nocturnal grounds—campfire amber, ranger terracotta, and starlight ochre.
-- **Tactile Poster Framing:** Physical registration lines, crisp 2–3px structural ink borders, and hard mechanical strike-shadows preserve the authenticity of hand-pulled woodblock and serigraph prints.
+- **Tactile Poster Framing:** A single structural sheet frame and `1px` linocut rules preserve the feel of a hand-pulled print without offset shadows or nested frames.
 
 
 ### Colors
@@ -354,20 +350,18 @@ Typography honors the three foundational pillars of Works Progress Administratio
 
 - **Display & Headline Hierarchy (Oswald):** Chiseled, condensed, and assertive. Headings mirror carved timber signboards and letterpress titling. In nocturne mode, Oswald is rendered in `text-transform: uppercase` with deliberate tracking, glowing cleanly against deep pine and midnight slate fields.
 - **Body & Longform Reading (Vollkorn):** Designed by Friedrich Althausen with robust serifs and open counters. In a dark environment, its sturdy anatomy prevents letter stems from thinning out or vibrating against dark backgrounds. Set Vollkorn body text in `#ded5c5` (Ink Bone) to maintain optimal comfort over long reading sessions.
-- **Labels, Telemetry & Badges (Work Sans):** Clean, utilitarian mid-century sans serif. Handles all technical metadata, coordinates, trail markers, button labels, and operational statuses. It is tracked out in uppercase (`letter-spacing: 0.06em` to `0.08em`) to mirror official surveyor documents and punched brass park markers.
+- **Labels, Telemetry & Badges (Work Sans):** Clean, utilitarian mid-century sans serif for metadata, coordinates, button labels and statuses. Labels read in sentence case at `13–14px`; uppercase tracking is kept for buttons, chips and table heads only (see the Uppercase Rule).
 
 
 ### Elevation & Depth
 
-Nocturne Serigraph explicitly rejects soft, translucent blur effects, nebulous drop shadows, and glassmorphism. Hand-pulled screen prints communicate depth through physical layering of dense ink plates, structural borders, and directional mechanical cutouts.
+Nocturne Serigraph explicitly rejects soft, translucent blur effects, nebulous drop shadows, and glassmorphism. Hand-pulled screen prints communicate depth through physical layering of dense ink plates, and `1px` structural rules.
 
 #### Depth Rules
 - **Tonal Substrate Stacking:** Elevation advances forward through step-ups in ink density: base canvas (`#0e1511`) → card placard (`#1a271f`) → elevated panel (`#223329`).
-- **The Nocturne "Print Strike" Hard Shadow:** Interactive controls and active cards rise above the surface using a zero-blur, hard-edge block shadow:
-  `box-shadow: 4px 4px 0px 0px #060a08`.
-  On button hover or card focus, this creates an unmistakable physical woodblock silhouette.
-- **Pressed Plate Mechanical Translation:** On active or pressed states, the component translates by `2px 2px` (`transform: translate(2px, 2px)`) while its hard shadow collapses to `2px 2px 0px 0px #060a08`, reproducing the tactile depression of a physical printing press.
-- **Debossed Field Guide Wells:** Inset data displays, cartography viewports, and form input fields simulate stamped or routed paper wells via a deep inset border: `box-shadow: inset 2px 2px 0px 0px #080d0a` over a sunken background of `#0a0f0c`.
+- **No Offset Shadows:** Controls and figures never rise on block shadows. Hover and pressed states change fill or border colour (amber border on hover).
+- **Focus Ring:** Focused inputs swap their border to Campfire Amber (`#e5933a`) with a `1px` ring of the same colour.
+- **Flat Wells:** Inputs, data displays and map viewports sit on `#0a0f0c` with a `1.5px` (inputs) or `1px` keyline border; no inset deboss shadow.
 
 
 ### Shapes
@@ -376,42 +370,38 @@ The shape vocabulary is rooted in the industrial tools of the 1930s Federal Art 
 
 - **Strict Right Angles (`roundedness: 0`):** Buttons, cards, modals, tabs, and form fields possess crisp, unrounded 0px corners. This maintains the bold, architectural geometry of silkscreen composition.
 - **Chamfered Signboards:** Special highlight placards, hero callouts, and navigational banners may incorporate 45-degree diagonal corner cutouts (`clip-path: polygon(...)` or 6px–8px notched chamfers), referencing CCC rustic park signage.
-- **Insignia Stamp Exceptions:** Badges, status markers, and validation seals may break the 0px rule by adopting circular or pill geometries (`9999px`) to evoke stamped ink approvals and metal ranger medallions.
+- **No Pills or Stamps:** Status markers are sentence-case text with a small square colour mark; only map and legend dots stay circular.
 - **Linocut Border Matrix:**
-  - Standard structural border: `2px solid #35483b`
+  - Page sheet: `2px solid #35483b`; everything inside divides with `1px` rules
   - Active / Primary focal boundary: `2px solid #e5933a`
   - Subtle partition divider: `1px solid #233328`
-  - Commemorative double keyline: `3px double #e5933a` on special certs or master placards.
 
 
 ### Components
 
 #### Buttons
-- **Primary Action (Campfire Amber):** Solid `#e5933a` fill with `#0e1511` text (Oswald Bold, uppercase, `label-lg`). Border: `2px solid #060a08`. Sharp 0px corners. Hover state activates a `4px 4px 0px 0px #060a08` hard shadow. Pressed state: `transform: translate(2px, 2px)` with shadow reduced to `2px 2px 0px 0px`.
-- **Secondary Action (Forest Canopy):** Solid `#2d4b38` fill with `#f4ede2` text. Border: `2px solid #35483b`. Hover triggers a `#e5933a` border color shift and a `3px 3px 0px 0px #060a08` shadow.
+- **Primary Action (Campfire Amber):** Solid `#e5933a` fill with `#0e1511` text (Work Sans Bold, uppercase, `label-lg`). Border: `2px solid #060a08`. Sharp 0px corners. Hover brightens the fill; no shadow or translation.
+- **Secondary Action (Forest Canopy):** Solid `#2d4b38` fill with `#f4ede2` text. Border: `2px solid #35483b`. Hover shifts the border to `#e5933a`.
 - **Tertiary / Danger (Ranger Terracotta):** Solid `#c8523b` fill with `#f4ede2` text. Border: `2px solid #060a08`. Used for critical alerts, fire warnings, and irreversible actions.
 - **Outlined / Broadsheet Button:** Transparent background, `#f4ede2` text, `2px solid #35483b` border. On hover, background fills with `#1a271f` and the border illuminates to `#e5933a`.
 
 #### Cards & Placards
-- **Standard Field Card:** Grounded in `#1a271f` (Surface Card) with a `2px solid #35483b` border and `1.5rem` internal padding. 
-- **Framed Serigraph Card:** Features a dual-border layout: an outer `2px solid #35483b` container with an internal `1px solid #233328` keyline inset by `6px`, creating the authentic serigraph art-print margin.
-- **Placard Header Banner:** Card heads are frequently capped with a solid `#141e17` or `#2d4b38` color band with `#f4ede2` Oswald titling, cleanly partitioning the card's body from its administrative header.
+- **Panels, not cards:** Content sits on the sheet surface (`#1a271f`), grouped by `1px` rules and headings; no box-in-box framing.
+- **Tally Strip / Ruled Rows:** Figures and repeating items follow the light-mode Tally Strip and Ruled Rows rules, with `#35483b` keylines.
+- **Header Banner:** Solid `#141e17` or `#2d4b38` bands with `#f4ede2` Oswald titling are reserved for the masthead, group/list headers and table heads.
 
-#### Chips, Badges & Seals
-- **Ranger Badge Stamp:** Pill or circular shape (`roundedness: 9999px`), uppercase `label-sm` in Work Sans Bold with `0.08em` tracking.
-  - *Nocturne Standard:* `#e5933a` text on `#1a271f` surface with a `1.5px solid #e5933a` border.
-  - *Fire / Hazard Alert:* `#c8523b` text on `#22120e` surface with a `1.5px solid #c8523b` border.
-  - *Trail Open / Ecology:* `#44805d` text on `#0f1f16` surface with a `1.5px solid #44805d` border.
+#### Tags & Chips
+- **Status Tag:** Sentence-case Work Sans `13–14px` with an `8px` square in the status colour (terracotta alert, amber advisory, emerald ok); no border, fill or radius.
 - **Filter Chips:** 0px corners, `#1a271f` background, `1.5px solid #35483b` border with `#ded5c5` text. When selected, fills with solid `#e5933a` and `#0e1511` text.
 
 #### Form Inputs & Controls
-- **Text Inputs:** Sharp 0px corners, background `#0a0f0c`, border `2px solid #35483b`, text `#f4ede2` set in Vollkorn (`body-md`). Inset deboss shadow: `box-shadow: inset 2px 2px 0px 0px #060a08`. Focus state shifts border to `2px solid #e5933a` with an external `2px 2px 0px 0px #e5933a` hard ring. Placeholder text is tinted in `#96a498` at 60% opacity.
+- **Text Inputs:** Sharp 0px corners, background `#0a0f0c`, border `1.5px solid #35483b`, text `#f4ede2` set in Vollkorn (`body-md`). Focus shifts the border to `#e5933a` with a `1px` ring. Placeholder text is tinted in `#96a498` at 60% opacity.
 - **Checkboxes:** Sharp 18px × 18px square, `#0a0f0c` background with `2px solid #35483b`. When checked, fills with `#e5933a` and displays a bold, geometric `#0e1511` checkmark.
 - **Radio Buttons:** Circular 18px × 18px, `2px solid #35483b` on `#0a0f0c`. Checked state displays a solid `#e5933a` center pip with a 3px dark gap.
 
 #### Lists & Field Dispatches
 - **Observation Ledger:** Alternating table rows in `#141e17` and `#1a271f`. Row dividers are crisp `1px solid #233328`. Hovered rows brighten to `#223329`.
-- **List Header Bars:** Sturdy uppercase Oswald headers enclosed in a `#141e17` banner strip bordered by `2px solid #35483b`.
+- **List Header Bars:** Sturdy uppercase Oswald headers on a `#141e17` banner strip, divided from the list by a `1px #35483b` rule.
 
 #### Heritage Accents
 - **Nocturne Registration Divider:** A triple-striped horizontal separator combining a 3px Alpine Emerald line (`#44805d`), a 2px Campfire Amber line (`#e5933a`), and a 2px Terracotta line (`#c8523b`) to delineate thematic chapters and section breaks.
