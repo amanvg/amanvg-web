@@ -163,6 +163,18 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2
 .error-text{display:block;background:var(--live-bg);color:var(--live-fg);padding:6px 12px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase}
 .msg:empty{display:none}
 
+fieldset{border:0;min-width:0}
+.checks-field legend{padding:0;margin-bottom:6px;font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
+.checks{max-height:224px;overflow-y:auto;background:var(--well-bg);border:2px solid var(--key);box-shadow:inset 2px 2px 0 0 var(--well-shadow)}
+.checks label{display:flex;align-items:center;gap:12px;min-height:44px;padding:6px 12px;cursor:pointer;font-family:var(--body);font-size:18px;line-height:24px}
+.checks label+label{border-top:1px solid var(--divider)}
+.checks input{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;border:2px solid var(--key);background:transparent;border-radius:0;cursor:pointer;display:grid;place-content:center}
+.checks input::after{content:'';width:5px;height:10px;border:solid var(--pri-fg);border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);margin-top:-2px}
+.checks input:checked{background:var(--pri-bg);border-color:var(--pri-line)}
+.checks input:checked::after{transform:rotate(45deg) scale(1)}
+.checks input:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.checks:focus-within{border-color:var(--focus)}
+@media(hover:hover){.checks label:hover{background:color-mix(in srgb,var(--accent) 14%,transparent)}}
 .chips{display:flex}
 .chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 14px;border:2px solid var(--key);background:transparent;color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .chips button+button{margin-left:-2px}
@@ -356,10 +368,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     </div>
                     <form class="group" id="svc-form" novalidate aria-labelledby="svc-h">
                         <h2 class="section-label" id="svc-h">Log service</h2>
-                        <div class="field">
-                            <label for="svc-item">Item</label>
-                            <div class="sel"><select id="svc-item"></select></div>
-                        </div>
+                        <fieldset class="field checks-field">
+                            <legend class="lbl">Items</legend>
+                            <div class="checks" id="svc-items"></div>
+                        </fieldset>
                         <div class="pair">
                             <div class="field">
                                 <label for="svc-date">Date</label>
@@ -801,7 +813,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
     let armed = null; // key of the row whose delete is waiting for a second click
     const fuelDate = $('fuel-date'), fuelMiles = $('fuel-miles'), fuelGal = $('fuel-gal');
-    const svcItem = $('svc-item'), svcDate = $('svc-date'), svcMiles = $('svc-miles'), svcBy = $('svc-by'), svcCost = $('svc-cost'), svcNotes = $('svc-notes');
+    const svcItems = $('svc-items'), svcDate = $('svc-date'), svcMiles = $('svc-miles'), svcBy = $('svc-by'), svcCost = $('svc-cost'), svcNotes = $('svc-notes');
 
     // Icon delete button; the first click arms it, the second deletes.
     function delButton(key, what) {
@@ -1112,12 +1124,15 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const date = normDate(svcDate.value);
       const miles = toNum(svcMiles.value);
       const cost = svcCost.value.trim() === '' ? 0 : toNum(svcCost.value);
+      const items = [...svcItems.querySelectorAll('input:checked')].map((c) => c.value);
+      if (!items.length) return say('svc-msg', 'Select an item');
       if (parseISO(date) === null) return say('svc-msg', 'Invalid date');
       if (miles === null || miles < 0) return say('svc-msg', 'Odometer required');
       if (cost === null || cost < 0) return say('svc-msg', 'Invalid cost');
       say('svc-msg', '');
-      const ok = await save('POST', '/services', { item: svcItem.value, date, miles: Math.round(miles), cost, by: svcBy.value, notes: svcNotes.value.trim() });
+      const ok = await save('POST', '/services', { items, date, miles: Math.round(miles), cost, by: svcBy.value, notes: svcNotes.value.trim() });
       if (!ok) return;
+      for (const c of svcItems.querySelectorAll('input')) c.checked = false;
       svcCost.value = ''; svcNotes.value = ''; svcDate.value = todayISO();
       delete svcMiles.dataset.typed;
       renderControls();
@@ -1253,7 +1268,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       renderControls();
     }
 
-    svcItem.replaceChildren(...SCHEDULE.map((s) => option(s.id, s.label)), option(MPI, labelOf(MPI)), option('other', labelOf('other')));
+    svcItems.replaceChildren(...[...SCHEDULE.map((s) => [s.id, s.label]), [MPI, labelOf(MPI)], ['other', labelOf('other')]].map(([id, label]) =>
+      el('label', null, el('input', { type: 'checkbox', value: id }), el('span', { text: label }))));
     fuelDate.value = svcDate.value = todayISO();
     renderControls();
     loadSite();

@@ -4,6 +4,7 @@
 const ORIGINS = ['https://www.amanvg.com', 'https://amanvg.com', 'http://localhost:8765'];
 const MAX_FUEL = 5000;
 const MAX_SERVICES = 5000;
+const MAX_VISIT_ITEMS = 25;
 
 const isDate = (s) => {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof s === 'string' ? s : '');
@@ -90,7 +91,8 @@ export default {
       let b;
       try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
       if (!b || typeof b !== 'object') return fail(400, 'Invalid body');
-      if (typeof b.item !== 'string' || !/^[\w-]{1,80}$/.test(b.item)) return fail(400, 'Invalid item');
+      const items = [...new Set(Array.isArray(b.items) ? b.items : [b.item])];
+      if (!items.length || items.length > MAX_VISIT_ITEMS || !items.every((i) => typeof i === 'string' && /^[\w-]{1,80}$/.test(i))) return fail(400, 'Invalid item');
       if (!isDate(b.date)) return fail(400, 'Invalid date');
       if (!Number.isInteger(b.miles) || !isNum(b.miles, 0, 2000000)) return fail(400, 'Invalid odometer');
       const cost = b.cost === undefined ? 0 : b.cost;
@@ -99,9 +101,10 @@ export default {
       const notes = b.notes === undefined ? '' : b.notes;
       if (typeof notes !== 'string' || notes.length > 200) return fail(400, 'Invalid notes');
       const { n } = await env.DB.prepare('SELECT COUNT(*) AS n FROM services').first();
-      if (n >= MAX_SERVICES) return fail(400, 'Log full');
+      if (n + items.length > MAX_SERVICES) return fail(400, 'Log full');
       await env.DB.batch([
-        env.DB.prepare('INSERT INTO services (id, item, date, miles, cost, done_by, notes) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), b.item, b.date, b.miles, cost, b.by, notes),
+        // One row per item; the visit cost sits on the first so totals stay right.
+        ...items.map((item, i) => env.DB.prepare('INSERT INTO services (id, item, date, miles, cost, done_by, notes) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), item, b.date, b.miles, i === 0 ? cost : 0, b.by, notes)),
         env.DB.prepare('INSERT INTO truck (id, odometer) VALUES (1, ?) ON CONFLICT (id) DO UPDATE SET odometer = MAX(COALESCE(odometer, 0), excluded.odometer)').bind(b.miles),
       ]);
       return json(await readLog(env), 201);
