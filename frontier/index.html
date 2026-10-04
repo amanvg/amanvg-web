@@ -106,6 +106,8 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar .btn{padding:8px 18px}
 :root[data-theme="dark"] .bar .btn{border-color:var(--f-sports)}
 .bar .grow{flex:1 1 auto}
+.bar .grow:empty{display:none}
+.bar #export{margin-left:auto}
 .bar .note{color:inherit}
 .bar .error-text{display:inline-block}
 
@@ -153,6 +155,10 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2
 .chips{display:flex}
 .chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 14px;border:2px solid var(--key);background:transparent;color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .chips button+button{margin-left:-2px}
+.bar .chips button{border-color:var(--f-sports);color:var(--f-sports);min-width:104px;padding:6px 12px}
+.bar .chips button.active{background:var(--f-sports);border-color:var(--f-sports);color:var(--b-sports)}
+@media(hover:hover){.bar .chips button:not(.active):hover{background:color-mix(in srgb,var(--f-sports) 16%,transparent)}}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:10px;padding:0 6px;border:1.5px solid var(--over-fg);border-radius:9999px;background:var(--over-bg);color:var(--over-fg);font-size:11px;line-height:1}
 .use-chips{margin-left:auto}
 .use-chips button{min-width:112px}
 .chips button.active{background:var(--pri-bg);border-color:var(--pri-line);color:var(--pri-fg);position:relative}
@@ -186,7 +192,6 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2
 .ledger .wrap{white-space:normal}
 .ledger .sub{display:block;font-weight:600;font-size:13px;letter-spacing:.02em;text-transform:none;color:var(--muted)}
 .ledger .late{color:var(--live-bg);font-weight:700}
-.duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
 
 .stamp{display:inline-flex;align-items:center;justify-content:center;min-width:76px;padding:4px 10px;border:1.5px solid var(--key);border-radius:9999px;font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .stamp.over{background:var(--over-bg);color:var(--over-fg);border-color:var(--over-bg)}
@@ -210,6 +215,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .sign-body{padding-left:6px;padding-right:6px}
   .num{font-size:clamp(38px,4vw,64px)}
   .odo input[type=number]{width:170px}
+  .bar{gap:8px 14px}
 }
 @media(max-width:960px){
   .body{grid-template-columns:1fr}
@@ -222,6 +228,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   main{padding-top:24px}
   .masthead{padding:12px 16px}
   .masthead h1{font-size:28px;line-height:36px}
+  input[type=date]{font-size:17px;padding-left:10px;padding-right:6px}
+  .bar .chips{width:100%}
+  .bar .chips button{flex:1;min-width:0}
   .odo{width:100%}
   .odo input[type=number]{width:auto;flex:1;min-width:0}
   .bar{padding:10px 16px}
@@ -270,6 +279,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 </div>
             </div>
             <div class="bar">
+                <div class="chips tabs" id="panes" role="tablist" aria-label="Section">
+                    <button type="button" role="tab" id="tab-maint" data-pane="maint" aria-controls="pane-maint" aria-selected="true" class="active">Maintenance<span class="badge" id="tab-over" hidden><span id="tab-over-n">0</span><span class="sr-only"> overdue</span></span></button><button type="button" role="tab" id="tab-fuel" data-pane="fuel" aria-controls="pane-fuel" aria-selected="false" tabindex="-1">Fuel</button>
+                </div>
                 <span class="note" id="saved">Saved in this browser</span>
                 <span class="note" id="exported">Never exported</span>
                 <span class="grow note" id="data-status" role="status" aria-live="polite"></span>
@@ -278,7 +290,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <button class="btn" id="import-cancel" type="button" hidden>Cancel</button>
                 <input type="file" id="import-file" accept="application/json,.json" hidden>
             </div>
-            <div class="body">
+            <div class="body" id="pane-maint" role="tabpanel" aria-labelledby="tab-maint">
                 <div class="panel inputs" id="inputs">
                     <div class="group">
                         <h2 class="section-label">Truck</h2>
@@ -330,31 +342,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="error-text msg" id="svc-msg" role="status" aria-live="polite"></div>
                         <button class="act pri" type="submit">Add service</button>
                     </form>
-                    <form class="group" id="fuel-form" novalidate aria-labelledby="fuel-h">
-                        <h2 class="section-label" id="fuel-h">Log fill-up</h2>
-                        <div class="pair">
-                            <div class="field">
-                                <label for="fuel-date">Date</label>
-                                <input type="date" id="fuel-date" autocomplete="off">
-                            </div>
-                            <div class="field">
-                                <label for="fuel-miles">Odometer</label>
-                                <input type="number" id="fuel-miles" min="0" step="1" inputmode="numeric" placeholder="mi" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="pair">
-                            <div class="field">
-                                <label for="fuel-gal">Gallons</label>
-                                <input type="number" id="fuel-gal" min="0" step="0.001" inputmode="decimal" placeholder="0.000" autocomplete="off">
-                            </div>
-                            <div class="field">
-                                <label for="fuel-cost">Cost, USD</label>
-                                <input type="number" id="fuel-cost" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="error-text msg" id="fuel-msg" role="status" aria-live="polite"></div>
-                        <button class="act pri" type="submit">Add fill-up</button>
-                    </form>
                 </div>
                 <div class="panel">
                     <div class="results">
@@ -392,25 +379,52 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <tbody id="hist-body"></tbody>
                             </table>
                         </div>
-                        <div class="duo">
-                            <div class="ledger-wrap">
-                                <h2 class="section-label" id="cost-l">Costs</h2>
-                                <table class="ledger" aria-labelledby="cost-l">
-                                    <thead><tr><th scope="col">Year</th><th scope="col">Service</th><th scope="col">Fuel</th><th scope="col">Total</th></tr></thead>
-                                    <tbody id="cost-body"></tbody>
-                                    <tfoot id="cost-foot"></tfoot>
-                                </table>
+                    </div>
+                </div>
+            </div>
+            <div class="body" id="pane-fuel" role="tabpanel" aria-labelledby="tab-fuel" hidden>
+                <div class="panel inputs">
+                    <form class="group" id="fuel-form" novalidate aria-labelledby="fuel-h">
+                        <h2 class="section-label" id="fuel-h">Log fill-up</h2>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="fuel-date">Date</label>
+                                <input type="date" id="fuel-date" autocomplete="off">
                             </div>
-                            <div class="ledger-wrap">
-                                <h2 class="section-label" id="mpg-l">Fuel economy</h2>
-                                <table class="ledger" aria-labelledby="mpg-l">
-                                    <thead><tr><th scope="col">Measure</th><th scope="col">MPG</th></tr></thead>
-                                    <tbody>
-                                        <tr><td>Average</td><td id="mpg-avg">—</td></tr>
-                                        <tr><td>Last fill-up</td><td id="mpg-last">—</td></tr>
-                                    </tbody>
-                                </table>
+                            <div class="field">
+                                <label for="fuel-miles">Odometer</label>
+                                <input type="number" id="fuel-miles" min="0" step="1" inputmode="numeric" placeholder="mi" autocomplete="off">
                             </div>
+                        </div>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="fuel-gal">Gallons</label>
+                                <input type="number" id="fuel-gal" min="0" step="0.001" inputmode="decimal" placeholder="0.000" autocomplete="off">
+                            </div>
+                            <div class="field">
+                                <label for="fuel-cost">Cost, USD</label>
+                                <input type="number" id="fuel-cost" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="error-text msg" id="fuel-msg" role="status" aria-live="polite"></div>
+                        <button class="act pri" type="submit">Add fill-up</button>
+                    </form>
+                </div>
+                <div class="panel">
+                    <div class="results">
+                        <div class="signs">
+                            <section class="sign" aria-labelledby="fs-avg-h">
+                                <h2 class="sign-head" id="fs-avg-h">Average</h2>
+                                <div class="sign-body"><output class="num" id="mpg-avg">—</output><div class="sign-unit">MPG</div></div>
+                            </section>
+                            <section class="sign" aria-labelledby="fs-last-h">
+                                <h2 class="sign-head" id="fs-last-h">Last fill-up</h2>
+                                <div class="sign-body"><output class="num" id="mpg-last">—</output><div class="sign-unit">MPG</div></div>
+                            </section>
+                            <section class="sign" aria-labelledby="fs-year-h">
+                                <h2 class="sign-head" id="fs-year-h">Fuel</h2>
+                                <div class="sign-body"><output class="num" id="fuel-year">—</output><div class="sign-unit" id="fuel-year-u">USD</div></div>
+                            </section>
                         </div>
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="fuel-l">Fill-ups</h2>
@@ -419,6 +433,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <tbody id="fuel-body"></tbody>
                             </table>
                         </div>
+                        <div class="ledger-wrap">
+                                <h2 class="section-label" id="cost-l">Costs</h2>
+                                <table class="ledger" aria-labelledby="cost-l">
+                                    <thead><tr><th scope="col">Year</th><th scope="col">Service</th><th scope="col">Fuel</th><th scope="col">Total</th></tr></thead>
+                                    <tbody id="cost-body"></tbody>
+                                    <tfoot id="cost-foot"></tfoot>
+                                </table>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -683,6 +705,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const $ = (id) => document.getElementById(id);
     const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
     const int = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+    const usd0 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
     const dec1 = (n) => n.toFixed(1);
     const plural = (n, w) => `${int.format(n)} ${w}${n === 1 ? '' : 's'}`;
     const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
@@ -773,6 +796,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       });
       $('sched-body').replaceChildren(...trs);
       setNum('n-over', count.over); setNum('n-soon', count.soon); setNum('n-ok', count.ok);
+      $('tab-over').hidden = !count.over; $('tab-over-n').textContent = count.over;
       $('n-none').textContent = `${count.none} not logged`;
     }
 
@@ -802,6 +826,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const stats = mpgStats(data.fuel);
       $('mpg-avg').textContent = stats.average == null ? '—' : dec1(stats.average);
       $('mpg-last').textContent = stats.last == null ? '—' : dec1(stats.last);
+      const year = todayISO().slice(0, 4);
+      $('fuel-year').textContent = usd0.format(data.fuel.reduce((n, f) => n + (f.date.slice(0, 4) === year ? f.cost : 0), 0));
+      $('fuel-year-u').textContent = `USD · ${year}`;
       const rows = data.fuel.slice().sort(byDateDesc);
       if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 6, text: 'No fill-ups' }))); return; }
       $('fuel-body').replaceChildren(...rows.map((f) => el('tr', null,
@@ -1005,6 +1032,39 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       paintMode();
     });
     paintMode();
+
+    // Panes: Maintenance | Fuel. Saved choice, overridden by #fuel in the URL.
+    const PANE_KEY = 'frontier:pane';
+    const tabEls = [...document.querySelectorAll('#panes [role=tab]')];
+    function setPane(p, focus) {
+      for (const t of tabEls) {
+        const on = t.dataset.pane === p;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        $(`pane-${t.dataset.pane}`).hidden = !on;
+        if (on && focus) t.focus();
+      }
+      try { localStorage.setItem(PANE_KEY, p); } catch (e) {}
+      history.replaceState(null, '', p === 'fuel' ? '#fuel' : location.pathname + location.search);
+    }
+    $('panes').addEventListener('click', (e) => {
+      const t = e.target.closest('[role=tab]');
+      if (t) setPane(t.dataset.pane);
+    });
+    $('panes').addEventListener('keydown', (e) => {
+      const i = tabEls.indexOf(document.activeElement);
+      if (i < 0) return;
+      const next = e.key === 'ArrowRight' ? (i + 1) % tabEls.length : e.key === 'ArrowLeft' ? (i + tabEls.length - 1) % tabEls.length : e.key === 'Home' ? 0 : e.key === 'End' ? tabEls.length - 1 : -1;
+      if (next < 0) return;
+      e.preventDefault();
+      setPane(tabEls[next].dataset.pane, true);
+    });
+    window.addEventListener('hashchange', () => { if (location.hash === '#fuel') setPane('fuel'); else if (location.hash === '') setPane('maint'); });
+    let startPane = 'maint';
+    try { if (localStorage.getItem(PANE_KEY) === 'fuel') startPane = 'fuel'; } catch (e) {}
+    if (location.hash === '#fuel') startPane = 'fuel';
+    setPane(startPane);
 
     svcDate.value = fuelDate.value = todayISO();
     renderControls();
