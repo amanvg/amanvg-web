@@ -110,7 +110,7 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar .grow:empty{display:none}
 .bar #export{margin-left:auto}
 body:not(.rw) #pane-fuel{grid-template-columns:1fr}
-body:not(.rw) #pane-fuel>.inputs,body:not(.rw) .act-col{display:none}
+body:not(.rw) #pane-fuel>.inputs,body:not(.rw) .act-col,body:not(.rw) td.act-cell{display:none}
 .bar.connect{border-top:0;gap:12px}
 .bar.connect label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
 .bar.connect input{flex:1 1 220px;max-width:460px}
@@ -409,7 +409,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="fuel-l">Fill-ups</h2>
                             <table class="ledger stack" aria-labelledby="fuel-l">
-                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col" class="c-cost">Cost</th><th scope="col">MPG</th><th scope="col" class="act-col">Delete</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Miles</th><th scope="col">Gallons</th><th scope="col" class="c-cost">Cost</th><th scope="col">MPG</th><th scope="col" class="act-col">Delete</th></tr></thead>
                                 <tbody id="fuel-body"></tbody>
                             </table>
                             <button class="btn" id="fuel-more" type="button" hidden></button>
@@ -594,16 +594,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // miles over the gallons of every fill after the first; needs two fill-ups.
     function mpgStats(fuel) {
       const f = fuel.slice().sort((a, b) => a.miles - b.miles || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-      const perId = {};
+      const perId = {}, tank = {};
       let mi = 0, gal = 0, last = null;
       for (let i = 1; i < f.length; i++) {
         const dm = f[i].miles - f[i - 1].miles;
         if (dm <= 0 || !(f[i].gallons > 0)) continue;
         perId[f[i].id] = dm / f[i].gallons;
+        tank[f[i].id] = dm;
         mi += dm; gal += f[i].gallons;
         last = perId[f[i].id];
       }
-      return { average: gal > 0 ? mi / gal : null, last, perId };
+      return { average: gal > 0 ? mi / gal : null, last, perId, tank };
     }
 
     // Calendar-year totals, newest year first, plus the grand total.
@@ -796,10 +797,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       more.hidden = all.length <= RECENT;
       more.textContent = showAll ? `Show recent ${RECENT}` : `Show all ${all.length}`;
       const rows = showAll ? all : all.slice(0, RECENT);
-      if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 6, text: 'No fill-ups' }))); return; }
+      if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 7, text: 'No fill-ups' }))); return; }
       $('fuel-body').replaceChildren(...rows.map((f) => el('tr', null,
         el('td', { text: f.date }),
         el('td', { 'data-label': 'Odometer', text: `${int.format(f.miles)} mi` }),
+        el('td', { 'data-label': 'Miles', text: stats.tank[f.id] == null ? '—' : int.format(stats.tank[f.id]) }),
         el('td', { 'data-label': 'Gallons', text: f.gallons.toFixed(3) }),
         el('td', { class: 'c-cost', 'data-label': 'Cost', text: usd.format(f.cost) }),
         el('td', { 'data-label': 'MPG', text: stats.perId[f.id] == null ? '—' : dec1(stats.perId[f.id]) }),
