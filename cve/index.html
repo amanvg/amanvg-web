@@ -127,7 +127,6 @@ main{flex:1;padding:40px var(--margin) 0}
 .item:first-child{border-top:0}
 .item:nth-child(odd){background:var(--row-a)}
 .item:nth-child(even){background:var(--row-b)}
-.item.off .info,.item.off .nums{opacity:.72}
 .tier{display:flex;align-items:center;justify-content:center;padding:8px;font-family:var(--display);font-weight:700;font-size:22px;line-height:28px;letter-spacing:.06em;text-transform:uppercase;background:var(--tb);color:var(--tf)}
 .t3{--tb:var(--act-bg);--tf:var(--act-fg)}
 .t2{--tb:var(--att-bg);--tf:var(--att-fg)}
@@ -195,7 +194,6 @@ tbody tr.ra{background:var(--row-a)}
 tbody tr.rb{background:var(--row-b)}
 tbody tr.drow{background:var(--well-bg)}
 @media(hover:hover){tbody tr.r:hover{background:var(--sel-bg);color:var(--sel-fg)}tbody tr.r:hover .idb{color:var(--sel-fg)}}
-tr.off td:not(.tcell){opacity:.72}
 td.tcell{padding:0;width:92px}
 td.tcell span{display:flex;align-items:center;justify-content:center;min-height:38px;font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;background:var(--tb);color:var(--tf)}
 td.tcell .t0{box-shadow:inset 0 0 0 1.5px var(--key)}
@@ -372,7 +370,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return 'none';
         }
         function matches(i) {
-            if (!state.list.length) return true;
+            if (!state.list.length) return false;
             const hay = ((i.vendor || '') + ' ' + (i.product || '')).toLowerCase();
             return state.list.some(t => hay.includes(t.toLowerCase()));
         }
@@ -383,9 +381,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             else if (lvl === 'likely') t = state.net ? 2 : 1;
             else if (lvl === 'poc') t = state.net ? 1 : 0;
             if (!state.prod) t = Math.max(0, t - 1);
-            const m = matches(i);
-            if (!m) t = Math.min(t, 1);
-            return { t, m };
+            return { t, w: matches(i) };
         }
 
         // ── Helpers ─────────────────────────────────────────────
@@ -406,6 +402,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
         function rank(a, b) {
             return (b.t - a.t)
+                || ((b.w ? 1 : 0) - (a.w ? 1 : 0))
                 || ((b.kev && b.kev.ransomware ? 1 : 0) - (a.kev && a.kev.ransomware ? 1 : 0))
                 || ((b.kev ? 1 : 0) - (a.kev ? 1 : 0))
                 || ((a.kev ? a.kev.due : '9') < (b.kev ? b.kev.due : '9') ? -1 : (a.kev ? a.kev.due : '9') > (b.kev ? b.kev.due : '9') ? 1 : 0)
@@ -529,7 +526,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             if (!i.kev && i.exploitation === 'poc') out.push('<span class="tag">PoC</span>');
             if (i.automatable === 'yes') out.push('<span class="tag">Automatable</span>');
             if (i.kev) out.push('<span class="tag' + (i.kev.due < today() ? ' hot' : '') + '">Due ' + esc(i.kev.due) + '</span>');
-            if (!i.m) out.push('<span class="tag">Not on watchlist</span>');
+            if (i.w) out.push('<span class="tag">Watched</span>');
             return out.join('');
         }
 
@@ -539,7 +536,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             if (!hot.length) { el.innerHTML = '<p class="empty">Nothing to raise</p>'; return; }
             const shown = hot.slice(0, SHORTLIST_MAX);
             let html = shown.map((i, n) => (
-                '<article class="item' + (i.m ? '' : ' off') + '" style="--n:' + n + '">' +
+                '<article class="item" style="--n:' + n + '">' +
                   '<div class="tier t' + i.t + '">' + TIER_NAMES[i.t] + '</div>' +
                   '<div class="info">' +
                     toggleBtn(i.id, 'short') +
@@ -601,7 +598,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             });
             document.getElementById('count').textContent = list.length + (list.length === 1 ? ' CVE' : ' CVEs');
             document.getElementById('tbody').innerHTML = list.length ? list.map((i, n) => (
-                '<tr class="r ' + (n % 2 ? 'rb' : 'ra') + (i.m ? '' : ' off') + '">' +
+                '<tr class="r ' + (n % 2 ? 'rb' : 'ra') + '">' +
                   '<td class="tcell"><span class="t' + i.t + '">' + TIER_NAMES[i.t] + '</span></td>' +
                   '<td>' + toggleBtn(i.id, 'ledger') + '</td>' +
                   '<td class="prod" title="' + esc(i.name || subject(i)) + '">' + esc(subject(i)) + '</td>' +
