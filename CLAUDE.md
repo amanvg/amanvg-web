@@ -59,7 +59,7 @@ A Reject means make no changes and ask what to adjust.
   Worker API, read-only until a device is Connected (no browser copy).
   Truck setup sits left on Maintenance; due-status signboards, schedule and
   history sit right. On Fuel the Add fill-up form sits left (Connected only),
-  MPG signboards and the 10 newest fill-ups (with miles per tank) sit right. A Cost chip (off by
+  MPG signboards and the 10 newest fill-ups (with miles per tank; MPG red below 16, green above 20) sit right. A Cost chip (off by
   default, saved per browser) shows cost.
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
   `data/visited.json`; a "Create your own" button switches to a blank,

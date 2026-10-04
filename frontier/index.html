@@ -33,7 +33,7 @@
   --shadow:#181c16; --accent:#d9822b; --focus:#24422e; --sel-bg:#d9822b; --sel-fg:#181c16;
   --btn-hover-bg:#ede3ce; --btn-hover-fg:#24422e;
   --well-bg:#f6efe1; --well-shadow:rgba(24,28,22,.15);
-  --live-bg:#a63a24; --live-fg:#f6efe1;
+  --live-bg:#a63a24; --live-fg:#f6efe1; --good:#2f6b3a;
   --act-fg:#24422e; --act-line:#24422e; --act-hover:#f6efe1;
   --pri-bg:#24422e; --pri-fg:#f6efe1; --pri-line:#181c16;
   --over-bg:#a63a24; --over-fg:#f6efe1; --soon-bg:#d9822b; --soon-fg:#181c16; --ok-bg:#24422e; --ok-fg:#f6efe1;
@@ -56,7 +56,7 @@
   --shadow:#060a08; --accent:#e5933a; --focus:#e5933a; --sel-bg:#e5933a; --sel-fg:#0e1511;
   --btn-hover-bg:#1a271f; --btn-hover-fg:#f4ede2;
   --well-bg:#0a0f0c; --well-shadow:#060a08;
-  --live-bg:#ff8168; --live-fg:#3e0400;
+  --live-bg:#ff8168; --live-fg:#3e0400; --good:#7fd69a;
   --act-fg:#f4ede2; --act-line:#35483b; --act-hover:#223329;
   --pri-bg:#e5933a; --pri-fg:#0e1511; --pri-line:#060a08;
   --over-bg:#ff8168; --over-fg:#3e0400; --soon-bg:#e5933a; --soon-fg:#0e1511; --ok-bg:#2d4b38; --ok-fg:#f4ede2;
@@ -202,6 +202,8 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2
 .ledger .wrap{white-space:normal}
 .ledger .sub{display:block;font-weight:600;font-size:13px;letter-spacing:.02em;text-transform:none;color:var(--muted)}
 .ledger .late{color:var(--live-bg);font-weight:700}
+.ledger .mpg-low{color:var(--live-bg);font-weight:700}
+.ledger .mpg-high{color:var(--good);font-weight:700}
 
 .stamp{display:inline-flex;align-items:center;justify-content:center;min-width:76px;padding:4px 10px;border:1.5px solid var(--key);border-radius:9999px;font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .stamp.over{background:var(--over-bg);color:var(--over-fg);border-color:var(--over-bg)}
@@ -785,6 +787,15 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     });
     $('fuel-more').addEventListener('click', () => { showAll = !showAll; renderFuel(); });
 
+    // MPG cell: red below 16.0, green above 20.0 (on the shown one-decimal value).
+    const MPG_LOW = 16, MPG_HIGH = 20;
+    function mpgCell(v) {
+      if (v == null) return el('td', { 'data-label': 'MPG', text: '—' });
+      const shown = dec1(v), n = Number(shown);
+      const tier = n < MPG_LOW ? 'low' : n > MPG_HIGH ? 'high' : null;
+      return el('td', { class: tier ? `mpg-${tier}` : null, 'data-label': 'MPG' }, shown, tier ? el('span', { class: 'sr-only', text: ` ${tier}` }) : null);
+    }
+
     function renderFuel() {
       const stats = mpgStats(data.fuel);
       $('mpg-avg').textContent = stats.average == null ? '—' : dec1(stats.average);
@@ -804,7 +815,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         el('td', { 'data-label': 'Miles', text: stats.tank[f.id] == null ? '—' : int.format(stats.tank[f.id]) }),
         el('td', { 'data-label': 'Gallons', text: f.gallons.toFixed(3) }),
         el('td', { class: 'c-cost', 'data-label': 'Cost', text: usd.format(f.cost) }),
-        el('td', { 'data-label': 'MPG', text: stats.perId[f.id] == null ? '—' : dec1(stats.perId[f.id]) }),
+        mpgCell(stats.perId[f.id]),
         el('td', { class: 'act-cell k-stat' }, delButton(`f:${f.id}`, `${f.date} fill-up`)))));
     }
 
