@@ -54,14 +54,15 @@ A Reject means make no changes and ask what to adjust.
   right, and results update live (no Calculate button).
 - `/tempest/`, `/mlbstadiums/`, `/USStates/`, `/worldmap/`, `/trust/`: follow
   `DESIGN.md` like `/seattlesports/`; region, division and section chips live in
-  the masthead, counts sit on signboards, lists are ledgers.
+  the masthead, counts sit on signboards (tally strips on `/mlbstadiums/`,
+  `/USStates/`, `/worldmap/`, `/trust/`), lists are ledgers.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services.
-  Truck setup sits left on Maintenance; due-status signboards, schedule and
+  Truck setup sits left on Maintenance; due-status tally strip, schedule and
   history sit right. On Fuel the Add fill-up form sits left (Connected only);
-  Average, Last fill-up (each with its change) and Best MPG signboards, then
-  mini boards (fill-ups, gallons, gal/100 mi, avg and best miles per fill-up,
+  Average, Last fill-up (each with its change) and Best MPG tally strip, then
+  a mini strip (fill-ups, gallons, gal/100 mi, avg and best miles per fill-up,
   counting only fills of 10+ gal), the MPG-by-month column chart (last 12
   calendar months ending this month, inline SVG, one hue, best and worst
   labelled), then the 10 newest fill-ups (with miles per

@@ -293,6 +293,7 @@ The shape language reflects hand-trimmed paper, guillotine paper cutters, chisel
 - **Standard Card:** Background in `#ede3ce`, bordered with `2px solid #4d5843`. Padding: `1.5rem`.
 - **Framed Field Card:** Inset nested frame using a `1px solid #4d5843` keyline placed `6px` inside the main `2px solid #24422e` outer boundary, echoing framed park boundary signs.
 - **Header Banding:** Card headers frequently use solid background blocks (e.g., `#24422e` banner across the top) with contrasting light typography to divide sections cleanly.
+- **Tally Strip:** Counts and headline figures sit side by side in one unboxed row, split by `1px` vertical rules in the keyline colour with a single `1px` rule beneath. Each figure is a muted Oswald uppercase label over a left-aligned Oswald number; no header bands, frames or shadows. A lead figure may take its own row at a larger size; status figures carry a small colour square before the label.
 
 ### Badges, Stamps & Chips
 - **Ranger Stamp Badge:** Circular or chamfered pill shape. Uppercase `label-sm` in Work Sans Bold with `0.08em` tracking. Uses high-contrast foreground/background pairs:
