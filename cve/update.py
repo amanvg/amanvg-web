@@ -17,6 +17,7 @@ import csv
 import gzip
 import io
 import json
+import re
 import sys
 import time
 import urllib.error
@@ -122,6 +123,17 @@ def enrich(cve_id):
         if "vendor" in info:
             break
     info["title"] = cna.get("title")
+    for a in [cna] + adp:
+        for pt in a.get("problemTypes") or []:
+            for dsc in pt.get("descriptions") or []:
+                name = re.sub(r"^CWE-\d+\s*[:\-]?\s*", "", (dsc.get("description") or "").strip())
+                if name and not name.upper().startswith(("CWE-", "NVD-CWE-")):
+                    info["cwe"] = name
+                    break
+            if "cwe" in info:
+                break
+        if "cwe" in info:
+            break
     for a in adp:
         for m in a.get("metrics") or []:
             o = (m.get("other") or {})
@@ -174,6 +186,7 @@ def main():
             "cvss": info.get("cvss"), "cvssVersion": info.get("cvssVersion"),
             "exploitation": "active",
             "automatable": info.get("automatable"), "impact": info.get("impact"),
+            "cwe": info.get("cwe"),
         })
         time.sleep(0.15)
 
@@ -195,6 +208,7 @@ def main():
             "cvss": info.get("cvss"), "cvssVersion": info.get("cvssVersion"),
             "exploitation": exploitation,
             "automatable": info.get("automatable"), "impact": info.get("impact"),
+            "cwe": info.get("cwe"),
         })
         if len(likely) >= MAX_LIKELY:
             break

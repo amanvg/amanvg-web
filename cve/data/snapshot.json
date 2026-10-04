@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-03T18:33:14Z",
+ "generatedAt": "2026-10-04T02:05:20Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.02",
  "kevCount": 1733,
@@ -22,7 +22,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Execute unauthorized code or commands"
   },
   {
    "id": "CVE-2025-39682",
@@ -41,7 +42,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Check for Unusual or Exceptional Conditions"
   },
   {
    "id": "CVE-2025-39964",
@@ -60,7 +62,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')"
   },
   {
    "id": "CVE-2026-102489",
@@ -79,7 +82,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Session Fixation"
   },
   {
    "id": "CVE-2026-102490",
@@ -98,7 +102,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Privilege Management"
   },
   {
    "id": "CVE-2026-104286",
@@ -117,7 +122,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Execute unauthorized code or commands"
   },
   {
    "id": "CVE-2026-19490",
@@ -136,7 +142,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Authentication Bypass Using an Alternate Path or Channel"
   },
   {
    "id": "CVE-2026-20079",
@@ -155,7 +162,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Authentication Bypass Using an Alternate Path or Channel"
   },
   {
    "id": "CVE-2026-42016",
@@ -174,7 +182,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Incorrect Authorization"
   },
   {
    "id": "CVE-2026-42018",
@@ -193,7 +202,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "Improper Authentication"
   },
   {
    "id": "CVE-2026-53266",
@@ -212,7 +222,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Out-of-bounds Write"
   },
   {
    "id": "CVE-2026-5430",
@@ -231,7 +242,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Validation of Certificate With Host Mismatch"
   },
   {
    "id": "CVE-2026-58704",
@@ -250,7 +262,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Elevation of privilege"
   },
   {
    "id": "CVE-2026-65660",
@@ -269,7 +282,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Control of Generation of Code ('Code Injection')"
   },
   {
    "id": "CVE-2026-67277",
@@ -288,7 +302,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "Missing authentication for critical function"
   },
   {
    "id": "CVE-2026-67279",
@@ -307,7 +322,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "Improper enforcement of behavioral workflow"
   },
   {
    "id": "CVE-2026-71362",
@@ -326,7 +342,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Incorrect Authorization (CWE-863)"
   },
   {
    "id": "CVE-2026-7273",
@@ -345,7 +362,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Stack-based buffer overflow"
   },
   {
    "id": "CVE-2026-75650",
@@ -364,7 +382,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements Used in a Template Engine (CWE-1336)"
   },
   {
    "id": "CVE-2026-76460",
@@ -383,7 +402,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Incorrect Use of Privileged APIs"
   },
   {
    "id": "CVE-2026-76461",
@@ -402,7 +422,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
   },
   {
    "id": "CVE-2026-76504",
@@ -421,7 +442,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Handling of URL Encoding (Hex Encoding)"
   },
   {
    "id": "CVE-2026-81963",
@@ -440,7 +462,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Link Resolution Before File Access ('Link Following')"
   },
   {
    "id": "CVE-2026-84869",
@@ -459,7 +482,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Missing Authorization"
   },
   {
    "id": "CVE-2026-85046",
@@ -478,7 +502,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Type confusion"
   },
   {
    "id": "CVE-2026-85102",
@@ -497,7 +522,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Certificate Validation."
   },
   {
    "id": "CVE-2026-85706",
@@ -516,7 +542,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
   },
   {
    "id": "CVE-2026-85880",
@@ -535,7 +562,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Heap-based Buffer Overflow"
   },
   {
    "id": "CVE-2026-86060",
@@ -554,7 +582,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper neutralization of argument delimiters in a command ('argument injection')"
   },
   {
    "id": "CVE-2026-86218",
@@ -573,7 +602,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper neutralization of directives in statically saved code ('static code injection')"
   },
   {
    "id": "CVE-2026-86950",
@@ -592,7 +622,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Processing a maliciously crafted file may lead to arbitrary code execution. Apple is aware of a report that this issue may have been exploited in an extremely sophisticated attack against specific targeted individuals on versions of iOS before iOS 27."
   },
   {
    "id": "CVE-2026-87491",
@@ -611,7 +642,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Out of bounds write"
   },
   {
    "id": "CVE-2026-87886",
@@ -630,7 +662,8 @@
    "cvssVersion": "3.0",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": null
   },
   {
    "id": "CVE-2026-87902",
@@ -649,7 +682,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Remote File Inclusion"
   },
   {
    "id": "CVE-2026-88771",
@@ -668,7 +702,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper input validation"
   },
   {
    "id": "CVE-2026-88772",
@@ -687,7 +722,8 @@
    "cvssVersion": "4.0",
    "exploitation": "active",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Restriction of Operations within the Bounds of a Memory Buffer"
   },
   {
    "id": "CVE-2026-93616",
@@ -706,7 +742,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')."
   },
   {
    "id": "CVE-2026-93952",
@@ -725,7 +762,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Input Validation"
   },
   {
    "id": "CVE-2026-94127",
@@ -744,7 +782,8 @@
    "cvssVersion": "3.1",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Heap-based Buffer Overflow"
   },
   {
    "id": "CVE-2026-100852",
@@ -759,7 +798,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-101001",
@@ -774,7 +814,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-101008",
@@ -789,7 +830,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-101075",
@@ -804,7 +846,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-101076",
@@ -819,7 +862,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-101187",
@@ -834,7 +878,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-101260",
@@ -849,7 +894,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-101261",
@@ -864,7 +910,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-101262",
@@ -879,7 +926,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-101263",
@@ -894,7 +942,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-101264",
@@ -909,7 +958,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-101858",
@@ -924,7 +974,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-102240",
@@ -939,7 +990,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-102793",
@@ -954,7 +1006,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-102794",
@@ -969,7 +1022,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-43641",
@@ -984,7 +1038,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-61517",
@@ -999,7 +1054,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-61560",
@@ -1014,7 +1070,8 @@
    "cvssVersion": "3.1",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
   },
   {
    "id": "CVE-2026-73694",
@@ -1029,7 +1086,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-79697",
@@ -1044,7 +1102,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-79698",
@@ -1059,52 +1118,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
-  },
-  {
-   "id": "CVE-2026-85222",
-   "vendor": "D-Link",
-   "product": "DNS-340L",
-   "name": "D-Link DNS-340L Add-On Center addon_center.cgi os command injection",
-   "published": "2026-09-03",
-   "kev": null,
-   "epss": 0.036,
-   "percentile": 0.891,
-   "cvss": 9.4,
-   "cvssVersion": "4.0",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total"
-  },
-  {
-   "id": "CVE-2026-85223",
-   "vendor": "D-Link",
-   "product": "DNS-340L",
-   "name": "D-Link DNS-340L CGI dropbox.cgi os command injection",
-   "published": "2026-09-03",
-   "kev": null,
-   "epss": 0.033,
-   "percentile": 0.88,
-   "cvss": 9.4,
-   "cvssVersion": "4.0",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total"
-  },
-  {
-   "id": "CVE-2026-85224",
-   "vendor": "D-Link",
-   "product": "DNS-320 ShareCenter",
-   "name": "D-Link DNS-320 ShareCenter File Sharing file_sharing.cgi os command injection",
-   "published": "2026-09-03",
-   "kev": null,
-   "epss": 0.036,
-   "percentile": 0.891,
-   "cvss": 9.4,
-   "cvssVersion": "4.0",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-85672",
@@ -1119,7 +1134,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-86151",
@@ -1134,7 +1150,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-86167",
@@ -1149,7 +1166,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-86295",
@@ -1164,7 +1182,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-86299",
@@ -1179,7 +1198,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-86426",
@@ -1194,7 +1214,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Authentication"
   },
   {
    "id": "CVE-2026-89010",
@@ -1209,7 +1230,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-90617",
@@ -1224,7 +1246,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90618",
@@ -1239,7 +1262,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90690",
@@ -1254,7 +1278,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90699",
@@ -1269,7 +1294,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90702",
@@ -1284,7 +1310,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90703",
@@ -1299,7 +1326,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90704",
@@ -1314,7 +1342,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-90705",
@@ -1329,7 +1358,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90706",
@@ -1344,7 +1374,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90788",
@@ -1359,7 +1390,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90843",
@@ -1374,7 +1406,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-90847",
@@ -1389,7 +1422,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-92397",
@@ -1404,7 +1438,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-92398",
@@ -1419,7 +1454,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-93349",
@@ -1434,7 +1470,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-93742",
@@ -1449,7 +1486,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-93958",
@@ -1464,7 +1502,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-94095",
@@ -1479,7 +1518,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-94098",
@@ -1494,7 +1534,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-94138",
@@ -1509,7 +1550,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "partial"
+   "impact": "partial",
+   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-95675",
@@ -1524,7 +1566,8 @@
    "cvssVersion": "4.0",
    "exploitation": "poc",
    "automatable": "yes",
-   "impact": "total"
+   "impact": "total",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   }
  ]
 }

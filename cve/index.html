@@ -142,6 +142,7 @@ main{flex:1;padding:40px var(--margin) 0}
 td .idb{font-size:17px;line-height:22px;gap:6px;white-space:nowrap}
 td .idb svg{width:10px;height:10px}
 .what{margin-top:2px;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);overflow-wrap:anywhere}
+.cwe{margin-top:6px;max-width:70ch;font-family:var(--body);font-size:16px;line-height:22px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .tag{font-family:var(--label);font-weight:700;font-size:11px;line-height:14px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border:1.5px solid currentColor;border-radius:9999px;white-space:nowrap}
 a.tag{color:inherit;text-decoration:none;transition:background .15s,color .15s}
@@ -539,6 +540,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                   '<div class="info">' +
                     toggleBtn(i.id, 'short') +
                     '<div class="what">' + esc(subject(i)) + '</div>' +
+                    (i.cwe ? '<div class="cwe" title="' + esc(i.cwe) + '">' + esc(i.cwe) + '</div>' : '') +
                     '<div class="tags">' + tags(i) + '</div>' +
                   '</div>' +
                   '<div class="nums">' +
