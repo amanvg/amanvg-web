@@ -62,7 +62,9 @@ A Reject means make no changes and ask what to adjust.
   history sit right. On Fuel the Add fill-up form sits left (Connected only);
   Average, Last fill-up (each with its change) and Best MPG signboards, then
   mini boards (fill-ups, gallons, gal/100 mi, avg and best miles per fill-up,
-  counting only fills of 10+ gal), then the 10 newest fill-ups (with miles per
+  counting only fills of 10+ gal), the MPG-by-month column chart (last 12
+  calendar months ending this month, inline SVG, one hue, best and worst
+  labelled), then the 10 newest fill-ups (with miles per
   tank; MPG red below 16, green above 20) sit right. No cost is shown on Fuel
   (fill-ups save cost 0).
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
