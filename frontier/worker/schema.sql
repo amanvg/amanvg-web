@@ -1,0 +1,27 @@
+CREATE TABLE IF NOT EXISTS truck (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  year INTEGER,
+  drive TEXT,
+  odometer INTEGER,
+  use TEXT NOT NULL DEFAULT 'standard'
+);
+
+CREATE TABLE IF NOT EXISTS fuel (
+  id TEXT PRIMARY KEY,
+  date TEXT NOT NULL,
+  miles INTEGER NOT NULL,
+  gallons REAL NOT NULL,
+  cost REAL NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS services (
+  id TEXT PRIMARY KEY,
+  item TEXT NOT NULL,
+  date TEXT NOT NULL,
+  miles INTEGER NOT NULL,
+  cost REAL NOT NULL DEFAULT 0,
+  done_by TEXT NOT NULL,
+  notes TEXT NOT NULL DEFAULT ''
+);
+
+CREATE INDEX IF NOT EXISTS fuel_date ON fuel (date, miles);

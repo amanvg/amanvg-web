@@ -299,8 +299,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <button class="btn" id="export" type="button">Export</button>
             </div>
             <form class="bar connect" id="connect-form" novalidate hidden>
-                <label for="token">Token</label>
-                <input type="password" id="token" autocomplete="off" spellcheck="false" aria-describedby="connect-msg">
+                <label for="key-input">Key</label>
+                <input type="password" id="key-input" autocomplete="off" spellcheck="false" aria-describedby="connect-msg">
                 <button class="btn" type="submit">Connect</button>
                 <button class="btn" type="button" id="connect-cancel">Cancel</button>
                 <span class="note error-text" id="connect-msg" role="status" aria-live="polite"></span>
@@ -650,15 +650,15 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
     // </pure>
 
-    const LOG_URL = '/frontier/data/log.json';
-    const FILE_URL = 'https://api.github.com/repos/amanvg/amanvg-web/contents/frontier/data/log.json';
-    const TOKEN_KEY = 'frontier:gh';
+    // The log lives in a Cloudflare D1 database behind frontier/worker/worker.js.
+    const API = ['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://localhost:8787' : 'https://frontier-log.amanvg.workers.dev';
+    const KEY_KEY = 'frontier:key';
     let siteState = 'loading'; // loading | ok | error
     let saveState = '';        // '' | saving | saved | failed
     let note = '';
-    let token = null;
-    try { token = localStorage.getItem(TOKEN_KEY) || null; } catch (e) { /* blocked */ }
-    const canEdit = () => !!token && siteState === 'ok';
+    let apiKey = null;
+    try { apiKey = localStorage.getItem(KEY_KEY) || null; } catch (e) { /* blocked */ }
+    const canEdit = () => !!apiKey && siteState === 'ok';
 
     // ---------------------------------------------------------------------------
     // DOM
@@ -816,10 +816,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     function paintStatus() {
       const text = siteState === 'loading' ? 'Loading' : siteState === 'error' ? 'Log unavailable'
-        : saveState === 'saving' ? 'Saving' : saveState === 'saved' ? 'Saved' : saveState === 'failed' ? 'Save failed' : token ? 'Connected' : '';
+        : saveState === 'saving' ? 'Saving' : saveState === 'saved' ? 'Saved' : saveState === 'failed' ? 'Save failed' : apiKey ? 'Connected' : '';
       $('saved').textContent = note && siteState !== 'loading' ? (text ? `${text} · ${note}` : note) : text;
       $('export').hidden = siteState !== 'ok';
-      $('connect').textContent = token ? 'Disconnect' : 'Connect';
+      $('connect').textContent = apiKey ? 'Disconnect' : 'Connect';
       document.body.classList.toggle('rw', canEdit());
       $('fuel-add').disabled = saveState === 'saving';
     }
@@ -842,53 +842,34 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       renderAll(); paintStatus();
     }
 
-    // --- GitHub: read and write frontier/data/log.json ------------------------------
-    const ghFetch = (url, init = {}) => fetch(url, {
+    // --- API: read and write the log ----------------------------------------------
+    const call = (method, path, body) => fetch(API + path, {
+      method,
       cache: 'no-store',
-      ...init,
-      headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${token}`, ...(init.body ? { 'Content-Type': 'application/json' } : {}) },
+      headers: { ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      body: body ? JSON.stringify(body) : undefined,
     });
-    function toB64(str) {
-      const bytes = new TextEncoder().encode(str);
-      let bin = '';
-      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-      return btoa(bin);
-    }
-    const fromB64 = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, '')), (c) => c.charCodeAt(0)));
 
-    function dropToken() {
-      token = null;
-      try { localStorage.removeItem(TOKEN_KEY); } catch (e) { /* ignore */ }
+    function dropKey() {
+      apiKey = null;
+      try { localStorage.removeItem(KEY_KEY); } catch (e) { /* ignore */ }
     }
 
-    // Every save reads the file fresh, applies the change to it, and commits it
-    // with that read's sha, so a stale page never overwrites another device.
-    // Saves run one at a time. Resolves true when committed.
-    let chain = Promise.resolve();
-    function mutate(fn, message) {
-      const run = chain.then(() => commit(fn, message, true));
-      chain = run.catch(() => false);
-      return run;
-    }
-    async function commit(fn, message, retry) {
+    // One write at a time; the server returns the whole log, which replaces `data`.
+    // Resolves true when saved.
+    async function save(method, path, body) {
       saveState = 'saving'; note = ''; paintStatus();
       try {
-        const r = await ghFetch(`${FILE_URL}?ref=main`);
-        if (r.status === 401) { dropToken(); saveState = 'failed'; note = 'Token rejected'; paintStatus(); return false; }
-        if (!r.ok) throw new Error(`Error ${r.status}`);
-        const j = await r.json();
-        const cur = validateData(JSON.parse(fromB64(j.content)));
-        if (!cur) throw new Error('Invalid log');
-        const next = fn(cur);
-        const w = await ghFetch(FILE_URL, { method: 'PUT', body: JSON.stringify({ message, content: toB64(JSON.stringify(next, null, 2) + '\n'), sha: j.sha, branch: 'main' }) });
-        if ((w.status === 409 || w.status === 422) && retry) return commit(fn, message, false);
-        if (w.status === 401) { dropToken(); saveState = 'failed'; note = 'Token rejected'; paintStatus(); return false; }
-        if (!w.ok) throw new Error(w.status === 403 || w.status === 404 ? 'No write access' : `Error ${w.status}`);
+        const r = await call(method, path, body);
+        if (r.status === 401) { dropKey(); saveState = 'failed'; note = 'Key rejected'; renderFuel(); paintStatus(); return false; }
+        if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || `Error ${r.status}`); }
+        const next = validateData(await r.json());
+        if (!next) throw new Error('Invalid log');
         data = next; saveState = 'saved'; note = '';
         renderControls();
         return true;
       } catch (e) {
-        saveState = 'failed'; note = e && e.message ? e.message : 'Offline';
+        saveState = 'failed'; note = e instanceof TypeError ? 'Offline' : e.message;
         paintStatus();
         return false;
       }
@@ -910,12 +891,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       if (gallons === null || gallons <= 0) return say('fuel-msg', 'Invalid gallons');
       if (cost === null || cost < 0) return say('fuel-msg', 'Invalid cost');
       say('fuel-msg', '');
-      const entry = { id: newId(), date, miles: Math.round(miles), gallons, cost };
-      const ok = await mutate((cur) => {
-        cur.fuel.push(entry);
-        if (cur.truck.odometer == null || entry.miles > cur.truck.odometer) cur.truck.odometer = entry.miles;
-        return cur;
-      }, 'frontier: log fill-up');
+      const ok = await save('POST', '/fuel', { date, miles: Math.round(miles), gallons, cost });
       if (!ok) return;
       fuelGal.value = ''; fuelCost.value = ''; fuelDate.value = todayISO();
       delete fuelMiles.dataset.typed;
@@ -934,8 +910,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const key = b.dataset.key;
       if (armed === key) {
         armed = null;
-        const id = key.slice(2);
-        mutate((cur) => { cur.fuel = cur.fuel.filter((f) => f.id !== id); return cur; }, 'frontier: delete fill-up');
+        save('DELETE', `/fuel/${key.slice(2)}`);
         renderFuel();
         return;
       }
@@ -946,28 +921,28 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       if (e.key === 'Escape' && armed) { const k = armed; armed = null; renderFuel(); restoreFocus(k); }
     });
 
-    // Connect: a fine-grained token (this repo, Contents read and write) kept in this browser.
+    // Connect: the key set with `wrangler secret put FRONTIER_KEY`, kept in this browser.
     const connectForm = $('connect-form');
     $('connect').addEventListener('click', () => {
-      if (token) { dropToken(); saveState = ''; note = ''; loadSite(); return; }
+      if (apiKey) { dropKey(); saveState = ''; note = ''; renderFuel(); paintStatus(); return; }
       connectForm.hidden = !connectForm.hidden;
-      if (!connectForm.hidden) $('token').focus();
+      if (!connectForm.hidden) $('key-input').focus();
     });
-    $('connect-cancel').addEventListener('click', () => { connectForm.hidden = true; $('token').value = ''; say('connect-msg', ''); $('connect').focus(); });
+    $('connect-cancel').addEventListener('click', () => { connectForm.hidden = true; $('key-input').value = ''; say('connect-msg', ''); $('connect').focus(); });
     connectForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const t = $('token').value.trim();
-      if (!t) return say('connect-msg', 'Token required');
-      token = t;
+      const k = $('key-input').value.trim();
+      if (!k) return say('connect-msg', 'Key required');
+      apiKey = k;
       say('connect-msg', 'Checking');
       try {
-        const r = await ghFetch(`${FILE_URL}?ref=main`);
-        if (!r.ok) { token = null; return say('connect-msg', r.status === 401 ? 'Token rejected' : `Error ${r.status}`); }
-      } catch (err) { token = null; return say('connect-msg', 'Offline'); }
-      try { localStorage.setItem(TOKEN_KEY, t); } catch (err) { /* kept in memory only */ }
-      $('token').value = ''; say('connect-msg', ''); connectForm.hidden = true;
+        const r = await call('GET', '/auth');
+        if (!r.ok) { apiKey = null; return say('connect-msg', r.status === 401 ? 'Key rejected' : `Error ${r.status}`); }
+      } catch (err) { apiKey = null; return say('connect-msg', 'Offline'); }
+      try { localStorage.setItem(KEY_KEY, k); } catch (err) { /* kept in memory only */ }
+      $('key-input').value = ''; say('connect-msg', ''); connectForm.hidden = true;
       saveState = ''; note = '';
-      loadSite();
+      renderFuel(); paintStatus();
     });
 
     // Export
@@ -1033,18 +1008,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     async function loadSite() {
       siteState = 'loading'; paintStatus();
       try {
-        let text;
-        if (token) {
-          const r = await ghFetch(`${FILE_URL}?ref=main`);
-          if (r.status === 401) { dropToken(); note = 'Token rejected'; return loadSite(); }
-          if (!r.ok) throw new Error(String(r.status));
-          text = fromB64((await r.json()).content);
-        } else {
-          const r = await fetch(`${LOG_URL}?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
-          if (!r.ok) throw new Error(String(r.status));
-          text = await r.text();
-        }
-        const parsed = validateData(JSON.parse(text));
+        const r = await call('GET', '/log');
+        if (!r.ok) throw new Error(String(r.status));
+        const parsed = validateData(await r.json());
         if (!parsed) throw new Error('invalid');
         data = parsed; siteState = 'ok';
       } catch (e) { siteState = 'error'; }

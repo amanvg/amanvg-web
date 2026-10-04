@@ -1,0 +1,8 @@
+name = "frontier-log"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "frontier"
+database_id = "99b45f76-5149-4370-93c9-b9dfd0390354"

@@ -5,3 +5,6 @@ agent.log
 .DS_Store
 .playwright-mcp/
 .impeccable/review/
+.wrangler/
+node_modules/
+.dev.vars
