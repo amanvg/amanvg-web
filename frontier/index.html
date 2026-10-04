@@ -229,6 +229,9 @@ fieldset{border:0;min-width:0}
 .ledger .wrap{white-space:normal}
 .ledger .sub{display:block;font-weight:600;font-size:13px;letter-spacing:.02em;text-transform:none;color:var(--muted)}
 .ledger .late{color:var(--live-bg);font-weight:700}
+.ledger .due{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.ledger .due-line,.ledger .nw{white-space:nowrap}
+.ledger .due-line .sub{display:inline;margin-left:8px}
 .ledger .mpg-low{color:var(--live-bg);font-weight:700}
 .ledger .mpg-high{color:var(--good);font-weight:700}
 
@@ -295,6 +298,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .ledger.stack td:first-child{grid-column:1;grid-row:1}
   .ledger.stack td.k-stat{grid-column:2;grid-row:1;text-align:right}
   .ledger.stack td.k-wide{grid-column:1/-1}
+  .ledger.stack td.k-due{grid-column:1/-1}
+  .ledger.stack .due{align-items:flex-start}
   .ledger.stack td[data-label]::before{content:attr(data-label) " ";color:var(--muted);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
   .ledger.stack td.empty{grid-column:1/-1}
   .ledger.stack tfoot{display:block}
@@ -650,20 +655,28 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // due-soon thresholds (500 mi, 30 days); the smaller score is the limit that
     // comes first, and label, stamp and sort all read the same score.
     function dueStatus(item, last, odometer, today) {
-      if (!last) return { state: 'none' };
+      // `due`: where each limit falls, as the target and what is left (negative = past).
+      // Never logged, only the first mileage is known: there is no in-service date.
+      if (!last) {
+        const mi = item.miles != null && odometer != null ? { at: item.miles, rem: item.miles - odometer } : null;
+        return { state: 'none', due: { mi, days: null } };
+      }
       const iv = intervalFor(item, true);
       const cands = [];
+      const due = { mi: null, days: null };
       if (iv.miles != null && odometer != null) {
-        const rem = last.miles + iv.miles - odometer;
+        const at = last.miles + iv.miles, rem = at - odometer;
+        due.mi = { at, rem };
         cands.push({ kind: 'mi', rem, score: rem / DUE_MILES });
       }
       if (iv.months != null) {
-        const rem = diffDays(addMonths(last.date, iv.months), today);
+        const at = addMonths(last.date, iv.months), rem = diffDays(at, today);
+        due.days = { at, rem };
         cands.push({ kind: 'days', rem, score: rem / DUE_DAYS });
       }
-      if (!cands.length) return { state: 'unknown' };
+      if (!cands.length) return { state: 'unknown', due };
       const c = cands.reduce((a, b) => (b.score < a.score ? b : a));
-      return { state: c.score < 0 ? 'over' : c.score <= 1 ? 'soon' : 'ok', kind: c.kind, rem: c.rem, score: c.score };
+      return { state: c.score < 0 ? 'over' : c.score <= 1 ? 'soon' : 'ok', kind: c.kind, rem: c.rem, score: c.score, due };
     }
 
     // One row per applicable schedule item, sorted: scored (worst first), then
@@ -836,11 +849,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return [iv.miles != null ? `${int.format(iv.miles)} mi` : null, iv.months != null ? `${iv.months} mo` : null].filter(Boolean).join(' · ');
     }
 
-    function dueText(r) {
-      const n = Math.abs(r.rem);
-      const unit = r.kind === 'mi' ? `${int.format(n)} mi` : plural(n, 'day');
-      return r.state === 'over' ? `Overdue ${unit}` : `Due in ${unit}`;
+    // One line of the Next due cell: what is left (or past) and where the limit falls.
+    function dueLine(d, kind) {
+      if (!d) return el('span', { class: 'due-line', text: '—' });
+      const n = Math.abs(d.rem);
+      const unit = kind === 'mi' ? `${int.format(n)} mi` : plural(n, 'day');
+      const at = kind === 'mi' ? `${int.format(d.at)} mi` : d.at;
+      return el('span', { class: `due-line${d.rem < 0 ? ' late' : ''}` }, d.rem < 0 ? `${unit} past` : `${unit} left`, el('span', { class: 'sub', text: at }));
     }
+    const dueCell = (r) => el('td', { class: 'k-r k-due', 'data-label': 'Next' },
+      el('span', { class: 'due' }, dueLine(r.due.days, 'days'), dueLine(r.due.mi, 'mi')),
+      r.state === 'none' ? el('span', { class: 'sr-only', text: 'Not logged' }) : null);
 
     function setNum(id, n) {
       const node = $(id);
@@ -862,11 +881,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         const stamp = el('span', { class: `stamp ${r.state}` },
           plain ? el('span', { 'aria-hidden': 'true', text: stampText }) : stampText,
           plain ? el('span', { class: 'sr-only', text: 'No status' }) : null);
-        const next = r.state === 'none' ? 'Not logged' : r.state === 'unknown' ? '—' : dueText(r);
         return el('tr', null,
           el('td', { class: 'wrap' }, r.item.label, el('span', { class: 'sub', text: intervalText(r.interval) })),
-          el('td', { class: 'wrap k-r', 'data-label': 'Last' }, r.last ? `${r.last.date}` : '—', r.last ? el('span', { class: 'sub', text: `${int.format(r.last.miles)} mi` }) : null, r.last && r.last.item === MPI ? el('span', { class: 'sub', text: 'MPI' }) : null),
-          el('td', { class: `wrap k-r${r.state === 'over' ? ' late' : ''}`, 'data-label': 'Next' }, next),
+          el('td', { class: 'k-r', 'data-label': 'Last' }, r.last ? el('span', { class: 'nw', text: r.last.date }) : '—', r.last ? el('span', { class: 'sub', text: `${int.format(r.last.miles)} mi` }) : null, r.last && r.last.item === MPI ? el('span', { class: 'sub', text: 'MPI' }) : null),
+          dueCell(r),
           el('td', { class: 'k-stat' }, stamp));
       });
       $('sched-body').replaceChildren(...trs);
