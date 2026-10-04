@@ -55,10 +55,11 @@ A Reject means make no changes and ask what to adjust.
 - `/tempest/`, `/mlbstadiums/`, `/USStates/`, `/worldmap/`, `/trust/`: follow
   `DESIGN.md` like `/seattlesports/`; region, division and section chips live in
   the masthead, counts sit on signboards, lists are ledgers.
-- `/frontier/`: follows `DESIGN.md` like `/commute/`; read-only view of the
-  committed `data/log.json` (no forms, no browser copy). Truck setup sits left
-  on Maintenance; due-status signboards, schedule and history, and on Fuel the
-  MPG signboards and the 10 newest fill-ups, sit right. A Cost chip (off by
+- `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the committed
+  `data/log.json`, read-only until a device is Connected (no browser copy).
+  Truck setup sits left on Maintenance; due-status signboards, schedule and
+  history sit right. On Fuel the Add fill-up form sits left (Connected only),
+  MPG signboards and the 10 newest fill-ups sit right. A Cost chip (off by
   default, saved per browser) shows cost.
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
   `data/visited.json`; a "Create your own" button switches to a blank,
@@ -94,10 +95,14 @@ A Reject means make no changes and ask what to adjust.
   `mlbstadiums/data/visited.json` are hand-edited config (`{"version":1,
   "visited":[...]}`), read same-origin; a browser Export uses the same schema.
 - `frontier/data/log.json` is the only Frontier data (`version`, `truck`,
-  `services`, `fuel`), hand-edited and read same-origin; fill-ups came from a
-  Fuelly CSV export (cost 0, no price data). The map "Create your own" copies
-  save to `localStorage` (`<folder>:mine`) with Export/Import; there is no
-  backend.
+  `services`, `fuel`); seeded from a Fuelly CSV export (cost 0, no price
+  data). Visitors read it same-origin. A device that pastes a fine-grained
+  GitHub token (this repo, Contents read and write; kept in that browser's
+  `localStorage`, `frontier:gh`) reads it through the GitHub API and saves by
+  committing it (fresh read, change, PUT with sha, one retry on conflict);
+  commit messages are `frontier: log fill-up` / `frontier: delete fill-up`.
+  The map "Create your own" copies save to `localStorage` (`<folder>:mine`)
+  with Export/Import; there is no other backend.
 - Workflows only commit when real data moved (they ignore timestamp-only diffs).
 
 ## Sections
@@ -112,8 +117,8 @@ A Reject means make no changes and ask what to adjust.
   browser-saved watchlist. Follows `DESIGN.md`.
 - `/frontier/` Frontier Maintenance: service and fill-up log for a 2022+ Nissan
   Frontier, due status from odometer and date against Nissan's schedule, cost
-  and MPG ledgers, all read from the committed log; update it by editing
-  `data/log.json`.
+  and MPG ledgers, all read from the committed log; fill-ups are logged from
+  the page once a device is Connected (services are edited in `data/log.json`).
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
   dashboards and maps; `carpicker/` is an older, unlinked page.
 - Home categories: Sports, Personal (Frontier, US States, Countries, MLB

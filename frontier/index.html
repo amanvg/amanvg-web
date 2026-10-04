@@ -109,7 +109,12 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar .grow{flex:1 1 auto}
 .bar .grow:empty{display:none}
 .bar #export{margin-left:auto}
-#pane-fuel{grid-template-columns:1fr}
+body:not(.rw) #pane-fuel{grid-template-columns:1fr}
+body:not(.rw) #pane-fuel>.inputs,body:not(.rw) .act-col{display:none}
+.bar.connect{border-top:0;gap:12px}
+.bar.connect label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
+.bar.connect input{flex:1 1 220px;max-width:460px}
+.bar #connect-msg:empty{display:none}
 .nocost .c-cost{display:none}
 .nocost .signs{grid-template-columns:repeat(2,minmax(0,1fr))}
 #fuel-more{margin-top:12px;align-self:flex-start}
@@ -128,7 +133,7 @@ main{flex:1;padding:28px var(--margin) 0}
 
 .sel{position:relative;min-width:0}
 .sel::after{content:'';position:absolute;right:14px;top:50%;margin-top:-3px;border:6px solid transparent;border-top:7px solid var(--text);border-bottom:0;pointer-events:none}
-select,input[type=text],input[type=number],input[type=date]{width:100%;min-width:0;min-height:44px;background:var(--well-bg);color:var(--text);border:2px solid var(--key);border-radius:0;box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:6px 12px;font-family:var(--body);font-size:20px;line-height:28px;font-variant-numeric:lining-nums tabular-nums;caret-color:var(--accent);transition:border-color .15s,box-shadow .15s}
+select,input[type=text],input[type=number],input[type=date],input[type=password]{width:100%;min-width:0;min-height:44px;background:var(--well-bg);color:var(--text);border:2px solid var(--key);border-radius:0;box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:6px 12px;font-family:var(--body);font-size:20px;line-height:28px;font-variant-numeric:lining-nums tabular-nums;caret-color:var(--accent);transition:border-color .15s,box-shadow .15s}
 select{-webkit-appearance:none;appearance:none;padding-right:36px;cursor:pointer;text-overflow:ellipsis}
 select option{background:var(--card);color:var(--text)}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
@@ -290,8 +295,16 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <span class="note" id="saved" role="status" aria-live="polite">Loading</span>
                 <span class="grow note" id="data-status" role="status" aria-live="polite"></span>
                 <button class="btn" id="cost-btn" type="button" aria-pressed="false" hidden>Cost</button>
+                <button class="btn" id="connect" type="button">Connect</button>
                 <button class="btn" id="export" type="button">Export</button>
             </div>
+            <form class="bar connect" id="connect-form" novalidate hidden>
+                <label for="token">Token</label>
+                <input type="password" id="token" autocomplete="off" spellcheck="false" aria-describedby="connect-msg">
+                <button class="btn" type="submit">Connect</button>
+                <button class="btn" type="button" id="connect-cancel">Cancel</button>
+                <span class="note error-text" id="connect-msg" role="status" aria-live="polite"></span>
+            </form>
             <div class="body" id="pane-maint" role="tabpanel" aria-labelledby="tab-maint">
                 <div class="panel inputs" id="inputs">
                     <div class="group">
@@ -350,6 +363,33 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 </div>
             </div>
             <div class="body" id="pane-fuel" role="tabpanel" aria-labelledby="tab-fuel" hidden>
+                <div class="panel inputs">
+                    <form class="group" id="fuel-form" novalidate aria-labelledby="fuel-h">
+                        <h2 class="section-label" id="fuel-h">Log fill-up</h2>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="fuel-date">Date</label>
+                                <input type="date" id="fuel-date" autocomplete="off">
+                            </div>
+                            <div class="field">
+                                <label for="fuel-miles">Odometer</label>
+                                <input type="number" id="fuel-miles" min="0" step="1" inputmode="numeric" placeholder="mi" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="fuel-gal">Gallons</label>
+                                <input type="number" id="fuel-gal" min="0" step="0.001" inputmode="decimal" placeholder="0.000" autocomplete="off">
+                            </div>
+                            <div class="field c-cost">
+                                <label for="fuel-cost">Cost, USD</label>
+                                <input type="number" id="fuel-cost" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="error-text msg" id="fuel-msg" role="status" aria-live="polite"></div>
+                        <button class="act pri" id="fuel-add" type="submit">Add fill-up</button>
+                    </form>
+                </div>
                 <div class="panel">
                     <div class="results">
                         <div class="signs">
@@ -369,7 +409,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="fuel-l">Fill-ups</h2>
                             <table class="ledger stack" aria-labelledby="fuel-l">
-                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col" class="c-cost">Cost</th><th scope="col">MPG</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col" class="c-cost">Cost</th><th scope="col">MPG</th><th scope="col" class="act-col">Delete</th></tr></thead>
                                 <tbody id="fuel-body"></tbody>
                             </table>
                             <button class="btn" id="fuel-more" type="button" hidden></button>
@@ -611,7 +651,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // </pure>
 
     const LOG_URL = '/frontier/data/log.json';
+    const FILE_URL = 'https://api.github.com/repos/amanvg/amanvg-web/contents/frontier/data/log.json';
+    const TOKEN_KEY = 'frontier:gh';
     let siteState = 'loading'; // loading | ok | error
+    let saveState = '';        // '' | saving | saved | failed
+    let note = '';
+    let token = null;
+    try { token = localStorage.getItem(TOKEN_KEY) || null; } catch (e) { /* blocked */ }
+    const canEdit = () => !!token && siteState === 'ok';
 
     // ---------------------------------------------------------------------------
     // DOM
@@ -623,6 +670,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const usd0 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
     const dec1 = (n) => n.toFixed(1);
     const plural = (n, w) => `${int.format(n)} ${w}${n === 1 ? '' : 's'}`;
+    const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
     const labelOf = (id) => { const s = SCHEDULE.find((x) => x.id === id); return s ? s.label : id === MPI ? 'Multi Point Inspection' : id === 'other' ? 'Other' : id; };
 
     // Build elements without innerHTML so user text only ever goes in as text.
@@ -640,6 +688,19 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     const odo = $('odo'), yearSel = $('year'), driveSel = $('drive');
     function option(value, text) { return el('option', { value, text }); }
+
+    const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+    let armed = null; // key of the row whose delete is waiting for a second click
+    const fuelDate = $('fuel-date'), fuelMiles = $('fuel-miles'), fuelGal = $('fuel-gal'), fuelCost = $('fuel-cost');
+
+    // Icon delete button; the first click arms it, the second deletes.
+    function delButton(key, what) {
+      if (!canEdit()) return null;
+      const on = armed === key;
+      const b = el('button', { class: `del${on ? ' armed' : ''}`, type: 'button', 'data-key': key, 'aria-label': `${on ? 'Confirm delete' : 'Delete'} ${what}` });
+      if (on) b.textContent = 'Delete'; else b.innerHTML = TRASH; // TRASH is a static literal
+      return b;
+    }
 
     function renderYears() {
       const top = Math.max(new Date().getFullYear() + 1, data.truck.year || 0);
@@ -735,13 +796,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       more.hidden = all.length <= RECENT;
       more.textContent = showAll ? `Show recent ${RECENT}` : `Show all ${all.length}`;
       const rows = showAll ? all : all.slice(0, RECENT);
-      if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 5, text: 'No fill-ups' }))); return; }
+      if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 6, text: 'No fill-ups' }))); return; }
       $('fuel-body').replaceChildren(...rows.map((f) => el('tr', null,
         el('td', { text: f.date }),
         el('td', { 'data-label': 'Odometer', text: `${int.format(f.miles)} mi` }),
         el('td', { 'data-label': 'Gallons', text: f.gallons.toFixed(3) }),
         el('td', { class: 'c-cost', 'data-label': 'Cost', text: usd.format(f.cost) }),
-        el('td', { 'data-label': 'MPG', text: stats.perId[f.id] == null ? '—' : dec1(stats.perId[f.id]) }))));
+        el('td', { 'data-label': 'MPG', text: stats.perId[f.id] == null ? '—' : dec1(stats.perId[f.id]) }),
+        el('td', { class: 'act-cell k-stat' }, delButton(`f:${f.id}`, `${f.date} fill-up`)))));
     }
 
     function renderCosts() {
@@ -753,8 +815,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     function paintStatus() {
-      $('saved').textContent = { loading: 'Loading', ok: '', error: 'Log unavailable' }[siteState];
+      const text = siteState === 'loading' ? 'Loading' : siteState === 'error' ? 'Log unavailable'
+        : saveState === 'saving' ? 'Saving' : saveState === 'saved' ? 'Saved' : saveState === 'failed' ? 'Save failed' : token ? 'Connected' : '';
+      $('saved').textContent = note && siteState !== 'loading' ? (text ? `${text} · ${note}` : note) : text;
       $('export').hidden = siteState !== 'ok';
+      $('connect').textContent = token ? 'Disconnect' : 'Connect';
+      document.body.classList.toggle('rw', canEdit());
+      $('fuel-add').disabled = saveState === 'saving';
     }
 
     function renderAll() {
@@ -771,8 +838,137 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       driveSel.value = data.truck.drive || '';
       paintUse();
       odo.value = data.truck.odometer == null ? '' : String(data.truck.odometer);
+      if (!fuelMiles.dataset.typed) fuelMiles.value = odo.value;
       renderAll(); paintStatus();
     }
+
+    // --- GitHub: read and write frontier/data/log.json ------------------------------
+    const ghFetch = (url, init = {}) => fetch(url, {
+      cache: 'no-store',
+      ...init,
+      headers: { Accept: 'application/vnd.github+json', Authorization: `Bearer ${token}`, ...(init.body ? { 'Content-Type': 'application/json' } : {}) },
+    });
+    function toB64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      return btoa(bin);
+    }
+    const fromB64 = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, '')), (c) => c.charCodeAt(0)));
+
+    function dropToken() {
+      token = null;
+      try { localStorage.removeItem(TOKEN_KEY); } catch (e) { /* ignore */ }
+    }
+
+    // Every save reads the file fresh, applies the change to it, and commits it
+    // with that read's sha, so a stale page never overwrites another device.
+    // Saves run one at a time. Resolves true when committed.
+    let chain = Promise.resolve();
+    function mutate(fn, message) {
+      const run = chain.then(() => commit(fn, message, true));
+      chain = run.catch(() => false);
+      return run;
+    }
+    async function commit(fn, message, retry) {
+      saveState = 'saving'; note = ''; paintStatus();
+      try {
+        const r = await ghFetch(`${FILE_URL}?ref=main`);
+        if (r.status === 401) { dropToken(); saveState = 'failed'; note = 'Token rejected'; paintStatus(); return false; }
+        if (!r.ok) throw new Error(`Error ${r.status}`);
+        const j = await r.json();
+        const cur = validateData(JSON.parse(fromB64(j.content)));
+        if (!cur) throw new Error('Invalid log');
+        const next = fn(cur);
+        const w = await ghFetch(FILE_URL, { method: 'PUT', body: JSON.stringify({ message, content: toB64(JSON.stringify(next, null, 2) + '\n'), sha: j.sha, branch: 'main' }) });
+        if ((w.status === 409 || w.status === 422) && retry) return commit(fn, message, false);
+        if (w.status === 401) { dropToken(); saveState = 'failed'; note = 'Token rejected'; paintStatus(); return false; }
+        if (!w.ok) throw new Error(w.status === 403 || w.status === 404 ? 'No write access' : `Error ${w.status}`);
+        data = next; saveState = 'saved'; note = '';
+        renderControls();
+        return true;
+      } catch (e) {
+        saveState = 'failed'; note = e && e.message ? e.message : 'Offline';
+        paintStatus();
+        return false;
+      }
+    }
+
+    function say(id, text) { $(id).textContent = text; }
+
+    fuelMiles.addEventListener('input', () => { fuelMiles.dataset.typed = '1'; });
+
+    $('fuel-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!canEdit() || saveState === 'saving') return;
+      const date = normDate(fuelDate.value);
+      const miles = toNum(fuelMiles.value);
+      const gallons = toNum(fuelGal.value);
+      const cost = fuelCost.value.trim() === '' ? 0 : toNum(fuelCost.value);
+      if (parseISO(date) === null) return say('fuel-msg', 'Invalid date');
+      if (miles === null || miles < 0) return say('fuel-msg', 'Odometer required');
+      if (gallons === null || gallons <= 0) return say('fuel-msg', 'Invalid gallons');
+      if (cost === null || cost < 0) return say('fuel-msg', 'Invalid cost');
+      say('fuel-msg', '');
+      const entry = { id: newId(), date, miles: Math.round(miles), gallons, cost };
+      const ok = await mutate((cur) => {
+        cur.fuel.push(entry);
+        if (cur.truck.odometer == null || entry.miles > cur.truck.odometer) cur.truck.odometer = entry.miles;
+        return cur;
+      }, 'frontier: log fill-up');
+      if (!ok) return;
+      fuelGal.value = ''; fuelCost.value = ''; fuelDate.value = todayISO();
+      delete fuelMiles.dataset.typed;
+      renderControls();
+    });
+
+    // Delete: first click arms the row's button, second click removes the entry.
+    function restoreFocus(key) {
+      const b = key && document.querySelector(`button[data-key="${key}"]`);
+      if (b) b.focus();
+    }
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('button.del');
+      if (!b) { if (armed) { armed = null; renderFuel(); } return; }
+      if (!canEdit()) return;
+      const key = b.dataset.key;
+      if (armed === key) {
+        armed = null;
+        const id = key.slice(2);
+        mutate((cur) => { cur.fuel = cur.fuel.filter((f) => f.id !== id); return cur; }, 'frontier: delete fill-up');
+        renderFuel();
+        return;
+      }
+      armed = key;
+      renderFuel(); restoreFocus(key);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && armed) { const k = armed; armed = null; renderFuel(); restoreFocus(k); }
+    });
+
+    // Connect: a fine-grained token (this repo, Contents read and write) kept in this browser.
+    const connectForm = $('connect-form');
+    $('connect').addEventListener('click', () => {
+      if (token) { dropToken(); saveState = ''; note = ''; loadSite(); return; }
+      connectForm.hidden = !connectForm.hidden;
+      if (!connectForm.hidden) $('token').focus();
+    });
+    $('connect-cancel').addEventListener('click', () => { connectForm.hidden = true; $('token').value = ''; say('connect-msg', ''); $('connect').focus(); });
+    connectForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const t = $('token').value.trim();
+      if (!t) return say('connect-msg', 'Token required');
+      token = t;
+      say('connect-msg', 'Checking');
+      try {
+        const r = await ghFetch(`${FILE_URL}?ref=main`);
+        if (!r.ok) { token = null; return say('connect-msg', r.status === 401 ? 'Token rejected' : `Error ${r.status}`); }
+      } catch (err) { token = null; return say('connect-msg', 'Offline'); }
+      try { localStorage.setItem(TOKEN_KEY, t); } catch (err) { /* kept in memory only */ }
+      $('token').value = ''; say('connect-msg', ''); connectForm.hidden = true;
+      saveState = ''; note = '';
+      loadSite();
+    });
 
     // Export
     $('export').addEventListener('click', () => {
@@ -835,16 +1031,27 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     setPane(startPane);
 
     async function loadSite() {
+      siteState = 'loading'; paintStatus();
       try {
-        const r = await fetch(`${LOG_URL}?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
-        if (!r.ok) throw new Error(String(r.status));
-        const parsed = validateData(await r.json());
+        let text;
+        if (token) {
+          const r = await ghFetch(`${FILE_URL}?ref=main`);
+          if (r.status === 401) { dropToken(); note = 'Token rejected'; return loadSite(); }
+          if (!r.ok) throw new Error(String(r.status));
+          text = fromB64((await r.json()).content);
+        } else {
+          const r = await fetch(`${LOG_URL}?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
+          if (!r.ok) throw new Error(String(r.status));
+          text = await r.text();
+        }
+        const parsed = validateData(JSON.parse(text));
         if (!parsed) throw new Error('invalid');
         data = parsed; siteState = 'ok';
       } catch (e) { siteState = 'error'; }
       renderControls();
     }
 
+    fuelDate.value = todayISO();
     paintCost();
     renderControls();
     loadSite();
