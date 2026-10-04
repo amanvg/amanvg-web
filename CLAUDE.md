@@ -57,7 +57,9 @@ A Reject means make no changes and ask what to adjust.
   the masthead, counts sit on signboards, lists are ledgers.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; odometer and setup
   inputs and the service and fill-up logs sit left, due-status signboards and
-  schedule, history, cost and fuel ledgers sit right; everything saves on change.
+  schedule, history, cost and fuel ledgers sit right. Opens on the committed
+  `data/log.json`, read-only (forms and delete hidden); "Create your own"
+  switches to a blank copy that saves on change.
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
   `data/visited.json`; a "Create your own" button switches to a blank,
   browser-saved copy with Export/Import in the same schema. No personal name
@@ -91,8 +93,11 @@ A Reject means make no changes and ask what to adjust.
 - `USStates/data/visited.json`, `worldmap/data/visited.json` and
   `mlbstadiums/data/visited.json` are hand-edited config (`{"version":1,
   "visited":[...]}`), read same-origin; a browser Export uses the same schema.
-- `/frontier/` and the "Create your own" map copies save to `localStorage`
-  (`frontier:v1`, `<folder>:mine`) with Export/Import; there is no backend.
+- `frontier/data/log.json` is the shared log (`frontier:v1` schema: truck,
+  services, fuel), hand-edited and read same-origin; fill-ups came from a
+  Fuelly CSV export (cost 0, no price data). "Create your own" in `/frontier/`
+  and the map copies save to `localStorage` (`frontier:v1`, `<folder>:mine`)
+  with Export/Import; there is no backend.
 - Workflows only commit when real data moved (they ignore timestamp-only diffs).
 
 ## Sections
@@ -107,7 +112,8 @@ A Reject means make no changes and ask what to adjust.
   browser-saved watchlist. Follows `DESIGN.md`.
 - `/frontier/` Frontier Maintenance: service and fill-up log for a 2022+ Nissan
   Frontier, due status from odometer and date against Nissan's schedule, cost
-  and MPG ledgers. Browser-saved, Export/Import.
+  and MPG ledgers. Opens on the committed log, read-only; "Create your own"
+  is browser-saved with Export/Import.
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
   dashboards and maps; `carpicker/` is an older, unlinked page.
 - Home categories: Sports, Personal (Frontier, US States, Countries, MLB

@@ -1,0 +1,412 @@
+{
+  "version": 1,
+  "truck": {
+    "year": null,
+    "drive": "4WD",
+    "odometer": 13954,
+    "use": "standard"
+  },
+  "services": [],
+  "fuel": [
+    {
+      "id": "fuelly-765",
+      "date": "2025-09-07",
+      "miles": 765,
+      "gallons": 16.628,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-1069",
+      "date": "2025-09-14",
+      "miles": 1069,
+      "gallons": 16.076,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-1372",
+      "date": "2025-09-23",
+      "miles": 1372,
+      "gallons": 16.312,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-1624",
+      "date": "2025-10-12",
+      "miles": 1624,
+      "gallons": 16.058,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-1887",
+      "date": "2025-10-29",
+      "miles": 1887,
+      "gallons": 15.976,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-2072",
+      "date": "2025-11-02",
+      "miles": 2072,
+      "gallons": 10.559,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-2212",
+      "date": "2025-11-02",
+      "miles": 2212,
+      "gallons": 6.601,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-2501",
+      "date": "2025-11-11",
+      "miles": 2501,
+      "gallons": 16.919,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-2806",
+      "date": "2025-11-27",
+      "miles": 2806,
+      "gallons": 18.067,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-3065",
+      "date": "2025-12-18",
+      "miles": 3065,
+      "gallons": 15.623,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-3290",
+      "date": "2025-12-24",
+      "miles": 3290,
+      "gallons": 13.654,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-3576",
+      "date": "2026-01-02",
+      "miles": 3576,
+      "gallons": 16.328,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-3732",
+      "date": "2026-01-09",
+      "miles": 3732,
+      "gallons": 10.151,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-4039",
+      "date": "2026-01-13",
+      "miles": 4039,
+      "gallons": 17.291,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-4322",
+      "date": "2026-01-23",
+      "miles": 4322,
+      "gallons": 16.565,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-4592",
+      "date": "2026-02-04",
+      "miles": 4592,
+      "gallons": 15.532,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-4877",
+      "date": "2026-02-18",
+      "miles": 4877,
+      "gallons": 16.598,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-4961",
+      "date": "2026-02-21",
+      "miles": 4961,
+      "gallons": 5.521,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-5119",
+      "date": "2026-02-21",
+      "miles": 5119,
+      "gallons": 9.484,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-5245",
+      "date": "2026-02-21",
+      "miles": 5245,
+      "gallons": 8.024,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-5348",
+      "date": "2026-02-21",
+      "miles": 5348,
+      "gallons": 5.482,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-5531",
+      "date": "2026-02-22",
+      "miles": 5531,
+      "gallons": 11.858,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-5803",
+      "date": "2026-02-22",
+      "miles": 5803,
+      "gallons": 15.282,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-5921",
+      "date": "2026-02-22",
+      "miles": 5921,
+      "gallons": 7.891,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-6134",
+      "date": "2026-02-22",
+      "miles": 6134,
+      "gallons": 12.655,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-6350",
+      "date": "2026-02-23",
+      "miles": 6350,
+      "gallons": 14.225,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-6555",
+      "date": "2026-02-23",
+      "miles": 6555,
+      "gallons": 13.96,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-6799",
+      "date": "2026-02-23",
+      "miles": 6799,
+      "gallons": 13.876,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-6919",
+      "date": "2026-02-23",
+      "miles": 6919,
+      "gallons": 6.429,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-7151",
+      "date": "2026-02-24",
+      "miles": 7151,
+      "gallons": 12.23,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-7369",
+      "date": "2026-02-24",
+      "miles": 7369,
+      "gallons": 12.991,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-7556",
+      "date": "2026-02-24",
+      "miles": 7556,
+      "gallons": 10.944,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-7861",
+      "date": "2026-02-25",
+      "miles": 7861,
+      "gallons": 16.224,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-8110",
+      "date": "2026-03-03",
+      "miles": 8110,
+      "gallons": 15.583,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-8307",
+      "date": "2026-03-15",
+      "miles": 8307,
+      "gallons": 13.381,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-8514",
+      "date": "2026-03-22",
+      "miles": 8514,
+      "gallons": 13.236,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-8680",
+      "date": "2026-03-22",
+      "miles": 8680,
+      "gallons": 8.845,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-8897",
+      "date": "2026-03-30",
+      "miles": 8897,
+      "gallons": 14.9,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-9149",
+      "date": "2026-04-10",
+      "miles": 9149,
+      "gallons": 15.946,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-9416",
+      "date": "2026-04-21",
+      "miles": 9416,
+      "gallons": 15.632,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-9654",
+      "date": "2026-05-06",
+      "miles": 9654,
+      "gallons": 15.411,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-9890",
+      "date": "2026-05-17",
+      "miles": 9890,
+      "gallons": 14.768,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-10105",
+      "date": "2026-06-05",
+      "miles": 10105,
+      "gallons": 14.121,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-10339",
+      "date": "2026-06-14",
+      "miles": 10339,
+      "gallons": 14.818,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-10569",
+      "date": "2026-06-21",
+      "miles": 10569,
+      "gallons": 13.743,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-10850",
+      "date": "2026-06-26",
+      "miles": 10850,
+      "gallons": 14.985,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-11154",
+      "date": "2026-07-02",
+      "miles": 11154,
+      "gallons": 17.302,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-11446",
+      "date": "2026-07-03",
+      "miles": 11446,
+      "gallons": 14.079,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-11754",
+      "date": "2026-07-05",
+      "miles": 11754,
+      "gallons": 15.407,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-12080",
+      "date": "2026-07-06",
+      "miles": 12080,
+      "gallons": 16.157,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-12366",
+      "date": "2026-07-13",
+      "miles": 12366,
+      "gallons": 16.625,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-12603",
+      "date": "2026-07-23",
+      "miles": 12603,
+      "gallons": 15.671,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-12854",
+      "date": "2026-08-05",
+      "miles": 12854,
+      "gallons": 16.384,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-13103",
+      "date": "2026-08-24",
+      "miles": 13103,
+      "gallons": 15.9,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-13374",
+      "date": "2026-09-05",
+      "miles": 13374,
+      "gallons": 17.135,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-13670",
+      "date": "2026-09-14",
+      "miles": 13670,
+      "gallons": 17.543,
+      "cost": 0
+    },
+    {
+      "id": "fuelly-13954",
+      "date": "2026-09-30",
+      "miles": 13954,
+      "gallons": 16.942,
+      "cost": 0
+    }
+  ],
+  "exportedOn": null
+}

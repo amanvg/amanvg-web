@@ -108,6 +108,11 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar .grow{flex:1 1 auto}
 .bar .grow:empty{display:none}
 .bar #export{margin-left:auto}
+.masthead .btn{padding:8px 18px}
+:root[data-theme="dark"] .masthead .btn{border-color:var(--f-sports)}
+.ro #svc-form,.ro #fuel-form,.ro .act-col,.ro td.act-cell{display:none}
+.ro #pane-fuel{grid-template-columns:1fr}
+.ro #pane-fuel>.inputs{display:none}
 .bar .note{color:inherit}
 .bar .error-text{display:inline-block}
 
@@ -231,6 +236,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   input[type=date]{font-size:17px;padding-left:10px;padding-right:6px}
   .bar .chips{width:100%}
   .bar .chips button{flex:1;min-width:0}
+  .masthead .btn{width:100%}
   .odo{width:100%}
   .odo input[type=number]{width:auto;flex:1;min-width:0}
   .bar{padding:10px 16px}
@@ -272,6 +278,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         <div class="sheet">
             <div class="masthead">
                 <h1>Frontier Maintenance</h1>
+                <button class="btn" id="view-btn" type="button">Create your own</button>
                 <div class="odo">
                     <label for="odo">Odometer</label>
                     <input type="number" id="odo" min="0" step="1" placeholder="—" inputmode="numeric" autocomplete="off">
@@ -282,7 +289,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <div class="chips tabs" id="panes" role="tablist" aria-label="Section">
                     <button type="button" role="tab" id="tab-maint" data-pane="maint" aria-controls="pane-maint" aria-selected="true" class="active">Maintenance<span class="badge" id="tab-over" hidden><span id="tab-over-n">0</span><span class="sr-only"> overdue</span></span></button><button type="button" role="tab" id="tab-fuel" data-pane="fuel" aria-controls="pane-fuel" aria-selected="false" tabindex="-1">Fuel</button>
                 </div>
-                <span class="note" id="saved">Saved in this browser</span>
+                <span class="note" id="saved" role="status" aria-live="polite">Loading</span>
                 <span class="note" id="exported">Never exported</span>
                 <span class="grow note" id="data-status" role="status" aria-live="polite"></span>
                 <button class="btn" id="export" type="button">Export</button>
@@ -375,7 +382,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="hist-l">History</h2>
                             <table class="ledger stack" aria-labelledby="hist-l">
-                                <thead><tr><th scope="col">Item</th><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Cost</th><th scope="col">Delete</th></tr></thead>
+                                <thead><tr><th scope="col">Item</th><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Cost</th><th scope="col" class="act-col">Delete</th></tr></thead>
                                 <tbody id="hist-body"></tbody>
                             </table>
                         </div>
@@ -429,7 +436,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="fuel-l">Fill-ups</h2>
                             <table class="ledger stack" aria-labelledby="fuel-l">
-                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col">Cost</th><th scope="col">MPG</th><th scope="col">Delete</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col">Cost</th><th scope="col">MPG</th><th scope="col" class="act-col">Delete</th></tr></thead>
                                 <tbody id="fuel-body"></tbody>
                             </table>
                         </div>
@@ -684,18 +691,26 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return blankData();
     }
 
-    function paintSaved() { $('saved').textContent = storageOk ? 'Saved in this browser' : 'Storage unavailable'; }
+    // Site view: the committed log, read-only. Own view: this browser's copy.
+    const LOG_URL = '/frontier/data/log.json';
+    let view = 'site';         // 'site' | 'mine'
+    let mine = load();         // this browser's own copy
+    let siteData = null;       // the committed log once loaded
+    let siteState = 'loading'; // loading | ok | error
+    const canEdit = () => view === 'mine';
+    const hasMine = () => mine.services.length > 0 || mine.fuel.length > 0 || mine.truck.odometer !== null;
 
     function save() {
+      if (view !== 'mine') return;
       try { localStorage.setItem(KEY, JSON.stringify(data)); storageOk = true; } catch (e) { storageOk = false; }
-      paintSaved();
+      paintStatus();
     }
 
     // Startup probe: never touches the stored data, so a corrupt or invalid
     // value is only replaced when the user next makes a change.
     function probeStorage() {
       try { localStorage.setItem('frontier:probe', '1'); localStorage.removeItem('frontier:probe'); } catch (e) { storageOk = false; }
-      paintSaved();
+      paintStatus();
     }
 
     // ---------------------------------------------------------------------------
@@ -724,7 +739,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
 
-    let data = load();
+    let data = blankData(); // whichever view is on screen
     let armed = null; // key of the row whose delete is waiting for a second click
     let pendingImport = null;
 
@@ -802,6 +817,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     // Icon delete button; the first click arms it, the second deletes.
     function delButton(key, what) {
+      if (!canEdit()) return null;
       const on = armed === key;
       const b = el('button', { class: `del${on ? ' armed' : ''}`, type: 'button', 'data-key': key, 'aria-label': `${on ? 'Confirm delete' : 'Delete'} ${what}` });
       if (on) b.textContent = 'Delete'; else b.innerHTML = TRASH; // TRASH is a static literal
@@ -852,6 +868,21 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('exported').textContent = data.exportedOn ? `Last exported ${data.exportedOn}` : 'Never exported';
     }
 
+    // Everything that depends on the view and the load state.
+    function paintStatus() {
+      const site = view === 'site';
+      $('saved').textContent = site ? ({ loading: 'Loading', ok: 'Original', error: 'Log unavailable' }[siteState])
+        : storageOk ? 'Saved in this browser' : 'Storage unavailable';
+      $('exported').hidden = site;
+      $('import').hidden = site;
+      $('export').hidden = site && siteState !== 'ok';
+      $('view-btn').textContent = site ? (hasMine() ? 'Your copy' : 'Create your own') : 'Back to original';
+      document.body.classList.toggle('ro', site);
+      odo.readOnly = site;
+      yearSel.disabled = driveSel.disabled = site;
+      for (const b of $('use').children) b.disabled = site;
+    }
+
     function renderAll() {
       renderSchedule(); renderHistory(); renderFuel(); renderCosts(); renderBar(); syncOdometers();
     }
@@ -872,7 +903,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       paintUse();
       odo.value = data.truck.odometer == null ? '' : String(data.truck.odometer);
       for (const input of [svcMiles, fuelMiles]) delete input.dataset.typed;
-      renderAll();
+      renderAll(); paintStatus();
     }
 
     // ---------------------------------------------------------------------------
@@ -889,7 +920,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     odo.addEventListener('input', () => {
-      if (odo.validity.badInput) return;
+      if (!canEdit() || odo.validity.badInput) return;
       const raw = odo.value.trim();
       const n = toNum(raw);
       if (raw === '') data.truck.odometer = null;
@@ -898,12 +929,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       save(); renderAll();
     });
 
-    yearSel.addEventListener('change', () => { data.truck.year = yearSel.value ? Number(yearSel.value) : null; save(); });
-    driveSel.addEventListener('change', () => { data.truck.drive = driveSel.value || null; save(); renderItems(); renderAll(); });
+    yearSel.addEventListener('change', () => { if (!canEdit()) return; data.truck.year = yearSel.value ? Number(yearSel.value) : null; save(); });
+    driveSel.addEventListener('change', () => { if (!canEdit()) return; data.truck.drive = driveSel.value || null; save(); renderItems(); renderAll(); });
 
     $('use').addEventListener('click', (e) => {
       const b = e.target.closest('button[data-use]');
-      if (!b || b.dataset.use === data.truck.use) return;
+      if (!canEdit() || !b || b.dataset.use === data.truck.use) return;
       data.truck.use = b.dataset.use;
       paintUse(); save(); renderItems(); renderAll();
     });
@@ -919,6 +950,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     $('svc-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!canEdit()) return;
       const date = normDate(svcDate.value);
       const miles = toNum(svcMiles.value);
       const cost = svcCost.value.trim() === '' ? 0 : toNum(svcCost.value);
@@ -936,6 +968,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     $('fuel-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!canEdit()) return;
       const date = normDate(fuelDate.value);
       const miles = toNum(fuelMiles.value);
       const gallons = toNum(fuelGal.value);
@@ -956,6 +989,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // Delete: first click arms the row's button, second click removes the entry.
     document.addEventListener('click', (e) => {
       const b = e.target.closest('button.del');
+      if (!canEdit()) return;
       if (!b) { if (armed) { armed = null; renderHistory(); renderFuel(); } return; }
       const key = b.dataset.key;
       if (armed === key) {
@@ -977,8 +1011,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     $('export').addEventListener('click', () => {
       const today = todayISO();
-      data.exportedOn = today;
-      save(); renderBar();
+      if (view === 'mine') { data.exportedOn = today; save(); renderBar(); }
       const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
       const a = el('a', { href: url, download: `frontier-maintenance-${today}.json` });
       document.body.append(a); a.click(); a.remove();
@@ -993,8 +1026,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     $('import').addEventListener('click', () => {
+      if (!canEdit()) return;
       if (!pendingImport) { $('import-file').click(); return; }
-      data = pendingImport;
+      data = mine = pendingImport;
       clearPending();
       save(); renderControls();
       $('data-status').textContent = 'Imported';
@@ -1066,9 +1100,31 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     if (location.hash === '#fuel') startPane = 'fuel';
     setPane(startPane);
 
+    function setView(v) {
+      view = v;
+      clearPending();
+      $('data-status').textContent = '';
+      armed = null;
+      data = v === 'mine' ? mine : (siteData || blankData());
+      renderControls();
+    }
+    $('view-btn').addEventListener('click', () => { setView(view === 'site' ? 'mine' : 'site'); $('view-btn').focus(); });
+
+    async function loadSite() {
+      try {
+        const r = await fetch(`${LOG_URL}?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
+        if (!r.ok) throw new Error(String(r.status));
+        const parsed = validateData(await r.json());
+        if (!parsed) throw new Error('invalid');
+        siteData = parsed; siteState = 'ok';
+      } catch (e) { siteState = 'error'; }
+      if (view === 'site') { data = siteData || blankData(); renderControls(); } else paintStatus();
+    }
+
     svcDate.value = fuelDate.value = todayISO();
     renderControls();
     probeStorage();
+    loadSite();
   </script>
 </body>
 </html>
