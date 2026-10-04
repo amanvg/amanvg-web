@@ -114,7 +114,10 @@ body:not(.rw) #pane-fuel>.inputs,body:not(.rw) .act-col,body:not(.rw) td.act-cel
 .bar.connect label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
 .bar.connect input{flex:1 1 220px;max-width:460px}
 .bar #connect-msg:empty{display:none}
-#pane-fuel .signs{grid-template-columns:repeat(2,minmax(0,1fr))}
+.signs.minis{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.minis .sign-head{font-size:15px;line-height:20px;padding:6px 10px}
+.minis .sign-body{padding:12px 6px 10px}
+.minis .num{font-size:clamp(26px,2.6vw,38px);min-height:clamp(34px,3vw,44px)}
 #fuel-more{margin-top:12px;align-self:flex-start}
 .bar .note{color:inherit}
 .bar .error-text{display:inline-block}
@@ -222,6 +225,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 @media(max-width:1180px){
   .body{grid-template-columns:minmax(340px,4fr) minmax(0,7fr)}
   .signs{gap:12px}
+  .signs.minis{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .minis .sign{grid-column:span 2}
+  .minis .sign:nth-child(n+4){grid-column:span 3}
   .sign-body{padding-left:6px;padding-right:6px}
   .num{font-size:clamp(38px,4vw,64px)}
   .odo input[type=number]{width:170px}
@@ -248,6 +254,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .bar{padding:10px 16px}
   .panel{padding:20px 16px 24px}
   .signs{gap:10px}
+  .signs.minis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .minis .sign,.minis .sign:nth-child(n+4){grid-column:auto}
+  .minis .sign:last-child{grid-column:1/-1}
+  .minis .sign-head{font-size:14px;padding:6px 8px}
+  .minis .num{font-size:30px;min-height:36px}
   .sign-head{font-size:16px;padding:6px 8px}
   .sign-body{padding:12px 4px 10px}
   .num{font-size:40px;min-height:44px}
@@ -262,6 +273,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .ledger.stack td.empty{grid-column:1/-1}
   .ledger.stack tfoot{display:block}
   .ledger.stack tfoot tr{display:grid}
+}
+@media(max-width:360px){
+  .sign-head{font-size:13px;letter-spacing:.02em;padding:6px 4px}
+  .minis .sign-head{font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.num.strike{animation:none}}
     </style>
@@ -394,11 +409,37 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="signs">
                             <section class="sign" aria-labelledby="fs-avg-h">
                                 <h2 class="sign-head" id="fs-avg-h">Average</h2>
-                                <div class="sign-body"><output class="num" id="mpg-avg">—</output><div class="sign-unit">MPG</div></div>
+                                <div class="sign-body"><output class="num" id="mpg-avg">—</output><div class="sign-unit" id="mpg-avg-u">MPG</div></div>
                             </section>
                             <section class="sign" aria-labelledby="fs-last-h">
                                 <h2 class="sign-head" id="fs-last-h">Last fill-up</h2>
-                                <div class="sign-body"><output class="num" id="mpg-last">—</output><div class="sign-unit">MPG</div></div>
+                                <div class="sign-body"><output class="num" id="mpg-last">—</output><div class="sign-unit" id="mpg-last-u">MPG</div></div>
+                            </section>
+                            <section class="sign" aria-labelledby="fs-best-h">
+                                <h2 class="sign-head" id="fs-best-h">Best</h2>
+                                <div class="sign-body"><output class="num" id="mpg-best">—</output><div class="sign-unit" id="mpg-best-u">MPG</div></div>
+                            </section>
+                        </div>
+                        <div class="signs minis">
+                            <section class="sign" aria-labelledby="fm-count-h">
+                                <h2 class="sign-head" id="fm-count-h">Fill-ups</h2>
+                                <div class="sign-body"><output class="num" id="st-count">—</output><div class="sign-unit">Total</div></div>
+                            </section>
+                            <section class="sign" aria-labelledby="fm-gal-h">
+                                <h2 class="sign-head" id="fm-gal-h">Gallons</h2>
+                                <div class="sign-body"><output class="num" id="st-gal">—</output><div class="sign-unit">Total</div></div>
+                            </section>
+                            <section class="sign" aria-labelledby="fm-g100-h">
+                                <h2 class="sign-head" id="fm-g100-h">Gal / 100 mi</h2>
+                                <div class="sign-body"><output class="num" id="st-g100">—</output><div class="sign-unit">Avg</div></div>
+                            </section>
+                            <section class="sign" aria-labelledby="fm-avgmi-h">
+                                <h2 class="sign-head" id="fm-avgmi-h">Avg miles</h2>
+                                <div class="sign-body"><output class="num" id="st-avgmi">—</output><div class="sign-unit">Per fill-up · 15+ gal</div></div>
+                            </section>
+                            <section class="sign" aria-labelledby="fm-bestmi-h">
+                                <h2 class="sign-head" id="fm-bestmi-h">Best miles</h2>
+                                <div class="sign-body"><output class="num" id="st-bestmi">—</output><div class="sign-unit">Per fill-up · 15+ gal</div></div>
                             </section>
                         </div>
                         <div class="ledger-wrap">
@@ -577,21 +618,41 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return rows;
     }
 
-    // MPG between consecutive fill-ups (full tank assumed). Average is total
-    // miles over the gallons of every fill after the first; needs two fill-ups.
+    // Fill-up stats. MPG is between consecutive fill-ups (full tank assumed): the
+    // average is total miles over the gallons of every fill after the first, and
+    // needs two fill-ups. The miles-per-fill-up stats count only fills of
+    // MIN_FILL_GAL gallons or more (part tanks would drag them down).
+    const MIN_FILL_GAL = 15;
     function mpgStats(fuel) {
       const f = fuel.slice().sort((a, b) => a.miles - b.miles || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-      const perId = {}, tank = {};
-      let mi = 0, gal = 0, last = null;
+      const perId = {}, tank = {}, tanks = [];
+      let mi = 0, gal = 0;
       for (let i = 1; i < f.length; i++) {
         const dm = f[i].miles - f[i - 1].miles;
         if (dm <= 0 || !(f[i].gallons > 0)) continue;
-        perId[f[i].id] = dm / f[i].gallons;
+        const mpg = dm / f[i].gallons;
+        perId[f[i].id] = mpg;
         tank[f[i].id] = dm;
+        tanks.push({ dm, gallons: f[i].gallons, mpg, date: f[i].date });
         mi += dm; gal += f[i].gallons;
-        last = perId[f[i].id];
       }
-      return { average: gal > 0 ? mi / gal : null, last, perId, tank };
+      const n = tanks.length;
+      const lastTank = n ? tanks[n - 1] : null;
+      const average = gal > 0 ? mi / gal : null;
+      const before = n >= 2 && gal > lastTank.gallons ? (mi - lastTank.dm) / (gal - lastTank.gallons) : null;
+      const best = tanks.reduce((b, t) => (!b || t.mpg > b.mpg ? t : b), null);
+      const full = tanks.filter((t) => t.gallons >= MIN_FILL_GAL);
+      return {
+        average, last: lastTank ? lastTank.mpg : null, perId, tank,
+        averageDelta: average != null && before != null ? average - before : null,
+        lastDelta: n >= 2 ? lastTank.mpg - tanks[n - 2].mpg : null,
+        best: best ? { mpg: best.mpg, date: best.date } : null,
+        fillups: f.length,
+        gallons: f.reduce((g, e) => g + e.gallons, 0),
+        gallonsPer100: mi > 0 ? (gal / mi) * 100 : null,
+        avgMiles: full.length ? full.reduce((m, t) => m + t.dm, 0) / full.length : null,
+        bestMiles: full.length ? Math.max(...full.map((t) => t.dm)) : null,
+      };
     }
 
     // Returns a clean copy of a stored/imported object, or null when invalid.
@@ -648,6 +709,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
     const int = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
     const dec1 = (n) => n.toFixed(1);
+    const gal2 = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const plural = (n, w) => `${int.format(n)} ${w}${n === 1 ? '' : 's'}`;
     const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
     const labelOf = (id) => { const s = SCHEDULE.find((x) => x.id === id); return s ? s.label : id === MPI ? 'Multi Point Inspection' : id === 'other' ? 'Other' : id; };
@@ -760,8 +822,20 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     function renderFuel() {
       const stats = mpgStats(data.fuel);
-      $('mpg-avg').textContent = stats.average == null ? '—' : dec1(stats.average);
-      $('mpg-last').textContent = stats.last == null ? '—' : dec1(stats.last);
+      const num1 = (n) => (n == null ? '—' : dec1(n));
+      const delta = (d) => { if (d == null) return ''; const r = Number(d.toFixed(1)); return r === 0 ? '0.0' : `${r > 0 ? '+' : '−'}${Math.abs(r).toFixed(1)}`; };
+      const withDelta = (d) => (d == null ? 'MPG' : `MPG · ${delta(d)}`);
+      $('mpg-avg').textContent = num1(stats.average);
+      $('mpg-avg-u').textContent = withDelta(stats.averageDelta);
+      $('mpg-last').textContent = num1(stats.last);
+      $('mpg-last-u').textContent = withDelta(stats.lastDelta);
+      $('mpg-best').textContent = stats.best ? dec1(stats.best.mpg) : '—';
+      $('mpg-best-u').textContent = stats.best ? `MPG · ${stats.best.date}` : 'MPG';
+      $('st-count').textContent = int.format(stats.fillups);
+      $('st-gal').textContent = stats.fillups ? gal2.format(stats.gallons) : '—';
+      $('st-g100').textContent = stats.gallonsPer100 == null ? '—' : stats.gallonsPer100.toFixed(2);
+      $('st-avgmi').textContent = stats.avgMiles == null ? '—' : dec1(stats.avgMiles);
+      $('st-bestmi').textContent = stats.bestMiles == null ? '—' : int.format(stats.bestMiles);
       const all = data.fuel.slice().sort(byDateDesc);
       const more = $('fuel-more');
       more.hidden = all.length <= RECENT;

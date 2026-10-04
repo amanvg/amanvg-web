@@ -60,9 +60,11 @@ A Reject means make no changes and ask what to adjust.
   odometer is locked to the highest reading across fill-ups and services.
   Truck setup sits left on Maintenance; due-status signboards, schedule and
   history sit right. On Fuel the Add fill-up form sits left (Connected only);
-  MPG signboards and the 10 newest fill-ups (with miles per tank; MPG red
-  below 16, green above 20) sit right. No cost is shown on Fuel (fill-ups
-  save cost 0).
+  Average, Last fill-up (each with its change) and Best MPG signboards, then
+  mini boards (fill-ups, gallons, gal/100 mi, avg and best miles per fill-up,
+  counting only fills of 15+ gal), then the 10 newest fill-ups (with miles per
+  tank; MPG red below 16, green above 20) sit right. No cost is shown on Fuel
+  (fill-ups save cost 0).
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
   `data/visited.json`; a "Create your own" button switches to a blank,
   browser-saved copy with Export/Import in the same schema. No personal name
