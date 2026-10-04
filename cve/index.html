@@ -326,7 +326,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 </section>
                 <aside class="rail" aria-label="Summary">
                     <div class="rail-in">
-                    <div class="act"><div><h2>Act</h2><span class="rule" id="rule-3"></span></div><output id="act-n" aria-live="polite">0</output></div>
+                    <div class="act"><div><h2>Act</h2><span class="rule" id="rule-3"></span><span class="rule" id="over-3"></span></div><output id="act-n" aria-live="polite">0</output></div>
                     <ul class="tiers" id="tiers"></ul>
                     <h2 class="railhead">Watchlist</h2>
                     <div class="watch">
@@ -405,6 +405,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         const today = () => new Date().toISOString().slice(0, 10);
+        const daysTo = d => Math.round((Date.parse(d) - Date.parse(today())) / 864e5);
+        const dueText = d => { const n = daysTo(d); return (n < 0 ? 'Overdue ' + -n + 'd' : n === 0 ? 'Due today' : 'Due in ' + n + 'd') + ' · ' + d; };
         const pct = v => v == null ? '—' : (v >= 0.1 ? Math.round(v * 100) : (v * 100).toFixed(1)) + '%';
         const cvss = v => v == null ? '—' : Number(v).toFixed(1);
         const dateOf = i => i.kev ? i.kev.added : i.published;
@@ -542,7 +544,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             if (i.kev && i.kev.ransomware) out.push('<span class="tag hot">Ransomware</span>');
             if (!i.kev && i.exploitation === 'poc') out.push('<span class="tag">PoC</span>');
             if (i.automatable === 'yes') out.push('<span class="tag">Automatable</span>');
-            if (i.kev) out.push('<span class="tag' + (i.kev.due < today() ? ' hot' : '') + '">Due ' + esc(i.kev.due) + '</span>');
+            if (i.kev) out.push('<span class="tag' + (daysTo(i.kev.due) <= 0 ? ' hot' : '') + '">' + esc(dueText(i.kev.due)) + '</span>');
             if (i.w) out.push('<span class="tag">Watched</span>');
             return out.join('');
         }
@@ -629,7 +631,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                   '<td>' + (i.kev ? 'KEV' + (i.kev.ransomware ? ' · Ransomware' : '') : i.exploitation === 'poc' ? 'PoC' : '—') + '</td>' +
                   '<td class="r">' + pct(i.epss) + '</td>' +
                   '<td class="r">' + cvss(i.cvss) + '</td>' +
-                  '<td class="' + (i.kev && i.kev.due < today() ? 'late' : '') + '">' + (i.kev ? esc(i.kev.due) : '—') + '</td>' +
+                  '<td class="' + (i.kev && daysTo(i.kev.due) <= 0 ? 'late' : '') + '">' + (i.kev ? esc(i.kev.due) : '—') + '</td>' +
                 '</tr>' +
                 (state.open.has(i.id) ? '<tr class="drow"><td class="dcell" colspan="7">' + detailHtml(i.id, 'ledger') + '</td></tr>' : '')
             )).join('') : '<tr><td colspan="7" class="empty">No match</td></tr>';
@@ -641,6 +643,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             document.getElementById('act-n').textContent = n[3];
             const rules = tierRules();
             document.getElementById('rule-3').textContent = rules[3];
+            const over = rows.filter(r => r.t === 3 && r.kev && daysTo(r.kev.due) < 0).length;
+            document.getElementById('over-3').textContent = over ? over + ' overdue' : '';
             document.getElementById('tiers').innerHTML = [2, 1, 0].map(t =>
                 '<li><span class="sw t' + t + '"></span><span class="tn">' + TIER_NAMES[t] + '<span class="rule">' + esc(rules[t]) + '</span></span><b>' + n[t] + '</b></li>').join('');
         }
