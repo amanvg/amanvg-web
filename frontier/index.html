@@ -1014,7 +1014,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         hide();
         g.classList.add('hot');
         tip.replaceChildren(el('b', { text: val(m) == null ? '—' : c.tip(val(m)) }), el('span', { text: `${MONTHS[m.month]} ${m.year} · ${m.fills ? plural(m.fills, 'fill-up') : 'No fill-ups'}` }),
-          avg == null ? null : el('span', { text: `Avg ${c.tip(avg)}` }));
+          ...(avg == null ? [] : [el('span', { text: `Avg ${c.tip(avg)}` })]));
         tip.hidden = false;
         const half = tip.offsetWidth / 2;
         tip.style.left = `${Math.min(Math.max(cx + 6, half + 2), box.clientWidth - half - 2)}px`; // +6: chart padding
