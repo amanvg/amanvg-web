@@ -563,12 +563,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       { id: 'cabin',      label: 'In-cabin microfilter',                 miles: 15000,  months: 12, source: 'Replace at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo' },
       { id: 'fluids', mpi: true,     label: 'Transmission & differential fluid inspection', miles: 15000, months: 12, source: 'Inspect automatic transmission fluid and differential gear oil every 15,000 mi / 12 mo' },
       { id: 'transfer',   label: 'Transfer case fluid inspection',       miles: 15000,  months: 12, only: '4WD', source: 'Inspect transfer fluid every 15,000 mi / 12 mo (4WD)' },
-      { id: 'prop',       label: 'Propeller shaft lubrication',          miles: 15000,  months: 12, only: '4WD', severe: { miles: 5000, months: 6 }, source: 'Every 15,000 mi / 12 mo (4WD models); severe use: 5,000 mi / 6 mo' },
+      { id: 'prop', mpi: true,       label: 'Propeller shaft lubrication',          miles: 15000,  months: 12, only: '4WD', severe: { miles: 5000, months: 6 }, source: 'Every 15,000 mi / 12 mo (4WD models); severe use: 5,000 mi / 6 mo' },
       { id: 'air',        label: 'Engine air filter',                    miles: 30000,  months: 24, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo' },
       { id: 'brakefluid', label: 'Brake fluid',                          miles: 30000,  months: 24, severe: { miles: 10000, months: 12 }, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo (severe use: 10,000 mi / 12 mo)' },
       { id: 'belt', mpi: true,       label: 'Drive belt inspection',                miles: 60000,  months: 48, then: { miles: 15000, months: 12 }, source: 'First inspection 60,000 mi / 48 mo, then every 15,000 mi / 12 mo' },
       { id: 'plugs',      label: 'Spark plugs',                          miles: 105000, months: 84, source: 'Replace at 105,000 mi / 84 mo; also when gap exceeds 0.053 in' },
-      { id: 'steering',   label: 'Steering gear & linkage inspection',   miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
+      { id: 'steering', mpi: true,   label: 'Steering gear & linkage inspection',   miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
       { id: 'suspension', mpi: true, label: 'Axle & suspension parts inspection',   miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
       { id: 'exhaust', mpi: true,    label: 'Exhaust system inspection',            miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
       { id: 'boots', mpi: true,      label: 'Drive shaft boots inspection',         miles: 15000,  months: 12, only: '4WD', severe: { miles: 5000, months: 6 }, source: 'Inspect every 15,000 mi / 12 mo (4WD); severe use: 5,000 mi / 6 mo' },
@@ -652,7 +652,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // power steering fluid, washer fluid, cooling hoses, radiator core and cap, drive
     // belt, coolant, brake fluid, ATF, heater and A/C hoses, engine air filter, rear
     // shocks, drive shaft CV, front shocks, differential condition and leaks, exhaust,
-    // fluid leaks.
+    // fluid leaks, propeller shaft, steering gear and linkage.
     const MPI = 'mpi';
 
     // Schedule item as it applies to this truck: drivetrain filter, and Severe-only rows.
