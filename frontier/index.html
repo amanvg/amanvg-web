@@ -246,6 +246,7 @@ fieldset{border:0;min-width:0}
 .chart .col:focus-visible .hit{stroke:var(--focus);stroke-width:2}
 .chart .hit{fill:transparent}
 .chart .val{fill:var(--text);font-family:var(--label);font-weight:700;font-size:12px;text-anchor:middle}
+.chart .empty{margin:0;padding:12px 6px 14px;color:var(--muted)}
 .chart-tip{position:absolute;z-index:2;pointer-events:none;background:var(--card);color:var(--text);border:1px solid var(--key);padding:6px 10px;font-family:var(--label);white-space:nowrap;transform:translate(-50%,-100%)}
 .chart-tip b{display:block;font-size:16px;line-height:20px}
 .chart-tip span{display:block;font-size:12px;line-height:16px;color:var(--muted);font-weight:600}
@@ -272,9 +273,14 @@ fieldset{border:0;min-width:0}
 .stamp.over{--mk:var(--over-bg);color:var(--live-bg)}
 .stamp.soon{--mk:var(--soon-bg)}
 .stamp.ok{--mk:var(--good);color:var(--good)}
-.del{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 10px;border:2px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--label);font-weight:600;font-size:13px;transition:background .15s,color .15s,border-color .15s}
-.del svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-@media(hover:hover){.del:hover{color:var(--text);border-color:var(--key)}}
+.del,.edt{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 10px;border:2px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-family:var(--label);font-weight:600;font-size:13px;transition:background .15s,color .15s,border-color .15s}
+.del svg,.edt svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media(hover:hover){.del:hover,.edt:hover{color:var(--text);border-color:var(--key)}}
+.edt[aria-pressed="true"]{color:var(--text);border-color:var(--key)}
+.ledger tr.editing td{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.flag{display:block;font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.form-acts{display:flex;flex-wrap:wrap;gap:12px}
+.form-acts .act{align-self:auto}
 .del.armed{background:var(--live-bg);color:var(--live-fg);border-color:var(--live-bg)}
 .ledger td.act-cell{padding:0 4px;text-align:right}
 
@@ -507,8 +513,18 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <input type="number" id="fuel-gal" min="0" step="0.001" inputmode="decimal" placeholder="0.000" autocomplete="off">
                             </div>
                         </div>
+                        <fieldset class="field checks-field">
+                            <legend class="lbl">Tank</legend>
+                            <div class="checks">
+                                <label><input type="checkbox" id="fuel-partial">Partial fill-up</label>
+                                <label><input type="checkbox" id="fuel-missed">Missed previous fill-up</label>
+                            </div>
+                        </fieldset>
                         <div class="error-text msg" id="fuel-msg" role="status" aria-live="polite"></div>
-                        <button class="act pri" id="fuel-add" type="submit">Add fill-up</button>
+                        <div class="form-acts">
+                            <button class="act pri" id="fuel-add" type="submit">Add fill-up</button>
+                            <button class="act" id="fuel-cancel" type="button" hidden>Cancel</button>
+                        </div>
                     </form>
                 </div>
                 <div class="panel">
@@ -554,9 +570,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             <div class="chart" id="mpg-chart" role="group" aria-labelledby="chart-l"></div>
                         </div>
                         <div class="ledger-wrap">
+                            <h2 class="section-label" id="dist-l">MPG distribution</h2>
+                            <div class="chart" id="mpg-dist" role="group" aria-labelledby="dist-l"></div>
+                        </div>
+                        <div class="ledger-wrap">
                             <h2 class="section-label" id="fuel-l">Fill-ups</h2>
                             <table class="ledger stack" aria-labelledby="fuel-l">
-                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Miles</th><th scope="col">Gallons</th><th scope="col">MPG</th><th scope="col" class="act-col">Delete</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Miles</th><th scope="col">Gallons</th><th scope="col">MPG</th><th scope="col" class="act-col">Edit</th></tr></thead>
                                 <tbody id="fuel-body"></tbody>
                             </table>
                             <button class="btn" id="fuel-more" type="button" hidden></button>
@@ -768,23 +788,31 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return rows;
     }
 
-    // Fill-up stats. MPG is between consecutive fill-ups (full tank assumed): the
-    // average is total miles over the gallons of every fill after the first, and
-    // needs two fill-ups. The miles-per-fill-up stats count only fills of
-    // MIN_FILL_GAL gallons or more (part tanks would drag them down).
+    // Fill-up stats. A tank runs from one full fill-up to the next: its MPG is the
+    // miles between them over the gallons of the closing fill plus any partial fills
+    // in between. A fill marked missed (an earlier fill went unlogged) drops the open
+    // tank and, when full, starts the next. The average is total tank miles over tank
+    // gallons and needs two full fill-ups. The miles-per-fill-up stats count only
+    // tanks of MIN_FILL_GAL gallons or more (part tanks would drag them down).
+    // `segments` are the odometer gaps between consecutive fill-ups, flags ignored.
     const MIN_FILL_GAL = 10;
     function mpgStats(fuel) {
       const f = fuel.slice().sort((a, b) => a.miles - b.miles || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-      const perId = {}, tank = {}, tanks = [];
-      let mi = 0, gal = 0;
-      for (let i = 1; i < f.length; i++) {
-        const dm = f[i].miles - f[i - 1].miles;
-        if (dm <= 0 || !(f[i].gallons > 0)) continue;
-        const mpg = dm / f[i].gallons;
-        perId[f[i].id] = mpg;
-        tank[f[i].id] = dm;
-        tanks.push({ dm, gallons: f[i].gallons, mpg, date: f[i].date });
-        mi += dm; gal += f[i].gallons;
+      const perId = {}, tank = {}, tanks = [], segments = [];
+      let mi = 0, gal = 0, start = null, carry = 0;
+      for (let i = 0; i < f.length; i++) {
+        const e = f[i];
+        if (i > 0 && e.miles > f[i - 1].miles) segments.push({ dm: e.miles - f[i - 1].miles, gallons: e.gallons, date: e.date });
+        if (e.missed || start === null) { start = e.partial ? null : e.miles; carry = 0; continue; }
+        if (e.partial) { carry += e.gallons; continue; }
+        const dm = e.miles - start, g = e.gallons + carry;
+        start = e.miles; carry = 0;
+        if (dm <= 0 || !(g > 0)) continue;
+        const mpg = dm / g;
+        perId[e.id] = mpg;
+        tank[e.id] = dm;
+        tanks.push({ dm, gallons: g, mpg, date: e.date });
+        mi += dm; gal += g;
       }
       const n = tanks.length;
       const lastTank = n ? tanks[n - 1] : null;
@@ -793,7 +821,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const best = tanks.reduce((b, t) => (!b || t.mpg > b.mpg ? t : b), null);
       const full = tanks.filter((t) => t.gallons >= MIN_FILL_GAL);
       return {
-        average, last: lastTank ? lastTank.mpg : null, perId, tank, tanks,
+        average, last: lastTank ? lastTank.mpg : null, perId, tank, tanks, segments,
         averageDelta: average != null && before != null ? average - before : null,
         lastDelta: n >= 2 ? lastTank.mpg - tanks[n - 2].mpg : null,
         best: best ? { mpg: best.mpg, date: best.date } : null,
@@ -832,7 +860,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       for (const f of o.fuel) {
         if (!f || typeof f !== 'object' || !uniq(f.id)) return null;
         if (parseISO(f.date) === null || !nn(f.miles) || !(isNum(f.gallons) && f.gallons > 0) || !nn(f.cost)) return null;
-        fuel.push({ id: f.id, date: f.date, miles: f.miles, gallons: f.gallons, cost: f.cost });
+        const flag = (v) => (v === undefined || v === 0 || v === false ? false : v === 1 || v === true ? true : null);
+        const partial = flag(f.partial), missed = flag(f.missed);
+        if (partial === null || missed === null) return null;
+        fuel.push({ id: f.id, date: f.date, miles: f.miles, gallons: f.gallons, cost: f.cost, partial, missed });
       }
       // The odometer is the highest reading across fill-ups and services.
       const readings = [...fuel, ...services].map((e) => e.miles);
@@ -855,6 +886,16 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         if (o) { o.mi += t.dm; o.gal += t.gallons; o.fills++; }
       }
       return months.map((o) => ({ key: o.key, year: o.year, month: o.month, fills: o.fills, mpg: o.gal > 0 ? o.mi / o.gal : null, mi: o.fills ? o.mi : null }));
+    }
+    // Tanks per whole-MPG bin (lo <= MPG < lo + 1, on the shown one-decimal value),
+    // from the lowest bin to the highest with empty bins kept.
+    function mpgHistogram(tanks) {
+      if (!tanks.length) return [];
+      const b = tanks.map((t) => Math.floor(Number(t.mpg.toFixed(1))));
+      const lo = Math.min(...b), hi = Math.max(...b);
+      const bins = Array.from({ length: hi - lo + 1 }, (_, i) => ({ lo: lo + i, n: 0 }));
+      for (const v of b) bins[v - lo].n++;
+      return bins;
     }
     // </pure>
 
@@ -899,7 +940,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
     let armed = null; // key of the row whose delete is waiting for a second click
-    const fuelDate = $('fuel-date'), fuelMiles = $('fuel-miles'), fuelGal = $('fuel-gal');
+    const fuelDate = $('fuel-date'), fuelMiles = $('fuel-miles'), fuelGal = $('fuel-gal'), fuelPartial = $('fuel-partial'), fuelMissed = $('fuel-missed');
+    let editing = null; // id of the fill-up loaded into the form
     const svcItems = $('svc-items'), svcDate = $('svc-date'), svcMiles = $('svc-miles'), svcBy = $('svc-by'), svcCost = $('svc-cost'), svcNotes = $('svc-notes');
 
     // Icon delete button; the first click arms it, the second deletes.
@@ -983,6 +1025,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     const RECENT = 10;
+    const PENCIL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM13 7l4 4"/></svg>';
+    function editButton(f) {
+      if (!canEdit()) return null;
+      const b = el('button', { class: 'edt', type: 'button', 'data-edit': f.id, 'aria-pressed': String(editing === f.id), 'aria-label': `Edit ${f.date} fill-up` });
+      b.innerHTML = PENCIL; // PENCIL is a static literal
+      return b;
+    }
     let showAll = false;
     $('fuel-more').addEventListener('click', () => { showAll = !showAll; renderFuel(); });
 
@@ -1110,10 +1159,73 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       box.replaceChildren(svg, table, tip);
     }
 
-    function renderChart(tanks) {
-      for (const c of CHARTS) { c.months = monthlyMpg(tanks, todayISO(), c.span()); drawChart(c); }
+    function renderChart(stats) {
+      for (const c of CHARTS) { c.months = monthlyMpg(c.field === 'mi' ? stats.segments : stats.tanks, todayISO(), c.span()); drawChart(c); }
+      distBins = mpgHistogram(stats.tanks); drawDist();
     }
     for (const c of CHARTS) new ResizeObserver(() => drawChart(c)).observe($(c.box));
+
+    // --- MPG distribution: tanks per whole-MPG bin -------------------------------------
+    let distBins = [];
+    function drawDist() {
+      const box = $('mpg-dist');
+      if (!distBins.length) { box.replaceChildren(el('p', { class: 'empty', text: 'No tanks' })); return; }
+      const W = box.clientWidth - 12;
+      if (W < 120) return;
+      const H = W < 480 ? 180 : 200;
+      const M = { top: 22, right: 6, bottom: 24, left: 30 };
+      const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
+      const band = plotW / distBins.length;
+      const barW = Math.min(40, Math.max(band * 0.7, band - 4));
+      const max = Math.max(...distBins.map((b) => b.n));
+      const step = niceStep(max) < 1 ? 1 : niceStep(max);
+      const top = Math.ceil(max / step) * step;
+      const y = (v) => M.top + plotH - (v / top) * plotH;
+      const every = [1, 2, 5, 10].find((k) => band * k >= 28) || 10;
+      const range = (b) => `${b.lo}–${b.lo + 1} MPG`;
+      const total = distBins.reduce((a, b) => a + b.n, 0);
+      const mode = distBins.reduce((a, b) => (b.n > a.n ? b : a));
+
+      const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
+      svg.setAttribute('aria-label', `MPG distribution, ${plural(total, 'tank')}: ` + distBins.map((b) => `${range(b)} ${b.n}`).join(', '));
+      svg.append(svgEl('title', null, 'MPG distribution'));
+      for (let v = 0; v <= top; v += step) {
+        svg.append(svgEl('line', { class: 'grid', x1: M.left, x2: W - M.right, y1: y(v), y2: y(v) }));
+        svg.append(svgEl('text', { class: 'tick', x: M.left - 6, y: y(v) + 4, 'text-anchor': 'end' }, String(v)));
+      }
+      const tip = el('div', { class: 'chart-tip', hidden: true, 'aria-hidden': 'true' });
+      const hide = () => { tip.hidden = true; for (const g of box.querySelectorAll('.col.hot')) g.classList.remove('hot'); };
+      distBins.forEach((b, i) => {
+        const x0 = M.left + band * i, cx = x0 + band / 2;
+        const g = svgEl('g', { class: 'col', tabindex: '0' });
+        if (b.n) {
+          const x = cx - barW / 2, yt = y(b.n), yb = M.top + plotH, r = Math.min(4, barW / 2, yb - yt);
+          g.append(svgEl('path', { class: 'bar', d: `M${x},${yb} V${yt + r} Q${x},${yt} ${x + r},${yt} H${x + barW - r} Q${x + barW},${yt} ${x + barW},${yt + r} V${yb} Z` }));
+          if (b === mode) g.append(svgEl('text', { class: 'val', x: cx, y: yt - 5 }, String(b.n)));
+        }
+        g.append(svgEl('rect', { class: 'hit', x: x0, y: M.top, width: band, height: plotH + M.bottom - 4 }));
+        svg.append(g);
+        if ((b.lo - distBins[0].lo) % every === 0) svg.append(svgEl('text', { class: 'tick', x: x0, y: H - 6, 'text-anchor': 'middle' }, String(b.lo)));
+        const on = () => {
+          hide(); g.classList.add('hot');
+          tip.replaceChildren(el('b', { text: plural(b.n, 'tank') }), el('span', { text: range(b) }));
+          tip.hidden = false;
+          const half = tip.offsetWidth / 2;
+          tip.style.left = `${Math.min(Math.max(cx + 6, half + 2), box.clientWidth - half - 2)}px`;
+          tip.style.top = `${Math.max(y(b.n) + 2, tip.offsetHeight + 2)}px`;
+        };
+        g.addEventListener('pointerenter', on);
+        g.addEventListener('pointermove', on);
+        g.addEventListener('pointerleave', hide);
+        g.addEventListener('focus', on);
+        g.addEventListener('blur', hide);
+      });
+      const table = el('table', { class: 'sr-only' }, el('caption', { text: 'MPG distribution' }),
+        el('thead', null, el('tr', null, el('th', { scope: 'col', text: 'MPG' }), el('th', { scope: 'col', text: 'Tanks' }))),
+        el('tbody', null, ...distBins.map((b) => el('tr', null, el('td', { text: range(b) }), el('td', { text: String(b.n) })))));
+      box.replaceChildren(svg, table, tip);
+    }
+    new ResizeObserver(() => drawDist()).observe($('mpg-dist'));
 
     // --- To the Moon: odometer against the average Earth-Moon distance -------------
     const MOON_MI = 238855;
@@ -1331,7 +1443,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     function renderFuel() {
       const stats = mpgStats(data.fuel);
-      renderChart(stats.tanks);
+      if (editing && !data.fuel.some((f) => f.id === editing)) endEdit();
+      renderChart(stats);
       odoPoints = odometerPoints(data.fuel, data.services);
       drawOdo();
       drawMoon();
@@ -1356,13 +1469,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       more.textContent = showAll ? `Show recent ${RECENT}` : `Show all ${all.length}`;
       const rows = showAll ? all : all.slice(0, RECENT);
       if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 6, text: 'No fill-ups' }))); return; }
-      $('fuel-body').replaceChildren(...rows.map((f) => el('tr', null,
-        el('td', { text: f.date }),
+      const flags = (f) => [f.partial && 'Partial', f.missed && 'Missed previous'].filter(Boolean).join(' · ');
+      $('fuel-body').replaceChildren(...rows.map((f) => el('tr', { class: editing === f.id ? 'editing' : null },
+        el('td', null, f.date, flags(f) ? el('span', { class: 'flag', text: flags(f) }) : null),
         el('td', { 'data-label': 'Odometer', text: `${int.format(f.miles)} mi` }),
         el('td', { 'data-label': 'Miles', text: stats.tank[f.id] == null ? '—' : int.format(stats.tank[f.id]) }),
         el('td', { 'data-label': 'Gallons', text: f.gallons.toFixed(3) }),
         mpgCell(stats.perId[f.id]),
-        el('td', { class: 'act-cell k-stat' }, delButton(`f:${f.id}`, `${f.date} fill-up`)))));
+        el('td', { class: 'act-cell k-stat' }, editButton(f), delButton(`f:${f.id}`, `${f.date} fill-up`)))));
     }
 
     function paintStatus() {
@@ -1408,6 +1522,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     function dropKey() {
       apiKey = null;
+      if (editing) endEdit();
       try { localStorage.removeItem(KEY_KEY); } catch (e) { /* ignore */ }
     }
 
@@ -1446,12 +1561,51 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       if (miles === null || miles < 0) return say('fuel-msg', 'Odometer required');
       if (gallons === null || gallons <= 0) return say('fuel-msg', 'Invalid gallons');
       say('fuel-msg', '');
-      const ok = await save('POST', '/fuel', { date, miles: Math.round(miles), gallons });
+      const body = { date, miles: Math.round(miles), gallons, partial: fuelPartial.checked, missed: fuelMissed.checked };
+      const ok = editing ? await save('PUT', `/fuel/${editing}`, body) : await save('POST', '/fuel', body);
       if (!ok) return;
-      fuelGal.value = ''; fuelDate.value = todayISO();
-      delete fuelMiles.dataset.typed;
+      const was = editing;
+      endEdit();
       renderControls();
+      if (was) { const b = document.querySelector(`button[data-edit="${was}"]`); if (b) b.focus(); }
     });
+
+    // Edit: the pencil loads a fill-up into the form; Save writes it back, Cancel or Escape drops it.
+    function endEdit() {
+      editing = null;
+      fuelGal.value = ''; fuelDate.value = todayISO(); fuelPartial.checked = fuelMissed.checked = false;
+      delete fuelMiles.dataset.typed; fuelMiles.value = $('odo').value;
+      $('fuel-h').textContent = 'Log fill-up';
+      $('fuel-add').textContent = 'Add fill-up';
+      $('fuel-cancel').hidden = true;
+      say('fuel-msg', '');
+    }
+    function startEdit(id) {
+      const f = data.fuel.find((x) => x.id === id);
+      if (!f) return;
+      editing = id;
+      fuelDate.value = f.date; fuelMiles.value = String(f.miles); fuelMiles.dataset.typed = '1';
+      fuelGal.value = String(f.gallons); fuelPartial.checked = f.partial; fuelMissed.checked = f.missed;
+      $('fuel-h').textContent = 'Edit fill-up';
+      $('fuel-add').textContent = 'Save fill-up';
+      $('fuel-cancel').hidden = false;
+      say('fuel-msg', '');
+      renderFuel();
+      fuelDate.focus();
+    }
+    function cancelEdit() {
+      const was = editing;
+      endEdit(); renderFuel();
+      const b = was && document.querySelector(`button[data-edit="${was}"]`);
+      if (b) b.focus();
+    }
+    $('fuel-cancel').addEventListener('click', cancelEdit);
+    $('fuel-body').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-edit]');
+      if (!b || !canEdit()) return;
+      if (editing === b.dataset.edit) cancelEdit(); else startEdit(b.dataset.edit);
+    });
+    $('fuel-form').addEventListener('keydown', (e) => { if (e.key === 'Escape' && editing) { e.stopPropagation(); cancelEdit(); } });
 
     $('svc-form').addEventListener('submit', async (e) => {
       e.preventDefault();

@@ -61,13 +61,18 @@ A Reject means make no changes and ask what to adjust.
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services.
   Truck setup sits left on Maintenance; due-status tally strip, schedule and
-  history sit right. On Fuel the Add fill-up form sits left (Connected only);
+  history sit right. On Fuel the Add fill-up form (date, odometer, gallons, Partial and Missed
+  previous flags) sits left (Connected only); a fill-up's pencil loads it into
+  the form to edit. MPG runs full tank to full tank: partial gallons roll into
+  the next full fill, a missed fill-up drops the open tank, and Miles by month
+  ignores the flags;
   Average, Last fill-up (each with its change) and Best MPG tally strip, then
   a mini strip (fill-ups, gallons, gal/100 mi, avg and best miles per fill-up,
   counting only fills of 10+ gal), the MPG-by-month column chart (last 12
   calendar months ending this month, inline SVG, one hue, best and worst
-  labelled), then the 10 newest fill-ups (with miles per
-  tank; MPG red below 16, green above 20) sit right. No cost is shown on Fuel
+  labelled), then the MPG distribution (tanks per whole MPG, tallest bin
+  labelled), then the 10 newest fill-ups (with miles per tank and flags; MPG red
+  below 16, green above 20) sit right. No cost is shown on Fuel
   (fill-ups save cost 0). History (`#history`) is one full-width column of
   ownership charts: first To the Moon, an inline-SVG serigraph of the odometer
   along an Earth-to-Moon arc (238,855 mi) with a Driven / To go / Arrival
@@ -112,7 +117,8 @@ A Reject means make no changes and ask what to adjust.
   Worker `frontier-log` (`frontier/worker/`: `worker.js`, `schema.sql`,
   `seed.sql`, `wrangler.toml`), deployed with `npx wrangler deploy` from that
   folder. `GET /log` is public and returns the `version`, `truck`, `services`,
-  `fuel` shape; `GET /auth`, `POST /fuel` and `DELETE /fuel/:id` need the
+  `fuel` shape; `GET /auth`, `POST /fuel`, `PUT /fuel/:id`, `DELETE /fuel/:id`, `POST /services`,
+  `DELETE /services/:id` and `PUT /truck` need the
   `FRONTIER_KEY` secret (`npx wrangler secret put FRONTIER_KEY`), which a
   device pastes into Connect (kept in its `localStorage`, `frontier:key`).
   CORS allows only amanvg.com and localhost:8765. `frontier/data/log.json` is
@@ -135,8 +141,8 @@ A Reject means make no changes and ask what to adjust.
   browser-saved watchlist. Follows `DESIGN.md`.
 - `/frontier/` Frontier Maintenance: service and fill-up log for a 2022+ Nissan
   Frontier, due status from odometer and date against Nissan's schedule, cost
-  and MPG ledgers; fill-ups are logged from the page once a device is
-  Connected (services are not loggable yet).
+  and MPG ledgers; fill-ups and services are logged from the page once a device
+  is Connected.
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
   dashboards and maps; `carpicker/` is an older, unlinked page.
 - Home categories: Sports, Personal (Frontier, US States, Countries, MLB
