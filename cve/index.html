@@ -83,10 +83,10 @@ header{background:var(--head-bg);border-bottom:3px solid var(--head-line);paddin
 .btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s,color .15s}
 :root[data-theme="dark"] .btn{border-color:var(--key)}
 @media(hover:hover){
-.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:none}
 :root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
 }
-.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.btn:active{box-shadow:none}
 .btn:focus-visible{outline-color:var(--head-text)}
 .icon-btn{width:44px;padding:0;justify-content:center}
 .icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -191,7 +191,7 @@ th.r,td.r{text-align:right}
 th button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:6px;width:100%;min-height:40px;padding:6px 12px;cursor:pointer;font:inherit;letter-spacing:inherit;text-transform:inherit}
 th.r button{justify-content:flex-end}
 th button:focus-visible{outline:3px solid var(--head-text);outline-offset:-4px}
-th [aria-hidden]{width:8px;font-size:9px}
+th [aria-hidden]{width:8px;font-size:12px}
 td{padding:8px 12px;font-weight:600;font-variant-numeric:tabular-nums;vertical-align:middle}
 tbody tr{border-top:1px solid var(--divider)}
 tbody tr.ra{background:var(--row-a)}
@@ -213,7 +213,7 @@ tr.r td:last-child{white-space:nowrap}
 .rail-in{display:flex;flex-direction:column;position:sticky;top:75px}
 .act{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;background:var(--act-bg);color:var(--act-fg)}
 .act h2{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase}
-.act output{display:block;font-family:var(--display);font-weight:700;font-size:80px;line-height:80px;font-variant-numeric:tabular-nums;animation:stamp .6s var(--ease) both}
+.act output{display:block;font-family:var(--display);font-weight:700;font-size:80px;line-height:86px;font-variant-numeric:tabular-nums;animation:stamp .6s var(--ease) both}
 @keyframes stamp{from{opacity:0;transform:scale(1.35)}to{opacity:1;transform:none}}
 .tiers{list-style:none}
 .tiers li{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 24px;border-top:1px solid var(--divider);font-family:var(--label);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
