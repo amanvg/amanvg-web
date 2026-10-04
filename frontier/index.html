@@ -150,6 +150,8 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2
 .chips{display:flex}
 .chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 14px;border:2px solid var(--key);background:var(--well-bg);color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .chips button+button{margin-left:-2px}
+.use-chips{margin-left:auto}
+.use-chips button{min-width:112px}
 .chips button.active{background:var(--accent);border-color:var(--accent);color:var(--sel-fg);position:relative}
 @media(hover:hover){.chips button:not(.active):hover{background:var(--act-hover)}}
 
@@ -369,6 +371,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <div class="group-head">
                                 <h2 class="section-label" id="sched-l">Schedule</h2>
+                                <div class="chips use-chips" id="use" role="group" aria-label="Use">
+                                    <button type="button" data-use="standard" class="active" aria-pressed="true">Standard</button><button type="button" data-use="severe" aria-pressed="false">Severe</button>
+                                </div>
                                 <span class="pill" id="n-none">0 not logged</span>
                             </div>
                             <table class="ledger stack" aria-labelledby="sched-l">
@@ -427,25 +432,34 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     'use strict';
 
     // ---------------------------------------------------------------------------
-    // Schedule — Nissan Frontier 3.8L V6 (VQ38DD), normal-use schedule
+    // Schedule — Nissan Frontier 3.8L V6 (VQ38DD), normal and severe use
     // ---------------------------------------------------------------------------
 
     // Source: Nissan owner's manual, "Maintenance and schedules" (2022-2025
     // manuals agree on every item below). `then` is the repeat interval once the
     // item has been done; null means the manual gives no limit of that kind.
+    // `severe` overrides the normal interval in Severe use; `severeOnly` rows exist
+    // only there. Severe items are verified against the 2022 manual.
     // <pure>
     const SCHEDULE = [
-      { id: 'oil',        label: 'Engine oil & filter',                  miles: 7500,   months: 6,  source: 'Replace at 7,500 mi / 6 mo (severe use: 5,000 mi / 6 mo)' },
+      { id: 'oil',        label: 'Engine oil & filter',                  miles: 7500,   months: 6,  severe: { miles: 5000, months: 6 }, source: 'Replace at 7,500 mi / 6 mo (severe use: 5,000 mi / 6 mo)' },
       { id: 'rotate',     label: 'Tire rotation',                        miles: 7500,   months: 6,  source: 'Rotate at each normal oil interval, 7,500 mi / 6 mo' },
-      { id: 'brakes',     label: 'Brake pads & rotors inspection',       miles: 15000,  months: 12, source: 'Inspect at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo' },
+      { id: 'brakes',     label: 'Brake pads & rotors inspection',       miles: 15000,  months: 12, severe: { miles: 5000, months: 6 }, source: 'Inspect at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo (severe use: 5,000 mi / 6 mo)' },
       { id: 'cabin',      label: 'In-cabin microfilter',                 miles: 15000,  months: 12, source: 'Replace at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo' },
       { id: 'fluids',     label: 'Transmission & differential fluid inspection', miles: 15000, months: 12, source: 'Inspect automatic transmission fluid and differential gear oil every 15,000 mi / 12 mo' },
       { id: 'transfer',   label: 'Transfer case fluid inspection',       miles: 15000,  months: 12, only: '4WD', source: 'Inspect transfer fluid every 15,000 mi / 12 mo (4WD)' },
-      { id: 'prop',       label: 'Propeller shaft lubrication',          miles: 15000,  months: 12, only: '4WD', source: 'Lubricate every 15,000 mi / 12 mo (4WD models)' },
+      { id: 'prop',       label: 'Propeller shaft lubrication',          miles: 15000,  months: 12, only: '4WD', severe: { miles: 5000, months: 6 }, source: 'Every 15,000 mi / 12 mo (4WD models); severe use: 5,000 mi / 6 mo' },
       { id: 'air',        label: 'Engine air filter',                    miles: 30000,  months: 24, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo' },
-      { id: 'brakefluid', label: 'Brake fluid',                          miles: 30000,  months: 24, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo' },
+      { id: 'brakefluid', label: 'Brake fluid',                          miles: 30000,  months: 24, severe: { miles: 10000, months: 12 }, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo (severe use: 10,000 mi / 12 mo)' },
       { id: 'belt',       label: 'Drive belt inspection',                miles: 60000,  months: 48, then: { miles: 15000, months: 12 }, source: 'First inspection 60,000 mi / 48 mo, then every 15,000 mi / 12 mo' },
       { id: 'plugs',      label: 'Spark plugs',                          miles: 105000, months: 84, source: 'Replace at 105,000 mi / 84 mo; also when gap exceeds 0.053 in' },
+      { id: 'steering',   label: 'Steering gear & linkage inspection',   miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
+      { id: 'suspension', label: 'Axle & suspension parts inspection',   miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
+      { id: 'exhaust',    label: 'Exhaust system inspection',            miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
+      { id: 'boots',      label: 'Drive shaft boots inspection',         miles: 15000,  months: 12, only: '4WD', severe: { miles: 5000, months: 6 }, source: 'Inspect every 15,000 mi / 12 mo (4WD); severe use: 5,000 mi / 6 mo' },
+      { id: 'diffoil',    label: 'Differential gear oil replacement',    miles: 20000,  months: 24, severeOnly: true, source: 'Severe use only: replace every 20,000 mi / 24 mo' },
+      { id: 'transferoil', label: 'Transfer case oil replacement',       miles: 20000,  months: 24, only: '4WD', severeOnly: true, source: 'Severe use only (4WD): replace every 20,000 mi / 24 mo' },
+      { id: 'atf',        label: 'Automatic transmission fluid replacement', miles: 30000, months: 24, severeOnly: true, source: 'Severe use only (towing, car-top carrier, rough or muddy roads): replace every 30,000 mi / 24 mo' },
       { id: 'coolant',    label: 'Engine coolant',                       miles: 105000, months: 84, then: { miles: 75000, months: 60 }, source: 'First replacement 105,000 mi / 84 mo, then every 75,000 mi / 60 mo' },
     ];
 
@@ -461,7 +475,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     const isNum = (n) => typeof n === 'number' && Number.isFinite(n);
     const pad2 = (n) => String(n).padStart(2, '0');
-    const blankData = () => ({ version: 1, truck: { year: null, drive: null, odometer: null }, services: [], fuel: [], exportedOn: null });
+    const blankData = () => ({ version: 1, truck: { year: null, drive: null, odometer: null, use: 'standard' }, services: [], fuel: [], exportedOn: null });
 
     // Typed text to a finite number, or null for empty / unparseable.
     function toNum(v) {
@@ -516,6 +530,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return best;
     }
 
+    // Schedule item as it applies to this truck: drivetrain filter, and Severe-only rows.
+    const applies = (it, truck) => (!it.only || truck.drive !== '2WD') && (!it.severeOnly || truck.use === 'severe');
+    // Item with the Severe interval laid over the normal one when use is severe.
+    const viewOf = (it, use) => (use === 'severe' && it.severe ? { ...it, ...it.severe } : it);
+
     // Interval in force: the first one until the item has been logged, then `then`.
     const intervalFor = (item, logged) => (logged && item.then ? item.then : item);
 
@@ -542,11 +561,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // One row per applicable schedule item, sorted: scored (worst first), then
     // logged-but-unscorable, then never logged.
     function scheduleRows(data, today) {
-      const drive = data.truck.drive;
       const rank = { over: 0, soon: 0, ok: 0, unknown: 1, none: 2 };
       const rows = SCHEDULE
-        .filter((it) => !it.only || drive !== '2WD')
-        .map((item, i) => {
+        .filter((it) => applies(it, data.truck))
+        .map((base, i) => {
+          const item = viewOf(base, data.truck.use);
           const last = latestEntry(data.services, item.id);
           return { item, last, i, interval: intervalFor(item, !!last), ...dueStatus(item, last, data.truck.odometer, today) };
         });
@@ -590,6 +609,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       if (!t || typeof t !== 'object') return null;
       if (!(t.year === null || (Number.isInteger(t.year) && t.year >= MIN_YEAR && t.year <= 2100))) return null;
       if (!(t.drive === null || t.drive === '2WD' || t.drive === '4WD')) return null;
+      if (!(t.use === undefined || t.use === 'standard' || t.use === 'severe')) return null;
       if (!(t.odometer === null || nn(t.odometer))) return null;
       if (!Array.isArray(o.services) || !Array.isArray(o.fuel) || o.services.length > 5000 || o.fuel.length > 5000) return null;
       if (!(o.exportedOn === null || parseISO(o.exportedOn) !== null)) return null;
@@ -609,7 +629,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         if (parseISO(f.date) === null || !nn(f.miles) || !(isNum(f.gallons) && f.gallons > 0) || !nn(f.cost)) return null;
         fuel.push({ id: f.id, date: f.date, miles: f.miles, gallons: f.gallons, cost: f.cost });
       }
-      return { version: 1, truck: { year: t.year, drive: t.drive, odometer: t.odometer }, services, fuel, exportedOn: o.exportedOn };
+      return { version: 1, truck: { year: t.year, drive: t.drive, odometer: t.odometer, use: t.use || 'standard' }, services, fuel, exportedOn: o.exportedOn };
     }
     // </pure>
 
@@ -687,7 +707,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     function renderItems() {
       const keep = svcItem.value;
-      const opts = SCHEDULE.filter((it) => !it.only || data.truck.drive !== '2WD').map((it) => option(it.id, it.label));
+      const opts = SCHEDULE.filter((it) => applies(it, data.truck)).map((it) => option(it.id, it.label));
       opts.push(option('other', 'Other'));
       svcItem.replaceChildren(...opts);
       svcItem.value = [...svcItem.options].some((o) => o.value === keep) ? keep : opts[0].value;
@@ -800,9 +820,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     // Replace every control from `data` (startup and import).
+    function paintUse() {
+      for (const x of $('use').children) { const on = x.dataset.use === data.truck.use; x.classList.toggle('active', on); x.setAttribute('aria-pressed', String(on)); }
+    }
+
     function renderControls() {
       renderYears(); renderItems();
       driveSel.value = data.truck.drive || '';
+      paintUse();
       odo.value = data.truck.odometer == null ? '' : String(data.truck.odometer);
       for (const input of [svcMiles, fuelMiles]) delete input.dataset.typed;
       renderAll();
@@ -833,6 +858,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     yearSel.addEventListener('change', () => { data.truck.year = yearSel.value ? Number(yearSel.value) : null; save(); });
     driveSel.addEventListener('change', () => { data.truck.drive = driveSel.value || null; save(); renderItems(); renderAll(); });
+
+    $('use').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-use]');
+      if (!b || b.dataset.use === data.truck.use) return;
+      data.truck.use = b.dataset.use;
+      paintUse(); save(); renderItems(); renderAll();
+    });
 
     for (const input of [svcMiles, fuelMiles]) input.addEventListener('input', () => { input.dataset.typed = '1'; });
 
