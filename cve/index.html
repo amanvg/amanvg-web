@@ -218,6 +218,9 @@ tr.r td:last-child{white-space:nowrap}
 .tiers li:nth-child(even){background:var(--row-b)}
 .tiers .sw{width:18px;height:18px;background:var(--tb);box-shadow:inset 0 0 0 1.5px var(--text)}
 .tiers .t0{background:transparent}
+.rule{display:block;font-family:var(--label);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.tiers .tn{display:flex;flex-direction:column;min-width:0}
+.tiers .rule{color:var(--muted);opacity:1}
 .tiers b{margin-left:auto;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
 .railhead{padding:10px 24px;background:var(--head-bg);color:var(--head-text);border-top:2px solid var(--head-line);border-bottom:2px solid var(--head-line);font-family:var(--display);font-weight:700;font-size:18px;line-height:26px;letter-spacing:.05em;text-transform:uppercase}
 .watch{padding:16px 24px 24px;display:flex;flex-direction:column;gap:14px}
@@ -322,7 +325,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 </section>
                 <aside class="rail" aria-label="Summary">
                     <div class="rail-in">
-                    <div class="act"><h2>Act</h2><output id="act-n" aria-live="polite">0</output></div>
+                    <div class="act"><div><h2>Act</h2><span class="rule" id="rule-3"></span></div><output id="act-n" aria-live="polite">0</output></div>
                     <ul class="tiers" id="tiers"></ul>
                     <h2 class="railhead">Watchlist</h2>
                     <div class="watch">
@@ -382,6 +385,19 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             else if (lvl === 'poc') t = state.net ? 1 : 0;
             if (!state.prod) t = Math.max(0, t - 1);
             return { t, w: matches(i) };
+        }
+
+        const EXPLOIT_PROBES = [
+            ['Ransomware', { kev: { ransomware: true } }],
+            ['KEV', { kev: { ransomware: false } }],
+            ['EPSS ≥ ' + Math.round(EPSS_LIKELY * 100) + '%', { epss: EPSS_LIKELY }],
+            ['PoC', { exploitation: 'poc' }],
+            ['Other', {}],
+        ];
+        function tierRules() {
+            const out = [[], [], [], []];
+            EXPLOIT_PROBES.forEach(([label, probe]) => out[tierOf(probe).t].push(label));
+            return out.map(l => l.length ? l.join(' · ') : 'None');
         }
 
         // ── Helpers ─────────────────────────────────────────────
@@ -533,7 +549,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         function renderShortlist(rows) {
             const el = document.getElementById('p-short');
             const hot = rows.filter(r => r.t >= 2).sort(rank);
-            if (!hot.length) { el.innerHTML = '<p class="empty">Nothing to raise</p>'; return; }
+            if (!hot.length) { el.innerHTML = '<p class="empty">Nothing to raise · ' + (state.net ? 'Internet-facing' : 'Internal') + ' · ' + (state.prod ? 'Prod' : 'Dev/Test') + '</p>'; return; }
             const shown = hot.slice(0, SHORTLIST_MAX);
             let html = shown.map((i, n) => (
                 '<article class="item" style="--n:' + n + '">' +
@@ -615,8 +631,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const n = [0, 0, 0, 0];
             rows.forEach(r => n[r.t]++);
             document.getElementById('act-n').textContent = n[3];
+            const rules = tierRules();
+            document.getElementById('rule-3').textContent = rules[3];
             document.getElementById('tiers').innerHTML = [2, 1, 0].map(t =>
-                '<li><span class="sw t' + t + '"></span>' + TIER_NAMES[t] + '<b>' + n[t] + '</b></li>').join('');
+                '<li><span class="sw t' + t + '"></span><span class="tn">' + TIER_NAMES[t] + '<span class="rule">' + esc(rules[t]) + '</span></span><b>' + n[t] + '</b></li>').join('');
         }
 
         function renderWatch() {
