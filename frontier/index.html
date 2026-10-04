@@ -649,7 +649,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         if (parseISO(f.date) === null || !nn(f.miles) || !(isNum(f.gallons) && f.gallons > 0) || !nn(f.cost)) return null;
         fuel.push({ id: f.id, date: f.date, miles: f.miles, gallons: f.gallons, cost: f.cost });
       }
-      return { version: 1, truck: { year: t.year, drive: t.drive, odometer: t.odometer, use: t.use || 'standard' }, services, fuel, exportedOn: o.exportedOn };
+      // The odometer is the highest reading across fill-ups and services.
+      const readings = [...fuel, ...services].map((e) => e.miles);
+      const odometer = readings.length ? Math.max(...readings) : null;
+      return { version: 1, truck: { year: t.year, drive: t.drive, odometer, use: t.use || 'standard' }, services, fuel, exportedOn: o.exportedOn };
     }
     // </pure>
 

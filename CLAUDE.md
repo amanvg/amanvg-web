@@ -56,11 +56,13 @@ A Reject means make no changes and ask what to adjust.
   `DESIGN.md` like `/seattlesports/`; region, division and section chips live in
   the masthead, counts sit on signboards, lists are ledgers.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
-  Worker API, read-only until a device is Connected (no browser copy).
+  Worker API, read-only until a device is Connected (no browser copy). The
+  odometer is locked to the highest reading across fill-ups and services.
   Truck setup sits left on Maintenance; due-status signboards, schedule and
-  history sit right. On Fuel the Add fill-up form sits left (Connected only),
-  MPG signboards and the 10 newest fill-ups (with miles per tank; MPG red below 16, green above 20) sit right. A Cost chip (off by
-  default, saved per browser) shows cost.
+  history sit right. On Fuel the Add fill-up form sits left (Connected only);
+  MPG signboards and the 10 newest fill-ups (with miles per tank; MPG red
+  below 16, green above 20) sit right. A Cost chip (off by default, saved per
+  browser) shows cost.
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
   `data/visited.json`; a "Create your own" button switches to a blank,
   browser-saved copy with Export/Import in the same schema. No personal name
