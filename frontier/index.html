@@ -666,30 +666,25 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // Status from the last entry. Miles and days are put on one scale by the
     // due-soon thresholds (1,000 mi, 30 days); the smaller score is the limit that
     // comes first, and label, stamp and sort all read the same score.
-    function dueStatus(item, last, odometer, today) {
+    function dueStatus(item, last, odometer, today, start) {
       // `due`: where each limit falls, as the target and what is left (negative = past).
-      // Never logged, only the first mileage is known: there is no in-service date,
-      // so it is scored on miles alone.
-      if (!last) {
-        const mi = item.miles != null && odometer != null ? { at: item.miles, rem: item.miles - odometer } : null;
-        if (!mi) return { state: 'none', due: { mi, days: null } };
-        const score = mi.rem / DUE_MILES;
-        return { state: score < 0 ? 'over' : score <= 1 ? 'soon' : 'ok', kind: 'mi', rem: mi.rem, score, due: { mi, days: null } };
-      }
-      const iv = intervalFor(item, true);
+      // Never logged: the first interval runs from 0 mi and from `start` (the earliest
+      // fill-up, standing in for the in-service date); without it, miles alone.
+      const from = last || { miles: 0, date: start };
+      const iv = intervalFor(item, !!last);
       const cands = [];
       const due = { mi: null, days: null };
       if (iv.miles != null && odometer != null) {
-        const at = last.miles + iv.miles, rem = at - odometer;
+        const at = from.miles + iv.miles, rem = at - odometer;
         due.mi = { at, rem };
         cands.push({ kind: 'mi', rem, score: rem / DUE_MILES });
       }
-      if (iv.months != null) {
-        const at = addMonths(last.date, iv.months), rem = diffDays(at, today);
+      if (iv.months != null && from.date) {
+        const at = addMonths(from.date, iv.months), rem = diffDays(at, today);
         due.days = { at, rem };
         cands.push({ kind: 'days', rem, score: rem / DUE_DAYS });
       }
-      if (!cands.length) return { state: 'unknown', due };
+      if (!cands.length) return { state: last ? 'unknown' : 'none', due };
       const c = cands.reduce((a, b) => (b.score < a.score ? b : a));
       return { state: c.score < 0 ? 'over' : c.score <= 1 ? 'soon' : 'ok', kind: c.kind, rem: c.rem, score: c.score, due };
     }
@@ -697,13 +692,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // One row per applicable schedule item, sorted: scored (worst first), then
     // logged-but-unscorable, then never logged.
     function scheduleRows(data, today) {
+      const start = data.fuel.reduce((d, f) => (!d || f.date < d ? f.date : d), null);
       const rank = { over: 0, soon: 0, ok: 0, unknown: 1, none: 2 };
       const rows = SCHEDULE
         .filter((it) => applies(it, data.truck))
         .map((base, i) => {
           const item = viewOf(base, data.truck.use);
           const last = latestEntry(data.services, item.id, !!item.mpi);
-          return { item, last, i, interval: intervalFor(item, !!last), ...dueStatus(item, last, data.truck.odometer, today) };
+          return { item, last, i, interval: intervalFor(item, !!last), ...dueStatus(item, last, data.truck.odometer, today, start) };
         });
       rows.sort((a, b) => rank[a.state] - rank[b.state] || (rank[a.state] === 0 ? a.score - b.score : 0) || a.i - b.i);
       return rows;
