@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-04T02:05:20Z",
+ "generatedAt": "2026-10-04T02:33:04Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.02",
  "kevCount": 1733,
@@ -23,6 +23,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-122",
    "cwe": "Execute unauthorized code or commands"
   },
   {
@@ -43,6 +44,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-754",
    "cwe": "Improper Check for Unusual or Exceptional Conditions"
   },
   {
@@ -63,6 +65,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-362",
    "cwe": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')"
   },
   {
@@ -83,6 +86,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-384",
    "cwe": "Session Fixation"
   },
   {
@@ -103,6 +107,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-269",
    "cwe": "Improper Privilege Management"
   },
   {
@@ -123,6 +128,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-22",
    "cwe": "Execute unauthorized code or commands"
   },
   {
@@ -143,6 +149,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-288",
    "cwe": "Authentication Bypass Using an Alternate Path or Channel"
   },
   {
@@ -163,6 +170,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-288",
    "cwe": "Authentication Bypass Using an Alternate Path or Channel"
   },
   {
@@ -183,6 +191,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-863",
    "cwe": "Incorrect Authorization"
   },
   {
@@ -203,6 +212,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "partial",
+   "cweId": "CWE-287",
    "cwe": "Improper Authentication"
   },
   {
@@ -223,6 +233,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-787",
    "cwe": "Out-of-bounds Write"
   },
   {
@@ -243,6 +254,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-347",
    "cwe": "Improper Validation of Certificate With Host Mismatch"
   },
   {
@@ -263,7 +275,8 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
-   "cwe": "Elevation of privilege"
+   "cweId": "CWE-693",
+   "cwe": "Protection Mechanism Failure"
   },
   {
    "id": "CVE-2026-65660",
@@ -283,6 +296,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-94",
    "cwe": "Improper Control of Generation of Code ('Code Injection')"
   },
   {
@@ -303,6 +317,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "partial",
+   "cweId": "CWE-306",
    "cwe": "Missing authentication for critical function"
   },
   {
@@ -323,6 +338,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "partial",
+   "cweId": "CWE-841",
    "cwe": "Improper enforcement of behavioral workflow"
   },
   {
@@ -343,6 +359,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-863",
    "cwe": "Incorrect Authorization (CWE-863)"
   },
   {
@@ -363,6 +380,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-121",
    "cwe": "Stack-based buffer overflow"
   },
   {
@@ -383,6 +401,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-1336",
    "cwe": "Improper Neutralization of Special Elements Used in a Template Engine (CWE-1336)"
   },
   {
@@ -403,6 +422,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-648",
    "cwe": "Incorrect Use of Privileged APIs"
   },
   {
@@ -423,6 +443,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-89",
    "cwe": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
   },
   {
@@ -443,6 +464,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-177",
    "cwe": "Improper Handling of URL Encoding (Hex Encoding)"
   },
   {
@@ -463,6 +485,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-59",
    "cwe": "Improper Link Resolution Before File Access ('Link Following')"
   },
   {
@@ -483,6 +506,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-862",
    "cwe": "Missing Authorization"
   },
   {
@@ -503,6 +527,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-843",
    "cwe": "Type confusion"
   },
   {
@@ -523,6 +548,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-295",
    "cwe": "Improper Certificate Validation."
   },
   {
@@ -543,6 +569,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
   },
   {
@@ -563,6 +590,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-122",
    "cwe": "Heap-based Buffer Overflow"
   },
   {
@@ -583,6 +611,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-88",
    "cwe": "Improper neutralization of argument delimiters in a command ('argument injection')"
   },
   {
@@ -603,6 +632,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-96",
    "cwe": "Improper neutralization of directives in statically saved code ('static code injection')"
   },
   {
@@ -623,7 +653,8 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
-   "cwe": "Processing a maliciously crafted file may lead to arbitrary code execution. Apple is aware of a report that this issue may have been exploited in an extremely sophisticated attack against specific targeted individuals on versions of iOS before iOS 27."
+   "cweId": "CWE-787",
+   "cwe": "Out-of-bounds Write"
   },
   {
    "id": "CVE-2026-87491",
@@ -643,6 +674,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-787",
    "cwe": "Out of bounds write"
   },
   {
@@ -663,6 +695,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-276",
    "cwe": null
   },
   {
@@ -683,6 +716,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-98",
    "cwe": "Remote File Inclusion"
   },
   {
@@ -703,6 +737,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-20",
    "cwe": "Improper input validation"
   },
   {
@@ -723,6 +758,7 @@
    "exploitation": "active",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-119",
    "cwe": "Improper Restriction of Operations within the Bounds of a Memory Buffer"
   },
   {
@@ -743,6 +779,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')."
   },
   {
@@ -763,6 +800,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-20",
    "cwe": "Improper Input Validation"
   },
   {
@@ -783,6 +821,7 @@
    "exploitation": "active",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-122",
    "cwe": "Heap-based Buffer Overflow"
   },
   {
@@ -799,6 +838,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
@@ -815,6 +855,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -831,6 +872,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -847,6 +889,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -863,6 +906,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -879,6 +923,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -895,6 +940,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -911,6 +957,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -927,6 +974,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -943,6 +991,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -959,6 +1008,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -975,6 +1025,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -991,6 +1042,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1007,6 +1059,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1023,6 +1076,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1039,6 +1093,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
@@ -1055,6 +1110,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
@@ -1071,6 +1127,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
   },
   {
@@ -1087,6 +1144,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
@@ -1103,6 +1161,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1119,6 +1178,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1135,6 +1195,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
@@ -1151,6 +1212,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1167,6 +1229,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1183,6 +1246,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "partial",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1199,6 +1263,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1215,6 +1280,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-287",
    "cwe": "Improper Authentication"
   },
   {
@@ -1231,6 +1297,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
@@ -1247,6 +1314,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1263,6 +1331,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1279,6 +1348,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1295,6 +1365,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1311,6 +1382,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1327,6 +1399,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1343,6 +1416,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "partial",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1359,6 +1433,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1375,6 +1450,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1391,6 +1467,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1407,6 +1484,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "partial",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1423,6 +1501,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1439,6 +1518,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1455,6 +1535,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1471,6 +1552,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
@@ -1487,6 +1569,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1503,6 +1586,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
   {
@@ -1519,6 +1603,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1535,6 +1620,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1551,6 +1637,7 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "partial",
+   "cweId": "CWE-77",
    "cwe": "Command Injection"
   },
   {
@@ -1567,6 +1654,7 @@
    "exploitation": "poc",
    "automatable": "yes",
    "impact": "total",
+   "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   }
  ]
