@@ -210,6 +210,8 @@ fieldset{border:0;min-width:0}
 .chart .tick{fill:var(--muted);font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.02em}
 .chart .tick.year{font-weight:700;letter-spacing:.06em}
 .chart .bar{fill:var(--s1);transition:fill-opacity .15s}
+.chart .avg{stroke:var(--s2);stroke-width:1;stroke-dasharray:4 3}
+.chart .avg-l{fill:var(--text);font-family:var(--label);font-weight:700;font-size:12px;paint-order:stroke;stroke:var(--row-a);stroke-width:3px;stroke-linejoin:round}
 .chart .line{fill:none;stroke:var(--s1);stroke-width:2;stroke-linejoin:round}
 .chart .dot{fill:var(--s1)}
 .chart .mark{fill:var(--text);stroke:var(--row-a);stroke-width:2}
@@ -964,7 +966,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // Each chart: its box, the monthly field it plots and how values read.
     const CHARTS = [
       { box: 'mpg-chart', title: 'MPG by month', head: 'MPG', field: 'mpg', fmt: dec1, tick: String, tip: (v) => `${dec1(v)} MPG`, step: () => 4, min: 24, left: 30 },
-      { box: 'miles-chart', title: 'Miles by month', head: 'Miles', field: 'mi', fmt: (v) => int.format(v), tick: (v) => int.format(v), tip: (v) => `${int.format(v)} mi`, step: niceStep, min: 0, left: 44 },
+      { box: 'miles-chart', title: 'Miles by month', head: 'Miles', field: 'mi', fmt: (v) => int.format(v), tick: (v) => int.format(v), tip: (v) => `${int.format(v)} mi`, step: niceStep, min: 0, left: 44, avg: true },
     ];
     // Gridline step near a fifth of the top value: 1, 2 or 5 times a power of ten.
     function niceStep(max) {
@@ -987,11 +989,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const max = Math.max(0, ...vals.map(val));
       const step = c.step(max);
       const top = Math.max(c.min, Math.ceil(max / step) * step || step);
+      // Average of the months that have a value (the reference line, `avg` charts only).
+      const avg = c.avg && vals.length ? vals.reduce((a, m) => a + val(m), 0) / vals.length : null;
       const y = (v) => M.top + plotH - (v / top) * plotH;
       const names = band < 30 ? MONTHS.map((n) => n[0]) : MONTHS;
 
       const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
-      svg.setAttribute('aria-label', `${c.title}, last 12 months: ` + chartMonths.map((m) => `${MONTHS[m.month]} ${m.year} ${val(m) == null ? 'no fill-ups' : c.fmt(val(m))}`).join(', '));
+      svg.setAttribute('aria-label', `${c.title}, last 12 months: ` + chartMonths.map((m) => `${MONTHS[m.month]} ${m.year} ${val(m) == null ? 'no fill-ups' : c.fmt(val(m))}`).join(', ') + (avg == null ? '' : `; average ${c.fmt(avg)}`));
       svg.append(svgEl('title', null, c.title));
 
       for (let v = 0; v <= top; v += step) {
@@ -1009,7 +1013,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const show = (g, m, cx, yTop) => {
         hide();
         g.classList.add('hot');
-        tip.replaceChildren(el('b', { text: val(m) == null ? '—' : c.tip(val(m)) }), el('span', { text: `${MONTHS[m.month]} ${m.year} · ${m.fills ? plural(m.fills, 'fill-up') : 'No fill-ups'}` }));
+        tip.replaceChildren(el('b', { text: val(m) == null ? '—' : c.tip(val(m)) }), el('span', { text: `${MONTHS[m.month]} ${m.year} · ${m.fills ? plural(m.fills, 'fill-up') : 'No fill-ups'}` }),
+          avg == null ? null : el('span', { text: `Avg ${c.tip(avg)}` }));
         tip.hidden = false;
         const half = tip.offsetWidth / 2;
         tip.style.left = `${Math.min(Math.max(cx + 6, half + 2), box.clientWidth - half - 2)}px`; // +6: chart padding
@@ -1039,8 +1044,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         g.addEventListener('blur', hide);
       });
 
+      if (avg != null) {
+        svg.append(svgEl('line', { class: 'avg', x1: M.left, x2: W - M.right, y1: y(avg), y2: y(avg) }));
+        svg.append(svgEl('text', { class: 'avg-l', x: W - M.right, y: y(avg) - 5, 'text-anchor': 'end' }, `Avg ${c.fmt(avg)}`));
+      }
+
       // Table view for screen readers (the values the tooltip shows).
-      const table = el('table', { class: 'sr-only' }, el('caption', { text: c.title }),
+      const table = el('table', { class: 'sr-only' }, el('caption', { text: avg == null ? c.title : `${c.title}, average ${c.fmt(avg)}` }),
         el('thead', null, el('tr', null, el('th', { scope: 'col', text: 'Month' }), el('th', { scope: 'col', text: c.head }), el('th', { scope: 'col', text: 'Fill-ups' }))),
         el('tbody', null, ...chartMonths.map((m) => el('tr', null, el('td', { text: m.key }), el('td', { text: val(m) == null ? '—' : c.fmt(val(m)) }), el('td', { text: String(m.fills) })))));
 
