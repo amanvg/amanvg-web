@@ -52,11 +52,13 @@ A Reject means make no changes and ask what to adjust.
 - `/commute/`: follows `DESIGN.md` like `/tirepressure/`; car, route and pump
   price inputs sit left, fare signboards and cost, miles, hours ledgers sit
   right, and results update live (no Calculate button).
-- Other app pages: dark theme. Copy the `:root` tokens, nav (`← amanvg` back link,
-  centered title), `.card`, and form styles from an existing page such as
-  `worldmap/index.html` rather than inventing new ones. Inter from
-  Google Fonts, 20px card radius, accent `#3b82f6`. They keep this look until
-  each is migrated, one step at a time.
+- `/tempest/`, `/mlbstadiums/`, `/USStates/`, `/worldmap/`, `/trust/`: follow
+  `DESIGN.md` like `/seattlesports/`; region, division and section chips live in
+  the masthead, counts sit on signboards, lists are ledgers.
+- `/carpicker/` (unlinked): still the old dark theme. Copy the `:root` tokens,
+  nav (`← amanvg` back link, centered title), `.card`, and form styles from the
+  page itself rather than inventing new ones. Inter from Google Fonts, 20px
+  card radius, accent `#3b82f6`. It keeps this look until it is migrated.
 - Desktop first. Design and verify at 1440×900 and 1024×768 before phone
   widths: inputs and results visible together, key controls above the fold.
   Collapse to one column below 960px.
