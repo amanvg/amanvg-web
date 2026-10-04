@@ -210,6 +210,11 @@ fieldset{border:0;min-width:0}
 .chart .tick{fill:var(--muted);font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.02em}
 .chart .tick.year{font-weight:700;letter-spacing:.06em}
 .chart .bar{fill:var(--s1);transition:fill-opacity .15s}
+.chart .line{fill:none;stroke:var(--s1);stroke-width:2;stroke-linejoin:round}
+.chart .dot{fill:var(--s1)}
+.chart .mark{fill:var(--text);stroke:var(--row-a);stroke-width:2}
+.chart .guide{stroke:var(--key);stroke-width:1}
+.chart:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .chart .col.hot .bar,.chart .col:focus .bar{fill-opacity:.78}
 .chart .col{outline:none}
 .chart .col:focus-visible .hit{stroke:var(--focus);stroke-width:2}
@@ -539,6 +544,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="miles-chart-l">Miles by month</h2>
                             <div class="chart" id="miles-chart" role="group" aria-labelledby="miles-chart-l"></div>
+                        </div>
+                        <div class="ledger-wrap">
+                            <h2 class="section-label" id="odo-chart-l">Odometer</h2>
+                            <div class="chart" id="odo-chart" role="group" aria-labelledby="odo-chart-l" tabindex="0"></div>
                         </div>
                     </div>
                 </div>
@@ -1044,9 +1053,97 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
     for (const c of CHARTS) new ResizeObserver(() => drawChart(c)).observe($(c.box));
 
+    // --- Odometer over time: line chart, every fill-up and service reading ---------
+    let odoPoints = [];
+    // One point per date (its highest reading), oldest first.
+    function odometerPoints(fuel, services) {
+      const byDate = new Map();
+      for (const e of [...fuel, ...services]) if (!byDate.has(e.date) || e.miles > byDate.get(e.date)) byDate.set(e.date, e.miles);
+      return [...byDate].map(([date, miles]) => ({ date, miles, t: parseISO(date) })).filter((p) => p.t != null).sort((a, b) => a.t - b.t);
+    }
+
+    function drawOdo() {
+      const box = $('odo-chart');
+      const W = box.clientWidth - 12;
+      if (W < 120) return;
+      const pts = odoPoints;
+      if (pts.length < 2) { box.replaceChildren(el('p', { class: 'sr-only', text: 'No readings' })); return; }
+      const H = W < 480 ? 200 : 240;
+      const M = { top: 22, right: 14, bottom: 40, left: 52 };
+      const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
+      const t0 = pts[0].t, t1 = Math.max(pts[pts.length - 1].t, parseISO(todayISO()));
+      const max = Math.max(1, ...pts.map((p) => p.miles));
+      const step = niceStep(max), top = Math.ceil(max / step) * step;
+      const x = (t) => M.left + ((t - t0) / (t1 - t0 || 1)) * plotW;
+      const y = (v) => M.top + plotH - (v / top) * plotH;
+
+      const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
+      const last = pts[pts.length - 1];
+      svg.setAttribute('aria-label', `Odometer, ${pts[0].date} to ${last.date}: ${int.format(pts[0].miles)} to ${int.format(last.miles)} mi`);
+      svg.append(svgEl('title', null, 'Odometer'));
+      for (let v = 0; v <= top; v += step) {
+        svg.append(svgEl('line', { class: 'grid', x1: M.left, x2: W - M.right, y1: y(v), y2: y(v) }));
+        svg.append(svgEl('text', { class: 'tick', x: M.left - 6, y: y(v) + 4, 'text-anchor': 'end' }, int.format(v)));
+      }
+
+      // Month labels: every month when they fit, else Jan / Apr / Jul / Oct; year under each January and the first label.
+      const first = new Date(t0), months = [];
+      for (let d = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 1)); d.getTime() <= t1; d = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1))) months.push(d);
+      const every = plotW / Math.max(months.length, 1) >= 34 ? 1 : 3;
+      let yearShown = false;
+      for (const d of months) {
+        const mo = d.getUTCMonth();
+        if (mo % every) continue;
+        const cx = x(d.getTime());
+        svg.append(svgEl('text', { class: 'tick', x: cx, y: H - 22, 'text-anchor': 'middle' }, MONTHS[mo]));
+        if (mo === 0 || !yearShown) { svg.append(svgEl('text', { class: 'tick year', x: cx, y: H - 6, 'text-anchor': 'middle' }, String(d.getUTCFullYear()))); yearShown = true; }
+      }
+
+      svg.append(svgEl('path', { class: 'line', d: pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.t)},${y(p.miles)}`).join(' ') }));
+      svg.append(svgEl('text', { class: 'val', x: Math.min(x(last.t), W - M.right - 24), y: y(last.miles) - 8 }, int.format(last.miles)));
+      const guide = svgEl('line', { class: 'guide', y1: M.top, y2: M.top + plotH, visibility: 'hidden' });
+      const mark = svgEl('circle', { class: 'mark', r: 4, visibility: 'hidden' });
+      svg.append(guide, mark);
+
+      const table = el('table', { class: 'sr-only' }, el('caption', { text: 'Odometer' }),
+        el('thead', null, el('tr', null, el('th', { scope: 'col', text: 'Date' }), el('th', { scope: 'col', text: 'Odometer' }))),
+        el('tbody', null, ...pts.map((p) => el('tr', null, el('td', { text: p.date }), el('td', { text: `${int.format(p.miles)} mi` })))));
+      const tip = el('div', { class: 'chart-tip', hidden: true, 'aria-hidden': 'true' });
+
+      let at = -1;
+      const show = (i) => {
+        at = i;
+        const p = pts[i], cx = x(p.t), cy = y(p.miles);
+        for (const [k, v] of [['x1', cx], ['x2', cx]]) guide.setAttribute(k, v);
+        mark.setAttribute('cx', cx); mark.setAttribute('cy', cy);
+        guide.setAttribute('visibility', 'visible'); mark.setAttribute('visibility', 'visible');
+        tip.replaceChildren(el('b', { text: `${int.format(p.miles)} mi` }), el('span', { text: p.date }));
+        tip.hidden = false;
+        const half = tip.offsetWidth / 2;
+        tip.style.left = `${Math.min(Math.max(cx + 6, half + 2), box.clientWidth - half - 2)}px`;
+        tip.style.top = `${Math.max(cy + 2, tip.offsetHeight + 2)}px`;
+      };
+      const hide = () => { at = -1; tip.hidden = true; guide.setAttribute('visibility', 'hidden'); mark.setAttribute('visibility', 'hidden'); };
+      const nearest = (px) => pts.reduce((b, p, i) => (Math.abs(x(p.t) - px) < Math.abs(x(pts[b].t) - px) ? i : b), 0);
+      svg.addEventListener('pointermove', (e) => { const r = svg.getBoundingClientRect(); show(nearest((e.clientX - r.left) * (W / r.width))); });
+      svg.addEventListener('pointerleave', hide);
+      box.onfocus = () => show(at < 0 ? pts.length - 1 : at);
+      box.onblur = hide;
+      box.onkeydown = (e) => {
+        const n = e.key === 'ArrowRight' ? at + 1 : e.key === 'ArrowLeft' ? at - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? pts.length - 1 : null;
+        if (n == null) return;
+        e.preventDefault();
+        show(Math.min(Math.max(n, 0), pts.length - 1));
+      };
+      box.replaceChildren(svg, table, tip);
+    }
+    new ResizeObserver(() => drawOdo()).observe($('odo-chart'));
+
     function renderFuel() {
       const stats = mpgStats(data.fuel);
       renderChart(stats.tanks);
+      odoPoints = odometerPoints(data.fuel, data.services);
+      drawOdo();
       const num1 = (n) => (n == null ? '—' : dec1(n));
       const delta = (d) => { if (d == null) return ''; const r = Number(d.toFixed(1)); return r === 0 ? '0.0' : `${r > 0 ? '+' : '−'}${Math.abs(r).toFixed(1)}`; };
       const withDelta = (d) => (d == null ? 'MPG' : `MPG · ${delta(d)}`);
