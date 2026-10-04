@@ -871,9 +871,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const at = kind === 'mi' ? `${int.format(d.at)} mi` : d.at;
       return el('span', { class: `due-line${d.rem < 0 ? ' late' : ''}` }, d.rem < 0 ? `${unit} past` : `${unit} left`, el('span', { class: 'sub', text: at }));
     }
-    const dueCell = (r) => el('td', { class: 'k-r k-due', 'data-label': 'Next' },
-      el('span', { class: 'due' }, dueLine(r.due.days, 'days'), dueLine(r.due.mi, 'mi')),
-      r.state === 'none' ? el('span', { class: 'sr-only', text: 'Not logged' }) : null);
+    // Only the limit that comes first; never-logged rows only know their mileage.
+    const dueCell = (r) => {
+      const kind = r.kind || (r.due.mi ? 'mi' : 'days');
+      return el('td', { class: 'k-r k-due', 'data-label': 'Next' },
+        el('span', { class: 'due' }, dueLine(kind === 'mi' ? r.due.mi : r.due.days, kind)),
+        r.state === 'none' ? el('span', { class: 'sr-only', text: 'Not logged' }) : null);
+    };
 
     function setNum(id, n) {
       const node = $(id);
@@ -897,7 +901,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
           plain ? el('span', { class: 'sr-only', text: 'No status' }) : null);
         return el('tr', null,
           el('td', { class: 'wrap' }, r.item.label, el('span', { class: 'sub', text: intervalText(r.interval) })),
-          el('td', { class: 'k-r', 'data-label': 'Last' }, r.last ? el('span', { class: 'nw', text: r.last.date }) : '—', r.last ? el('span', { class: 'sub', text: `${int.format(r.last.miles)} mi` }) : null, r.last && r.last.item === MPI ? el('span', { class: 'sub', text: 'MPI' }) : null),
+          el('td', { class: 'k-r', 'data-label': 'Last' }, r.last ? el('span', { class: 'nw', text: r.last.date }) : '—'),
           dueCell(r),
           el('td', { class: 'k-stat' }, stamp));
       });
