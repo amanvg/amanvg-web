@@ -121,10 +121,13 @@ main{flex:1;padding:28px var(--margin) 0}
 
 .sel{position:relative;min-width:0}
 .sel::after{content:'';position:absolute;right:14px;top:50%;margin-top:-3px;border:6px solid transparent;border-top:7px solid var(--text);border-bottom:0;pointer-events:none}
-select,input[type=text],input[type=number]{width:100%;min-width:0;min-height:44px;background:var(--well-bg);color:var(--text);border:2px solid var(--key);border-radius:0;box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:6px 12px;font-family:var(--body);font-size:20px;line-height:28px;font-variant-numeric:lining-nums tabular-nums;caret-color:var(--accent);transition:border-color .15s,box-shadow .15s}
+select,input[type=text],input[type=number],input[type=date]{width:100%;min-width:0;min-height:44px;background:var(--well-bg);color:var(--text);border:2px solid var(--key);border-radius:0;box-shadow:inset 2px 2px 0 0 var(--well-shadow);padding:6px 12px;font-family:var(--body);font-size:20px;line-height:28px;font-variant-numeric:lining-nums tabular-nums;caret-color:var(--accent);transition:border-color .15s,box-shadow .15s}
 select{-webkit-appearance:none;appearance:none;padding-right:36px;cursor:pointer;text-overflow:ellipsis}
 select option{background:var(--card);color:var(--text)}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input[type=date]{-webkit-appearance:none;appearance:none;display:block;text-align:left;height:44px;padding-top:0;padding-bottom:0}
+input[type=date]::-webkit-date-and-time-value{text-align:left}
+input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.85}
 input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 input::placeholder{color:var(--muted);opacity:.65}
 select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:2px 2px 0 0 var(--focus)}
@@ -301,7 +304,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="pair">
                             <div class="field">
                                 <label for="svc-date">Date</label>
-                                <input type="text" id="svc-date" inputmode="numeric" maxlength="10" placeholder="yyyy-mm-dd" autocomplete="off">
+                                <input type="date" id="svc-date" autocomplete="off">
                             </div>
                             <div class="field">
                                 <label for="svc-miles">Odometer</label>
@@ -332,7 +335,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="pair">
                             <div class="field">
                                 <label for="fuel-date">Date</label>
-                                <input type="text" id="fuel-date" inputmode="numeric" maxlength="10" placeholder="yyyy-mm-dd" autocomplete="off">
+                                <input type="date" id="fuel-date" autocomplete="off">
                             </div>
                             <div class="field">
                                 <label for="fuel-miles">Odometer</label>
