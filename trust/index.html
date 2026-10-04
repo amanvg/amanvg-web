@@ -66,10 +66,10 @@ header{background:var(--head-bg);border-bottom:3px solid var(--head-line);paddin
 .btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s,color .15s}
 :root[data-theme="dark"] .btn{border-color:var(--key)}
 @media(hover:hover){
-.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:4px 4px 0 0 var(--shadow);transform:translate(-2px,-2px)}
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg);box-shadow:none}
 :root[data-theme="dark"] .btn:hover{border-color:var(--accent)}
 }
-.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.btn:active{box-shadow:none}
 .btn:focus-visible{outline-color:var(--head-text)}
 .icon-btn{width:44px;padding:0}
 .icon-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -91,7 +91,7 @@ main{flex:1;padding:28px var(--margin) 0}
 .block-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:2px 12px;background:var(--head-bg);color:var(--head-text);padding:8px 28px;font-family:var(--display);font-weight:700;font-size:22px;line-height:28px;letter-spacing:.06em;text-transform:uppercase}
 .block-body{padding:24px 28px 28px;display:flex;flex-direction:column;gap:24px}
 .sub{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;color:var(--muted);margin-bottom:10px}
-.reviewed{font-family:var(--label);font-weight:600;font-size:13px;line-height:16px;font-variant-numeric:tabular-nums}
+.reviewed{font-family:var(--label);font-weight:600;font-size:13px;line-height:19px;font-variant-numeric:tabular-nums}
 
 .signs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 .sign{background:transparent;min-width:0;border-bottom:1px solid var(--key)}
@@ -111,7 +111,7 @@ tbody tr+tr td{border-top:1px solid var(--divider)}
 td a{word-break:break-word}
 a{color:var(--link);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px}
-.reveal{font-family:var(--label);font-weight:600;font-size:14px;line-height:16px;color:var(--text);background:transparent;border:1.5px solid var(--key);padding:6px 14px;min-height:32px;cursor:pointer;transition:background .15s,border-color .15s}
+.reveal{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;color:var(--text);background:transparent;border:1.5px solid var(--key);padding:6px 14px;min-height:32px;cursor:pointer;transition:background .15s,border-color .15s}
 @media(hover:hover){.reveal:hover{background:var(--btn-hover-bg);border-color:var(--accent)}}
 
 footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
@@ -138,8 +138,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 /* Tally strip: figures side by side, split by 1px rules, no bands */
-.signs{gap:1px;background:var(--key);border-bottom:1px solid var(--key)}
-.sign{background:var(--card);border-bottom:0}
+.signs{gap:1px;background:none;overflow:hidden;border-bottom:1px solid var(--key)}
+.sign{background:none;border-bottom:0;box-shadow:-1px 0 0 var(--key),0 -1px 0 var(--key)}
 .sign-head,.sign.hot .sign-head{min-height:0;background:none;color:var(--muted);padding:12px 14px 0;font-size:15px;line-height:20px}
 .sign-body{justify-content:flex-start;padding:6px 14px 14px}
   </style>
