@@ -118,7 +118,9 @@ body:not(.rw) #pane-fuel>.inputs,body:not(.rw) #svc-form,body:not(.rw) .act-col,
 .minis .sign-head{font-size:15px;line-height:20px;padding:6px 10px}
 .minis .sign-body{padding:12px 6px 10px}
 .minis .num{font-size:clamp(26px,2.6vw,38px);min-height:clamp(34px,3vw,44px)}
-#fuel-more{margin-top:12px;align-self:flex-start}
+#fuel-more{margin-top:12px;align-self:flex-start;color:var(--act-fg);border-color:var(--act-line)}
+@media(hover:hover){#fuel-more:hover{background:var(--act-hover);color:var(--act-fg)}:root[data-theme="dark"] #fuel-more:hover{border-color:var(--accent)}}
+#fuel-more:focus-visible{outline-color:var(--focus)}
 .bar .note{color:inherit}
 .bar .error-text{display:inline-block}
 
