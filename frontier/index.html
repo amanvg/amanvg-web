@@ -122,7 +122,7 @@ body:not(.rw) #pane-fuel>.inputs,body:not(.rw) #svc-form,body:not(.rw) .act-col,
 @media(hover:hover){#fuel-more:hover{background:var(--act-hover);color:var(--act-fg)}:root[data-theme="dark"] #fuel-more:hover{border-color:var(--accent)}}
 #fuel-more:focus-visible{outline-color:var(--focus)}
 .bar .note{color:inherit}
-.bar .error-text{display:inline-block}
+.bar .error-text{display:inline-block;color:var(--live-fg)}
 
 .body{display:grid;grid-template-columns:minmax(380px,4fr) minmax(0,7fr);gap:1px;background:var(--key)}
 .panel{background:var(--card);min-width:0;padding:24px 28px 28px}
@@ -371,7 +371,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <input type="password" id="key-input" autocomplete="off" spellcheck="false" aria-describedby="connect-msg">
                 <button class="btn" type="submit">Connect</button>
                 <button class="btn" type="button" id="connect-cancel">Cancel</button>
-                <span class="note error-text" id="connect-msg" role="status" aria-live="polite"></span>
+                <span class="note" id="connect-msg" role="status" aria-live="polite"></span>
             </form>
             <div class="body" id="pane-maint" role="tabpanel" aria-labelledby="tab-maint">
                 <div class="panel inputs" id="inputs">
@@ -1225,9 +1225,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     // --- API: read and write the log ----------------------------------------------
-    const call = (method, path, body) => fetch(API + path, {
+    const call = (method, path, body, signal) => fetch(API + path, {
       method,
       cache: 'no-store',
+      signal,
       headers: { ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}), ...(body ? { 'Content-Type': 'application/json' } : {}) },
       body: body ? JSON.stringify(body) : undefined,
     });
@@ -1338,22 +1339,41 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const connectForm = $('connect-form');
     $('connect').addEventListener('click', () => {
       if (apiKey) { dropKey(); saveState = ''; note = ''; renderFuel(); renderHistory(); paintStatus(); return; }
-      connectForm.hidden = !connectForm.hidden;
-      if (!connectForm.hidden) $('key-input').focus();
+      showConnect(true);
     });
-    $('connect-cancel').addEventListener('click', () => { connectForm.hidden = true; $('key-input').value = ''; say('connect-msg', ''); $('connect').focus(); });
+    // Connect status: neutral while checking, an error block (field marked invalid and
+    // selected for retyping) when the key fails.
+    const keyInput = $('key-input'), connectSubmit = connectForm.querySelector('[type=submit]');
+    function connectMsg(text, bad) {
+      say('connect-msg', text);
+      $('connect-msg').classList.toggle('error-text', !!bad);
+      if (bad) { keyInput.setAttribute('aria-invalid', 'true'); keyInput.focus(); keyInput.select(); } else keyInput.removeAttribute('aria-invalid');
+    }
+    // While the key form is open, its own Connect replaces the one in the bar.
+    function showConnect(open) {
+      connectForm.hidden = !open;
+      $('connect').hidden = open;
+      if (open) keyInput.focus(); else $('connect').focus();
+    }
+    keyInput.addEventListener('input', () => { if (keyInput.hasAttribute('aria-invalid')) connectMsg(''); });
+    $('connect-cancel').addEventListener('click', () => { keyInput.value = ''; connectMsg(''); showConnect(false); });
     connectForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const k = $('key-input').value.trim();
-      if (!k) return say('connect-msg', 'Key required');
+      if (connectSubmit.disabled) return;
+      const k = keyInput.value.trim();
+      if (!k) return connectMsg('Key required', true);
       apiKey = k;
-      say('connect-msg', 'Checking');
+      connectMsg('Checking');
+      connectSubmit.disabled = true;
       try {
-        const r = await call('GET', '/auth');
-        if (!r.ok) { apiKey = null; return say('connect-msg', r.status === 401 ? 'Key rejected' : `Error ${r.status}`); }
-      } catch (err) { apiKey = null; return say('connect-msg', 'Offline'); }
+        const r = await call('GET', '/auth', null, AbortSignal.timeout(10000));
+        if (!r.ok) { apiKey = null; return connectMsg(r.status === 401 ? 'Key rejected' : `Error ${r.status}`, true); }
+      } catch (err) {
+        apiKey = null;
+        return connectMsg(err.name === 'TimeoutError' ? 'Timed out' : 'Offline', true);
+      } finally { connectSubmit.disabled = false; }
       try { localStorage.setItem(KEY_KEY, k); } catch (err) { /* kept in memory only */ }
-      $('key-input').value = ''; say('connect-msg', ''); connectForm.hidden = true;
+      keyInput.value = ''; connectMsg(''); showConnect(false);
       saveState = ''; note = '';
       renderFuel(); renderHistory(); paintStatus();
     });
