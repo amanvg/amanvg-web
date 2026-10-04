@@ -70,7 +70,8 @@ A Reject means make no changes and ask what to adjust.
   tank; MPG red below 16, green above 20) sit right. No cost is shown on Fuel
   (fill-ups save cost 0). History (`#history`) is one full-width column of
   ownership charts, starting with Miles by month (same chart as MPG, miles
-  from fill-up odometer distance by fill date), then an Odometer line chart of
+  from fill-up odometer distance by fill date, from the first fill-up's month
+  to this month with a dashed average line; bars and labels scale to fit), then an Odometer line chart of
   every fill-up and service reading over the whole log.
 - `/USStates/`, `/worldmap/`, `/mlbstadiums/`: open on the committed
   `data/visited.json`; a "Create your own" button switches to a blank,

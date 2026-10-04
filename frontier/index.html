@@ -953,7 +953,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return el('td', { class: tier ? `mpg-${tier}` : null, 'data-label': 'MPG' }, shown, tier ? el('span', { class: 'sr-only', text: ` ${tier}` }) : null);
     }
 
-    // --- MPG and miles by month: column charts, last 12 months --------------------
+    // --- MPG (last 12 months) and miles (since the first fill-up) by month ----------
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const CHART_MONTHS = 12;
     const SVGNS = 'http://www.w3.org/2000/svg';
@@ -965,25 +965,32 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     };
     // Each chart: its box, the monthly field it plots and how values read.
     const CHARTS = [
-      { box: 'mpg-chart', title: 'MPG by month', head: 'MPG', field: 'mpg', fmt: dec1, tick: String, tip: (v) => `${dec1(v)} MPG`, step: () => 4, min: 24, left: 30 },
-      { box: 'miles-chart', title: 'Miles by month', head: 'Miles', field: 'mi', fmt: (v) => int.format(v), tick: (v) => int.format(v), tip: (v) => `${int.format(v)} mi`, step: niceStep, min: 0, left: 44, avg: true },
+      { box: 'mpg-chart', span: () => CHART_MONTHS, title: 'MPG by month', head: 'MPG', field: 'mpg', fmt: dec1, tick: String, tip: (v) => `${dec1(v)} MPG`, step: () => 4, min: 24, left: 30 },
+      { box: 'miles-chart', span: sinceFirstFill, title: 'Miles by month', head: 'Miles', field: 'mi', fmt: (v) => int.format(v), tick: (v) => int.format(v), tip: (v) => `${int.format(v)} mi`, step: niceStep, min: 0, left: 44, avg: true },
     ];
     // Gridline step near a fifth of the top value: 1, 2 or 5 times a power of ten.
     function niceStep(max) {
       const raw = Math.max(max, 1) / 5, p = 10 ** Math.floor(Math.log10(raw)), f = raw / p;
       return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
     }
-    let chartMonths = [];
+    // Months from the first fill-up's month through this month.
+    function sinceFirstFill() {
+      const first = data.fuel.reduce((d, f) => (!d || f.date < d ? f.date : d), null), today = todayISO();
+      if (!first) return CHART_MONTHS;
+      return Math.max(1, (Number(today.slice(0, 4)) - Number(first.slice(0, 4))) * 12 + Number(today.slice(5, 7)) - Number(first.slice(5, 7)) + 1);
+    }
 
     function drawChart(c) {
       const box = $(c.box);
+      const chartMonths = c.months || [];
+      if (!chartMonths.length) return;
       const W = box.clientWidth - 12; // minus side padding
       if (W < 120) return; // hidden pane or not laid out yet
       const H = W < 480 ? 200 : 240;
       const M = { top: 22, right: 6, bottom: 40, left: c.left };
       const plotW = W - M.left - M.right, plotH = H - M.top - M.bottom;
       const band = plotW / chartMonths.length;
-      const barW = Math.min(24, band - 6);
+      const barW = Math.min(24, Math.max(band * 0.6, band - 6));
       const val = (m) => m[c.field];
       const vals = chartMonths.filter((m) => val(m) != null);
       const max = Math.max(0, ...vals.map(val));
@@ -992,10 +999,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       // Average of the months that have a value (the reference line, `avg` charts only).
       const avg = c.avg && vals.length ? vals.reduce((a, m) => a + val(m), 0) / vals.length : null;
       const y = (v) => M.top + plotH - (v / top) * plotH;
-      const names = band < 30 ? MONTHS.map((n) => n[0]) : MONTHS;
+      // Month names when they fit, then initials, then every 2nd / 3rd / 6th / 12th month.
+      const names = band < 30 && band >= 14 ? MONTHS.map((n) => n[0]) : MONTHS;
+      const every = band >= 14 ? 1 : [2, 3, 6, 12].find((k) => band * k >= 30) || 12;
 
       const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
-      svg.setAttribute('aria-label', `${c.title}, last 12 months: ` + chartMonths.map((m) => `${MONTHS[m.month]} ${m.year} ${val(m) == null ? 'no fill-ups' : c.fmt(val(m))}`).join(', ') + (avg == null ? '' : `; average ${c.fmt(avg)}`));
+      svg.setAttribute('aria-label', `${c.title}, ${chartMonths.length} months: ` + chartMonths.map((m) => `${MONTHS[m.month]} ${m.year} ${val(m) == null ? 'no fill-ups' : c.fmt(val(m))}`).join(', ') + (avg == null ? '' : `; average ${c.fmt(avg)}`));
       svg.append(svgEl('title', null, c.title));
 
       for (let v = 0; v <= top; v += step) {
@@ -1033,7 +1042,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
         g.append(svgEl('rect', { class: 'hit', x: M.left + band * i, y: M.top, width: band, height: plotH + M.bottom - 4 }));
         svg.append(g);
-        svg.append(svgEl('text', { class: 'tick', x: cx, y: H - 22, 'text-anchor': 'middle' }, names[m.month]));
+        if (m.month % every === 0) svg.append(svgEl('text', { class: 'tick', x: cx, y: H - 22, 'text-anchor': 'middle' }, names[m.month]));
         const yearHere = m.month === 0 || (i === 0 && !(jan > 0 && jan * band < 40));
         if (yearHere) svg.append(svgEl('text', { class: 'tick year', x: i === 0 ? M.left + band * i + 2 : cx, y: H - 6, 'text-anchor': i === 0 ? 'start' : 'middle' }, String(m.year)));
         const on = () => show(g, m, cx, y(val(m) == null ? 0 : val(m)));
@@ -1058,8 +1067,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
 
     function renderChart(tanks) {
-      chartMonths = monthlyMpg(tanks, todayISO(), CHART_MONTHS);
-      for (const c of CHARTS) drawChart(c);
+      for (const c of CHARTS) { c.months = monthlyMpg(tanks, todayISO(), c.span()); drawChart(c); }
     }
     for (const c of CHARTS) new ResizeObserver(() => drawChart(c)).observe($(c.box));
 
