@@ -109,7 +109,7 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar .grow:empty{display:none}
 .bar-actions{display:flex;flex-wrap:nowrap;gap:8px 12px;margin-left:auto}
 body:not(.rw) #pane-fuel{grid-template-columns:1fr}
-body:not(.rw) #pane-fuel>.inputs,body:not(.rw) .act-col,body:not(.rw) td.act-cell{display:none}
+body:not(.rw) #pane-fuel>.inputs,body:not(.rw) #svc-form,body:not(.rw) .act-col,body:not(.rw) td.act-cell{display:none}
 .bar.connect{border-top:0;gap:12px}
 .bar.connect label{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase}
 .bar.connect input{flex:1 1 220px;max-width:460px}
@@ -354,6 +354,39 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             </div>
                         </div>
                     </div>
+                    <form class="group" id="svc-form" novalidate aria-labelledby="svc-h">
+                        <h2 class="section-label" id="svc-h">Log service</h2>
+                        <div class="field">
+                            <label for="svc-item">Item</label>
+                            <div class="sel"><select id="svc-item"></select></div>
+                        </div>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="svc-date">Date</label>
+                                <input type="date" id="svc-date" autocomplete="off">
+                            </div>
+                            <div class="field">
+                                <label for="svc-miles">Odometer</label>
+                                <input type="number" id="svc-miles" min="0" step="1" inputmode="numeric" placeholder="mi" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="pair">
+                            <div class="field">
+                                <label for="svc-by">Done by</label>
+                                <div class="sel"><select id="svc-by"><option value="shop">Shop</option><option value="diy">DIY</option></select></div>
+                            </div>
+                            <div class="field">
+                                <label for="svc-cost">Cost</label>
+                                <input type="number" id="svc-cost" min="0" step="0.01" inputmode="decimal" placeholder="$" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="svc-notes">Notes</label>
+                            <input type="text" id="svc-notes" maxlength="200" autocomplete="off">
+                        </div>
+                        <div class="error-text msg" id="svc-msg" role="status" aria-live="polite"></div>
+                        <button class="act pri" id="svc-add" type="submit">Add service</button>
+                    </form>
                 </div>
                 <div class="panel">
                     <div class="results">
@@ -387,7 +420,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="hist-l">History</h2>
                             <table class="ledger stack" aria-labelledby="hist-l">
-                                <thead><tr><th scope="col">Item</th><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Cost</th></tr></thead>
+                                <thead><tr><th scope="col">Item</th><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Cost</th><th scope="col" class="act-col">Delete</th></tr></thead>
                                 <tbody id="hist-body"></tbody>
                             </table>
                         </div>
@@ -768,6 +801,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
     let armed = null; // key of the row whose delete is waiting for a second click
     const fuelDate = $('fuel-date'), fuelMiles = $('fuel-miles'), fuelGal = $('fuel-gal');
+    const svcItem = $('svc-item'), svcDate = $('svc-date'), svcMiles = $('svc-miles'), svcBy = $('svc-by'), svcCost = $('svc-cost'), svcNotes = $('svc-notes');
 
     // Icon delete button; the first click arms it, the second deletes.
     function delButton(key, what) {
@@ -833,13 +867,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     function renderHistory() {
       const rows = data.services.slice().sort(byDateDesc);
-      if (!rows.length) { $('hist-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 4, text: 'No services' }))); return; }
+      if (!rows.length) { $('hist-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 5, text: 'No services' }))); return; }
       $('hist-body').replaceChildren(...rows.map((s) => el('tr', null,
         el('td', { class: 'wrap' }, labelOf(s.item),
           el('span', { class: 'sub', text: [s.by === 'diy' ? 'DIY' : 'Shop', s.notes].filter(Boolean).join(' · ') })),
         el('td', { class: 'k-r', 'data-label': 'Date', text: s.date }),
         el('td', { class: 'k-r', 'data-label': 'Odometer', text: `${int.format(s.miles)} mi` }),
-        el('td', { class: 'k-r k-wide', 'data-label': 'Cost', text: usd.format(s.cost) }))));
+        el('td', { class: 'k-r k-wide', 'data-label': 'Cost', text: usd.format(s.cost) }),
+        el('td', { class: 'act-cell k-stat' }, delButton(`s:${s.id}`, `${s.date} ${labelOf(s.item)}`)))));
     }
 
     const RECENT = 10;
@@ -991,7 +1026,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('export').hidden = siteState !== 'ok';
       $('connect').textContent = apiKey ? 'Disconnect' : 'Connect';
       document.body.classList.toggle('rw', canEdit());
-      $('fuel-add').disabled = saveState === 'saving';
+      $('fuel-add').disabled = $('svc-add').disabled = saveState === 'saving';
       const lock = !canEdit() || saveState === 'saving';
       yearSel.disabled = driveSel.disabled = lock;
       for (const x of $('use').children) x.disabled = lock;
@@ -1012,6 +1047,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       paintUse();
       odo.value = data.truck.odometer == null ? '' : String(data.truck.odometer);
       if (!fuelMiles.dataset.typed) fuelMiles.value = odo.value;
+      if (!svcMiles.dataset.typed) svcMiles.value = odo.value;
       renderAll(); paintStatus();
     }
 
@@ -1034,7 +1070,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       saveState = 'saving'; note = ''; paintStatus();
       try {
         const r = await call(method, path, body);
-        if (r.status === 401) { dropKey(); saveState = 'failed'; note = 'Key rejected'; renderFuel(); paintStatus(); return false; }
+        if (r.status === 401) { dropKey(); saveState = 'failed'; note = 'Key rejected'; renderFuel(); renderHistory(); paintStatus(); return false; }
         if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || `Error ${r.status}`); }
         const next = validateData(await r.json());
         if (!next) throw new Error('Invalid log');
@@ -1051,6 +1087,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     function say(id, text) { $(id).textContent = text; }
 
     fuelMiles.addEventListener('input', () => { fuelMiles.dataset.typed = '1'; });
+    svcMiles.addEventListener('input', () => { svcMiles.dataset.typed = '1'; });
 
     $('fuel-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1066,6 +1103,23 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       if (!ok) return;
       fuelGal.value = ''; fuelDate.value = todayISO();
       delete fuelMiles.dataset.typed;
+      renderControls();
+    });
+
+    $('svc-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!canEdit() || saveState === 'saving') return;
+      const date = normDate(svcDate.value);
+      const miles = toNum(svcMiles.value);
+      const cost = svcCost.value.trim() === '' ? 0 : toNum(svcCost.value);
+      if (parseISO(date) === null) return say('svc-msg', 'Invalid date');
+      if (miles === null || miles < 0) return say('svc-msg', 'Odometer required');
+      if (cost === null || cost < 0) return say('svc-msg', 'Invalid cost');
+      say('svc-msg', '');
+      const ok = await save('POST', '/services', { item: svcItem.value, date, miles: Math.round(miles), cost, by: svcBy.value, notes: svcNotes.value.trim() });
+      if (!ok) return;
+      svcCost.value = ''; svcNotes.value = ''; svcDate.value = todayISO();
+      delete svcMiles.dataset.typed;
       renderControls();
     });
 
@@ -1088,26 +1142,26 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
     document.addEventListener('click', (e) => {
       const b = e.target.closest('button.del');
-      if (!b) { if (armed) { armed = null; renderFuel(); } return; }
+      if (!b) { if (armed) { armed = null; renderFuel(); renderHistory(); } return; }
       if (!canEdit()) return;
       const key = b.dataset.key;
       if (armed === key) {
         armed = null;
-        save('DELETE', `/fuel/${key.slice(2)}`);
-        renderFuel();
+        save('DELETE', `/${key[0] === 's' ? 'services' : 'fuel'}/${key.slice(2)}`);
+        renderFuel(); renderHistory();
         return;
       }
       armed = key;
-      renderFuel(); restoreFocus(key);
+      renderFuel(); renderHistory(); restoreFocus(key);
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && armed) { const k = armed; armed = null; renderFuel(); restoreFocus(k); }
+      if (e.key === 'Escape' && armed) { const k = armed; armed = null; renderFuel(); renderHistory(); restoreFocus(k); }
     });
 
     // Connect: the key set with `wrangler secret put FRONTIER_KEY`, kept in this browser.
     const connectForm = $('connect-form');
     $('connect').addEventListener('click', () => {
-      if (apiKey) { dropKey(); saveState = ''; note = ''; renderFuel(); paintStatus(); return; }
+      if (apiKey) { dropKey(); saveState = ''; note = ''; renderFuel(); renderHistory(); paintStatus(); return; }
       connectForm.hidden = !connectForm.hidden;
       if (!connectForm.hidden) $('key-input').focus();
     });
@@ -1125,7 +1179,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       try { localStorage.setItem(KEY_KEY, k); } catch (err) { /* kept in memory only */ }
       $('key-input').value = ''; say('connect-msg', ''); connectForm.hidden = true;
       saveState = ''; note = '';
-      renderFuel(); paintStatus();
+      renderFuel(); renderHistory(); paintStatus();
     });
 
     // Export
@@ -1199,7 +1253,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       renderControls();
     }
 
-    fuelDate.value = todayISO();
+    svcItem.replaceChildren(...SCHEDULE.map((s) => option(s.id, s.label)), option(MPI, labelOf(MPI)), option('other', labelOf('other')));
+    fuelDate.value = svcDate.value = todayISO();
     renderControls();
     loadSite();
   </script>

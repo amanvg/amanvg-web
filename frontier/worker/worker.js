@@ -1,8 +1,9 @@
 // Frontier log API: Cloudflare Worker + D1.
-// GET /log (public) · GET /auth · POST /fuel · DELETE /fuel/:id · PUT /truck (Bearer FRONTIER_KEY)
+// GET /log (public) · GET /auth · POST /fuel · POST /services · DELETE /fuel/:id · DELETE /services/:id · PUT /truck (Bearer FRONTIER_KEY)
 
 const ORIGINS = ['https://www.amanvg.com', 'https://amanvg.com', 'http://localhost:8765'];
 const MAX_FUEL = 5000;
+const MAX_SERVICES = 5000;
 
 const isDate = (s) => {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof s === 'string' ? s : '');
@@ -85,10 +86,31 @@ export default {
       return json(await readLog(env));
     }
 
-    const del = pathname.match(/^\/fuel\/([\w-]{1,64})$/);
+    if (req.method === 'POST' && pathname === '/services') {
+      let b;
+      try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
+      if (!b || typeof b !== 'object') return fail(400, 'Invalid body');
+      if (typeof b.item !== 'string' || !/^[\w-]{1,80}$/.test(b.item)) return fail(400, 'Invalid item');
+      if (!isDate(b.date)) return fail(400, 'Invalid date');
+      if (!Number.isInteger(b.miles) || !isNum(b.miles, 0, 2000000)) return fail(400, 'Invalid odometer');
+      const cost = b.cost === undefined ? 0 : b.cost;
+      if (!isNum(cost, 0, 100000)) return fail(400, 'Invalid cost');
+      if (b.by !== 'diy' && b.by !== 'shop') return fail(400, 'Invalid done by');
+      const notes = b.notes === undefined ? '' : b.notes;
+      if (typeof notes !== 'string' || notes.length > 200) return fail(400, 'Invalid notes');
+      const { n } = await env.DB.prepare('SELECT COUNT(*) AS n FROM services').first();
+      if (n >= MAX_SERVICES) return fail(400, 'Log full');
+      await env.DB.batch([
+        env.DB.prepare('INSERT INTO services (id, item, date, miles, cost, done_by, notes) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(crypto.randomUUID(), b.item, b.date, b.miles, cost, b.by, notes),
+        env.DB.prepare('INSERT INTO truck (id, odometer) VALUES (1, ?) ON CONFLICT (id) DO UPDATE SET odometer = MAX(COALESCE(odometer, 0), excluded.odometer)').bind(b.miles),
+      ]);
+      return json(await readLog(env), 201);
+    }
+
+    const del = pathname.match(/^\/(fuel|services)\/([\w-]{1,64})$/);
     if (req.method === 'DELETE' && del) {
       await env.DB.batch([
-        env.DB.prepare('DELETE FROM fuel WHERE id = ?').bind(del[1]),
+        env.DB.prepare(`DELETE FROM ${del[1]} WHERE id = ?`).bind(del[2]),
         env.DB.prepare('UPDATE truck SET odometer = COALESCE((SELECT MAX(m) FROM (SELECT MAX(miles) AS m FROM fuel UNION ALL SELECT MAX(miles) FROM services)), odometer) WHERE id = 1'),
       ]);
       return json(await readLog(env));
