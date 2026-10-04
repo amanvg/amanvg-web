@@ -1154,11 +1154,25 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         svg.append(svgEl('circle', { class: 'crater', cx: mx + dx * R, cy: my + dy * R, r: cr * R }));
       svg.append(svgEl('text', { class: 'lbl dim', x: mx, y: my + R + 20, 'text-anchor': 'middle' }, `${int.format(MOON_MI)} mi`));
 
-      // Earth: a ridge of pines along the lower left.
+      // Earth: a ridge of quadratic curves, sampled so trees can stand on it.
       const gy = H * 0.86;
-      svg.append(svgEl('path', { class: 'ridge', d: `M0,${H} V${gy - H * 0.05} Q${W * 0.1},${gy - H * 0.13} ${W * 0.22},${gy - H * 0.04} T${W * 0.46},${gy + H * 0.02} Q${W * 0.7},${gy + H * 0.04} ${W},${gy + H * 0.11} V${H} Z` }));
+      const P = [[0, gy - H * 0.05], [W * 0.1, gy - H * 0.13], [W * 0.22, gy - H * 0.04], [W * 0.34, gy + H * 0.05], [W * 0.46, gy + H * 0.02], [W * 0.7, gy + H * 0.04], [W, gy + H * 0.11]];
+      const ground = [];
+      for (let k = 0; k + 2 < P.length; k += 2) {
+        for (let j = 0; j <= 40; j++) {
+          const t = j / 40, u = 1 - t;
+          ground.push([u * u * P[k][0] + 2 * u * t * P[k + 1][0] + t * t * P[k + 2][0], u * u * P[k][1] + 2 * u * t * P[k + 1][1] + t * t * P[k + 2][1]]);
+        }
+      }
+      const groundY = (x) => {
+        const k = Math.max(1, ground.findIndex((g) => g[0] >= x));
+        const [x0, y0] = ground[k - 1], [x1, y1] = ground[k] || ground[k - 1];
+        return x1 === x0 ? y0 : y0 + ((x - x0) / (x1 - x0)) * (y1 - y0);
+      };
+      svg.append(svgEl('path', { class: 'ridge', d: `M0,${H} ` + ground.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ') + ` V${H} Z` }));
+      // A two-tier pine whose base sits below the ground under both of its corners.
       const tree = (x, h) => {
-        const w = h * 0.42, b = gy - H * 0.06 + (x / W) * H * 0.07;
+        const w = h * 0.42, b = Math.max(groundY(x - w * 1.1), groundY(x + w * 1.1)) + 3;
         svg.append(svgEl('path', { class: 'ridge', d: `M${x},${b - h} L${x + w},${b - h * 0.42} H${x + w * 0.55} L${x + w * 1.1},${b} H${x - w * 1.1} L${x - w * 0.55},${b - h * 0.42} H${x - w} Z` }));
       };
       for (const [fx, fh] of [[0.03, 0.2], [0.07, 0.27], [0.12, 0.18], [0.27, 0.15], [0.31, 0.21], [0.36, 0.13]]) tree(W * fx, H * fh * Math.min(1, W / 760));
