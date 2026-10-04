@@ -180,7 +180,7 @@ fieldset{border:0;min-width:0}
 .chips{display:flex}
 .chips button{flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 14px;border:2px solid var(--key);background:transparent;color:var(--text);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .chips button+button{margin-left:-2px}
-.bar .chips button{border-color:var(--f-sports);color:var(--f-sports);min-width:104px;padding:6px 12px}
+.bar .chips button{flex:0 0 auto;border-color:var(--f-sports);color:var(--f-sports);min-width:104px;padding:6px 12px}
 .bar .chips button.active{background:var(--f-sports);border-color:var(--f-sports);color:var(--b-sports)}
 @media(hover:hover){.bar .chips button:not(.active):hover{background:color-mix(in srgb,var(--f-sports) 16%,transparent)}}
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-left:10px;padding:0 6px;border:1.5px solid var(--over-fg);border-radius:9999px;background:var(--over-bg);color:var(--over-fg);font-size:11px;line-height:1}
@@ -277,7 +277,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .masthead h1{font-size:28px;line-height:36px}
   input[type=date]{font-size:17px;padding-left:10px;padding-right:6px}
   .bar .chips{width:100%}
-  .bar .chips button{flex:1;min-width:0}
+  .bar .chips button{flex:1 1 auto;min-width:0}
   .bar-actions{width:100%;gap:8px}
   .bar .bar-actions .btn{flex:1;min-width:0;padding:8px 8px}
   .odo{width:100%}
