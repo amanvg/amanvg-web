@@ -109,11 +109,7 @@ main{flex:1;padding:28px var(--margin) 0}
 .bar .grow{flex:1 1 auto}
 .bar .grow:empty{display:none}
 .bar #export{margin-left:auto}
-.masthead .btn{padding:8px 18px}
-:root[data-theme="dark"] .masthead .btn{border-color:var(--f-sports)}
-.ro #svc-form,.ro #fuel-form,.ro .act-col,.ro td.act-cell{display:none}
-.ro #pane-fuel{grid-template-columns:1fr}
-.ro #pane-fuel>.inputs{display:none}
+#pane-fuel{grid-template-columns:1fr}
 .nocost .c-cost{display:none}
 .nocost .signs{grid-template-columns:repeat(2,minmax(0,1fr))}
 #fuel-more{margin-top:12px;align-self:flex-start}
@@ -240,7 +236,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   input[type=date]{font-size:17px;padding-left:10px;padding-right:6px}
   .bar .chips{width:100%}
   .bar .chips button{flex:1;min-width:0}
-  .masthead .btn{width:100%}
   .odo{width:100%}
   .odo input[type=number]{width:auto;flex:1;min-width:0}
   .bar{padding:10px 16px}
@@ -282,10 +277,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         <div class="sheet">
             <div class="masthead">
                 <h1>Frontier Maintenance</h1>
-                <button class="btn" id="view-btn" type="button">Create your own</button>
                 <div class="odo">
                     <label for="odo">Odometer</label>
-                    <input type="number" id="odo" min="0" step="1" placeholder="—" inputmode="numeric" autocomplete="off">
+                    <input type="number" id="odo" placeholder="—" readonly>
                     <span class="unit">mi</span>
                 </div>
             </div>
@@ -294,13 +288,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     <button type="button" role="tab" id="tab-maint" data-pane="maint" aria-controls="pane-maint" aria-selected="true" class="active">Maintenance<span class="badge" id="tab-over" hidden><span id="tab-over-n">0</span><span class="sr-only"> overdue</span></span></button><button type="button" role="tab" id="tab-fuel" data-pane="fuel" aria-controls="pane-fuel" aria-selected="false" tabindex="-1">Fuel</button>
                 </div>
                 <span class="note" id="saved" role="status" aria-live="polite">Loading</span>
-                <span class="note" id="exported">Never exported</span>
                 <span class="grow note" id="data-status" role="status" aria-live="polite"></span>
                 <button class="btn" id="cost-btn" type="button" aria-pressed="false" hidden>Cost</button>
                 <button class="btn" id="export" type="button">Export</button>
-                <button class="btn" id="import" type="button">Import</button>
-                <button class="btn" id="import-cancel" type="button" hidden>Cancel</button>
-                <input type="file" id="import-file" accept="application/json,.json" hidden>
             </div>
             <div class="body" id="pane-maint" role="tabpanel" aria-labelledby="tab-maint">
                 <div class="panel inputs" id="inputs">
@@ -309,51 +299,16 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="pair">
                             <div class="field">
                                 <label for="year">Year</label>
-                                <div class="sel"><select id="year" autocomplete="off"></select></div>
+                                <div class="sel"><select id="year" disabled></select></div>
                             </div>
                             <div class="field">
                                 <label for="drive">Drivetrain</label>
                                 <div class="sel">
-                                    <select id="drive" autocomplete="off"><option value="">—</option><option value="2WD">2WD</option><option value="4WD">4WD</option></select>
+                                    <select id="drive" disabled><option value="">—</option><option value="2WD">2WD</option><option value="4WD">4WD</option></select>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <form class="group" id="svc-form" novalidate aria-labelledby="svc-h">
-                        <h2 class="section-label" id="svc-h">Log service</h2>
-                        <div class="field">
-                            <label for="svc-item">Item</label>
-                            <div class="sel"><select id="svc-item" autocomplete="off"></select></div>
-                        </div>
-                        <div class="pair">
-                            <div class="field">
-                                <label for="svc-date">Date</label>
-                                <input type="date" id="svc-date" autocomplete="off">
-                            </div>
-                            <div class="field">
-                                <label for="svc-miles">Odometer</label>
-                                <input type="number" id="svc-miles" min="0" step="1" inputmode="numeric" placeholder="mi" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="pair">
-                            <div class="field">
-                                <label for="svc-cost">Cost, USD</label>
-                                <input type="number" id="svc-cost" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
-                            </div>
-                            <div class="field">
-                                <span class="lbl" id="by-l">Done by</span>
-                                <div class="chips" id="svc-by" role="group" aria-labelledby="by-l">
-                                    <button type="button" data-by="diy" class="active" aria-pressed="true">DIY</button><button type="button" data-by="shop" aria-pressed="false">Shop</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="svc-notes">Notes</label>
-                            <input type="text" id="svc-notes" maxlength="200" autocomplete="off">
-                        </div>
-                        <div class="error-text msg" id="svc-msg" role="status" aria-live="polite"></div>
-                        <button class="act pri" type="submit">Add service</button>
-                    </form>
                 </div>
                 <div class="panel">
                     <div class="results">
@@ -375,7 +330,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             <div class="group-head">
                                 <h2 class="section-label" id="sched-l">Schedule</h2>
                                 <div class="chips use-chips" id="use" role="group" aria-label="Use">
-                                    <button type="button" data-use="standard" class="active" aria-pressed="true">Standard</button><button type="button" data-use="severe" aria-pressed="false">Severe</button>
+                                    <button type="button" data-use="standard" class="active" aria-pressed="true" disabled>Standard</button><button type="button" data-use="severe" aria-pressed="false" disabled>Severe</button>
                                 </div>
                                 <span class="pill" id="n-none">0 not logged</span>
                             </div>
@@ -387,7 +342,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="hist-l">History</h2>
                             <table class="ledger stack" aria-labelledby="hist-l">
-                                <thead><tr><th scope="col">Item</th><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Cost</th><th scope="col" class="act-col">Delete</th></tr></thead>
+                                <thead><tr><th scope="col">Item</th><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Cost</th></tr></thead>
                                 <tbody id="hist-body"></tbody>
                             </table>
                         </div>
@@ -395,33 +350,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 </div>
             </div>
             <div class="body" id="pane-fuel" role="tabpanel" aria-labelledby="tab-fuel" hidden>
-                <div class="panel inputs">
-                    <form class="group" id="fuel-form" novalidate aria-labelledby="fuel-h">
-                        <h2 class="section-label" id="fuel-h">Log fill-up</h2>
-                        <div class="pair">
-                            <div class="field">
-                                <label for="fuel-date">Date</label>
-                                <input type="date" id="fuel-date" autocomplete="off">
-                            </div>
-                            <div class="field">
-                                <label for="fuel-miles">Odometer</label>
-                                <input type="number" id="fuel-miles" min="0" step="1" inputmode="numeric" placeholder="mi" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="pair">
-                            <div class="field">
-                                <label for="fuel-gal">Gallons</label>
-                                <input type="number" id="fuel-gal" min="0" step="0.001" inputmode="decimal" placeholder="0.000" autocomplete="off">
-                            </div>
-                            <div class="field c-cost">
-                                <label for="fuel-cost">Cost, USD</label>
-                                <input type="number" id="fuel-cost" min="0" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="error-text msg" id="fuel-msg" role="status" aria-live="polite"></div>
-                        <button class="act pri" type="submit">Add fill-up</button>
-                    </form>
-                </div>
                 <div class="panel">
                     <div class="results">
                         <div class="signs">
@@ -441,7 +369,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="fuel-l">Fill-ups</h2>
                             <table class="ledger stack" aria-labelledby="fuel-l">
-                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col" class="c-cost">Cost</th><th scope="col">MPG</th><th scope="col" class="act-col">Delete</th></tr></thead>
+                                <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Gallons</th><th scope="col" class="c-cost">Cost</th><th scope="col">MPG</th></tr></thead>
                                 <tbody id="fuel-body"></tbody>
                             </table>
                             <button class="btn" id="fuel-more" type="button" hidden></button>
@@ -506,7 +434,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // Pure logic (no DOM): dates, due status, fuel economy, totals, validation
     // ---------------------------------------------------------------------------
 
-    const KEY = 'frontier:v1';
     const MIN_YEAR = 2022;
     const DUE_MILES = 500; // due soon: within this many miles ...
     const DUE_DAYS = 30;   // ... or this many days
@@ -683,41 +610,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     }
     // </pure>
 
-    // ---------------------------------------------------------------------------
-    // Storage (every read and write guarded; works in memory when blocked)
-    // ---------------------------------------------------------------------------
-
-    let storageOk = true;
-
-    function load() {
-      try {
-        const raw = localStorage.getItem(KEY);
-        if (raw) return validateData(JSON.parse(raw)) || blankData();
-      } catch (e) { /* blocked or corrupt: start blank */ }
-      return blankData();
-    }
-
-    // Site view: the committed log, read-only. Own view: this browser's copy.
     const LOG_URL = '/frontier/data/log.json';
-    let view = 'site';         // 'site' | 'mine'
-    let mine = load();         // this browser's own copy
-    let siteData = null;       // the committed log once loaded
     let siteState = 'loading'; // loading | ok | error
-    const canEdit = () => view === 'mine';
-    const hasMine = () => mine.services.length > 0 || mine.fuel.length > 0 || mine.truck.odometer !== null;
-
-    function save() {
-      if (view !== 'mine') return;
-      try { localStorage.setItem(KEY, JSON.stringify(data)); storageOk = true; } catch (e) { storageOk = false; }
-      paintStatus();
-    }
-
-    // Startup probe: never touches the stored data, so a corrupt or invalid
-    // value is only replaced when the user next makes a change.
-    function probeStorage() {
-      try { localStorage.setItem('frontier:probe', '1'); localStorage.removeItem('frontier:probe'); } catch (e) { storageOk = false; }
-      paintStatus();
-    }
 
     // ---------------------------------------------------------------------------
     // DOM
@@ -729,7 +623,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const usd0 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
     const dec1 = (n) => n.toFixed(1);
     const plural = (n, w) => `${int.format(n)} ${w}${n === 1 ? '' : 's'}`;
-    const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
     const labelOf = (id) => { const s = SCHEDULE.find((x) => x.id === id); return s ? s.label : id === MPI ? 'Multi Point Inspection' : id === 'other' ? 'Other' : id; };
 
     // Build elements without innerHTML so user text only ever goes in as text.
@@ -743,17 +636,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       return n;
     }
 
-    const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
-
-    let data = blankData(); // whichever view is on screen
-    let armed = null; // key of the row whose delete is waiting for a second click
-    let pendingImport = null;
+    let data = blankData();
 
     const odo = $('odo'), yearSel = $('year'), driveSel = $('drive');
-    const svcItem = $('svc-item'), svcDate = $('svc-date'), svcMiles = $('svc-miles'), svcCost = $('svc-cost'), svcNotes = $('svc-notes');
-    const fuelDate = $('fuel-date'), fuelMiles = $('fuel-miles'), fuelGal = $('fuel-gal'), fuelCost = $('fuel-cost');
-    let svcBy = 'diy';
-
     function option(value, text) { return el('option', { value, text }); }
 
     function renderYears() {
@@ -762,20 +647,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       for (let y = top; y >= MIN_YEAR; y--) opts.push(option(String(y), String(y)));
       yearSel.replaceChildren(...opts);
       yearSel.value = data.truck.year ? String(data.truck.year) : '';
-    }
-
-    function renderItems() {
-      const keep = svcItem.value;
-      const opts = SCHEDULE.filter((it) => applies(it, data.truck)).map((it) => option(it.id, it.label));
-      opts.push(option(MPI, 'Multi Point Inspection'), option('other', 'Other'));
-      svcItem.replaceChildren(...opts);
-      svcItem.value = [...svcItem.options].some((o) => o.value === keep) ? keep : opts[0].value;
-    }
-
-    // Log-form odometers follow the truck odometer until typed in.
-    function syncOdometers() {
-      const v = data.truck.odometer == null ? '' : String(data.truck.odometer);
-      for (const input of [svcMiles, fuelMiles]) if (!input.dataset.typed) input.value = v;
     }
 
     function intervalText(iv) {
@@ -821,27 +692,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('n-none').textContent = `${count.none} not logged`;
     }
 
-    // Icon delete button; the first click arms it, the second deletes.
-    function delButton(key, what) {
-      if (!canEdit()) return null;
-      const on = armed === key;
-      const b = el('button', { class: `del${on ? ' armed' : ''}`, type: 'button', 'data-key': key, 'aria-label': `${on ? 'Confirm delete' : 'Delete'} ${what}` });
-      if (on) b.textContent = 'Delete'; else b.innerHTML = TRASH; // TRASH is a static literal
-      return b;
-    }
-
     function byDateDesc(a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.miles - a.miles; }
 
     function renderHistory() {
       const rows = data.services.slice().sort(byDateDesc);
-      if (!rows.length) { $('hist-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 5, text: 'No services' }))); return; }
+      if (!rows.length) { $('hist-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 4, text: 'No services' }))); return; }
       $('hist-body').replaceChildren(...rows.map((s) => el('tr', null,
         el('td', { class: 'wrap' }, labelOf(s.item),
           el('span', { class: 'sub', text: [s.by === 'diy' ? 'DIY' : 'Shop', s.notes].filter(Boolean).join(' · ') })),
         el('td', { class: 'k-r', 'data-label': 'Date', text: s.date }),
         el('td', { class: 'k-r', 'data-label': 'Odometer', text: `${int.format(s.miles)} mi` }),
-        el('td', { class: 'k-r k-wide', 'data-label': 'Cost', text: usd.format(s.cost) }),
-        el('td', { class: 'act-cell k-stat' }, delButton(`s:${s.id}`, `${s.date} ${labelOf(s.item)}`)))));
+        el('td', { class: 'k-r k-wide', 'data-label': 'Cost', text: usd.format(s.cost) }))));
     }
 
     const RECENT = 10;
@@ -874,14 +735,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       more.hidden = all.length <= RECENT;
       more.textContent = showAll ? `Show recent ${RECENT}` : `Show all ${all.length}`;
       const rows = showAll ? all : all.slice(0, RECENT);
-      if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 6, text: 'No fill-ups' }))); return; }
+      if (!rows.length) { $('fuel-body').replaceChildren(el('tr', null, el('td', { class: 'empty', colspan: 5, text: 'No fill-ups' }))); return; }
       $('fuel-body').replaceChildren(...rows.map((f) => el('tr', null,
         el('td', { text: f.date }),
         el('td', { 'data-label': 'Odometer', text: `${int.format(f.miles)} mi` }),
         el('td', { 'data-label': 'Gallons', text: f.gallons.toFixed(3) }),
         el('td', { class: 'c-cost', 'data-label': 'Cost', text: usd.format(f.cost) }),
-        el('td', { 'data-label': 'MPG', text: stats.perId[f.id] == null ? '—' : dec1(stats.perId[f.id]) }),
-        el('td', { class: 'act-cell k-stat' }, delButton(`f:${f.id}`, `${f.date} fill-up`)))));
+        el('td', { 'data-label': 'MPG', text: stats.perId[f.id] == null ? '—' : dec1(stats.perId[f.id]) }))));
     }
 
     function renderCosts() {
@@ -892,189 +752,34 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         el('td', { text: 'Total' }), el('td', { text: usd.format(t.service) }), el('td', { text: usd.format(t.fuel) }), el('td', { text: usd.format(t.total) })));
     }
 
-    function renderBar() {
-      $('exported').textContent = data.exportedOn ? `Last exported ${data.exportedOn}` : 'Never exported';
-    }
-
-    // Everything that depends on the view and the load state.
     function paintStatus() {
-      const site = view === 'site';
-      $('saved').textContent = site ? ({ loading: 'Loading', ok: 'Original', error: 'Log unavailable' }[siteState])
-        : storageOk ? 'Saved in this browser' : 'Storage unavailable';
-      $('exported').hidden = site;
-      $('import').hidden = site;
-      $('export').hidden = site && siteState !== 'ok';
-      $('view-btn').textContent = site ? (hasMine() ? 'Your copy' : 'Create your own') : 'Back to original';
-      document.body.classList.toggle('ro', site);
-      odo.readOnly = site;
-      yearSel.disabled = driveSel.disabled = site;
-      for (const b of $('use').children) b.disabled = site;
+      $('saved').textContent = { loading: 'Loading', ok: '', error: 'Log unavailable' }[siteState];
+      $('export').hidden = siteState !== 'ok';
     }
 
     function renderAll() {
-      renderSchedule(); renderHistory(); renderFuel(); renderCosts(); renderBar(); syncOdometers();
+      renderSchedule(); renderHistory(); renderFuel(); renderCosts();
     }
 
-    function restoreFocus(key) {
-      const b = key && document.querySelector(`button[data-key="${key}"]`);
-      if (b) b.focus();
-    }
-
-    // Replace every control from `data` (startup and import).
+    // Replace every control from `data`.
     function paintUse() {
       for (const x of $('use').children) { const on = x.dataset.use === data.truck.use; x.classList.toggle('active', on); x.setAttribute('aria-pressed', String(on)); }
     }
 
     function renderControls() {
-      renderYears(); renderItems();
+      renderYears();
       driveSel.value = data.truck.drive || '';
       paintUse();
       odo.value = data.truck.odometer == null ? '' : String(data.truck.odometer);
-      for (const input of [svcMiles, fuelMiles]) delete input.dataset.typed;
       renderAll(); paintStatus();
     }
 
-    // ---------------------------------------------------------------------------
-    // Events
-    // ---------------------------------------------------------------------------
-
-    function say(id, text) { $(id).textContent = text; }
-
-    function bumpOdometer(miles) {
-      if (data.truck.odometer == null || miles > data.truck.odometer) {
-        data.truck.odometer = miles;
-        odo.value = String(miles);
-      }
-    }
-
-    odo.addEventListener('input', () => {
-      if (!canEdit() || odo.validity.badInput) return;
-      const raw = odo.value.trim();
-      const n = toNum(raw);
-      if (raw === '') data.truck.odometer = null;
-      else if (n !== null && n >= 0) data.truck.odometer = Math.round(n);
-      else return;
-      save(); renderAll();
-    });
-
-    yearSel.addEventListener('change', () => { if (!canEdit()) return; data.truck.year = yearSel.value ? Number(yearSel.value) : null; save(); });
-    driveSel.addEventListener('change', () => { if (!canEdit()) return; data.truck.drive = driveSel.value || null; save(); renderItems(); renderAll(); });
-
-    $('use').addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-use]');
-      if (!canEdit() || !b || b.dataset.use === data.truck.use) return;
-      data.truck.use = b.dataset.use;
-      paintUse(); save(); renderItems(); renderAll();
-    });
-
-    for (const input of [svcMiles, fuelMiles]) input.addEventListener('input', () => { input.dataset.typed = '1'; });
-
-    $('svc-by').addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-by]');
-      if (!b) return;
-      svcBy = b.dataset.by;
-      for (const x of $('svc-by').children) { const on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-pressed', String(on)); }
-    });
-
-    $('svc-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!canEdit()) return;
-      const date = normDate(svcDate.value);
-      const miles = toNum(svcMiles.value);
-      const cost = svcCost.value.trim() === '' ? 0 : toNum(svcCost.value);
-      if (parseISO(date) === null) return say('svc-msg', 'Invalid date');
-      if (miles === null || miles < 0) return say('svc-msg', 'Odometer required');
-      if (cost === null || cost < 0) return say('svc-msg', 'Invalid cost');
-      const m = Math.round(miles);
-      data.services.push({ id: newId(), item: svcItem.value, date, miles: m, cost, by: svcBy, notes: svcNotes.value.trim().slice(0, 200) });
-      bumpOdometer(m);
-      svcCost.value = ''; svcNotes.value = '';
-      delete svcMiles.dataset.typed;
-      say('svc-msg', '');
-      save(); renderAll();
-    });
-
-    $('fuel-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!canEdit()) return;
-      const date = normDate(fuelDate.value);
-      const miles = toNum(fuelMiles.value);
-      const gallons = toNum(fuelGal.value);
-      const cost = fuelCost.value.trim() === '' ? 0 : toNum(fuelCost.value);
-      if (parseISO(date) === null) return say('fuel-msg', 'Invalid date');
-      if (miles === null || miles < 0) return say('fuel-msg', 'Odometer required');
-      if (gallons === null || gallons <= 0) return say('fuel-msg', 'Invalid gallons');
-      if (cost === null || cost < 0) return say('fuel-msg', 'Invalid cost');
-      const m = Math.round(miles);
-      data.fuel.push({ id: newId(), date, miles: m, gallons, cost });
-      bumpOdometer(m);
-      fuelGal.value = ''; fuelCost.value = '';
-      delete fuelMiles.dataset.typed;
-      say('fuel-msg', '');
-      save(); renderAll();
-    });
-
-    // Delete: first click arms the row's button, second click removes the entry.
-    document.addEventListener('click', (e) => {
-      const b = e.target.closest('button.del');
-      if (!canEdit()) return;
-      if (!b) { if (armed) { armed = null; renderHistory(); renderFuel(); } return; }
-      const key = b.dataset.key;
-      if (armed === key) {
-        armed = null;
-        if (key.startsWith('s:')) data.services = data.services.filter((s) => `s:${s.id}` !== key);
-        else data.fuel = data.fuel.filter((f) => `f:${f.id}` !== key);
-        save(); renderAll();
-        return;
-      }
-      armed = key;
-      renderHistory(); renderFuel(); restoreFocus(key);
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && armed) { const k = armed; armed = null; renderHistory(); renderFuel(); restoreFocus(k); }
-    });
-
-    // Export / import
-    function fail(text) { const s = $('data-status'); s.replaceChildren(el('span', { class: 'error-text', text })); }
-
+    // Export
     $('export').addEventListener('click', () => {
-      const today = todayISO();
-      if (view === 'mine') { data.exportedOn = today; save(); renderBar(); }
       const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
-      const a = el('a', { href: url, download: `frontier-maintenance-${today}.json` });
+      const a = el('a', { href: url, download: `frontier-maintenance-${todayISO()}.json` });
       document.body.append(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      $('data-status').textContent = 'Exported';
-    });
-
-    function clearPending() {
-      pendingImport = null;
-      $('import').textContent = 'Import';
-      $('import-cancel').hidden = true;
-    }
-
-    $('import').addEventListener('click', () => {
-      if (!canEdit()) return;
-      if (!pendingImport) { $('import-file').click(); return; }
-      data = mine = pendingImport;
-      clearPending();
-      save(); renderControls();
-      $('data-status').textContent = 'Imported';
-    });
-    $('import-cancel').addEventListener('click', () => { clearPending(); $('data-status').textContent = ''; });
-
-    $('import-file').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      e.target.value = '';
-      clearPending();
-      if (!file) return;
-      let parsed = null;
-      try { parsed = file.size <= 5e6 ? validateData(JSON.parse(await file.text())) : null; } catch (err) { /* invalid JSON */ }
-      if (!parsed) return fail('Import failed: invalid file');
-      pendingImport = parsed;
-      $('import').textContent = 'Replace data';
-      $('import-cancel').hidden = false;
-      $('data-status').textContent = `${plural(parsed.services.length, 'service')} · ${plural(parsed.fuel.length, 'fill-up')}`;
     });
 
     // ── Theme ──────────────────────────────────────────────────────────────────
@@ -1129,31 +834,19 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     if (location.hash === '#fuel') startPane = 'fuel';
     setPane(startPane);
 
-    function setView(v) {
-      view = v;
-      clearPending();
-      $('data-status').textContent = '';
-      armed = null;
-      data = v === 'mine' ? mine : (siteData || blankData());
-      renderControls();
-    }
-    $('view-btn').addEventListener('click', () => { setView(view === 'site' ? 'mine' : 'site'); $('view-btn').focus(); });
-
     async function loadSite() {
       try {
         const r = await fetch(`${LOG_URL}?t=${Math.floor(Date.now() / 60000)}`, { cache: 'no-store' });
         if (!r.ok) throw new Error(String(r.status));
         const parsed = validateData(await r.json());
         if (!parsed) throw new Error('invalid');
-        siteData = parsed; siteState = 'ok';
+        data = parsed; siteState = 'ok';
       } catch (e) { siteState = 'error'; }
-      if (view === 'site') { data = siteData || blankData(); renderControls(); } else paintStatus();
+      renderControls();
     }
 
-    svcDate.value = fuelDate.value = todayISO();
     paintCost();
     renderControls();
-    probeStorage();
     loadSite();
   </script>
 </body>
