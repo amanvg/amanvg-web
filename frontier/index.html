@@ -448,19 +448,19 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const SCHEDULE = [
       { id: 'oil',        label: 'Engine oil & filter',                  miles: 7500,   months: 6,  severe: { miles: 5000, months: 6 }, source: 'Replace at 7,500 mi / 6 mo (severe use: 5,000 mi / 6 mo)' },
       { id: 'rotate',     label: 'Tire rotation',                        miles: 7500,   months: 6,  source: 'Rotate at each normal oil interval, 7,500 mi / 6 mo' },
-      { id: 'brakes',     label: 'Brake pads & rotors inspection',       miles: 15000,  months: 12, severe: { miles: 5000, months: 6 }, source: 'Inspect at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo (severe use: 5,000 mi / 6 mo)' },
+      { id: 'brakes', mpi: true,     label: 'Brake pads & rotors inspection',       miles: 15000,  months: 12, severe: { miles: 5000, months: 6 }, source: 'Inspect at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo (severe use: 5,000 mi / 6 mo)' },
       { id: 'cabin',      label: 'In-cabin microfilter',                 miles: 15000,  months: 12, source: 'Replace at 15,000 mi / 12 mo, then every 15,000 mi / 12 mo' },
-      { id: 'fluids',     label: 'Transmission & differential fluid inspection', miles: 15000, months: 12, source: 'Inspect automatic transmission fluid and differential gear oil every 15,000 mi / 12 mo' },
+      { id: 'fluids', mpi: true,     label: 'Transmission & differential fluid inspection', miles: 15000, months: 12, source: 'Inspect automatic transmission fluid and differential gear oil every 15,000 mi / 12 mo' },
       { id: 'transfer',   label: 'Transfer case fluid inspection',       miles: 15000,  months: 12, only: '4WD', source: 'Inspect transfer fluid every 15,000 mi / 12 mo (4WD)' },
       { id: 'prop',       label: 'Propeller shaft lubrication',          miles: 15000,  months: 12, only: '4WD', severe: { miles: 5000, months: 6 }, source: 'Every 15,000 mi / 12 mo (4WD models); severe use: 5,000 mi / 6 mo' },
       { id: 'air',        label: 'Engine air filter',                    miles: 30000,  months: 24, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo' },
       { id: 'brakefluid', label: 'Brake fluid',                          miles: 30000,  months: 24, severe: { miles: 10000, months: 12 }, source: 'Replace at 30,000 mi / 24 mo, then every 30,000 mi / 24 mo (severe use: 10,000 mi / 12 mo)' },
-      { id: 'belt',       label: 'Drive belt inspection',                miles: 60000,  months: 48, then: { miles: 15000, months: 12 }, source: 'First inspection 60,000 mi / 48 mo, then every 15,000 mi / 12 mo' },
+      { id: 'belt', mpi: true,       label: 'Drive belt inspection',                miles: 60000,  months: 48, then: { miles: 15000, months: 12 }, source: 'First inspection 60,000 mi / 48 mo, then every 15,000 mi / 12 mo' },
       { id: 'plugs',      label: 'Spark plugs',                          miles: 105000, months: 84, source: 'Replace at 105,000 mi / 84 mo; also when gap exceeds 0.053 in' },
       { id: 'steering',   label: 'Steering gear & linkage inspection',   miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
-      { id: 'suspension', label: 'Axle & suspension parts inspection',   miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
-      { id: 'exhaust',    label: 'Exhaust system inspection',            miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
-      { id: 'boots',      label: 'Drive shaft boots inspection',         miles: 15000,  months: 12, only: '4WD', severe: { miles: 5000, months: 6 }, source: 'Inspect every 15,000 mi / 12 mo (4WD); severe use: 5,000 mi / 6 mo' },
+      { id: 'suspension', mpi: true, label: 'Axle & suspension parts inspection',   miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
+      { id: 'exhaust', mpi: true,    label: 'Exhaust system inspection',            miles: 30000,  months: 24, severe: { miles: 5000, months: 6 }, source: 'Inspect every 30,000 mi / 24 mo; severe use: 5,000 mi / 6 mo' },
+      { id: 'boots', mpi: true,      label: 'Drive shaft boots inspection',         miles: 15000,  months: 12, only: '4WD', severe: { miles: 5000, months: 6 }, source: 'Inspect every 15,000 mi / 12 mo (4WD); severe use: 5,000 mi / 6 mo' },
       { id: 'diffoil',    label: 'Differential gear oil replacement',    miles: 20000,  months: 24, severeOnly: true, source: 'Severe use only: replace every 20,000 mi / 24 mo' },
       { id: 'transferoil', label: 'Transfer case oil replacement',       miles: 20000,  months: 24, only: '4WD', severeOnly: true, source: 'Severe use only (4WD): replace every 20,000 mi / 24 mo' },
       { id: 'atf',        label: 'Automatic transmission fluid replacement', miles: 30000, months: 24, severeOnly: true, source: 'Severe use only (towing, car-top carrier, rough or muddy roads): replace every 30,000 mi / 24 mo' },
@@ -525,14 +525,25 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const diffDays = (a, b) => Math.round((parseISO(a) - parseISO(b)) / DAY_MS);
 
     // Most recent entry for an item: latest date, then highest odometer.
-    function latestEntry(services, itemId) {
+    function latestEntry(services, itemId, covered) {
       let best = null;
       for (const s of services) {
-        if (s.item !== itemId) continue;
+        if (s.item !== itemId && !(covered && s.item === MPI)) continue;
         if (!best || s.date > best.date || (s.date === best.date && s.miles > best.miles)) best = s;
       }
       return best;
     }
+
+    // Multi Point Inspection: logged once as item 'mpi'. It counts as done for every
+    // schedule row flagged `mpi` (the inspection rows it covers); replacement rows
+    // such as the air filter, cabin filter, brake fluid and coolant are not touched.
+    // It covers: tread depth, brakes, horn, headlights, in-cabin microfilter, dash
+    // lights, wiper blades, vehicle lights, rear hatch / hood supports, battery, oil,
+    // power steering fluid, washer fluid, cooling hoses, radiator core and cap, drive
+    // belt, coolant, brake fluid, ATF, heater and A/C hoses, engine air filter, rear
+    // shocks, drive shaft CV, front shocks, differential condition and leaks, exhaust,
+    // fluid leaks.
+    const MPI = 'mpi';
 
     // Schedule item as it applies to this truck: drivetrain filter, and Severe-only rows.
     const applies = (it, truck) => (!it.only || truck.drive !== '2WD') && (!it.severeOnly || truck.use === 'severe');
@@ -570,7 +581,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         .filter((it) => applies(it, data.truck))
         .map((base, i) => {
           const item = viewOf(base, data.truck.use);
-          const last = latestEntry(data.services, item.id);
+          const last = latestEntry(data.services, item.id, !!item.mpi);
           return { item, last, i, interval: intervalFor(item, !!last), ...dueStatus(item, last, data.truck.odometer, today) };
         });
       rows.sort((a, b) => rank[a.state] - rank[b.state] || (rank[a.state] === 0 ? a.score - b.score : 0) || a.i - b.i);
@@ -675,7 +686,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     const dec1 = (n) => n.toFixed(1);
     const plural = (n, w) => `${int.format(n)} ${w}${n === 1 ? '' : 's'}`;
     const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
-    const labelOf = (id) => { const s = SCHEDULE.find((x) => x.id === id); return s ? s.label : id === 'other' ? 'Other' : id; };
+    const labelOf = (id) => { const s = SCHEDULE.find((x) => x.id === id); return s ? s.label : id === MPI ? 'Multi Point Inspection' : id === 'other' ? 'Other' : id; };
 
     // Build elements without innerHTML so user text only ever goes in as text.
     function el(tag, props, ...kids) {
@@ -712,7 +723,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     function renderItems() {
       const keep = svcItem.value;
       const opts = SCHEDULE.filter((it) => applies(it, data.truck)).map((it) => option(it.id, it.label));
-      opts.push(option('other', 'Other'));
+      opts.push(option(MPI, 'Multi Point Inspection'), option('other', 'Other'));
       svcItem.replaceChildren(...opts);
       svcItem.value = [...svcItem.options].some((o) => o.value === keep) ? keep : opts[0].value;
     }
@@ -756,7 +767,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         const next = r.state === 'none' ? 'Not logged' : r.state === 'unknown' ? '—' : dueText(r);
         return el('tr', null,
           el('td', { class: 'wrap' }, r.item.label, el('span', { class: 'sub', text: intervalText(r.interval) })),
-          el('td', { class: 'wrap k-r', 'data-label': 'Last' }, r.last ? `${r.last.date}` : '—', r.last ? el('span', { class: 'sub', text: `${int.format(r.last.miles)} mi` }) : null),
+          el('td', { class: 'wrap k-r', 'data-label': 'Last' }, r.last ? `${r.last.date}` : '—', r.last ? el('span', { class: 'sub', text: `${int.format(r.last.miles)} mi` }) : null, r.last && r.last.item === MPI ? el('span', { class: 'sub', text: 'MPI' }) : null),
           el('td', { class: `wrap k-r${r.state === 'over' ? ' late' : ''}`, 'data-label': 'Next' }, next),
           el('td', { class: 'k-stat' }, stamp));
       });
