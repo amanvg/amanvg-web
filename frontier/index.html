@@ -562,7 +562,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             </section>
                             <section class="sign" aria-labelledby="fm-bestmi-h">
                                 <h2 class="sign-head" id="fm-bestmi-h">Best miles</h2>
-                                <div class="sign-body"><output class="num" id="st-bestmi">—</output><div class="sign-unit st-full-u">Per fill-up</div></div>
+                                <div class="sign-body"><output class="num" id="st-bestmi">—</output><div class="sign-unit">Per fill-up</div></div>
                             </section>
                         </div>
                         <div class="ledger-wrap">
@@ -1462,7 +1462,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('st-count').textContent = int.format(stats.fillups);
       $('st-gal').textContent = stats.fillups ? gal2.format(stats.gallons) : '—';
       $('st-g100').textContent = stats.gallonsPer100 == null ? '—' : stats.gallonsPer100.toFixed(2);
-      for (const u of document.querySelectorAll('.st-full-u')) u.textContent = `Per fill-up · ${MIN_FILL_GAL}+ gal`;
       $('st-avgmi').textContent = stats.avgRange == null ? '—' : dec1(stats.avgRange);
       $('st-bestmi').textContent = stats.bestMiles == null ? '—' : int.format(stats.bestMiles);
       const all = data.fuel.slice().sort(byDateDesc);
