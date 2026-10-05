@@ -892,8 +892,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         ${row('Logged', t.length, 'days', '')}
                         ${row('Rain', n(rain[rain.length - 1].y, 2), 'in', `${rain.filter(p => p.day >= 0.01).length} days`)}
                         ${row('Wettest', n(wet.day, 2), 'in', dayFmt(wet.date))}
-                        ${row('80°+', t.filter(p => p.hi >= 80).length, 'days', '')}
-                        ${row('Freezing', t.filter(p => p.lo <= 32).length, 'days', '')}
+                        ${row('Warm', t.filter(p => p.nhi != null && p.hi - p.nhi >= 5).length, 'days', 'High +5° avg')}
+                        ${row('Cold', t.filter(p => p.nlo != null && p.nlo - p.lo >= 5).length, 'days', 'Low −5° avg')}
                         ${row('Humidity', n(mean(ser.hum.map(p => p.avg))), '%', 'avg')}
                         ${row('Wind', n(mean(ser.wind.map(p => p.y)), 1), 'mph', 'avg')}
                         ${row('Peak gust', n(gust.y), 'mph', dayFmt(gust.date))}
