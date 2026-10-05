@@ -557,8 +557,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                                 <div class="sign-body"><output class="num" id="st-g100">—</output><div class="sign-unit">Avg</div></div>
                             </section>
                             <section class="sign" aria-labelledby="fm-avgmi-h">
-                                <h2 class="sign-head" id="fm-avgmi-h">Avg miles</h2>
-                                <div class="sign-body"><output class="num" id="st-avgmi">—</output><div class="sign-unit st-full-u">Per fill-up</div></div>
+                                <h2 class="sign-head" id="fm-avgmi-h">Avg range</h2>
+                                <div class="sign-body"><output class="num" id="st-avgmi">—</output><div class="sign-unit">Per 17 gal</div></div>
                             </section>
                             <section class="sign" aria-labelledby="fm-bestmi-h">
                                 <h2 class="sign-head" id="fm-bestmi-h">Best miles</h2>
@@ -794,8 +794,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // tank and, when full, starts the next. The average is total tank miles over tank
     // gallons and needs two full fill-ups. The miles-per-fill-up stats count only
     // tanks of MIN_FILL_GAL gallons or more (part tanks would drag them down).
+    // Avg range is the average MPG over a RANGE_GAL-gallon tank.
     // `segments` are the odometer gaps between consecutive fill-ups, flags ignored.
     const MIN_FILL_GAL = 10;
+    const RANGE_GAL = 17;
     function mpgStats(fuel) {
       const f = fuel.slice().sort((a, b) => a.miles - b.miles || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
       const perId = {}, tank = {}, tanks = [], segments = [];
@@ -828,7 +830,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         fillups: f.length,
         gallons: f.reduce((g, e) => g + e.gallons, 0),
         gallonsPer100: mi > 0 ? (gal / mi) * 100 : null,
-        avgMiles: full.length ? full.reduce((m, t) => m + t.dm, 0) / full.length : null,
+        avgRange: average != null ? average * RANGE_GAL : null,
         bestMiles: full.length ? Math.max(...full.map((t) => t.dm)) : null,
       };
     }
@@ -1461,7 +1463,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('st-gal').textContent = stats.fillups ? gal2.format(stats.gallons) : '—';
       $('st-g100').textContent = stats.gallonsPer100 == null ? '—' : stats.gallonsPer100.toFixed(2);
       for (const u of document.querySelectorAll('.st-full-u')) u.textContent = `Per fill-up · ${MIN_FILL_GAL}+ gal`;
-      $('st-avgmi').textContent = stats.avgMiles == null ? '—' : dec1(stats.avgMiles);
+      $('st-avgmi').textContent = stats.avgRange == null ? '—' : dec1(stats.avgRange);
       $('st-bestmi').textContent = stats.bestMiles == null ? '—' : int.format(stats.bestMiles);
       const all = data.fuel.slice().sort(byDateDesc);
       const more = $('fuel-more');
