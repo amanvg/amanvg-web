@@ -562,7 +562,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             </section>
                             <section class="sign" aria-labelledby="fm-bestmi-h">
                                 <h2 class="sign-head" id="fm-bestmi-h">Best miles</h2>
-                                <div class="sign-body"><output class="num" id="st-bestmi">—</output><div class="sign-unit">Per fill-up</div></div>
+                                <div class="sign-body"><output class="num" id="st-bestmi">—</output><div class="sign-unit" id="st-bestmi-u">Mi</div></div>
                             </section>
                         </div>
                         <div class="ledger-wrap">
@@ -831,7 +831,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         gallons: f.reduce((g, e) => g + e.gallons, 0),
         gallonsPer100: mi > 0 ? (gal / mi) * 100 : null,
         avgRange: average != null ? average * RANGE_GAL : null,
-        bestMiles: full.length ? Math.max(...full.map((t) => t.dm)) : null,
+        bestMiles: full.reduce((b, t) => (!b || t.dm > b.dm ? t : b), null),
       };
     }
 
@@ -1463,7 +1463,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('st-gal').textContent = stats.fillups ? gal2.format(stats.gallons) : '—';
       $('st-g100').textContent = stats.gallonsPer100 == null ? '—' : stats.gallonsPer100.toFixed(2);
       $('st-avgmi').textContent = stats.avgRange == null ? '—' : dec1(stats.avgRange);
-      $('st-bestmi').textContent = stats.bestMiles == null ? '—' : int.format(stats.bestMiles);
+      $('st-bestmi').textContent = stats.bestMiles ? int.format(stats.bestMiles.dm) : '—';
+      $('st-bestmi-u').textContent = stats.bestMiles ? `Mi · ${stats.bestMiles.date}` : 'Mi';
       const all = data.fuel.slice().sort(byDateDesc);
       const more = $('fuel-more');
       more.hidden = all.length <= RECENT;
