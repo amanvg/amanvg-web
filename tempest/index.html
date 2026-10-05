@@ -579,14 +579,15 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 };
                 S.error = null;
                 $('rail').classList.remove('loading');
-                renderRail();
-                if (S.tab !== 'history') renderStage();
+                if (S.tab !== 'history') { renderRail(); renderStage(); }
             } catch (err) {
                 console.error(err);
                 if (!S.data) {
                     S.error = err.message;
-                    $('rail').innerHTML = `<div class="state">Couldn’t load station data</div><div class="error-text">${esc(err.message)}</div>`;
-                    if (S.tab !== 'history') renderStage();
+                    if (S.tab !== 'history') {
+                        $('rail').innerHTML = `<div class="state">Couldn’t load station data</div><div class="error-text">${esc(err.message)}</div>`;
+                        renderStage();
+                    }
                 }
             }
         }
@@ -736,7 +737,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         // ── History stage ────────────────────────────────────────
         const DF = {
-            DATE: 0, PRES_AVG: 1, TEMP_AVG: 4, TEMP_MAX: 5, TEMP_MIN: 6,
+            DATE: 0, PRES_AVG: 1, PRES_MAX: 2, PRES_MIN: 3, TEMP_AVG: 4, TEMP_MAX: 5, TEMP_MIN: 6,
             HUM_AVG: 7, HUM_MAX: 8, HUM_MIN: 9, SOLAR_MAX: 17,
             WIND_AVG: 13, WIND_GUST: 14, RAIN: 29
         };
@@ -808,7 +809,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 press: single(o => mb2inhg(o[DF.PRES_AVG])),
                 solar: single(o => { const v = o[DF.SOLAR_MAX] ?? 0; return v > 1500 ? 0 : v; })
             };
-            S.hist = { year, ser };
+            S.hist = { year, ser, obs };
             return `
                 <section class="sign" id="big" aria-live="polite"></section>
                 <div class="tiles odd" role="group" aria-label="Metric">
@@ -862,6 +863,44 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             paintPlots();
         }
 
+        // Left rail on History: the selected year at a glance.
+        function renderYearRail() {
+            const rail = $('rail');
+            if (!S.hist) { rail.innerHTML = '<div class="state">Not enough data yet</div>'; return; }
+            const { year, ser, obs } = S.hist, t = ser.temp, rain = ser.rain;
+            const top = (pts, f) => pts.reduce((a, p) => f(p) > f(a) ? p : a);
+            const bot = (pts, f) => pts.reduce((a, p) => f(p) < f(a) ? p : a);
+            const hi = top(t, p => p.hi), lo = bot(t, p => p.lo), wet = top(rain, p => p.day);
+            const gust = top(ser.gust, p => p.y), solar = top(ser.solar, p => p.y);
+            const pMax = mb2inhg(Math.max(...obs.map(o => o[DF.PRES_MAX]).filter(v => v != null)));
+            const pMin = mb2inhg(Math.min(...obs.map(o => o[DF.PRES_MIN]).filter(v => v > 0)));
+            const row = (k, v, unit, note) => `<tr><th scope="row">${k}</th><td>${v}${unit ? `<span class="unit">${unit}</span>` : ''}</td><td class="note">${note || ''}</td></tr>`;
+            rail.innerHTML = `
+                <section class="sign" aria-labelledby="yr-h">
+                    <h2 class="sign-head"><span id="yr-h">${year}</span><span class="hv">${dayFmt(t[0].date)} – ${dayFmt(t[t.length - 1].date)}</span></h2>
+                    <div class="sign-body">
+                        <output class="num strike">${Math.round(mean(t.map(p => p.avg)))}°</output>
+                        <div class="sky"><span>Average</span></div>
+                        <div class="sign-ref">
+                            <span class="pill">Hi ${Math.round(hi.hi)}° ${dayFmt(hi.date)}</span>
+                            <span class="pill">Lo ${Math.round(lo.lo)}° ${dayFmt(lo.date)}</span>
+                        </div>
+                    </div>
+                    <table class="ledger now" aria-label="Year summary"><tbody>
+                        ${row('Logged', t.length, 'days', '')}
+                        ${row('Rain', n(rain[rain.length - 1].y, 2), 'in', `${rain.filter(p => p.day >= 0.01).length} days`)}
+                        ${row('Wettest', n(wet.day, 2), 'in', dayFmt(wet.date))}
+                        ${row('80°+', t.filter(p => p.hi >= 80).length, 'days', '')}
+                        ${row('Freezing', t.filter(p => p.lo <= 32).length, 'days', '')}
+                        ${row('Humidity', n(mean(ser.hum.map(p => p.avg))), '%', 'avg')}
+                        ${row('Wind', n(mean(ser.wind.map(p => p.y)), 1), 'mph', 'avg')}
+                        ${row('Peak gust', n(gust.y), 'mph', dayFmt(gust.date))}
+                        ${row('Pressure', n(mean(ser.press.map(p => p.y)), 2), 'inHg', `${n(pMin, 2)}–${n(pMax, 2)}`)}
+                        ${row('Peak solar', n(solar.y), 'W/m²', dayFmt(solar.date))}
+                    </tbody></table>
+                </section>`;
+        }
+
         async function renderHistory() {
             const seq = ++stageSeq, st = $('stage');
             st.setAttribute('aria-labelledby', 'tab-history');
@@ -875,6 +914,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 const allObs = all.flatMap(a => a.status === 'fulfilled' ? a.value : []);
                 st.innerHTML = head + renderHistoryBody(obs, S.year, normals(allObs));
                 if (S.hist) renderYearBig();
+                renderYearRail();
             } catch (err) {
                 console.error(err);
                 if (seq !== stageSeq) return;
@@ -888,6 +928,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             stageSeq++;
             st.setAttribute('aria-labelledby', 'tab-' + S.tab);
             if (S.tab === 'history') { renderHistory(); return; }
+            if (S.data) renderRail();
+            else if (S.error) $('rail').innerHTML = `<div class="state">Couldn’t load station data</div><div class="error-text">${esc(S.error)}</div>`;
             if (!S.data) { st.innerHTML = S.error ? `<div class="state">Couldn’t load station data</div>` : '<div class="state">Loading</div>'; return; }
             if (S.tab === '7d') renderForecast(); else render24();
         }
