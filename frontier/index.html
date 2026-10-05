@@ -249,8 +249,8 @@ fieldset{border:0;min-width:0}
 .moon .done.draw{animation:moon-draw 1.6s var(--ease) both}
 @keyframes moon-draw{from{stroke-dashoffset:var(--len)}}
 .moon .tick{stroke:var(--moon-ink);stroke-width:1.5;opacity:.7}
-.moon .lbl{fill:var(--moon-ink);font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.04em}
-.moon .lbl.dim{opacity:.7;font-weight:600}
+.moon .lbl{fill:var(--moon-ink);stroke:var(--moon-sky);stroke-width:4px;stroke-linejoin:round;paint-order:stroke;font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.04em}
+.moon .lbl.dim{opacity:.95;font-weight:600}
 .moon .here{fill:var(--moon-path);font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:.04em}
 .moon .truck{outline:none;cursor:default}
 .moon .truck .body{fill:var(--moon-face)}
