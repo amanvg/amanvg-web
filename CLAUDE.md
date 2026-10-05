@@ -48,9 +48,13 @@ A Reject means make no changes and ask what to adjust.
   colour on the header band only; bodies sit on the card surface.
 - `/tirepressure/`: follows `DESIGN.md` like `/seattlesports/`; unit chips live
   in the masthead, results sit on a tally strip.
-- `/cve/`: follows `DESIGN.md` like `/tirepressure/`; exposure, environment and
-  window chips live in the masthead, tier blocks (Act, Attend, Track*, Track)
-  carry the result.
+- `/cve/`: follows `DESIGN.md` like `/tirepressure/`; window chips live in the
+  masthead, tier blocks (Act, Attend, Track*, Track) carry the result. The tier
+  is a literal lookup in CISA SSVC Table 9 with Mission & Well-being fixed at
+  Medium (no subjective inputs); each item shows its Exploitation, Automatable
+  and Impact, the tier tooltip its Table 9 row. Values come
+  from CISA Vulnrichment (KEV is always Active); missing ones are derived from
+  the CVSS vector (else the worse value) and marked `~`. EPSS only ranks.
 - `/commute/`: follows `DESIGN.md` like `/tirepressure/`; car, route and pump
   price inputs sit left, a fare tally strip and cost, miles, hours ledgers sit
   right, and results update live (no Calculate button).
@@ -137,8 +141,8 @@ A Reject means make no changes and ask what to adjust.
   placard over the next 30 days, from current temperature, 10-year climate
   and altitude. Follows `DESIGN.md`; units °F/°C and PSI/kPa/bar.
 - `/cve/` CVE Triage: recent CISA KEV and likely-exploited CVEs tiered Act,
-  Attend, Track*, Track from exploitation, EPSS, exposure, environment and a
-  browser-saved watchlist. Follows `DESIGN.md`.
+  Attend, Track*, Track by the CISA SSVC decision tree, with a browser-saved
+  watchlist that ranks matches first. Follows `DESIGN.md`.
 - `/frontier/` Frontier Maintenance: service and fill-up log for a 2022+ Nissan
   Frontier, due status from odometer and date against Nissan's schedule, cost
   and MPG ledgers; fill-ups and services are logged from the page once a device

@@ -9,7 +9,9 @@ Sources (stdlib only, no keys):
 
 Candidates are every KEV entry added in the window, plus CVEs published in the
 window that have EPSS >= EPSS_MIN or a CISA exploitation of poc/active.
-The page decides the tier; this script only collects facts.
+The page decides the tier (CISA SSVC Table 9); this script only collects facts.
+exploitation/automatable/impact are CISA's published SSVC values, or null when
+CISA has not scored the CVE (KEV entries are always "active").
 
 Usage: python3 cve/update.py
 """
@@ -97,13 +99,13 @@ def load_published(start, end):
 
 
 def best_cvss(cna, adp):
-    """Highest-priority base score: CNA v4/v3.1/v3.0, then ADP."""
+    """Highest-priority base score and vector: CNA v4/v3.1/v3.0, then ADP."""
     for container in [cna] + adp:
         for m in container.get("metrics") or []:
             for key in ("cvssV4_0", "cvssV3_1", "cvssV3_0"):
                 if key in m and "baseScore" in m[key]:
-                    return float(m[key]["baseScore"]), m[key]["version"]
-    return None, None
+                    return float(m[key]["baseScore"]), m[key]["version"], m[key].get("vectorString")
+    return None, None, None
 
 
 def enrich(cve_id):
@@ -113,8 +115,7 @@ def enrich(cve_id):
         return {}
     cna, adp = d["containers"].get("cna", {}), d["containers"].get("adp", [])
     info = {}
-    score, ver = best_cvss(cna, adp)
-    info["cvss"], info["cvssVersion"] = score, ver
+    info["cvss"], info["cvssVersion"], info["cvssVector"] = best_cvss(cna, adp)
     for a in [cna] + adp:
         for aff in a.get("affected") or []:
             if aff.get("vendor") and aff.get("product"):
@@ -188,6 +189,7 @@ def main():
             "epss": round(epss[cve_id][0], 3) if cve_id in epss else None,
             "percentile": round(epss[cve_id][1], 3) if cve_id in epss else None,
             "cvss": info.get("cvss"), "cvssVersion": info.get("cvssVersion"),
+            "cvssVector": info.get("cvssVector"),
             "exploitation": "active",
             "automatable": info.get("automatable"), "impact": info.get("impact"),
             "cweId": info.get("cweId"), "cwe": info.get("cwe"),
@@ -199,8 +201,8 @@ def main():
         score, pct = epss[cve_id]
         info = enrich(cve_id)
         time.sleep(0.15)
-        exploitation = info.get("exploitation") or "none"
-        if score < EPSS_MIN and exploitation == "none":
+        exploitation = info.get("exploitation")
+        if score < EPSS_MIN and exploitation in (None, "none"):
             continue
         likely.append({
             "id": cve_id,
@@ -210,6 +212,7 @@ def main():
             "kev": None,
             "epss": round(score, 3), "percentile": round(pct, 3),
             "cvss": info.get("cvss"), "cvssVersion": info.get("cvssVersion"),
+            "cvssVector": info.get("cvssVector"),
             "exploitation": exploitation,
             "automatable": info.get("automatable"), "impact": info.get("impact"),
             "cweId": info.get("cweId"), "cwe": info.get("cwe"),

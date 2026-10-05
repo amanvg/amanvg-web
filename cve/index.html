@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CVE Triage — amanvg</title>
-    <meta name="description" content="Recent exploited and likely-exploited CVEs, tiered Act, Attend, Track* and Track.">
+    <meta name="description" content="Recent exploited and likely-exploited CVEs, tiered Act, Attend, Track* and Track by the CISA SSVC decision tree.">
     <meta name="theme-color" content="#24422e">
     <meta property="og:type" content="website">
     <meta property="og:title" content="CVE Triage — amanvg">
-    <meta property="og:description" content="Recent exploited and likely-exploited CVEs, tiered Act, Attend, Track* and Track.">
+    <meta property="og:description" content="Recent exploited and likely-exploited CVEs, tiered Act, Attend, Track* and Track by the CISA SSVC decision tree.">
     <meta property="og:url" content="https://www.amanvg.com/cve/">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script>
@@ -100,7 +100,7 @@ main{flex:1;padding:40px var(--margin) 0}
 .masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 28px;min-height:76px;padding:12px 28px;background:var(--b-band);color:var(--f-band);border-bottom:2px solid var(--head-line)}
 .masthead h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
 .controls{display:flex;flex-wrap:wrap;gap:8px 16px}
-.chips{display:flex}
+.chips{display:flex;align-items:center}
 .chips label{cursor:pointer}
 .chips input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
 .chips span{display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:44px;padding:8px 14px;border:1.5px solid var(--f-band);font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;transition:background .15s,color .15s,border-color .15s}
@@ -109,12 +109,13 @@ main{flex:1;padding:40px var(--margin) 0}
 .chips input:focus-visible+span{outline:3px solid var(--f-band);outline-offset:3px;position:relative}
 @media(hover:hover){.chips input:not(:checked)+span:hover{background:rgba(246,239,225,.14)}}
 
-.body{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1px;background:var(--key)}
+.body{--tier-w:104px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1px;background:var(--key)}
 .stage,.rail{background:var(--card);min-width:0}
 .stage{display:flex;flex-direction:column}
 .tabbar{display:flex;align-items:stretch;justify-content:space-between;gap:12px;background:var(--row-a);border-bottom:1px solid var(--key)}
 [role=tablist]{display:flex}
 [role=tab]{font-family:var(--label);font-weight:700;font-size:15px;line-height:20px;letter-spacing:.01em;min-height:48px;padding:8px 24px;border:0;border-right:1px solid var(--key);background:transparent;color:var(--text);cursor:pointer;transition:background .15s,color .15s}
+#tab-short{width:var(--tier-w);padding-left:0;padding-right:0;text-align:center}
 [role=tab][aria-selected=true]{background:var(--tab-on-bg);color:var(--tab-on-fg)}
 @media(hover:hover){[role=tab][aria-selected=false]:hover{background:var(--row-b)}}
 [role=tab]:focus-visible{outline-offset:-5px}
@@ -122,7 +123,7 @@ main{flex:1;padding:40px var(--margin) 0}
 .stamp .late{background:var(--late-bg);color:var(--late-fg);padding:2px 8px;margin-left:8px}
 
 /* shortlist */
-.item{display:grid;grid-template-columns:104px minmax(0,1fr) auto;border-top:1px solid var(--divider);}
+.item{display:grid;grid-template-columns:var(--tier-w) minmax(0,1fr) auto;border-top:1px solid var(--divider);}
 #p-short:not(.seen) .item{animation:strike .5s var(--ease) both;animation-delay:calc(var(--n,0) * 35ms)}
 .item:first-child{border-top:0}
 .item:nth-child(odd){background:var(--row-a)}
@@ -144,6 +145,8 @@ td .idb svg{width:10px;height:10px}
 .cwe{margin-top:6px;max-width:70ch;font-family:var(--body);font-size:16px;line-height:22px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .cwe b{font-family:var(--label);font-weight:600;font-size:13px;color:var(--muted);margin-right:8px;font-variant-numeric:tabular-nums}
 .tags{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px}
+.tag.pt{color:var(--text);font-weight:700}
+.tag abbr{text-decoration:none;cursor:help}
 .tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--label);font-weight:600;font-size:13px;line-height:18px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
 .tags .tag::before{content:'';width:7px;height:7px;background:currentColor}
 .tag.hot{color:var(--late-bg);font-weight:700}
@@ -223,8 +226,6 @@ tr.r td:last-child{white-space:nowrap}
 .tiers .sw{width:18px;height:18px;background:var(--tb);box-shadow:inset 0 0 0 1.5px var(--text)}
 .tiers .t0{background:transparent}
 .rule{display:block;font-family:var(--label);font-weight:600;font-size:13px;line-height:18px;letter-spacing:0;text-transform:none;opacity:.9}
-.tiers .tn{display:flex;flex-direction:column;min-width:0}
-.tiers .rule{color:var(--muted);opacity:1}
 .tiers b{margin-left:auto;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
 .railhead{padding:10px 24px;background:var(--head-bg);color:var(--head-text);font-family:var(--display);font-weight:700;font-size:18px;line-height:26px;letter-spacing:.05em;text-transform:uppercase}
 .watch{padding:16px 24px 24px;display:flex;flex-direction:column;gap:14px}
@@ -243,8 +244,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 .sources a:focus-visible{outline-color:var(--foot-text)}
 @media(hover:hover){.sources a:hover{text-decoration-color:currentColor}}
 
-@media(max-width:1160px){.stamp .src{display:none}.nums{gap:14px;padding:14px 16px}.num{min-width:48px}.num b{font-size:28px;line-height:32px}td{padding:8px}th button{padding:6px 8px}.body{grid-template-columns:minmax(0,1fr) 280px}}
-@media(max-width:1040px) and (min-width:961px){.body{grid-template-columns:minmax(0,1fr) 240px}table{font-size:13px}td{padding:8px 6px}td .idb{font-size:16px}}
+th button span:empty{display:none}
+@media(max-width:1366px){td{padding:8px 7px}th button{padding:6px 7px}}
+@media(max-width:1160px){.stamp .src{display:none}.nums{gap:14px;padding:14px 16px}.num{min-width:48px}.num b{font-size:28px;line-height:32px}.body{grid-template-columns:minmax(0,1fr) 280px}}
+@media(max-width:1160px) and (min-width:961px){.body{grid-template-columns:minmax(0,1fr) 240px}table{font-size:13px}td{padding:8px 6px}th button{padding:6px}td .idb{font-size:16px}}
 @media(max-width:960px){
   .body{grid-template-columns:1fr}
   .rail-in{position:static}
@@ -257,8 +260,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   main{padding-top:24px}
   .masthead{padding:12px 16px}
   .masthead h1{font-size:28px;line-height:36px}
+  .chips{flex-wrap:wrap}
+  .chips span{padding:8px 10px}
   .tabbar{flex-wrap:wrap}
-  [role=tab]{padding:8px 16px}
+  [role=tab],#tab-short{width:auto;padding:8px 16px}
   .stamp{padding:0 16px 8px;text-align:left;flex-basis:100%}
   .item{grid-template-columns:1fr}
   .tier{min-height:36px;justify-content:flex-start;padding:4px 20px;font-size:18px}
@@ -290,14 +295,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             <div class="masthead">
                 <h1>CVE Triage</h1>
                 <div class="controls">
-                    <div class="chips" role="radiogroup" aria-label="Exposure">
-                        <label><input type="radio" name="exp" value="net" checked><span>Internet-facing</span></label>
-                        <label><input type="radio" name="exp" value="int"><span>Internal</span></label>
-                    </div>
-                    <div class="chips" role="radiogroup" aria-label="Environment">
-                        <label><input type="radio" name="env" value="prod" checked><span>Prod</span></label>
-                        <label><input type="radio" name="env" value="dev"><span>Dev/Test</span></label>
-                    </div>
                     <div class="chips" role="radiogroup" aria-label="Window">
                         <label><input type="radio" name="win" value="7" checked><span>7 days</span></label>
                         <label><input type="radio" name="win" value="30"><span>30 days</span></label>
@@ -332,7 +329,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 </section>
                 <aside class="rail" aria-label="Summary">
                     <div class="rail-in">
-                    <div class="act"><div><h2>Act</h2><span class="rule" id="rule-3"></span><span class="rule" id="over-3"></span></div><output id="act-n" aria-live="polite">0</output></div>
+                    <div class="act"><div><h2>Act</h2><span class="rule" id="over-3"></span></div><output id="act-n" aria-live="polite">0</output></div>
                     <ul class="tiers" id="tiers"></ul>
                     <h2 class="railhead">Watchlist</h2>
                     <div class="watch">
@@ -357,12 +354,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         const SNAPSHOT = '/cve/data/snapshot.json';
         const RECORD_API = 'https://cveawg.mitre.org/api/cve/';
-        const EPSS_LIKELY = 0.1;      // at or above, a CVE counts as likely to be exploited
         const SHORTLIST_MAX = 15;
         const STALE_HOURS = 48;
         const TIER_NAMES = ['Track', 'Track*', 'Attend', 'Act'];
 
-        const state = { items: [], snap: null, net: true, prod: true, days: 7, tab: 'short', open: new Set(), sort: { k: 'tier', dir: -1 }, q: '', list: [] };
+        const state = { items: [], snap: null, days: 7, tab: 'short', open: new Set(), sort: { k: 'tier', dir: -1 }, q: '', list: [] };
 
         // ── Storage (every access guarded) ──────────────────────
 
@@ -371,13 +367,42 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
         function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
 
-        // ── Tiering ─────────────────────────────────────────────
+        // ── Tiering: CISA SSVC Guide (Nov 2022), Tables 8 and 9 ──
 
-        function exploitLevel(i) {
-            if (i.kev || i.exploitation === 'active') return 'active';
-            if ((i.epss || 0) >= EPSS_LIKELY) return 'likely';
-            if (i.exploitation === 'poc') return 'poc';
-            return 'none';
+        // Mission & Well-being is fixed at Medium (Table 8: Support × Minimal), so the tier rests on the three published points
+        const MW = 'medium';
+        // Table 9, rows 1-36: Exploitation, Automatable, Technical Impact, Mission & Well-being → Decision
+        const SSVC_ROWS = [
+            ['none', 'no', 'partial', 'low', 'Track'], ['none', 'no', 'partial', 'medium', 'Track'], ['none', 'no', 'partial', 'high', 'Track'],
+            ['none', 'no', 'total', 'low', 'Track'], ['none', 'no', 'total', 'medium', 'Track'], ['none', 'no', 'total', 'high', 'Track*'],
+            ['none', 'yes', 'partial', 'low', 'Track'], ['none', 'yes', 'partial', 'medium', 'Track'], ['none', 'yes', 'partial', 'high', 'Attend'],
+            ['none', 'yes', 'total', 'low', 'Track'], ['none', 'yes', 'total', 'medium', 'Track'], ['none', 'yes', 'total', 'high', 'Attend'],
+            ['poc', 'no', 'partial', 'low', 'Track'], ['poc', 'no', 'partial', 'medium', 'Track'], ['poc', 'no', 'partial', 'high', 'Track*'],
+            ['poc', 'no', 'total', 'low', 'Track'], ['poc', 'no', 'total', 'medium', 'Track*'], ['poc', 'no', 'total', 'high', 'Attend'],
+            ['poc', 'yes', 'partial', 'low', 'Track'], ['poc', 'yes', 'partial', 'medium', 'Track'], ['poc', 'yes', 'partial', 'high', 'Attend'],
+            ['poc', 'yes', 'total', 'low', 'Track'], ['poc', 'yes', 'total', 'medium', 'Track*'], ['poc', 'yes', 'total', 'high', 'Attend'],
+            ['active', 'no', 'partial', 'low', 'Track'], ['active', 'no', 'partial', 'medium', 'Track'], ['active', 'no', 'partial', 'high', 'Attend'],
+            ['active', 'no', 'total', 'low', 'Track'], ['active', 'no', 'total', 'medium', 'Attend'], ['active', 'no', 'total', 'high', 'Act'],
+            ['active', 'yes', 'partial', 'low', 'Attend'], ['active', 'yes', 'partial', 'medium', 'Attend'], ['active', 'yes', 'partial', 'high', 'Act'],
+            ['active', 'yes', 'total', 'low', 'Attend'], ['active', 'yes', 'total', 'medium', 'Act'], ['active', 'yes', 'total', 'high', 'Act'],
+        ];
+        const SSVC = new Map(SSVC_ROWS.map((r, n) => [r.slice(0, 4).join('|'), { t: TIER_NAMES.indexOf(r[4]), row: n + 1 }]));
+
+        // CVSS vector as { AV: 'N', ... }; used only when CISA has not published an SSVC value
+        function vec(s) {
+            const out = {};
+            String(s || '').split('/').forEach(p => { const [k, v] = p.split(':'); if (k && v) out[k] = v; });
+            return out;
+        }
+        // Decision points: CISA value, else a fixed rule from the CVSS vector, else the worse value. Derived values carry src '~'.
+        function points(i) {
+            const v = vec(i.cvssVector), has = Object.keys(v).length > 1, v4 = 'VC' in v;
+            const e = i.kev ? ['active', ''] : ['none', 'poc', 'active'].includes(i.exploitation) ? [i.exploitation, ''] : ['none', '~'];
+            const a = ['yes', 'no'].includes(i.automatable) ? [i.automatable, '']
+                : has ? [v.AV === 'N' && v.AC === 'L' && v.PR === 'N' && v.UI === 'N' && (!v4 || v.AT === 'N') ? 'yes' : 'no', '~'] : ['yes', '~'];
+            const t = ['partial', 'total'].includes(i.impact) ? [i.impact, '']
+                : has ? [(v4 ? [v.VC, v.VI, v.VA] : [v.C, v.I, v.A]).every(x => x === 'H') ? 'total' : 'partial', '~'] : ['total', '~'];
+            return { e: e[0], eSrc: e[1], a: a[0], aSrc: a[1], i: t[0], iSrc: t[1] };
         }
         function matches(i) {
             if (!state.list.length) return false;
@@ -385,26 +410,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return state.list.some(t => hay.includes(t.toLowerCase()));
         }
         function tierOf(i) {
-            const lvl = exploitLevel(i);
-            let t = 0;
-            if (lvl === 'active') t = (state.net || (i.kev && i.kev.ransomware)) ? 3 : 2;
-            else if (lvl === 'likely') t = state.net ? 2 : 1;
-            else if (lvl === 'poc') t = state.net ? 1 : 0;
-            if (!state.prod) t = Math.max(0, t - 1);
-            return { t, w: matches(i) };
-        }
-
-        const EXPLOIT_PROBES = [
-            ['Ransomware', { kev: { ransomware: true } }],
-            ['KEV', { kev: { ransomware: false } }],
-            ['EPSS ≥ ' + Math.round(EPSS_LIKELY * 100) + '%', { epss: EPSS_LIKELY }],
-            ['PoC', { exploitation: 'poc' }],
-            ['Other', {}],
-        ];
-        function tierRules() {
-            const out = [[], [], [], []];
-            EXPLOIT_PROBES.forEach(([label, probe]) => out[tierOf(probe).t].push(label));
-            return out.map(l => l.length ? l.join(' · ') : 'None');
+            const p = points(i);
+            const hit = SSVC.get([p.e, p.a, p.i, MW].join('|'));
+            return { t: hit.t, row: hit.row, p, w: matches(i) };
         }
 
         // ── Helpers ─────────────────────────────────────────────
@@ -546,15 +554,22 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         // ── Rendering ───────────────────────────────────────────
 
         function tags(i) {
-            const out = [];
+            const p = i.p, pt = (v, src) => '<span class="tag pt">' + val(v, src) + '</span>';
+            const out = [pt(EXPL[p.e], p.eSrc), pt(p.a === 'yes' ? 'Automatable' : 'Not automatable', p.aSrc), pt(cap(p.i) + ' impact', p.iSrc)];
             if (i.kev) out.push('<span class="tag">KEV</span>');
             if (i.kev && i.kev.ransomware) out.push('<span class="tag hot">Ransomware</span>');
-            if (!i.kev && i.exploitation === 'poc') out.push('<span class="tag">PoC</span>');
-            if (i.automatable === 'yes') out.push('<span class="tag">Automatable</span>');
             if (i.kev) out.push('<span class="tag' + (daysTo(i.kev.due) <= 0 ? ' hot' : '') + '">' + esc(dueText(i.kev.due)) + '</span>');
             if (i.w) out.push('<span class="tag">Watched</span>');
             return out.join('');
         }
+
+        const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+        const EXPL = { none: 'No exploit', poc: 'PoC', active: 'Active' };
+        const DERIVED = 'Derived: CISA has not published this value';
+        const show = v => v === 'poc' ? 'PoC' : cap(v);
+        const val = (v, src) => src ? '<abbr title="' + DERIVED + '">~' + show(v) + '</abbr>' : show(v);
+        const pathText = p => [(p.eSrc || '') + EXPL[p.e], (p.aSrc || '') + (p.a === 'yes' ? 'Automatable' : 'Not automatable'), (p.iSrc || '') + cap(p.i) + ' impact'].join(' · ');
+        const rowTip = i => pathText(i.p) + ' · Table 9 row ' + i.row;
 
         function cweLine(i) {
             const id = /^CWE-\d+$/.test(i.cweId || '') ? i.cweId : '';
@@ -566,11 +581,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         function renderShortlist(rows) {
             const el = document.getElementById('p-short');
             const hot = rows.filter(r => r.t >= 2).sort(rank);
-            if (!hot.length) { el.innerHTML = '<p class="empty">Nothing to raise · ' + (state.net ? 'Internet-facing' : 'Internal') + ' · ' + (state.prod ? 'Prod' : 'Dev/Test') + '</p>'; return; }
+            if (!hot.length) { el.innerHTML = '<p class="empty">Nothing to raise</p>'; return; }
             const shown = hot.slice(0, SHORTLIST_MAX);
             let html = shown.map((i, n) => (
                 '<article class="item" style="--n:' + n + '">' +
-                  '<div class="tier t' + i.t + '">' + TIER_NAMES[i.t] + '</div>' +
+                  '<div class="tier t' + i.t + '" title="' + rowTip(i) + '">' + TIER_NAMES[i.t] + '</div>' +
                   '<div class="info">' +
                     toggleBtn(i.id, 'short') +
                     '<div class="what">' + esc(subject(i)) + '</div>' +
@@ -597,7 +612,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             { k: 'tier', label: 'Tier' },
             { k: 'id', label: 'CVE' },
             { k: 'prod', label: 'Product' },
-            { k: 'exp', label: 'Exploit' },
             { k: 'epss', label: 'EPSS', r: true },
             { k: 'cvss', label: 'CVSS', r: true },
             { k: 'due', label: 'Due' },
@@ -607,7 +621,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 case 'tier': return i.t;
                 case 'id': return i.id;
                 case 'prod': return subject(i).toLowerCase();
-                case 'exp': return i.kev ? 2 : i.exploitation === 'poc' ? 1 : 0;
                 case 'epss': return i.epss || 0;
                 case 'cvss': return i.cvss || 0;
                 case 'due': return i.kev ? i.kev.due : '';
@@ -617,7 +630,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             document.getElementById('thead').innerHTML = COLS.map(c => {
                 const on = state.sort.k === c.k;
                 return '<th class="' + (c.r ? 'r' : '') + '" aria-sort="' + (on ? (state.sort.dir > 0 ? 'ascending' : 'descending') : 'none') + '">' +
-                    '<button type="button" data-k="' + c.k + '">' + c.label + '<span aria-hidden="true">' + (on ? (state.sort.dir > 0 ? '▲' : '▼') : '') + '</span></button></th>';
+                    '<button type="button" data-k="' + c.k + '"' + '>' + c.label + '<span aria-hidden="true">' + (on ? (state.sort.dir > 0 ? '▲' : '▼') : '') + '</span></button></th>';
             }).join('');
         }
         function renderLedger(rows) {
@@ -633,28 +646,25 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             document.getElementById('count').textContent = list.length + (list.length === 1 ? ' CVE' : ' CVEs');
             document.getElementById('tbody').innerHTML = list.length ? list.map((i, n) => (
                 '<tr class="r ' + (n % 2 ? 'rb' : 'ra') + '">' +
-                  '<td class="tcell"><span class="t' + i.t + '">' + TIER_NAMES[i.t] + '</span></td>' +
+                  '<td class="tcell"><span class="t' + i.t + '" title="' + rowTip(i) + '">' + TIER_NAMES[i.t] + '</span></td>' +
                   '<td>' + toggleBtn(i.id, 'ledger') + '</td>' +
                   '<td class="prod" title="' + esc(i.name || subject(i)) + '">' + esc(subject(i)) + '</td>' +
-                  '<td>' + (i.kev ? 'KEV' + (i.kev.ransomware ? ' · Ransomware' : '') : i.exploitation === 'poc' ? 'PoC' : '—') + '</td>' +
                   '<td class="r">' + pct(i.epss) + '</td>' +
                   '<td class="r">' + cvss(i.cvss) + '</td>' +
                   '<td class="' + (i.kev && daysTo(i.kev.due) <= 0 ? 'late' : '') + '">' + (i.kev ? esc(i.kev.due) : '—') + '</td>' +
                 '</tr>' +
-                (state.open.has(i.id) ? '<tr class="drow"><td class="dcell" colspan="7">' + detailHtml(i.id, 'ledger') + '</td></tr>' : '')
-            )).join('') : '<tr><td colspan="7" class="empty">No match</td></tr>';
+                (state.open.has(i.id) ? '<tr class="drow"><td class="dcell" colspan="6">' + detailHtml(i.id, 'ledger') + '</td></tr>' : '')
+            )).join('') : '<tr><td colspan="6" class="empty">No match</td></tr>';
         }
 
         function renderRail(rows) {
             const n = [0, 0, 0, 0];
             rows.forEach(r => n[r.t]++);
             document.getElementById('act-n').textContent = n[3];
-            const rules = tierRules();
-            document.getElementById('rule-3').textContent = rules[3];
             const over = rows.filter(r => r.t === 3 && r.kev && daysTo(r.kev.due) < 0).length;
             document.getElementById('over-3').textContent = over ? over + ' overdue' : '';
             document.getElementById('tiers').innerHTML = [2, 1, 0].map(t =>
-                '<li><span class="sw t' + t + '"></span><span class="tn">' + TIER_NAMES[t] + '<span class="rule">' + esc(rules[t]) + '</span></span><b>' + n[t] + '</b></li>').join('');
+                '<li><span class="sw t' + t + '"></span>' + TIER_NAMES[t] + '<b>' + n[t] + '</b></li>').join('');
         }
 
         function renderWatch() {
@@ -684,14 +694,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         // ── URL state and export ────────────────────────────────
 
-        const SORT_KEYS = ['tier', 'id', 'prod', 'exp', 'epss', 'cvss', 'due'];
+        const SORT_KEYS = ['tier', 'id', 'prod', 'epss', 'cvss', 'due'];
         const ID_RE = /^CVE-\d{4}-\d{4,}$/;
         function syncHash() {
             const p = new URLSearchParams();
             if (state.tab === 'ledger') p.set('tab', 'ledger');
             if (state.days !== 7) p.set('win', state.days);
-            if (!state.net) p.set('exp', 'int');
-            if (!state.prod) p.set('env', 'dev');
             if (state.q) p.set('q', state.q);
             if (state.sort.k !== 'tier' || state.sort.dir !== -1) { p.set('sort', state.sort.k); p.set('dir', state.sort.dir); }
             const open = [...state.open].filter(id => ID_RE.test(id)).slice(0, 10);
@@ -705,8 +713,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const p = new URLSearchParams(ID_RE.test(raw) ? 'open=' + raw : raw);
             const win = Number(p.get('win'));
             if (win === 7 || win === 30) state.days = win;
-            if (p.get('exp') === 'int') state.net = false; else if (p.get('exp') === 'net') state.net = true;
-            if (p.get('env') === 'dev') state.prod = false; else if (p.get('env') === 'prod') state.prod = true;
             if (p.get('tab') === 'ledger') state.tab = 'ledger';
             if (SORT_KEYS.includes(p.get('sort'))) state.sort = { k: p.get('sort'), dir: p.get('dir') === '1' ? 1 : -1 };
             state.q = (p.get('q') || '').slice(0, 80);
@@ -726,11 +732,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 setTimeout(() => { btn.textContent = label; }, 1500);
             });
         }
-        const CSV_HEAD = ['CVE', 'Tier', 'Vendor', 'Product', 'Exploit', 'EPSS', 'CVSS', 'KEV due', 'CWE'];
+        const CSV_HEAD = ['CVE', 'Tier', 'SSVC row', 'Exploitation', 'Automatable', 'Technical impact', 'Derived', 'Vendor', 'Product', 'KEV', 'EPSS', 'CVSS', 'KEV due', 'CWE'];
         function exportRows() {
             return (state.shown || []).map(i => [
-                i.id, TIER_NAMES[i.t], i.vendor || '', i.product || '',
-                i.kev ? (i.kev.ransomware ? 'KEV Ransomware' : 'KEV') : i.exploitation === 'poc' ? 'PoC' : '',
+                i.id, TIER_NAMES[i.t], i.row, i.p.e, i.p.a, i.p.i,
+                [i.p.eSrc && 'exploitation', i.p.aSrc && 'automatable', i.p.iSrc && 'impact'].filter(Boolean).join(' '),
+                i.vendor || '', i.product || '',
+                i.kev ? (i.kev.ransomware ? 'KEV Ransomware' : 'KEV') : '',
                 i.epss == null ? '' : i.epss, i.cvss == null ? '' : i.cvss,
                 i.kev ? i.kev.due : '', i.cweId || ''
             ].map(v => String(v)));
@@ -770,10 +778,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') setTab(state.tab === 'short' ? 'ledger' : 'short', true);
         });
 
-        function savePrefs() { save('cve.prefs', { net: state.net, prod: state.prod, days: state.days }); }
+        function savePrefs() { save('cve.prefs', { days: state.days }); }
         document.querySelectorAll('.chips input').forEach(r => r.addEventListener('change', () => {
-            if (r.name === 'exp') state.net = r.value === 'net';
-            if (r.name === 'env') state.prod = r.value === 'prod';
             if (r.name === 'win') state.days = Number(r.value);
             savePrefs();
             render();
@@ -834,17 +840,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         async function start() {
             const p = load('cve.prefs', {});
-            if (typeof p.net === 'boolean') state.net = p.net;
-            if (typeof p.prod === 'boolean') state.prod = p.prod;
             if (p.days === 7 || p.days === 30) state.days = p.days;
             const wl = load('cve.watchlist', []);
             state.list = Array.isArray(wl) ? wl.filter(t => typeof t === 'string').slice(0, 50) : [];
-            document.querySelector('input[name=exp][value=' + (state.net ? 'net' : 'int') + ']').checked = true;
-            document.querySelector('input[name=env][value=' + (state.prod ? 'prod' : 'dev') + ']').checked = true;
             document.querySelector('input[name=win][value="' + state.days + '"]').checked = true;
             const fromHash = readHash();
-            document.querySelector('input[name=exp][value=' + (state.net ? 'net' : 'int') + ']').checked = true;
-            document.querySelector('input[name=env][value=' + (state.prod ? 'prod' : 'dev') + ']').checked = true;
             document.querySelector('input[name=win][value="' + state.days + '"]').checked = true;
             document.getElementById('filter').value = state.q;
             renderWatch();
