@@ -182,7 +182,10 @@ input[type=text][data-next]{border-color:var(--accent);box-shadow:none}
 .ledger tbody tr+tr{border-top:1px solid var(--divider)}
 .ledger tbody tr:nth-child(odd){background:var(--row-a)}
 .ledger tbody tr:nth-child(even){background:var(--row-b)}
-.ledger tbody tr.avg{background:var(--sel-bg);color:var(--sel-fg)}
+.ledger tbody tr{cursor:pointer}
+.ledger tbody tr.sel{background:var(--sel-bg);color:var(--sel-fg)}
+.pick{all:unset;cursor:pointer}
+.pick:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .ledger td:first-child{font-weight:600;font-size:14px}
 
 footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-top:3px solid var(--foot-line)}
@@ -337,9 +340,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             <table class="ledger" aria-labelledby="ledger-label">
                                 <thead><tr><th scope="col">Day</th><th scope="col">Temp</th><th scope="col">Front</th><th scope="col">Rear</th></tr></thead>
                                 <tbody>
-                                    <tr id="row-cold"><td>Cold</td><td>—</td><td>—</td><td>—</td></tr>
-                                    <tr id="row-avg" class="avg"><td>Average</td><td>—</td><td>—</td><td>—</td></tr>
-                                    <tr id="row-warm"><td>Warm</td><td>—</td><td>—</td><td>—</td></tr>
+                                    <tr id="row-cold"><td><button type="button" class="pick" data-target="cold" aria-pressed="false">Cold</button></td><td>—</td><td>—</td><td>—</td></tr>
+                                    <tr id="row-avg" class="sel"><td><button type="button" class="pick" data-target="avg" aria-pressed="true">Average</button></td><td>—</td><td>—</td><td>—</td></tr>
+                                    <tr id="row-warm"><td><button type="button" class="pick" data-target="warm" aria-pressed="false">Warm</button></td><td>—</td><td>—</td><td>—</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -377,6 +380,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             loc: null,                       // { lat, lon, label, zip }
             weather: null,                   // { nowF, avgF, coldF, warmF, elevM }
             fillF: null,                     // user override, °F; null = outdoor now
+            target: 'avg',                   // cold | avg | warm: temperature the fill optimizes for
             loading: false,
             example: false,                  // demo values; never saved
         };
@@ -386,12 +390,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             try {
                 if (S.example) {
                     const d = JSON.parse(localStorage.getItem(STORE_KEY) || 'null') || {};
-                    d.tempU = S.tempU; d.pressU = S.pressU;
+                    d.tempU = S.tempU; d.pressU = S.pressU; d.target = S.target;
                     localStorage.setItem(STORE_KEY, JSON.stringify(d));
                     return;
                 }
                 localStorage.setItem(STORE_KEY, JSON.stringify({
-                    front: S.front, rear: S.rear, tempU: S.tempU, pressU: S.pressU, loc: S.loc,
+                    front: S.front, rear: S.rear, tempU: S.tempU, pressU: S.pressU, loc: S.loc, target: S.target,
                 }));
             } catch (e) {}
         }
@@ -403,6 +407,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 if (typeof d.rear === 'number') S.rear = d.rear;
                 if (d.tempU === 'f' || d.tempU === 'c') S.tempU = d.tempU;
                 if (d.pressU in PSI_PER) S.pressU = d.pressU;
+                if (['cold', 'avg', 'warm'].includes(d.target)) S.target = d.target;
                 if (d.loc && isFinite(d.loc.lat) && isFinite(d.loc.lon)) S.loc = d.loc;
             } catch (e) {}
         }
@@ -590,6 +595,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         $('fill').addEventListener('input', () => { readFill($('fill').value); render(); });
         $('fill').addEventListener('change', () => { readFill($('fill').value); render(true); });
         $('fill-reset').addEventListener('click', () => { S.fillF = null; render(true); });
+        document.querySelectorAll('.ledger tbody tr').forEach(tr => tr.addEventListener('click', () => {
+            S.target = tr.querySelector('.pick').dataset.target;
+            save(); renderResults();
+        }));
 
         document.querySelectorAll('.stepper button').forEach(b => b.addEventListener('click', () => {
             const dir = +b.dataset.step, which = b.dataset.for;
@@ -731,15 +740,18 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     $(`ref-${key}`).innerHTML = '';
                     continue;
                 }
-                const raw = psiToDisp(fillTarget(placard, fillF, w.avgF, patm), pu);
+                const raw = psiToDisp(fillTarget(placard, fillF, w[`${S.target}F`], patm), pu);
                 const fill = dispToPsi(snap(raw, pu), pu);
                 fills[key] = fill;
                 setNum(`num-${key}`, fmtP(fill, pu));
                 $(`ref-${key}`).innerHTML = `<span>Placard ${fmtP(placard, pu)}</span><span class="pill">${fmtDelta(fill - placard, pu)}</span>`;
             }
 
-            const rows = [['row-cold', w && w.coldF], ['row-avg', w && w.avgF], ['row-warm', w && w.warmF]];
-            for (const [id, tF] of rows) {
+            const rows = [['cold', w && w.coldF], ['avg', w && w.avgF], ['warm', w && w.warmF]];
+            for (const [t, tF] of rows) {
+                const id = `row-${t}`;
+                $(id).classList.toggle('sel', t === S.target);
+                $(id).querySelector('.pick').setAttribute('aria-pressed', String(t === S.target));
                 if (!w) { setCell(id, ['—', '—', '—']); continue; }
                 setCell(id, [
                     fmtT(tF, tu),
