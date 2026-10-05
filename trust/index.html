@@ -229,7 +229,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             <div class="sign hot"><div class="sign-head">Cookies set</div><div class="sign-body">None</div></div>
             <div class="sign hot"><div class="sign-head">Analytics or ad trackers</div><div class="sign-body">None</div></div>
             <div class="sign hot"><div class="sign-head">Accounts</div><div class="sign-body">None</div></div>
-            <div class="sign"><div class="sign-head">Pages using localStorage</div><div class="sign-body">10</div></div>
+            <div class="sign"><div class="sign-head">Pages using localStorage</div><div class="sign-body">11</div></div>
           </div>
           <div>
             <h3 class="sub">Stored in your browser</h3>
@@ -242,6 +242,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
               <tr><td>/tirepressure/</td><td><code>tirepressure.inputs</code></td><td>Placard values, unit choices, saved location</td></tr>
               <tr><td>/tirepressure/</td><td><code>tirepressure.hist.*</code></td><td>Open-Meteo history summary by rounded location</td></tr>
               <tr><td>/cve/</td><td><code>cve.prefs</code>, <code>cve.watchlist</code></td><td>Window choice; watched CVEs</td></tr>
+              <tr><td>/cve/</td><td><code>cve.rec.*</code> (sessionStorage)</td><td>CVE records, cleared when the tab closes</td></tr>
+              <tr><td>/frontier/</td><td><code>frontier:key</code></td><td>API key, after Connect</td></tr>
+              <tr><td>/frontier/</td><td><code>frontier:pane</code></td><td>Open tab</td></tr>
+              <tr><td>/USStates/, /worldmap/, /mlbstadiums/</td><td><code>USStates:mine</code>, <code>worldmap:mine</code>, <code>mlbstadiums:mine</code></td><td>"Create your own" visited list</td></tr>
               </tbody>
             </table>
           </div>
@@ -258,8 +262,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
               <tr><td>/commute/, /tirepressure/</td><td>Address or place name</td><td>Nominatim (OpenStreetMap)</td></tr>
               <tr><td>/commute/</td><td>Route coordinates</td><td>OSRM demo router</td></tr>
               <tr><td>/tirepressure/</td><td>Place coordinates; device location when the location button is used</td><td>Open-Meteo; Nominatim</td></tr>
-              <tr><td>/seattlesports/</td><td>Live score requests</td><td>ESPN</td></tr>
+              <tr><td>/seattlesports/</td><td>Live score requests; team logo images</td><td>ESPN (cdn.espn.com, a.espncdn.com)</td></tr>
               <tr><td>/tempest/</td><td>Weather station requests</td><td>WeatherFlow</td></tr>
+              <tr><td>/cve/</td><td>CVE ID of an opened record</td><td>CVE Program (cveawg.mitre.org)</td></tr>
+              <tr><td>/frontier/</td><td>Fuel and service log reads; writes with the API key once Connected</td><td>Cloudflare Workers and D1</td></tr>
               <tr><td>/USStates/, /worldmap/, /mlbstadiums/</td><td>Map library and boundary files</td><td>jsDelivr</td></tr>
               </tbody>
             </table>
@@ -297,7 +303,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             <div class="sign"><div class="sign-head">Transport</div><div class="sign-body">HTTPS</div></div>
             <div class="sign"><div class="sign-head">Hosting</div><div class="sign-body">GitHub Pages</div></div>
             <div class="sign"><div class="sign-head">Automated data jobs</div><div class="sign-body">3</div></div>
-            <div class="sign hot"><div class="sign-head">Pages with a server</div><div class="sign-body">0</div></div>
+            <div class="sign"><div class="sign-head">Pages with a server</div><div class="sign-body">1</div></div>
           </div>
           <div>
             <h3 class="sub">Automated jobs</h3>
@@ -339,8 +345,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
               <tbody>
               <tr><td><a href="https://www.fueleconomy.gov/" target="_blank" rel="noopener">fueleconomy.gov</a> (U.S. DOE and EPA)</td><td>Vehicle ratings</td></tr>
               <tr><td><a href="https://gasprices.aaa.com/" target="_blank" rel="noopener">AAA</a></td><td>State gas price averages</td></tr>
-              <tr><td><a href="https://www.eia.gov/" target="_blank" rel="noopener">U.S. EIA</a></td><td>Residential electricity prices</td></tr>
-              <tr><td><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> (ODbL)</td><td>Geocoding and map tiles</td></tr>
+              <tr><td><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> (ODbL)</td><td>Geocoding</td></tr>
               <tr><td><a href="https://project-osrm.org/" target="_blank" rel="noopener">OSRM</a></td><td>Driving routes</td></tr>
               <tr><td><a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0)</td><td>Temperature, elevation and history</td></tr>
               <tr><td><a href="https://www.zippopotam.us/" target="_blank" rel="noopener">Zippopotam.us</a></td><td>Zip code to state</td></tr>
@@ -350,6 +355,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
               <tr><td><a href="https://www.espn.com/" target="_blank" rel="noopener">ESPN</a></td><td>Seattle sports scores and schedules</td></tr>
               <tr><td><a href="https://weatherflow.com/" target="_blank" rel="noopener">WeatherFlow Tempest</a></td><td>Weather station readings</td></tr>
               <tr><td><a href="https://github.com/topojson/us-atlas" target="_blank" rel="noopener">us-atlas</a>, <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas</a></td><td>Map boundaries</td></tr>
+              <tr><td><a href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html" target="_blank" rel="noopener">US Census</a>, <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a></td><td>Boundary data behind us-atlas and world-atlas</td></tr>
+              <tr><td><a href="https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/frontier/2022/2022-nissan-frontier-owner-manual.pdf" target="_blank" rel="noopener">Nissan</a> (2022 Frontier owner's manual)</td><td>Maintenance schedule</td></tr>
+              <tr><td><a href="https://www.cloudflare.com/" target="_blank" rel="noopener">Cloudflare</a> (Workers, D1)</td><td>Frontier log storage</td></tr>
               <tr><td><a href="https://d3js.org/" target="_blank" rel="noopener">D3</a></td><td>Mapping library</td></tr>
               <tr><td>North Cascades, Ivan Chermayeff, National Park Service, 1972 (<a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a> lists public domain; Smithsonian Cooper Hewitt)</td><td>Homepage banner</td></tr>
               <tr><td><a href="https://fonts.google.com/specimen/Oswald" target="_blank" rel="noopener">Oswald</a>, <a href="https://fonts.google.com/specimen/Vollkorn" target="_blank" rel="noopener">Vollkorn</a>, <a href="https://fonts.google.com/specimen/Work+Sans" target="_blank" rel="noopener">Work Sans</a> (OFL), served by Google Fonts</td><td>Typefaces</td></tr>
