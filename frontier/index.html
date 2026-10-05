@@ -610,7 +610,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             </section>
                             <section class="sign" aria-labelledby="fm-avgmi-h">
                                 <h2 class="sign-head" id="fm-avgmi-h">Avg range</h2>
-                                <div class="sign-body"><output class="num" id="st-avgmi">—</output><div class="sign-unit">Per 17 gal</div></div>
+                                <div class="sign-body"><output class="num" id="st-avgmi">—</output><div class="sign-unit" id="st-avgmi-u">Per gal</div></div>
                             </section>
                             <section class="sign" aria-labelledby="fm-bestmi-h">
                                 <h2 class="sign-head" id="fm-bestmi-h">Best miles</h2>
@@ -846,10 +846,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // tank and, when full, starts the next. The average is total tank miles over tank
     // gallons and needs two full fill-ups. The miles-per-fill-up stats count only
     // tanks of MIN_FILL_GAL gallons or more (part tanks would drag them down).
-    // Avg range is the average MPG over a RANGE_GAL-gallon tank.
+    // Avg range is the average MPG over the average tank of RANGE_MIN_GAL gallons or
+    // more (smaller fills are usually topped up for another reason than running low).
     // `segments` are the odometer gaps between consecutive fill-ups, flags ignored.
     const MIN_FILL_GAL = 10;
-    const RANGE_GAL = 17;
+    const RANGE_MIN_GAL = 15;
     function mpgStats(fuel) {
       const f = fuel.slice().sort((a, b) => a.miles - b.miles || (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
       const perId = {}, tank = {}, tanks = [], segments = [];
@@ -874,6 +875,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const before = n >= 2 && gal > lastTank.gallons ? (mi - lastTank.dm) / (gal - lastTank.gallons) : null;
       const best = tanks.reduce((b, t) => (!b || t.mpg > b.mpg ? t : b), null);
       const full = tanks.filter((t) => t.gallons >= MIN_FILL_GAL);
+      const low = tanks.filter((t) => t.gallons >= RANGE_MIN_GAL);
+      const rangeGal = low.length ? low.reduce((s, t) => s + t.gallons, 0) / low.length : null;
       return {
         average, last: lastTank ? lastTank.mpg : null, perId, tank, tanks, segments,
         averageDelta: average != null && before != null ? average - before : null,
@@ -882,7 +885,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         fillups: f.length,
         gallons: f.reduce((g, e) => g + e.gallons, 0),
         gallonsPer100: mi > 0 ? (gal / mi) * 100 : null,
-        avgRange: average != null ? average * RANGE_GAL : null,
+        rangeGal,
+        avgRange: average != null && rangeGal != null ? average * rangeGal : null,
         bestMiles: full.reduce((b, t) => (!b || t.dm > b.dm ? t : b), null),
       };
     }
@@ -1515,6 +1519,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('st-gal').textContent = stats.fillups ? gal2.format(stats.gallons) : '—';
       $('st-g100').textContent = stats.gallonsPer100 == null ? '—' : stats.gallonsPer100.toFixed(2);
       $('st-avgmi').textContent = stats.avgRange == null ? '—' : dec1(stats.avgRange);
+      $('st-avgmi-u').textContent = stats.rangeGal == null ? 'Gal' : `Per ${dec1(stats.rangeGal)} gal`;
       $('st-bestmi').textContent = stats.bestMiles ? int.format(stats.bestMiles.dm) : '—';
       $('st-bestmi-u').textContent = stats.bestMiles ? `Mi · ${stats.bestMiles.date}` : 'Mi';
       const all = data.fuel.slice().sort(byDateDesc);

@@ -71,7 +71,7 @@ A Reject means make no changes and ask what to adjust.
   the next full fill, a missed fill-up drops the open tank, and Miles by month
   ignores the flags;
   Average, Last fill-up (each with its change) and Best MPG tally strip, then
-  a mini strip (fill-ups, gallons, gal/100 mi, avg range as average MPG × 17 gal,
+  a mini strip (fill-ups, gallons, gal/100 mi, avg range as average MPG × the average gallons of tanks of 15+ gal,
   best miles per fill-up counting only fills of 10+ gal), the MPG-by-month column chart (last 12
   calendar months ending this month, inline SVG, one hue, best and worst
   labelled), then the MPG distribution (tanks per whole MPG, tallest bin
