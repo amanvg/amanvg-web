@@ -276,20 +276,41 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       <div class="stripes"></div>
 
       <section class="block" id="accessibility" aria-labelledby="accessibility-h">
-        <h2 class="block-head" id="accessibility-h">Accessibility</h2>
+        <h2 class="block-head" id="accessibility-h"><span>Accessibility</span><span class="reviewed">Last reviewed 2026-10-04</span></h2>
         <div class="block-body">
+          <div class="signs">
+            <div class="sign"><div class="sign-head">Target</div><div class="sign-body">WCAG 2.2 AA</div></div>
+            <div class="sign"><div class="sign-head">Conformance</div><div class="sign-body">Not audited</div></div>
+            <div class="sign"><div class="sign-head">Tested</div><div class="sign-body">2026-10-04</div></div>
+          </div>
+          <div>
+            <h3 class="sub">Practices</h3>
           <div class="ledger">
             <table>
               <thead><tr><th scope="col">Practice</th><th scope="col">Where</th></tr></thead>
               <tbody>
-              <tr><td>Page language declared</td><td>10 of 10 pages</td></tr>
-              <tr><td>Responsive viewport; zoom not disabled</td><td>10 of 10 pages</td></tr>
-              <tr><td>Visible keyboard focus</td><td>10 of 10 pages</td></tr>
-              <tr><td>Skip-to-content link</td><td>10 of 10 pages</td></tr>
-              <tr><td>Labelled form fields</td><td>/commute/</td></tr>
-              <tr><td>Images with alt text</td><td>All images</td></tr>
+              <tr><td>Page language declared</td><td>11 of 11 pages</td></tr>
+              <tr><td>Responsive viewport; zoom not disabled</td><td>11 of 11 pages</td></tr>
+              <tr><td>Visible keyboard focus</td><td>11 of 11 pages</td></tr>
+              <tr><td>Skip-to-content link</td><td>11 of 11 pages</td></tr>
+              <tr><td>Labelled form fields</td><td>/commute/, /tirepressure/, /cve/, /frontier/</td></tr>
+              <tr><td>Image text alternatives</td><td>Decorative images <code>alt=""</code>; maps and charts labelled SVG</td></tr>
+              <tr><td>Test method</td><td>Source checks; browser at 1440, 1024 and 375 px; no screen reader</td></tr>
               </tbody>
             </table>
+          </div>
+          </div>
+          <div>
+            <h3 class="sub">Known issues</h3>
+          <div class="ledger">
+            <table>
+              <thead><tr><th scope="col">Issue</th><th scope="col">Where</th></tr></thead>
+              <tbody>
+              <tr><td>3 tables scroll sideways at 375 px</td><td>/trust/</td></tr>
+              <tr><td>Nav text 10 px below 420 px wide</td><td>10 of 11 pages</td></tr>
+              </tbody>
+            </table>
+          </div>
           </div>
           <p>Feedback: <button type="button" class="reveal" data-u="amanvg" data-d="gmail.com">Show email</button></p>
         </div>
