@@ -95,7 +95,8 @@ header{background:var(--head-bg);border-bottom:3px solid var(--head-line);paddin
   .sitenav>li:nth-child(n) .sitenav-drop{top:100%;left:0;right:0;min-width:0}
 }
 @media(max-width:420px){
-  .sitenav-btn{font-size:10px;letter-spacing:.02em}
+  .sitenav{flex-wrap:wrap;justify-content:flex-start;column-gap:18px;overflow-x:visible}
+  .sitenav-btn{min-height:36px}
 }
 .brand{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
 .tools{display:flex;gap:12px}

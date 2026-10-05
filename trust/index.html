@@ -84,7 +84,8 @@ header{background:var(--head-bg);border-bottom:3px solid var(--head-line);paddin
   .sitenav>li:nth-child(n) .sitenav-drop{top:100%;left:0;right:0;min-width:0}
 }
 @media(max-width:420px){
-  .sitenav-btn{font-size:10px;letter-spacing:.02em}
+  .sitenav{flex-wrap:wrap;justify-content:flex-start;column-gap:18px;overflow-x:visible}
+  .sitenav-btn{min-height:36px}
 }
 .brand{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
 .tools{display:flex;gap:12px}
@@ -167,6 +168,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 .sign{background:none;border-bottom:0;box-shadow:-1px 0 0 var(--key),0 -1px 0 var(--key)}
 .sign-head,.sign.hot .sign-head{min-height:0;background:none;color:var(--muted);padding:12px 14px 0;font-size:15px;line-height:20px}
 .sign-body{justify-content:flex-start;padding:6px 14px 14px}
+/* Phones: each ledger row stacks, cells labelled from the column head */
+@media(max-width:700px){
+  .ledger table,.ledger tbody,.ledger tr,.ledger td{display:block}
+  .ledger thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .ledger td{padding:2px 14px;overflow-wrap:anywhere}
+  .ledger td:first-child{padding-top:12px}
+  .ledger td:last-child{padding-bottom:12px}
+  .ledger tbody tr+tr td{border-top:0}
+  .ledger tbody tr+tr{border-top:1px solid var(--divider)}
+  .ledger td[data-label]::before{content:attr(data-label);display:block;margin-top:6px;font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+}
   </style>
 </head>
 <body>
@@ -306,8 +318,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             <table>
               <thead><tr><th scope="col">Issue</th><th scope="col">Where</th></tr></thead>
               <tbody>
-              <tr><td>3 tables scroll sideways at 375 px</td><td>/trust/</td></tr>
-              <tr><td>Nav text 10 px below 420 px wide</td><td>10 of 11 pages</td></tr>
+              <tr><td colspan="2">None</td></tr>
               </tbody>
             </table>
           </div>
@@ -478,6 +489,18 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   document.addEventListener('click', function (e) { if (!nav.contains(e.target)) close(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
 })();
+// Stacked ledgers keep table roles and label each cell with its column head
+document.querySelectorAll('.ledger table').forEach((t) => {
+  const heads = [...t.querySelectorAll('thead th')].map((th) => th.textContent);
+  t.setAttribute('role', 'table');
+  t.querySelectorAll('thead, tbody').forEach((g) => g.setAttribute('role', 'rowgroup'));
+  t.querySelectorAll('tr').forEach((tr) => tr.setAttribute('role', 'row'));
+  t.querySelectorAll('th').forEach((th) => th.setAttribute('role', 'columnheader'));
+  t.querySelectorAll('tbody tr').forEach((tr) => [...tr.children].forEach((td, i) => {
+    td.setAttribute('role', 'cell');
+    if (i > 0 && td.colSpan === 1 && heads[i]) td.dataset.label = heads[i];
+  }));
+});
 </script>
 </body>
 </html>
