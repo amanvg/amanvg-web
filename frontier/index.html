@@ -79,6 +79,31 @@ button{font:inherit}
 .skip-link:focus{top:8px}
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50}
 header{background:var(--head-bg);border-bottom:3px solid var(--head-line);padding:0 var(--margin);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.sitenav{display:flex;align-self:stretch;margin-left:auto;list-style:none}
+.sitenav>li{position:relative;display:flex;align-items:center}
+.sitenav-btn{font-family:var(--label);font-weight:700;font-size:13px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;color:var(--head-text);background:none;border:0;border-bottom:3px solid transparent;cursor:pointer;min-height:44px;padding:4px 12px 1px}
+.sitenav-btn[aria-current="true"]{border-bottom-color:var(--accent)}
+.sitenav-btn:focus-visible{outline-color:var(--head-text)}
+.sitenav-drop{display:none;position:absolute;top:100%;left:0;min-width:220px;list-style:none;background:var(--canvas);border:1px solid var(--head-line);border-top:3px solid var(--accent);z-index:60}
+.sitenav>li[data-open="true"] .sitenav-drop{display:block}
+.sitenav>li:last-child .sitenav-drop{left:auto;right:0}
+@media(hover:hover){.sitenav>li:hover .sitenav-drop{display:block}.sitenav-btn:hover{border-bottom-color:var(--accent)}}
+.sitenav-drop a{display:flex;align-items:center;min-height:44px;padding:8px 16px;font-family:var(--label);font-weight:600;font-size:14px;color:var(--text);text-decoration:none;border-top:1px solid var(--divider)}
+.sitenav-drop li:first-child a{border-top:0}
+.sitenav-drop a:hover{background:var(--card)}
+.sitenav-drop a[aria-current="page"]{color:var(--accent);background:var(--card)}
+:root[data-theme="light"] .sitenav-drop a[aria-current="page"]{color:var(--head-bg)}
+@media(max-width:960px){
+  .top header{flex-wrap:wrap;height:auto;row-gap:0;padding-top:10px}
+  .sitenav{order:3;width:100%;margin:0;justify-content:space-between;column-gap:6px;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--head-line)}
+  :root[data-theme="light"] .sitenav{border-top-color:rgba(246,239,225,.25)}
+  .sitenav>li{position:static}
+  .sitenav-btn{padding:4px 0 1px;font-size:12px;letter-spacing:.05em;white-space:nowrap}
+  .sitenav>li:nth-child(n) .sitenav-drop{top:100%;left:0;right:0;min-width:0}
+}
+@media(max-width:420px){
+  .sitenav-btn{font-size:10px;letter-spacing:.02em}
+}
 .brand{font-family:var(--display);font-weight:700;font-size:28px;line-height:36px;letter-spacing:.05em;text-transform:uppercase;color:var(--head-text);text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
 .tools{display:flex;gap:12px}
 .btn{font-family:var(--label);font-weight:700;font-size:14px;line-height:18px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 22px;border:2px solid var(--head-text);color:var(--head-text);background:transparent;transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s,border-color .15s,color .15s}
@@ -366,6 +391,32 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     <div class="top">
         <header>
             <a class="brand" href="/">amanvg</a>
+            <ul class="sitenav" aria-label="Sections">
+              <li data-open="false"><button class="sitenav-btn" type="button" aria-expanded="false" aria-controls="sitenav-0">Sports</button>
+                <ul class="sitenav-drop" id="sitenav-0">
+                  <li><a href="/seattlesports/">Seattle Sports</a></li>
+                </ul></li>
+              <li data-open="false"><button class="sitenav-btn" type="button" aria-expanded="false" aria-controls="sitenav-1" aria-current="true">Personal</button>
+                <ul class="sitenav-drop" id="sitenav-1">
+                  <li><a href="/frontier/" aria-current="page">Frontier Maintenance</a></li>
+                  <li><a href="/USStates/">US States</a></li>
+                  <li><a href="/worldmap/">Countries</a></li>
+                  <li><a href="/mlbstadiums/">MLB Stadiums</a></li>
+                </ul></li>
+              <li data-open="false"><button class="sitenav-btn" type="button" aria-expanded="false" aria-controls="sitenav-2">Weather</button>
+                <ul class="sitenav-drop" id="sitenav-2">
+                  <li><a href="/tempest/">Tempest Station</a></li>
+                </ul></li>
+              <li data-open="false"><button class="sitenav-btn" type="button" aria-expanded="false" aria-controls="sitenav-3">Security</button>
+                <ul class="sitenav-drop" id="sitenav-3">
+                  <li><a href="/cve/">CVE Triage</a></li>
+                </ul></li>
+              <li data-open="false"><button class="sitenav-btn" type="button" aria-expanded="false" aria-controls="sitenav-4">Calculators</button>
+                <ul class="sitenav-drop" id="sitenav-4">
+                  <li><a href="/commute/">Commute Cost</a></li>
+                  <li><a href="/tirepressure/">Tire Pressure</a></li>
+                </ul></li>
+            </ul>
             <nav class="tools" aria-label="Main navigation">
                 <button class="btn icon-btn" id="mode" type="button" aria-label="Switch to dark mode">
                     <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>
@@ -1786,5 +1837,28 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     renderControls();
     loadSite();
   </script>
+<script>
+(function () {
+  var nav = document.querySelector('.sitenav');
+  if (!nav) return;
+  function close(except) {
+    nav.querySelectorAll(':scope>li').forEach(function (li) {
+      if (li === except) return;
+      li.dataset.open = 'false';
+      li.firstElementChild.setAttribute('aria-expanded', 'false');
+    });
+  }
+  nav.querySelectorAll('.sitenav-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var li = b.parentElement, open = li.dataset.open !== 'true';
+      close(li);
+      li.dataset.open = open;
+      b.setAttribute('aria-expanded', open);
+    });
+  });
+  document.addEventListener('click', function (e) { if (!nav.contains(e.target)) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
 </body>
 </html>
