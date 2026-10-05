@@ -226,6 +226,8 @@ tr.r td:last-child{white-space:nowrap}
 .tiers .sw{width:18px;height:18px;background:var(--tb);box-shadow:inset 0 0 0 1.5px var(--text)}
 .tiers .t0{background:transparent}
 .rule{display:block;font-family:var(--label);font-weight:600;font-size:13px;line-height:18px;letter-spacing:0;text-transform:none;opacity:.9}
+.tiers .tn{display:flex;flex-direction:column;min-width:0}
+.tiers .rule{color:var(--muted);opacity:1}
 .tiers b{margin-left:auto;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
 .railhead{padding:10px 24px;background:var(--head-bg);color:var(--head-text);font-family:var(--display);font-weight:700;font-size:18px;line-height:26px;letter-spacing:.05em;text-transform:uppercase}
 .watch{padding:16px 24px 24px;display:flex;flex-direction:column;gap:14px}
@@ -329,7 +331,7 @@ th button span:empty{display:none}
                 </section>
                 <aside class="rail" aria-label="Summary">
                     <div class="rail-in">
-                    <div class="act"><div><h2>Act</h2><span class="rule" id="over-3"></span></div><output id="act-n" aria-live="polite">0</output></div>
+                    <div class="act"><div><h2>Act</h2><span class="rule" id="rem-3"></span><span class="rule" id="over-3"></span></div><output id="act-n" aria-live="polite">0</output></div>
                     <ul class="tiers" id="tiers"></ul>
                     <h2 class="railhead">Watchlist</h2>
                     <div class="watch">
@@ -657,14 +659,17 @@ th button span:empty{display:none}
             )).join('') : '<tr><td colspan="6" class="empty">No match</td></tr>';
         }
 
+        // CISA SSVC Guide, Table 1: remediation timing and who is involved
+        const REMEDY = ['Standard', 'Standard · Monitor', 'Sooner than standard · Supervisors', 'ASAP · Leadership'];
         function renderRail(rows) {
             const n = [0, 0, 0, 0];
             rows.forEach(r => n[r.t]++);
             document.getElementById('act-n').textContent = n[3];
             const over = rows.filter(r => r.t === 3 && r.kev && daysTo(r.kev.due) < 0).length;
+            document.getElementById('rem-3').textContent = REMEDY[3];
             document.getElementById('over-3').textContent = over ? over + ' overdue' : '';
             document.getElementById('tiers').innerHTML = [2, 1, 0].map(t =>
-                '<li><span class="sw t' + t + '"></span>' + TIER_NAMES[t] + '<b>' + n[t] + '</b></li>').join('');
+                '<li><span class="sw t' + t + '"></span><span class="tn">' + TIER_NAMES[t] + '<span class="rule">' + REMEDY[t] + '</span></span><b>' + n[t] + '</b></li>').join('');
         }
 
         function renderWatch() {
