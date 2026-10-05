@@ -413,10 +413,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
 
         function chart(o) {
-            const { w, h, pts, color, tickUnit = '', dec = 0, min: fMin, max: fMax, xTicks = [], xMin, xMax, band = false, bars = false, marks = false } = o;
+            const { w, h, pts, color, tickUnit = '', dec = 0, min: fMin, max: fMax, xTicks = [], xMin, xMax, band = false, bars = false, marks = false, normals: nrm } = o;
             if (!pts || pts.length < 2) return { html: '<div class="empty">No data</div>' };
-            const norm = band && pts.some(p => p.nhi != null);
-            const ys = band ? pts.flatMap(p => norm && p.nhi != null ? [p.lo, p.hi, p.nlo, p.nhi] : [p.lo, p.hi]) : pts.map(p => p.y);
+            const norm = band && !!nrm?.length;
+            const ys = band ? [...pts.flatMap(p => [p.lo, p.hi]), ...(norm ? nrm.flatMap(p => [p.nlo, p.nhi]) : [])] : pts.map(p => p.y);
             const sc = niceScale(Math.min(...ys), Math.max(...ys), fMin, fMax);
             const dp = Math.max(dec, decimals(sc.step));
             const labels = sc.ticks.map(v => v.toFixed(dp) + tickUnit);
@@ -433,7 +433,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 ? 'M' + pts.map(p => `${f(sx(p.x))},${f(sy(p.hi))}`).join('L') + 'L' + pts.slice().reverse().map(p => `${f(sx(p.x))},${f(sy(p.lo))}`).join('L') + 'Z'
                 : `M${f(sx(pts[0].x))},${f(base)}L` + pts.map(p => `${f(sx(p.x))},${f(sy(p.y))}`).join('L') + `L${f(sx(pts[pts.length - 1].x))},${f(base)}Z`;
             const nm = !norm ? '' : ['nhi', 'nlo'].map(k => {
-                const q = pts.filter(p => p[k] != null);
+                const q = nrm.filter(p => p[k] != null);
                 return q.length < 2 ? '' : `<path class="nm" d="M${q.map(p => `${f(sx(p.x))},${f(sy(p[k]))}`).join('L')}"/>`;
             }).join('');
             let mk = '';
@@ -448,14 +448,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 ${sc.ticks.map((v, i) => `<line class="g" x1="${pad.l}" x2="${pad.l + cw}" y1="${f(sy(v))}" y2="${f(sy(v))}"/><text class="t" x="${pad.l - 8}" y="${f(sy(v) + 4)}" text-anchor="end">${labels[i]}</text>`).join('')}
                 <line class="ax" x1="${pad.l}" x2="${pad.l + cw}" y1="${base}" y2="${base}"/>
                 ${bars
-                    ? `<path class="bar" style="stroke-width:${f(Math.max(1, cw / pts.length * 0.75))}" d="${pts.map(p => `M${f(sx(p.x))},${f(sy(p.hi))}V${f(sy(p.lo))}`).join('')}"/>`
+                    ? `<path class="bar" style="stroke-width:${f(Math.max(1, cw / (x1 - x0 + 1) * 0.75))}" d="${pts.map(p => `M${f(sx(p.x))},${f(sy(p.hi))}V${f(sy(p.lo))}`).join('')}"/>`
                     : `<path class="ar" d="${area}"/><path class="${band ? 'av' : 'ln'}" d="${line}"/>`}
                 ${nm}
                 ${xTicks.map(t => `<text class="t" x="${f(sx(t.x))}" y="${base + 19}" text-anchor="middle">${t.label}</text>`).join('')}
                 ${mk}
                 <line class="cross" y1="${pad.t}" y2="${base}" x1="0" x2="0"/><circle class="cdot" r="5" cx="0" cy="0"/>
             </svg>`;
-            return { html, sx, sy, pad, cw, x0, x1, pts, w };
+            return { html, sx, sy, pad, cw, x0, x1, pts, nrm, w };
         }
 
         function miniChart(pts, floor0) {
@@ -487,13 +487,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return out;
         }
         const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        function monthTicks(data, w) {
-            const out = [], yr = data[0].date.slice(0, 4);
-            for (let m = 0; m < 12; m++) {
-                const idx = data.findIndex(d => d.date >= `${yr}-${String(m + 1).padStart(2, '0')}-01`);
-                if (idx >= 0) out.push({ x: idx, label: w < 480 ? MONTHS[m][0] : MONTHS[m] });
-            }
-            return out;
+        function monthTicks(year, w) {
+            return MONTHS.map((name, m) => ({ x: dayIndex(year, `${year}-${String(m + 1).padStart(2, '0')}-01`), label: w < 480 ? name[0] : name }));
         }
 
         // Plots are drawn at their real pixel width so axis text stays at 1:1.
@@ -676,7 +671,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
 
         // Hovering a plot moves the crosshair and shows the point in the first stat cell.
-        function crosshair(el, r, read) {
+        function crosshair(el, r, read, readNorm) {
             if (!r.sx) return;
             const svg = el.querySelector('svg'), cross = svg.querySelector('.cross'), cdot = svg.querySelector('.cdot');
             const cell = $('stat-now');
@@ -685,6 +680,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const show = e => {
                 const box = svg.getBoundingClientRect();
                 const x = (e.clientX - box.left) * (r.w / box.width);
+                const last = r.pts[r.pts.length - 1];
+                if (readNorm && r.nrm && x > r.sx(last.x) + (r.cw / (r.x1 - r.x0 + 1))) {
+                    let nb = r.nrm[0], nd = Infinity;
+                    for (const p of r.nrm) { const dd = Math.abs(r.sx(p.x) - x); if (dd < nd) { nd = dd; nb = p; } }
+                    const nx = r.sx(nb.x);
+                    cross.setAttribute('x1', nx); cross.setAttribute('x2', nx);
+                    cdot.setAttribute('cx', -99); cdot.setAttribute('cy', -99);
+                    svg.classList.add('on');
+                    if (nowK) { const o = readNorm(nb); nowK.textContent = o.k; nowV.innerHTML = o.v; }
+                    return;
+                }
                 let best = r.pts[0], bd = Infinity;
                 for (const p of r.pts) { const dd = Math.abs(r.sx(p.x) - x); if (dd < bd) { bd = dd; best = p; } }
                 const px = r.sx(best.x), py = r.sy(best.y ?? best.avg);
@@ -779,6 +785,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const hi = c2f(o[DF.TEMP_MAX]), lo = c2f(o[DF.TEMP_MIN]), avg = c2f(o[DF.TEMP_AVG]);
             return { hi, lo: (avg - lo > 40) ? avg : lo, avg };
         }
+        const daysIn = y => (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)) ? 366 : 365;
+        const dayIndex = (year, d) => Math.round((Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)) - Date.UTC(year, 0, 1)) / 864e5);
         // Day of a non-leap year (Feb 29 folds into Feb 28) from an ISO date.
         const doy = d => { const m = +d.slice(5, 7), dd = Math.min(+d.slice(8, 10), m === 2 ? 28 : 31); return Math.round((Date.UTC(2025, m - 1, dd) - Date.UTC(2025, 0, 1)) / 864e5); };
         // Normal high/low per calendar day from every station year, smoothed over a wrapping 31-day window.
@@ -798,22 +806,27 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         function renderHistoryBody(obs, year, norm) {
             if (!obs || obs.length < 7) { S.hist = null; return '<div class="state">Not enough data yet</div>'; }
-            const band = (hi, lo, avg) => obs.map((o, i) => ({ x: i, date: o[DF.DATE], hi: hi(o), lo: lo(o), avg: avg(o) }));
-            const single = f => obs.map((o, i) => ({ x: i, date: o[DF.DATE], y: f(o) }));
+            const X = o => dayIndex(year, String(o[DF.DATE]));
+            const band = (hi, lo, avg) => obs.map(o => ({ x: X(o), date: o[DF.DATE], hi: hi(o), lo: lo(o), avg: avg(o) }));
+            const single = f => obs.map(o => ({ x: X(o), date: o[DF.DATE], y: f(o) }));
             let acc = 0;
             const ser = {
-                temp: obs.map((o, i) => {
+                temp: obs.map(o => {
                     const nd = norm?.[doy(String(o[DF.DATE]))];
-                    return { x: i, date: o[DF.DATE], ...tempDay(o), nhi: nd?.hi, nlo: nd?.lo };
+                    return { x: X(o), date: o[DF.DATE], ...tempDay(o), nhi: nd?.hi, nlo: nd?.lo };
                 }),
                 hum:   band(o => o[DF.HUM_MAX], o => o[DF.HUM_MIN], o => o[DF.HUM_AVG]),
-                rain:  obs.map((o, i) => { const day = mm2in(o[DF.RAIN] ?? 0); acc += day; return { x: i, date: o[DF.DATE], y: +acc.toFixed(2), day }; }),
+                rain:  obs.map(o => { const day = mm2in(o[DF.RAIN] ?? 0); acc += day; return { x: X(o), date: o[DF.DATE], y: +acc.toFixed(2), day }; }),
                 wind:  single(o => ms2mph(o[DF.WIND_AVG])),
                 gust:  single(o => ms2mph(o[DF.WIND_GUST])),
                 press: single(o => mb2inhg(o[DF.PRES_AVG])),
                 solar: single(o => { const v = o[DF.SOLAR_MAX] ?? 0; return v > 1500 ? 0 : v; })
             };
-            S.hist = { year, ser, obs };
+            const nrm = !norm ? [] : Array.from({ length: daysIn(year) }, (_, x) => {
+                const nd = norm[doy(new Date(Date.UTC(year, 0, 1 + x)).toISOString().slice(0, 10))];
+                return { x, date: new Date(Date.UTC(year, 0, 1 + x)).toISOString().slice(0, 10), nhi: nd?.hi, nlo: nd?.lo };
+            });
+            S.hist = { year, ser, obs, nrm };
             return `
                 <section class="sign" id="big" aria-live="polite"></section>
                 <div class="tiles odd" role="group" aria-label="Metric">
@@ -849,7 +862,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
 
         function renderYearBig() {
-            const m = yearMetricById(S.yearMetric), { year, ser } = S.hist, pts = ser[m.id];
+            const m = yearMetricById(S.yearMetric), { year, ser, nrm } = S.hist, pts = ser[m.id];
             const unit = m.unit ? `<small>${m.unit}</small>` : '';
             $('big').innerHTML = `
                 <h2 class="sign-head"><span>${m.label}</span><span class="hv">${m.sub}</span></h2>
@@ -857,12 +870,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <div class="plot hov" data-plot="big"></div>`;
             plots.big = (el, w) => {
                 const r = chart({ w, h: w < 520 ? 220 : 256, pts, band: m.band, bars: m.id === 'temp', color: m.color, tickUnit: m.tick, dec: m.dec, min: m.min,
-                    xTicks: monthTicks(pts, w), marks: m.id !== 'rain', label: `${m.label}, ${m.sub.toLowerCase()} ${year}` });
+                    xMin: 0, xMax: daysIn(year) - 1, normals: m.id === 'temp' ? nrm : null,
+                    xTicks: monthTicks(year, w), marks: m.id !== 'rain', label: `${m.label}, ${m.sub.toLowerCase()} ${year}` });
                 el.innerHTML = r.html;
                 crosshair(el, r, p => ({
                     k: dayFmt(p.date) + (p.nhi != null ? ` · Normal ${n(p.nhi, m.dec)} / ${n(p.nlo, m.dec)}` : ''),
                     v: (m.band ? `${n(p.hi, m.dec)} / ${n(p.lo, m.dec)}` : n(m.id === 'rain' ? p.day : p.y, m.dec)) + unit
-                }));
+                }), m.id === 'temp' ? p => ({ k: `${dayFmt(p.date)} · Normal`, v: `${n(p.nhi, m.dec)} / ${n(p.nlo, m.dec)}${unit}` }) : null);
             };
             paintPlots();
         }
