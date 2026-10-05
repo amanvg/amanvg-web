@@ -460,11 +460,18 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return `<svg class="mini" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true"><path class="ar" d="${line}L100,32L0,32Z"/><path class="ln" d="${line}"/></svg>`;
         }
 
-        const timeFmt = x => new Date(x * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        // The station is in Seattle; show its local time whatever the viewer's zone.
+        const TZ = 'America/Los_Angeles';
+        const TZ_PARTS = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' });
+        function tzOffset(t) {
+            const p = Object.fromEntries(TZ_PARTS.formatToParts(new Date(t * 1000)).map(x => [x.type, +x.value]));
+            return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second) / 1000 - Math.floor(t);
+        }
+        const timeFmt = x => new Date(x * 1000).toLocaleTimeString('en-US', { timeZone: TZ, hour: 'numeric', minute: '2-digit', hour12: true });
         function hourTicks(x0, x1, w) {
-            const step = (w < 480 ? 6 : 4) * 3600, out = [];
-            for (let t = Math.ceil(x0 / step) * step; t <= x1; t += step) {
-                out.push({ x: t, label: new Date(t * 1000).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true }) });
+            const step = (w < 480 ? 6 : 4) * 3600, out = [], off = tzOffset(x0);
+            for (let t = Math.ceil((x0 + off) / step) * step - off; t <= x1; t += step) {
+                out.push({ x: t, label: new Date(t * 1000).toLocaleTimeString('en-US', { timeZone: TZ, hour: 'numeric', hour12: true }) });
             }
             return out;
         }
@@ -545,9 +552,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     uv:    rawObs.map(o => ({ x: o[F.TS], y: o[F.UV] ?? 0 })),
                     solar: rawObs.map(o => ({ x: o[F.TS], y: o[F.SOLAR] ?? 0 }))
                 };
-                const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
+                const off = tzOffset(nowEpoch), midnight = Math.floor((nowEpoch + off) / 86400) * 86400 - off;
                 let rs = 0;
-                ser.rain = rawObs.filter(o => o[F.TS] >= midnight.getTime() / 1000)
+                ser.rain = rawObs.filter(o => o[F.TS] >= midnight)
                     .map(o => { rs += mm2in(o[F.RAIN] ?? 0); return { x: o[F.TS], y: +rs.toFixed(3) }; });
 
                 const rainToday = cur.precip_accum_local_day ?? rs;
@@ -705,8 +712,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     <thead><tr><th scope="col">Day</th><th scope="col">Sky</th><th scope="col" class="rng-h" style="text-align:center">Range</th><th scope="col">Low</th><th scope="col">High</th><th scope="col">Rain</th></tr></thead>
                     <tbody>${daily.map((d, i) => {
                         const dt = new Date(d.day_start_local * 1000);
-                        const name = i === 0 ? 'Today' : dt.toLocaleDateString('en-US', { weekday: 'short' });
-                        const iso = dt.toLocaleDateString('en-CA');
+                        const name = i === 0 ? 'Today' : dt.toLocaleDateString('en-US', { timeZone: TZ, weekday: 'short' });
+                        const iso = dt.toLocaleDateString('en-CA', { timeZone: TZ });
                         const l = (d.air_temp_low - lo) / span * 100, w = Math.max(2, (d.air_temp_high - d.air_temp_low) / span * 100);
                         return `<tr>
                             <td class="day">${name}<small>${iso.slice(5)}</small></td>
