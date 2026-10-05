@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-05T01:12:23.636Z",
+ "generatedAt": "2026-10-05T07:34:11.394Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -556,7 +556,7 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-10-03T23:00Z",
+     "date": "2026-10-05T00:00Z",
      "competitions": [
       {
        "status": {
@@ -570,53 +570,18 @@
         {
          "homeAway": "home",
          "winner": true,
-         "score": "3",
+         "score": "6",
          "team": {
-          "id": "6",
-          "abbreviation": "EDM",
-          "shortDisplayName": "Oilers",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/edm.png"
+          "id": "124292",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Kraken",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
          }
         },
         {
          "homeAway": "away",
          "winner": false,
          "score": "1",
-         "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
-         }
-        }
-       ],
-       "broadcasts": []
-      }
-     ]
-    },
-    "liveGame": {
-     "date": "2026-10-05T00:00Z",
-     "competitions": [
-      {
-       "status": {
-        "type": {
-         "state": "in",
-         "shortDetail": "20:00 - 2nd",
-         "description": "In Progress"
-        }
-       },
-       "competitors": [
-        {
-         "homeAway": "home",
-         "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
          "team": {
           "id": "3",
           "abbreviation": "CGY",
@@ -629,6 +594,7 @@
       }
      ]
     },
+    "liveGame": null,
     "nextGame": {
      "date": "2026-10-07T01:00Z",
      "competitions": [
@@ -681,7 +647,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "3"
+       "displayValue": "1"
       },
       {
        "name": "losses",
@@ -691,12 +657,12 @@
       {
        "name": "points",
        "abbreviation": "PTS",
-       "displayValue": "2"
+       "displayValue": "4"
       },
       {
        "name": "wins",
        "abbreviation": "W",
-       "displayValue": "1"
+       "displayValue": "2"
       },
       {
        "name": "overtimeLosses",
@@ -747,6 +713,45 @@
      },
      {
       "team": {
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "1"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "0"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "2"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "18",
        "abbreviation": "SJ",
        "displayName": "San Jose Sharks"
@@ -786,9 +791,9 @@
      },
      {
       "team": {
-       "id": "22",
-       "abbreviation": "VAN",
-       "displayName": "Vancouver Canucks"
+       "id": "124292",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Kraken"
       },
       "stats": [
        {
@@ -825,84 +830,6 @@
      },
      {
       "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "3"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "0"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "2"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "1"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "124292",
-       "abbreviation": "SEA",
-       "displayName": "Seattle Kraken"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "3"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "1"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "2"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "1"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "37",
        "abbreviation": "VGK",
        "displayName": "Vegas Golden Knights"
@@ -916,7 +843,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "3"
+        "displayValue": "1"
        },
        {
         "name": "losses",
@@ -926,12 +853,51 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "2"
+        "displayValue": "4"
        },
        {
         "name": "wins",
         "abbreviation": "W",
+        "displayValue": "2"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "22",
+       "abbreviation": "VAN",
+       "displayName": "Vancouver Canucks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
         "displayValue": "1"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "2"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "2"
        },
        {
         "name": "overtimeLosses",
@@ -999,7 +965,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "points",
