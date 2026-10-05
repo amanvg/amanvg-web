@@ -189,7 +189,8 @@ main{flex:1;padding:40px var(--margin) 0}
 .plot .ln{fill:none;stroke:var(--c);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
 .plot .ar{fill:var(--c);fill-opacity:.16;stroke:none}
 .plot .av{fill:none;stroke:var(--text);stroke-width:1.5;stroke-linejoin:round;opacity:.75}
-.plot .nm{fill:none;stroke:var(--c);stroke-width:1.5;stroke-dasharray:5 4;stroke-linejoin:round}
+.plot .bar{fill:none;stroke:var(--c);stroke-linecap:butt}
+.plot .nm{fill:none;stroke:var(--text);stroke-width:1.5;stroke-dasharray:5 4;stroke-linejoin:round}
 .plot .dot{fill:var(--c);stroke:var(--well-bg);stroke-width:2}
 .plot .cross{stroke:var(--text);stroke-width:1;opacity:0}
 .plot .cdot{fill:var(--well-bg);stroke:var(--text);stroke-width:2;opacity:0}
@@ -410,7 +411,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
 
         function chart(o) {
-            const { w, h, pts, color, tickUnit = '', dec = 0, min: fMin, max: fMax, xTicks = [], xMin, xMax, band = false, marks = false } = o;
+            const { w, h, pts, color, tickUnit = '', dec = 0, min: fMin, max: fMax, xTicks = [], xMin, xMax, band = false, bars = false, marks = false } = o;
             if (!pts || pts.length < 2) return { html: '<div class="empty">No data</div>' };
             const norm = band && pts.some(p => p.nhi != null);
             const ys = band ? pts.flatMap(p => norm && p.nhi != null ? [p.lo, p.hi, p.nlo, p.nhi] : [p.lo, p.hi]) : pts.map(p => p.y);
@@ -444,8 +445,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const html = `<svg viewBox="0 0 ${w} ${h}" style="--c:var(${color})" role="img" aria-label="${esc(o.label || 'Chart')}">
                 ${sc.ticks.map((v, i) => `<line class="g" x1="${pad.l}" x2="${pad.l + cw}" y1="${f(sy(v))}" y2="${f(sy(v))}"/><text class="t" x="${pad.l - 8}" y="${f(sy(v) + 4)}" text-anchor="end">${labels[i]}</text>`).join('')}
                 <line class="ax" x1="${pad.l}" x2="${pad.l + cw}" y1="${base}" y2="${base}"/>
-                <path class="ar" d="${area}"/>
-                <path class="${band ? 'av' : 'ln'}" d="${line}"/>
+                ${bars
+                    ? `<path class="bar" style="stroke-width:${f(Math.max(1, cw / pts.length * 0.75))}" d="${pts.map(p => `M${f(sx(p.x))},${f(sy(p.hi))}V${f(sy(p.lo))}`).join('')}"/>`
+                    : `<path class="ar" d="${area}"/><path class="${band ? 'av' : 'ln'}" d="${line}"/>`}
                 ${nm}
                 ${xTicks.map(t => `<text class="t" x="${f(sx(t.x))}" y="${base + 19}" text-anchor="middle">${t.label}</text>`).join('')}
                 ${mk}
@@ -852,7 +854,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 ${yearStats(m, pts)}
                 <div class="plot hov" data-plot="big"></div>`;
             plots.big = (el, w) => {
-                const r = chart({ w, h: w < 520 ? 220 : 256, pts, band: m.band, color: m.color, tickUnit: m.tick, dec: m.dec, min: m.min,
+                const r = chart({ w, h: w < 520 ? 220 : 256, pts, band: m.band, bars: m.id === 'temp', color: m.color, tickUnit: m.tick, dec: m.dec, min: m.min,
                     xTicks: monthTicks(pts, w), marks: m.id !== 'rain', label: `${m.label}, ${m.sub.toLowerCase()} ${year}` });
                 el.innerHTML = r.html;
                 crosshair(el, r, p => ({
