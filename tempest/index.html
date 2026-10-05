@@ -189,6 +189,7 @@ main{flex:1;padding:40px var(--margin) 0}
 .plot .ln{fill:none;stroke:var(--c);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
 .plot .ar{fill:var(--c);fill-opacity:.16;stroke:none}
 .plot .av{fill:none;stroke:var(--text);stroke-width:1.5;stroke-linejoin:round;opacity:.75}
+.plot .nm{fill:none;stroke:var(--c);stroke-width:1.5;stroke-dasharray:5 4;stroke-linejoin:round}
 .plot .dot{fill:var(--c);stroke:var(--well-bg);stroke-width:2}
 .plot .cross{stroke:var(--text);stroke-width:1;opacity:0}
 .plot .cdot{fill:var(--well-bg);stroke:var(--text);stroke-width:2;opacity:0}
@@ -411,7 +412,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         function chart(o) {
             const { w, h, pts, color, tickUnit = '', dec = 0, min: fMin, max: fMax, xTicks = [], xMin, xMax, band = false, marks = false } = o;
             if (!pts || pts.length < 2) return { html: '<div class="empty">No data</div>' };
-            const ys = band ? pts.flatMap(p => [p.lo, p.hi]) : pts.map(p => p.y);
+            const norm = band && pts.some(p => p.nhi != null);
+            const ys = band ? pts.flatMap(p => norm && p.nhi != null ? [p.lo, p.hi, p.nlo, p.nhi] : [p.lo, p.hi]) : pts.map(p => p.y);
             const sc = niceScale(Math.min(...ys), Math.max(...ys), fMin, fMax);
             const dp = Math.max(dec, decimals(sc.step));
             const labels = sc.ticks.map(v => v.toFixed(dp) + tickUnit);
@@ -427,6 +429,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const area = band
                 ? 'M' + pts.map(p => `${f(sx(p.x))},${f(sy(p.hi))}`).join('L') + 'L' + pts.slice().reverse().map(p => `${f(sx(p.x))},${f(sy(p.lo))}`).join('L') + 'Z'
                 : `M${f(sx(pts[0].x))},${f(base)}L` + pts.map(p => `${f(sx(p.x))},${f(sy(p.y))}`).join('L') + `L${f(sx(pts[pts.length - 1].x))},${f(base)}Z`;
+            const nm = !norm ? '' : ['nhi', 'nlo'].map(k => {
+                const q = pts.filter(p => p[k] != null);
+                return q.length < 2 ? '' : `<path class="nm" d="M${q.map(p => `${f(sx(p.x))},${f(sy(p[k]))}`).join('L')}"/>`;
+            }).join('');
             let mk = '';
             if (marks) {
                 const yHi = p => band ? p.hi : p.y, yLo = p => band ? p.lo : p.y;
@@ -440,6 +446,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <line class="ax" x1="${pad.l}" x2="${pad.l + cw}" y1="${base}" y2="${base}"/>
                 <path class="ar" d="${area}"/>
                 <path class="${band ? 'av' : 'ln'}" d="${line}"/>
+                ${nm}
                 ${xTicks.map(t => `<text class="t" x="${f(sx(t.x))}" y="${base + 19}" text-anchor="middle">${t.label}</text>`).join('')}
                 ${mk}
                 <line class="cross" y1="${pad.t}" y2="${base}" x1="0" x2="0"/><circle class="cdot" r="5" cx="0" cy="0"/>
@@ -763,15 +770,36 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         const dayFmt = d => `${MONTHS[+d.slice(5, 7) - 1]} ${+d.slice(8, 10)}`;
         const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
 
-        function renderHistoryBody(obs, year) {
+        function tempDay(o) {
+            const hi = c2f(o[DF.TEMP_MAX]), lo = c2f(o[DF.TEMP_MIN]), avg = c2f(o[DF.TEMP_AVG]);
+            return { hi, lo: (avg - lo > 40) ? avg : lo, avg };
+        }
+        // Day of a non-leap year (Feb 29 folds into Feb 28) from an ISO date.
+        const doy = d => { const m = +d.slice(5, 7), dd = Math.min(+d.slice(8, 10), m === 2 ? 28 : 31); return Math.round((Date.UTC(2025, m - 1, dd) - Date.UTC(2025, 0, 1)) / 864e5); };
+        // Normal high/low per calendar day from every station year, smoothed over a wrapping 31-day window.
+        function normals(allObs) {
+            const sum = Array.from({ length: 365 }, () => ({ hi: 0, lo: 0, n: 0 }));
+            for (const o of allObs) {
+                if (o[DF.TEMP_MAX] == null || o[DF.TEMP_MIN] == null) continue;
+                const t = tempDay(o), b = sum[doy(String(o[DF.DATE]))];
+                b.hi += t.hi; b.lo += t.lo; b.n++;
+            }
+            return sum.map((_, i) => {
+                let hi = 0, lo = 0, n = 0;
+                for (let k = -15; k <= 15; k++) { const b = sum[(i + k + 365) % 365]; hi += b.hi; lo += b.lo; n += b.n; }
+                return n ? { hi: hi / n, lo: lo / n } : null;
+            });
+        }
+
+        function renderHistoryBody(obs, year, norm) {
             if (!obs || obs.length < 7) { S.hist = null; return '<div class="state">Not enough data yet</div>'; }
             const band = (hi, lo, avg) => obs.map((o, i) => ({ x: i, date: o[DF.DATE], hi: hi(o), lo: lo(o), avg: avg(o) }));
             const single = f => obs.map((o, i) => ({ x: i, date: o[DF.DATE], y: f(o) }));
             let acc = 0;
             const ser = {
                 temp: obs.map((o, i) => {
-                    const hi = c2f(o[DF.TEMP_MAX]), lo = c2f(o[DF.TEMP_MIN]), avg = c2f(o[DF.TEMP_AVG]);
-                    return { x: i, date: o[DF.DATE], hi, lo: (avg - lo > 40) ? avg : lo, avg };
+                    const nd = norm?.[doy(String(o[DF.DATE]))];
+                    return { x: i, date: o[DF.DATE], ...tempDay(o), nhi: nd?.hi, nlo: nd?.lo };
                 }),
                 hum:   band(o => o[DF.HUM_MAX], o => o[DF.HUM_MIN], o => o[DF.HUM_AVG]),
                 rain:  obs.map((o, i) => { const day = mm2in(o[DF.RAIN] ?? 0); acc += day; return { x: i, date: o[DF.DATE], y: +acc.toFixed(2), day }; }),
@@ -827,7 +855,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     xTicks: monthTicks(pts, w), marks: m.id !== 'rain', label: `${m.label}, ${m.sub.toLowerCase()} ${year}` });
                 el.innerHTML = r.html;
                 crosshair(el, r, p => ({
-                    k: dayFmt(p.date),
+                    k: dayFmt(p.date) + (p.nhi != null ? ` · Normal ${n(p.nhi, m.dec)} / ${n(p.nlo, m.dec)}` : ''),
                     v: (m.band ? `${n(p.hi, m.dec)} / ${n(p.lo, m.dec)}` : n(m.id === 'rain' ? p.day : p.y, m.dec)) + unit
                 }));
             };
@@ -840,9 +868,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const head = yearChips();
             st.innerHTML = head + '<div class="state">Loading</div>';
             try {
-                const obs = await loadAnnual(S.year);
+                const ys = [];
+                for (let y = new Date().getFullYear(); y >= FIRST_YEAR; y--) ys.push(y);
+                const [obs, all] = await Promise.all([loadAnnual(S.year), Promise.allSettled(ys.map(loadAnnual))]);
                 if (seq !== stageSeq) return;
-                st.innerHTML = head + renderHistoryBody(obs, S.year);
+                const allObs = all.flatMap(a => a.status === 'fulfilled' ? a.value : []);
+                st.innerHTML = head + renderHistoryBody(obs, S.year, normals(allObs));
                 if (S.hist) renderYearBig();
             } catch (err) {
                 console.error(err);
