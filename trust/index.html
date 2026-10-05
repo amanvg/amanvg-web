@@ -235,17 +235,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             <h3 class="sub">Stored in your browser</h3>
           <div class="ledger">
             <table>
-              <thead><tr><th scope="col">Page</th><th scope="col">Key</th><th scope="col">Contents</th></tr></thead>
+              <thead><tr><th scope="col">Page</th><th scope="col">Key</th><th scope="col">Contents</th><th scope="col">Cleared by</th></tr></thead>
               <tbody>
-              <tr><td>All pages</td><td><code>theme</code></td><td>Light or dark choice</td></tr>
-              <tr><td>/commute/</td><td><code>epa:*</code></td><td>fueleconomy.gov vehicle responses</td></tr>
-              <tr><td>/tirepressure/</td><td><code>tirepressure.inputs</code></td><td>Placard values, unit choices, saved location</td></tr>
-              <tr><td>/tirepressure/</td><td><code>tirepressure.hist.*</code></td><td>Open-Meteo history summary by rounded location</td></tr>
-              <tr><td>/cve/</td><td><code>cve.prefs</code>, <code>cve.watchlist</code></td><td>Window choice; watched CVEs</td></tr>
-              <tr><td>/cve/</td><td><code>cve.rec.*</code> (sessionStorage)</td><td>CVE records, cleared when the tab closes</td></tr>
-              <tr><td>/frontier/</td><td><code>frontier:key</code></td><td>API key, after Connect</td></tr>
-              <tr><td>/frontier/</td><td><code>frontier:pane</code></td><td>Open tab</td></tr>
-              <tr><td>/USStates/, /worldmap/, /mlbstadiums/</td><td><code>USStates:mine</code>, <code>worldmap:mine</code>, <code>mlbstadiums:mine</code></td><td>"Create your own" visited list</td></tr>
+              <tr><td>All pages</td><td><code>theme</code></td><td>Light or dark choice</td><td>Clearing site data</td></tr>
+              <tr><td>/commute/</td><td><code>epa:*</code></td><td>fueleconomy.gov vehicle responses</td><td>Expires after 7 days</td></tr>
+              <tr><td>/tirepressure/</td><td><code>tirepressure.inputs</code></td><td>Placard values, unit choices, saved location</td><td>Clearing site data</td></tr>
+              <tr><td>/tirepressure/</td><td><code>tirepressure.hist.*</code></td><td>Open-Meteo history summary by rounded location</td><td>Replaced daily</td></tr>
+              <tr><td>/cve/</td><td><code>cve.prefs</code>, <code>cve.watchlist</code></td><td>Window choice; watched CVEs</td><td>Watchlist remove; clearing site data</td></tr>
+              <tr><td>/cve/</td><td><code>cve.rec.*</code> (sessionStorage)</td><td>CVE records</td><td>Closing the tab</td></tr>
+              <tr><td>/frontier/</td><td><code>frontier:key</code></td><td>API key, after Connect</td><td>Disconnect</td></tr>
+              <tr><td>/frontier/</td><td><code>frontier:pane</code></td><td>Open tab</td><td>Clearing site data</td></tr>
+              <tr><td>/USStates/, /worldmap/, /mlbstadiums/</td><td><code>USStates:mine</code>, <code>worldmap:mine</code>, <code>mlbstadiums:mine</code></td><td>"Create your own" visited list</td><td>Clear</td></tr>
               </tbody>
             </table>
           </div>
@@ -319,10 +319,41 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
           </div>
           </div>
           <div>
+            <h3 class="sub">Frontier server</h3>
+          <div class="ledger">
+            <table>
+              <thead><tr><th scope="col">Item</th><th scope="col">Status</th></tr></thead>
+              <tbody>
+              <tr><td>Host</td><td>Cloudflare Workers, D1 database</td></tr>
+              <tr><td>Stored</td><td>Truck setup, fill-ups, services; no visitor data</td></tr>
+              <tr><td>Retention</td><td>Until deleted by the owner</td></tr>
+              <tr><td>Reads</td><td>Public, <code>GET /log</code></td></tr>
+              <tr><td>Writes</td><td>Bearer key, SHA-256 timing-safe compare</td></tr>
+              <tr><td>CORS origins</td><td>amanvg.com, www.amanvg.com, localhost:8765</td></tr>
+              <tr><td>Caching</td><td><code>no-store</code></td></tr>
+              <tr><td>Visitor IP addresses</td><td>Seen by Cloudflare; not stored in D1</td></tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
+          <div>
+            <h3 class="sub">Controls</h3>
+          <div class="ledger">
+            <table>
+              <thead><tr><th scope="col">Control</th><th scope="col">Status</th></tr></thead>
+              <tbody>
+              <tr><td>Content-Security-Policy</td><td>None</td></tr>
+              <tr><td>Subresource Integrity</td><td>jsDelivr scripts on /USStates/, /worldmap/, /mlbstadiums/; not available for Google Fonts</td></tr>
+              <tr><td>Public client token</td><td>WeatherFlow read token in /tempest/ source</td></tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
+          <div>
             <h3 class="sub">Disclosure</h3>
           <div class="ledger">
             <table>
-              
+              <thead><tr><th scope="col">Item</th><th scope="col">Where</th></tr></thead>
               <tbody>
               <tr><td>Report a vulnerability</td><td><a href="https://github.com/amanvg/amanvg-web/security/advisories/new" target="_blank" rel="noopener">GitHub private report</a></td></tr>
               <tr><td>Security contact</td><td><button type="button" class="reveal" data-u="amanvg" data-d="gmail.com">Show email</button></td></tr>
