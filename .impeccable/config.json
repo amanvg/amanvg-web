@@ -29,6 +29,24 @@
         ],
         "createdAt": "2026-10-04T14:51:46.581Z",
         "reason": "Short ledger item labels (<=44 chars, Work Sans label style) match the uppercase ledger rows on the other DESIGN.md pages; judged by the assistant, not user-confirmed"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "frontier/index.html"
+        ],
+        "createdAt": "2026-10-05T11:54:33.734Z",
+        "reason": "user confirmed: flagged hits are horizontal 3px rules (nav dropdown top, footer top) from shared DESIGN.md, not side-tab accents"
+      },
+      {
+        "rule": "repeated-container-text",
+        "value": "*",
+        "files": [
+          "frontier/index.html"
+        ],
+        "createdAt": "2026-10-05T11:54:33.758Z",
+        "reason": "user confirmed: Odometer repeats as the label of separate form fields and table columns, each needed for accessibility"
       }
     ]
   }
