@@ -1,37 +1,37 @@
 {
-  "asOf": "2026-10-05",
-  "fetchedAt": "2026-10-05T20:23:43Z",
+  "asOf": "2026-10-06",
+  "fetchedAt": "2026-10-06T18:02:02Z",
   "source": "AAA Gas Prices (gasprices.aaa.com)",
   "states": {
     "AK": {
       "diesel": 6.58,
-      "premium": 5.47,
-      "regular": 5.03
+      "premium": 5.5,
+      "regular": 5.02
     },
     "AL": {
       "diesel": 5.95,
       "premium": 4.82,
-      "regular": 3.98
+      "regular": 3.97
     },
     "AR": {
-      "diesel": 5.97,
-      "premium": 4.82,
-      "regular": 3.96
+      "diesel": 5.96,
+      "premium": 4.87,
+      "regular": 3.98
     },
     "AZ": {
       "diesel": 6.23,
       "premium": 5.42,
-      "regular": 4.75
+      "regular": 4.74
     },
     "CA": {
       "diesel": 8.36,
-      "premium": 6.81,
-      "regular": 6.39
+      "premium": 6.8,
+      "regular": 6.38
     },
     "CO": {
-      "diesel": 6.08,
-      "premium": 4.86,
-      "regular": 4.13
+      "diesel": 6.07,
+      "premium": 4.83,
+      "regular": 4.12
     },
     "CT": {
       "diesel": 6.46,
@@ -39,138 +39,138 @@
       "regular": 4.45
     },
     "DC": {
-      "diesel": 6.53,
-      "premium": 5.48,
-      "regular": 4.45
+      "diesel": 6.5,
+      "premium": 5.5,
+      "regular": 4.43
     },
     "DE": {
-      "diesel": 6.42,
-      "premium": 5.14,
-      "regular": 4.23
+      "diesel": 6.37,
+      "premium": 5.08,
+      "regular": 4.15
     },
     "FL": {
-      "diesel": 5.81,
-      "premium": 4.84,
-      "regular": 4.06
+      "diesel": 5.91,
+      "premium": 4.95,
+      "regular": 4.15
     },
     "GA": {
-      "diesel": 5.79,
-      "premium": 4.73,
+      "diesel": 5.8,
+      "premium": 4.76,
       "regular": 3.85
     },
     "HI": {
-      "diesel": 7.16,
-      "premium": 6.11,
-      "regular": 5.62
+      "diesel": 7.22,
+      "premium": 6.12,
+      "regular": 5.63
     },
     "IA": {
       "diesel": 6.05,
-      "premium": 5.0,
-      "regular": 4.11
+      "premium": 5.16,
+      "regular": 4.25
     },
     "ID": {
-      "diesel": 6.49,
-      "premium": 5.53,
-      "regular": 4.95
+      "diesel": 6.47,
+      "premium": 5.51,
+      "regular": 4.94
     },
     "IL": {
-      "diesel": 6.68,
-      "premium": 5.82,
-      "regular": 4.66
+      "diesel": 6.66,
+      "premium": 5.81,
+      "regular": 4.65
     },
     "IN": {
-      "diesel": 6.75,
-      "premium": 4.86,
-      "regular": 3.74
+      "diesel": 6.72,
+      "premium": 4.84,
+      "regular": 3.72
     },
     "KS": {
-      "diesel": 6.03,
-      "premium": 4.77,
+      "diesel": 6.02,
+      "premium": 4.76,
       "regular": 4.05
     },
     "KY": {
-      "diesel": 6.2,
-      "premium": 5.03,
-      "regular": 4.02
+      "diesel": 6.18,
+      "premium": 5.08,
+      "regular": 4.06
     },
     "LA": {
-      "diesel": 5.85,
+      "diesel": 5.84,
       "premium": 4.78,
-      "regular": 3.94
+      "regular": 3.93
     },
     "MA": {
-      "diesel": 6.36,
-      "premium": 5.38,
+      "diesel": 6.35,
+      "premium": 5.39,
       "regular": 4.35
     },
     "MD": {
-      "diesel": 6.4,
-      "premium": 5.15,
-      "regular": 4.23
-    },
-    "ME": {
-      "diesel": 6.45,
-      "premium": 5.42,
-      "regular": 4.4
-    },
-    "MI": {
-      "diesel": 6.62,
-      "premium": 5.7,
-      "regular": 4.46
-    },
-    "MN": {
-      "diesel": 6.14,
-      "premium": 5.22,
+      "diesel": 6.38,
+      "premium": 5.14,
       "regular": 4.21
     },
+    "ME": {
+      "diesel": 6.46,
+      "premium": 5.42,
+      "regular": 4.39
+    },
+    "MI": {
+      "diesel": 6.59,
+      "premium": 5.67,
+      "regular": 4.43
+    },
+    "MN": {
+      "diesel": 6.13,
+      "premium": 5.32,
+      "regular": 4.3
+    },
     "MO": {
-      "diesel": 6.09,
-      "premium": 4.76,
+      "diesel": 6.06,
+      "premium": 4.77,
       "regular": 4.03
     },
     "MS": {
-      "diesel": 5.89,
+      "diesel": 5.9,
       "premium": 4.77,
       "regular": 3.94
     },
     "MT": {
-      "diesel": 6.2,
-      "premium": 5.23,
+      "diesel": 6.19,
+      "premium": 5.2,
       "regular": 4.51
     },
     "NC": {
-      "diesel": 6.01,
-      "premium": 4.88,
-      "regular": 4.03
+      "diesel": 6.0,
+      "premium": 4.97,
+      "regular": 4.09
     },
     "ND": {
-      "diesel": 6.06,
+      "diesel": 6.05,
       "premium": 5.19,
-      "regular": 4.16
+      "regular": 4.17
     },
     "NE": {
-      "diesel": 6.0,
-      "premium": 5.06,
-      "regular": 4.21
+      "diesel": 5.99,
+      "premium": 5.04,
+      "regular": 4.23
     },
     "NH": {
       "diesel": 6.37,
-      "premium": 5.38,
-      "regular": 4.34
+      "premium": 5.37,
+      "regular": 4.33
     },
     "NJ": {
       "diesel": 6.36,
       "premium": 5.16,
-      "regular": 4.31
+      "regular": 4.29
     },
     "NM": {
-      "diesel": 6.04,
-      "premium": 5.09,
-      "regular": 4.34
+      "diesel": 6.06,
+      "premium": 5.24,
+      "regular": 4.47
     },
     "NV": {
-      "diesel": 6.76,
-      "premium": 6.08,
+      "diesel": 6.75,
+      "premium": 6.07,
       "regular": 5.48
     },
     "NY": {
@@ -179,84 +179,84 @@
       "regular": 4.47
     },
     "OH": {
-      "diesel": 6.33,
-      "premium": 4.96,
-      "regular": 3.88
+      "diesel": 6.24,
+      "premium": 4.9,
+      "regular": 3.78
     },
     "OK": {
-      "diesel": 5.82,
-      "premium": 4.73,
-      "regular": 3.98
+      "diesel": 5.81,
+      "premium": 4.77,
+      "regular": 4.0
     },
     "OR": {
-      "diesel": 6.8,
+      "diesel": 6.79,
       "premium": 5.59,
       "regular": 5.04
     },
     "PA": {
-      "diesel": 6.56,
+      "diesel": 6.55,
       "premium": 5.31,
-      "regular": 4.48
+      "regular": 4.47
     },
     "RI": {
       "diesel": 6.31,
-      "premium": 5.45,
-      "regular": 4.34
+      "premium": 5.44,
+      "regular": 4.33
     },
     "SC": {
-      "diesel": 5.84,
-      "premium": 4.75,
-      "regular": 3.92
+      "diesel": 5.83,
+      "premium": 4.9,
+      "regular": 4.03
     },
     "SD": {
-      "diesel": 5.98,
-      "premium": 5.02,
-      "regular": 4.19
+      "diesel": 5.97,
+      "premium": 5.09,
+      "regular": 4.26
     },
     "TN": {
       "diesel": 6.03,
-      "premium": 4.79,
-      "regular": 3.94
+      "premium": 4.84,
+      "regular": 3.97
     },
     "TX": {
       "diesel": 5.74,
-      "premium": 4.77,
-      "regular": 3.91
+      "premium": 4.78,
+      "regular": 3.9
     },
     "UT": {
-      "diesel": 6.44,
-      "premium": 5.45,
-      "regular": 4.92
+      "diesel": 6.43,
+      "premium": 5.47,
+      "regular": 4.93
     },
     "VA": {
-      "diesel": 6.26,
-      "premium": 4.98,
-      "regular": 4.12
+      "diesel": 6.25,
+      "premium": 5.04,
+      "regular": 4.16
     },
     "VT": {
       "diesel": 6.41,
-      "premium": 5.43,
+      "premium": 5.44,
       "regular": 4.43
     },
     "WA": {
       "diesel": 7.33,
-      "premium": 6.01,
+      "premium": 6.02,
       "regular": 5.48
     },
     "WI": {
-      "diesel": 6.31,
-      "premium": 5.31,
+      "diesel": 6.29,
+      "premium": 5.34,
       "regular": 4.15
     },
     "WV": {
-      "diesel": 6.42,
-      "premium": 5.14,
-      "regular": 4.28
+      "diesel": 6.4,
+      "premium": 5.17,
+      "regular": 4.29
     },
     "WY": {
       "diesel": 6.2,
-      "premium": 5.02,
-      "regular": 4.45
+      "premium": 5.06,
+      "regular": 4.49
     }
   }
 }
