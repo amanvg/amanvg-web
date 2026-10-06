@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-06T03:15:40.154Z",
+ "generatedAt": "2026-10-06T21:50:09.411Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -596,13 +596,13 @@
     },
     "liveGame": null,
     "nextGame": {
-     "date": "2026-10-07T01:00Z",
+     "date": "2026-10-07T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "pre",
-         "shortDetail": "10/6 - 9:00 PM EDT",
+         "shortDetail": "10/6 - 9:40 PM EDT",
          "description": "Scheduled"
         }
        },
