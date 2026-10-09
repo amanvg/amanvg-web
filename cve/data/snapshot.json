@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-08T23:20:20Z",
+ "generatedAt": "2026-10-09T06:07:03Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.08",
  "kevCount": 1739,
@@ -22,7 +22,7 @@
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
    "exploitation": "active",
-   "automatable": "no",
+   "automatable": "yes",
    "impact": "total",
    "cweId": "CWE-284",
    "cwe": "Improper Access Control"
@@ -45,7 +45,7 @@
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
    "exploitation": "active",
    "automatable": "yes",
-   "impact": "partial",
+   "impact": "total",
    "cweId": "CWE-617",
    "cwe": "Reachable Assertion"
   },
@@ -512,28 +512,6 @@
    "cwe": "Stack-based buffer overflow"
   },
   {
-   "id": "CVE-2026-75650",
-   "vendor": "Adobe",
-   "product": "Commerce and Magento",
-   "name": "Adobe Commerce and Magento Improper Neutralization of Special Elements Used in a Template Engine Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-08",
-    "due": "2026-09-11",
-    "ransomware": false
-   },
-   "epss": 0.039,
-   "percentile": 0.901,
-   "cvss": 10.0,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-1336",
-   "cwe": "Improper Neutralization of Special Elements Used in a Template Engine (CWE-1336)"
-  },
-  {
    "id": "CVE-2026-76460",
    "vendor": "Cisco",
    "product": "Identity Services Engine",
@@ -598,28 +576,6 @@
    "impact": "total",
    "cweId": "CWE-177",
    "cwe": "Improper Handling of URL Encoding (Hex Encoding)"
-  },
-  {
-   "id": "CVE-2026-81963",
-   "vendor": "Microsoft",
-   "product": "Windows",
-   "name": "Microsoft Windows Link Following Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-08",
-    "due": "2026-09-22",
-    "ransomware": false
-   },
-   "epss": 0.004,
-   "percentile": 0.314,
-   "cvss": 7.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-59",
-   "cwe": "Improper Link Resolution Before File Access ('Link Following')"
   },
   {
    "id": "CVE-2026-84869",
@@ -688,28 +644,6 @@
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
   },
   {
-   "id": "CVE-2026-85880",
-   "vendor": "Microsoft",
-   "product": "Windows",
-   "name": "Microsoft Windows Heap-Based Buffer Overflow Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-08",
-    "due": "2026-09-22",
-    "ransomware": false
-   },
-   "epss": 0.036,
-   "percentile": 0.892,
-   "cvss": 7.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-122",
-   "cwe": "Heap-based Buffer Overflow"
-  },
-  {
    "id": "CVE-2026-86060",
    "vendor": "MikroTik",
    "product": "RouterOS",
@@ -730,28 +664,6 @@
    "impact": "total",
    "cweId": "CWE-88",
    "cwe": "Improper neutralization of argument delimiters in a command ('argument injection')"
-  },
-  {
-   "id": "CVE-2026-86218",
-   "vendor": "N-able",
-   "product": "N-central",
-   "name": "N-able N-central Static Code Injection Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-08",
-    "due": "2026-09-11",
-    "ransomware": false
-   },
-   "epss": 0.129,
-   "percentile": 0.962,
-   "cvss": 10.0,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-96",
-   "cwe": "Improper neutralization of directives in statically saved code ('static code injection')"
   },
   {
    "id": "CVE-2026-86950",
