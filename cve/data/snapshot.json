@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-09T06:07:03Z",
+ "generatedAt": "2026-10-09T22:37:24Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.08",
  "kevCount": 1739,
- "epssDate": "2026-10-08",
+ "epssDate": "2026-10-09",
  "items": [
   {
    "id": "CVE-2015-3306",
@@ -16,7 +16,7 @@
     "due": "2026-10-11",
     "ransomware": false
    },
-   "epss": 0.968,
+   "epss": 0.98,
    "percentile": 0.999,
    "cvss": 10.0,
    "cvssVersion": "3.1",
@@ -38,7 +38,7 @@
     "due": "2026-10-11",
     "ransomware": false
    },
-   "epss": 0.913,
+   "epss": 0.918,
    "percentile": 0.998,
    "cvss": 7.5,
    "cvssVersion": "3.1",
@@ -60,8 +60,8 @@
     "due": "2026-10-11",
     "ransomware": false
    },
-   "epss": 0.934,
-   "percentile": 0.998,
+   "epss": 0.945,
+   "percentile": 0.999,
    "cvss": 8.1,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -82,8 +82,8 @@
     "due": "2026-10-11",
     "ransomware": false
    },
-   "epss": 0.082,
-   "percentile": 0.948,
+   "epss": 0.145,
+   "percentile": 0.966,
    "cvss": 9.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -104,8 +104,8 @@
     "due": "2026-10-11",
     "ransomware": false
    },
-   "epss": 0.017,
-   "percentile": 0.759,
+   "epss": 0.034,
+   "percentile": 0.886,
    "cvss": 7.2,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
@@ -126,8 +126,8 @@
     "due": "2026-09-12",
     "ransomware": false
    },
-   "epss": 0.039,
-   "percentile": 0.899,
+   "epss": 0.038,
+   "percentile": 0.897,
    "cvss": 7.4,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:W/RC:C",
@@ -149,7 +149,7 @@
     "ransomware": false
    },
    "epss": 0.029,
-   "percentile": 0.864,
+   "percentile": 0.865,
    "cvss": 9.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -198,7 +198,7 @@
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L/E:A/AU:Y/V:C",
    "exploitation": "active",
-   "automatable": "yes",
+   "automatable": "no",
    "impact": "total",
    "cweId": "CWE-384",
    "cwe": "Session Fixation"
@@ -214,8 +214,8 @@
     "due": "2026-10-05",
     "ransomware": false
    },
-   "epss": 0.006,
-   "percentile": 0.459,
+   "epss": 0.005,
+   "percentile": 0.443,
    "cvss": 8.5,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A/AU:Y/V:D",
@@ -413,7 +413,7 @@
     "ransomware": false
    },
    "epss": 0.021,
-   "percentile": 0.811,
+   "percentile": 0.812,
    "cvss": 8.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C",
@@ -457,7 +457,7 @@
     "ransomware": false
    },
    "epss": 0.01,
-   "percentile": 0.625,
+   "percentile": 0.626,
    "cvss": 6.9,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
@@ -589,7 +589,7 @@
     "ransomware": false
    },
    "epss": 0.009,
-   "percentile": 0.592,
+   "percentile": 0.593,
    "cvss": 9.9,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
@@ -809,7 +809,7 @@
     "ransomware": false
    },
    "epss": 0.006,
-   "percentile": 0.466,
+   "percentile": 0.467,
    "cvss": 8.7,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
@@ -1199,7 +1199,7 @@
    "published": "2026-09-15",
    "kev": null,
    "epss": 0.029,
-   "percentile": 0.865,
+   "percentile": 0.866,
    "cvss": 9.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -1415,7 +1415,7 @@
    "published": "2026-09-14",
    "kev": null,
    "epss": 0.022,
-   "percentile": 0.818,
+   "percentile": 0.819,
    "cvss": 5.1,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N/E:P",
@@ -1559,7 +1559,7 @@
    "published": "2026-09-21",
    "kev": null,
    "epss": 0.024,
-   "percentile": 0.832,
+   "percentile": 0.833,
    "cvss": 9.4,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
