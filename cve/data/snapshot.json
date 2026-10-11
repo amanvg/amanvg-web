@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-11T05:45:03Z",
+ "generatedAt": "2026-10-11T21:57:04Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.08",
  "kevCount": 1739,
- "epssDate": "2026-10-10",
+ "epssDate": "2026-10-11",
  "items": [
   {
    "id": "CVE-2015-3306",
@@ -281,7 +281,7 @@
     "ransomware": false
    },
    "epss": 0.008,
-   "percentile": 0.562,
+   "percentile": 0.563,
    "cvss": 8.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
@@ -567,7 +567,7 @@
     "ransomware": false
    },
    "epss": 0.012,
-   "percentile": 0.683,
+   "percentile": 0.684,
    "cvss": 8.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
@@ -633,7 +633,7 @@
     "ransomware": false
    },
    "epss": 0.011,
-   "percentile": 0.642,
+   "percentile": 0.643,
    "cvss": 9.5,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
@@ -655,7 +655,7 @@
     "ransomware": false
    },
    "epss": 0.013,
-   "percentile": 0.696,
+   "percentile": 0.697,
    "cvss": 9.5,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
@@ -1078,24 +1078,6 @@
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
   },
   {
-   "id": "CVE-2026-89010",
-   "vendor": "WAVLINK Technology",
-   "product": "WN535M1",
-   "name": "WAVLINK WN535M1/WN535M3 Unauthenticated OS Command Injection via sync_server",
-   "published": "2026-09-11",
-   "kev": null,
-   "epss": 0.032,
-   "percentile": 0.877,
-   "cvss": 9.3,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "poc",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
-  },
-  {
    "id": "CVE-2026-90617",
    "vendor": "GH05TCREW",
    "product": "PentestAgent",
@@ -1139,7 +1121,7 @@
    "published": "2026-09-14",
    "kev": null,
    "epss": 0.021,
-   "percentile": 0.812,
+   "percentile": 0.813,
    "cvss": 6.9,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N/E:P",
@@ -1463,7 +1445,7 @@
    "published": "2026-09-22",
    "kev": null,
    "epss": 0.021,
-   "percentile": 0.807,
+   "percentile": 0.808,
    "cvss": 9.3,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
