@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-10T21:42:54Z",
+ "generatedAt": "2026-10-11T05:45:03Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.08",
  "kevCount": 1739,
@@ -358,28 +358,6 @@
    "cwe": "Improper Control of Generation of Code ('Code Injection')"
   },
   {
-   "id": "CVE-2026-67277",
-   "vendor": "MikroTik",
-   "product": "RouterOS",
-   "name": "MikroTik RouterOS Missing Authentication for Critical Function Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-10",
-    "due": "2026-09-13",
-    "ransomware": false
-   },
-   "epss": 0.016,
-   "percentile": 0.745,
-   "cvss": 8.8,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "partial",
-   "cweId": "CWE-306",
-   "cwe": "Missing authentication for critical function"
-  },
-  {
    "id": "CVE-2026-67279",
    "vendor": "MikroTik",
    "product": "RouterOS",
@@ -576,28 +554,6 @@
    "impact": "total",
    "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
-  },
-  {
-   "id": "CVE-2026-86060",
-   "vendor": "MikroTik",
-   "product": "RouterOS",
-   "name": "MikroTik RouterOS Improper Neutralization of Argument Delimiters in a Command Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-10",
-    "due": "2026-09-13",
-    "ransomware": false
-   },
-   "epss": 0.064,
-   "percentile": 0.935,
-   "cvss": 9.2,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-88",
-   "cwe": "Improper neutralization of argument delimiters in a command ('argument injection')"
   },
   {
    "id": "CVE-2026-86950",
