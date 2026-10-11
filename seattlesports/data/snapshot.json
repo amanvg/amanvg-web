@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-11T06:15:51.463Z",
+ "generatedAt": "2026-10-11T22:20:15.818Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -50,16 +50,15 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-10-11T20:25Z",
      "competitions": [
       {
        "status": {
         "type": {
-         "state": "pre",
-         "shortDetail": "10/11 - 4:25 PM EDT",
-         "description": "Scheduled"
+         "state": "in",
+         "shortDetail": "14:11 - 3rd",
+         "description": "In Progress"
         }
        },
        "competitors": [
@@ -85,6 +84,41 @@
        "broadcasts": []
       }
      ]
+    },
+    "nextGame": {
+     "date": "2026-10-16T00:15Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "10/15 - 8:15 PM EDT",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "7",
+          "abbreviation": "DEN",
+          "shortDisplayName": "Broncos",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/den.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "26",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seahawks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
     }
    },
    "standings": {
@@ -98,7 +132,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "1"
+       "displayValue": "1.5"
       },
       {
        "name": "losses",
@@ -133,7 +167,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "-"
+        "displayValue": "0.5"
        },
        {
         "name": "losses",
@@ -167,7 +201,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "1"
+        "displayValue": "1.5"
        },
        {
         "name": "losses",
@@ -201,7 +235,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2"
+        "displayValue": "2.5"
        },
        {
         "name": "losses",
@@ -235,7 +269,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "3"
+        "displayValue": "3.5"
        },
        {
         "name": "losses",
@@ -594,16 +628,15 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-10-11T21:00Z",
      "competitions": [
       {
        "status": {
         "type": {
-         "state": "pre",
-         "shortDetail": "10/11 - 5:00 PM EDT",
-         "description": "Scheduled"
+         "state": "in",
+         "shortDetail": "12:03 - 2nd",
+         "description": "In Progress"
         }
        },
        "competitors": [
@@ -614,6 +647,41 @@
           "abbreviation": "WSH",
           "shortDisplayName": "Capitals",
           "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/wsh.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "124292",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Kraken",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "nextGame": {
+     "date": "2026-10-13T23:00Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "10/13 - 7:00 PM EDT",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "15",
+          "abbreviation": "PHI",
+          "shortDisplayName": "Flyers",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/phi.png"
          }
         },
         {
