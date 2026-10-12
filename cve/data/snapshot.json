@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-11T21:57:04Z",
+ "generatedAt": "2026-10-12T05:55:54Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.08",
  "kevCount": 1739,
@@ -226,50 +226,6 @@
    "cwe": "Execute unauthorized code or commands"
   },
   {
-   "id": "CVE-2026-42016",
-   "vendor": "JFrog",
-   "product": "Artifactory",
-   "name": "JFrog Artifactory Incorrect Authorization Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-11",
-    "due": "2026-09-25",
-    "ransomware": false
-   },
-   "epss": 0.086,
-   "percentile": 0.95,
-   "cvss": 8.1,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-863",
-   "cwe": "Incorrect Authorization"
-  },
-  {
-   "id": "CVE-2026-42018",
-   "vendor": "JFrog",
-   "product": "Artifactory",
-   "name": "JFrog Artifactory Improper Authentication Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-11",
-    "due": "2026-09-25",
-    "ransomware": false
-   },
-   "epss": 0.098,
-   "percentile": 0.954,
-   "cvss": 7.5,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "partial",
-   "cweId": "CWE-287",
-   "cwe": "Improper Authentication"
-  },
-  {
    "id": "CVE-2026-53266",
    "vendor": "Linux",
    "product": "Kernel",
@@ -490,28 +446,6 @@
    "cwe": "Improper Handling of URL Encoding (Hex Encoding)"
   },
   {
-   "id": "CVE-2026-84869",
-   "vendor": "ConnectWise",
-   "product": "ScreenConnect",
-   "name": "ConnectWise ScreenConnect Improper Privilege Management and Missing Authorization Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-11",
-    "due": "2026-09-14",
-    "ransomware": false
-   },
-   "epss": 0.009,
-   "percentile": 0.593,
-   "cvss": 9.9,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-862",
-   "cwe": "Missing Authorization"
-  },
-  {
    "id": "CVE-2026-85102",
    "vendor": "Check Point",
    "product": "Multiple Products",
@@ -532,28 +466,6 @@
    "impact": "total",
    "cweId": "CWE-295",
    "cwe": "Improper Certificate Validation."
-  },
-  {
-   "id": "CVE-2026-85706",
-   "vendor": "GitLab",
-   "product": "Community Edition and Enterprise Edition",
-   "name": "GitLab Community Edition and Enterprise Edition Path Traversal Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-11",
-    "due": "2026-09-14",
-    "ransomware": false
-   },
-   "epss": 0.93,
-   "percentile": 0.998,
-   "cvss": 10.0,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-22",
-   "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
   },
   {
    "id": "CVE-2026-86950",
