@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-12T05:55:54Z",
+ "generatedAt": "2026-10-12T15:22:12Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.08",
  "kevCount": 1739,
- "epssDate": "2026-10-11",
+ "epssDate": "2026-10-12",
  "items": [
   {
    "id": "CVE-2015-3306",
@@ -149,7 +149,7 @@
     "ransomware": false
    },
    "epss": 0.013,
-   "percentile": 0.691,
+   "percentile": 0.692,
    "cvss": 7.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
@@ -435,7 +435,7 @@
     "ransomware": false
    },
    "epss": 0.018,
-   "percentile": 0.781,
+   "percentile": 0.782,
    "cvss": 9.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -589,7 +589,7 @@
     "ransomware": false
    },
    "epss": 0.006,
-   "percentile": 0.467,
+   "percentile": 0.468,
    "cvss": 8.7,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
@@ -633,7 +633,7 @@
     "ransomware": false
    },
    "epss": 0.011,
-   "percentile": 0.636,
+   "percentile": 0.637,
    "cvss": 10.0,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
@@ -691,7 +691,7 @@
    "published": "2026-09-28",
    "kev": null,
    "epss": 0.026,
-   "percentile": 0.851,
+   "percentile": 0.852,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -727,7 +727,7 @@
    "published": "2026-09-28",
    "kev": null,
    "epss": 0.025,
-   "percentile": 0.839,
+   "percentile": 0.84,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -954,6 +954,24 @@
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
+   "id": "CVE-2026-21589",
+   "vendor": "Atlassian",
+   "product": "Bamboo Data Center",
+   "name": null,
+   "published": "2026-10-05",
+   "kev": null,
+   "epss": 0.028,
+   "percentile": 0.86,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:H/SA:H",
+   "exploitation": "poc",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-552",
+   "cwe": "Files or Directories Accessible to External Parties"
+  },
+  {
    "id": "CVE-2026-43641",
    "vendor": "Softaculous",
    "product": "Virtualizor",
@@ -1177,7 +1195,7 @@
    "published": "2026-09-15",
    "kev": null,
    "epss": 0.022,
-   "percentile": 0.818,
+   "percentile": 0.819,
    "cvss": 6.9,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:L/SI:L/SA:L/E:P",
@@ -1285,7 +1303,7 @@
    "published": "2026-09-20",
    "kev": null,
    "epss": 0.027,
-   "percentile": 0.855,
+   "percentile": 0.856,
    "cvss": 9.4,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
