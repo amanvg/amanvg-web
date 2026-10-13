@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-13T14:09:56Z",
+ "generatedAt": "2026-10-13T22:43:49Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.08",
- "kevCount": 1739,
+ "kevCatalogVersion": "2026.10.13",
+ "kevCount": 1741,
  "epssDate": "2026-10-13",
  "items": [
   {
@@ -224,6 +224,28 @@
    "impact": "total",
    "cweId": "CWE-22",
    "cwe": "Execute unauthorized code or commands"
+  },
+  {
+   "id": "CVE-2026-104935",
+   "vendor": "Ivanti",
+   "product": "Connect Secure",
+   "name": "Ivanti Connect Secure Authentication Bypass by Spoofing Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-13",
+    "due": "2026-10-16",
+    "ransomware": false
+   },
+   "epss": null,
+   "percentile": null,
+   "cvss": 8.6,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:L",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-290",
+   "cwe": "Authentication bypass by spoofing"
   },
   {
    "id": "CVE-2026-53266",
@@ -666,6 +688,28 @@
    "cwe": "Heap-based Buffer Overflow"
   },
   {
+   "id": "CVE-2026-96951",
+   "vendor": "Microsoft",
+   "product": "Windows",
+   "name": "Microsoft Windows Command Injection Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-13",
+    "due": "2026-10-16",
+    "ransomware": false
+   },
+   "epss": null,
+   "percentile": null,
+   "cvss": 8.8,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-77",
+   "cwe": "Improper Neutralization of Special Elements used in a Command ('Command Injection')"
+  },
+  {
    "id": "CVE-2026-100852",
    "vendor": "AzuraCast",
    "product": "AzuraCast",
@@ -952,6 +996,24 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
+   "id": "CVE-2026-108895",
+   "vendor": "Linksys",
+   "product": "E1700",
+   "name": "Linksys E1700 setDMZ os command injection",
+   "published": "2026-10-12",
+   "kev": null,
+   "epss": 0.022,
+   "percentile": 0.821,
+   "cvss": 9.4,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
+   "exploitation": "poc",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-21589",
