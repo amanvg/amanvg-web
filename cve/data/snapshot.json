@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-14T17:09:12Z",
+ "generatedAt": "2026-10-14T21:40:11Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.13",
- "kevCount": 1741,
+ "kevCatalogVersion": "2026.10.14",
+ "kevCount": 1745,
  "epssDate": "2026-10-14",
  "items": [
   {
@@ -160,6 +160,28 @@
    "cwe": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')"
   },
   {
+   "id": "CVE-2026-0322",
+   "vendor": "Palo Alto Networks",
+   "product": "PAN-OS",
+   "name": "Palo Alto Networks PAN-OS Code Injection Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-14",
+    "due": "2026-10-17",
+    "ransomware": false
+   },
+   "epss": null,
+   "percentile": null,
+   "cvss": 8.6,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A/AU:N/R:U/V:D/RE:M/U:Red",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-94",
+   "cwe": "Improper Control of Generation of Code ('Code Injection')"
+  },
+  {
    "id": "CVE-2026-102489",
    "vendor": "Zammad GmbH",
    "product": "Zammad",
@@ -246,6 +268,50 @@
    "impact": "total",
    "cweId": "CWE-290",
    "cwe": "Authentication bypass by spoofing"
+  },
+  {
+   "id": "CVE-2026-105133",
+   "vendor": "Ahsay",
+   "product": "AhsayCBS",
+   "name": "Ahsay AhsayCBS Improper Authentication Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-14",
+    "due": "2026-10-17",
+    "ransomware": false
+   },
+   "epss": 0.004,
+   "percentile": 0.307,
+   "cvss": 6.9,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N/E:P",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "partial",
+   "cweId": "CWE-287",
+   "cwe": "Improper Authentication"
+  },
+  {
+   "id": "CVE-2026-105134",
+   "vendor": "Ahsay",
+   "product": "AhsayCBS",
+   "name": "Ahsay AhsayCBS Command Injection Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-14",
+    "due": "2026-10-17",
+    "ransomware": false
+   },
+   "epss": 0.018,
+   "percentile": 0.786,
+   "cvss": 10.0,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-53266",
@@ -466,6 +532,28 @@
    "impact": "total",
    "cweId": "CWE-177",
    "cwe": "Improper Handling of URL Encoding (Hex Encoding)"
+  },
+  {
+   "id": "CVE-2026-76519",
+   "vendor": "Cisco",
+   "product": "Secure Email Gateway",
+   "name": "Cisco Secure Email Gateway Relative Path Traversal Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-14",
+    "due": "2026-10-17",
+    "ransomware": false
+   },
+   "epss": null,
+   "percentile": null,
+   "cvss": 9.8,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-23",
+   "cwe": "Relative Path Traversal"
   },
   {
    "id": "CVE-2026-85102",
@@ -996,6 +1084,24 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
+   "id": "CVE-2026-108894",
+   "vendor": "Linksys",
+   "product": "E1700",
+   "name": "Linksys E1700 Static Route addStaticRoute os command injection",
+   "published": "2026-10-12",
+   "kev": null,
+   "epss": 0.022,
+   "percentile": 0.818,
+   "cvss": 9.4,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
+   "exploitation": "poc",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-108895",
