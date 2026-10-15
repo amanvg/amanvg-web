@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-15T16:59:39Z",
+ "generatedAt": "2026-10-15T21:21:53Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.14",
- "kevCount": 1745,
+ "kevCatalogVersion": "2026.10.15",
+ "kevCount": 1746,
  "epssDate": "2026-10-15",
  "items": [
   {
@@ -312,6 +312,28 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "OS Command Injection"
+  },
+  {
+   "id": "CVE-2026-21589",
+   "vendor": "Atlassian",
+   "product": "Multiple Products",
+   "name": "Atlassian Multiple Products Files or Directories Accessible to External Parties Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-15",
+    "due": "2026-10-18",
+    "ransomware": false
+   },
+   "epss": 0.028,
+   "percentile": 0.861,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:H/SA:H",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-552",
+   "cwe": "Files or Directories Accessible to External Parties"
   },
   {
    "id": "CVE-2026-53266",
@@ -1224,24 +1246,6 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
-  },
-  {
-   "id": "CVE-2026-21589",
-   "vendor": "Atlassian",
-   "product": "Bamboo Data Center",
-   "name": null,
-   "published": "2026-10-05",
-   "kev": null,
-   "epss": 0.028,
-   "percentile": 0.861,
-   "cvss": 9.3,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:H/SA:H",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-552",
-   "cwe": "Files or Directories Accessible to External Parties"
   },
   {
    "id": "CVE-2026-43641",
