@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-16T16:38:16Z",
+ "generatedAt": "2026-10-16T21:06:50Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.15",
- "kevCount": 1746,
+ "kevCatalogVersion": "2026.10.16",
+ "kevCount": 1748,
  "epssDate": "2026-10-16",
  "items": [
   {
@@ -160,6 +160,28 @@
    "cwe": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')"
   },
   {
+   "id": "CVE-2025-61624",
+   "vendor": "Fortinet",
+   "product": "Multiple Products",
+   "name": "Fortinet Multiple Products Path Traversal Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-16",
+    "due": "2026-10-19",
+    "ransomware": false
+   },
+   "epss": 0.006,
+   "percentile": 0.466,
+   "cvss": 5.4,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:N/I:H/A:H/E:P/RL:O/RC:C",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-22",
+   "cwe": "Escalation of privilege"
+  },
+  {
    "id": "CVE-2026-0322",
    "vendor": "Palo Alto Networks",
    "product": "PAN-OS",
@@ -224,6 +246,28 @@
    "impact": "total",
    "cweId": "CWE-269",
    "cwe": "Improper Privilege Management"
+  },
+  {
+   "id": "CVE-2026-102764",
+   "vendor": "BeyondTrust",
+   "product": "Remote Support",
+   "name": "BeyondTrust Remote Support Authentication Bypass by Spoofing Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-16",
+    "due": "2026-10-19",
+    "ransomware": false
+   },
+   "epss": 0.006,
+   "percentile": 0.476,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-290",
+   "cwe": "Authentication bypass by spoofing"
   },
   {
    "id": "CVE-2026-104286",
@@ -326,14 +370,14 @@
    },
    "epss": 0.127,
    "percentile": 0.962,
-   "cvss": 9.3,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:H/SA:H",
+   "cvss": null,
+   "cvssVersion": null,
+   "cvssVector": null,
    "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-552",
-   "cwe": "Files or Directories Accessible to External Parties"
+   "automatable": null,
+   "impact": null,
+   "cweId": null,
+   "cwe": null
   },
   {
    "id": "CVE-2026-53266",
@@ -1248,6 +1292,24 @@
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
+   "id": "CVE-2026-111214",
+   "vendor": "Netgate",
+   "product": "pfSense CE",
+   "name": "Netgate pfSense CE 2.7.0 through 2.9.0 OS Command Injection via interfaces_qinq_edit.php",
+   "published": "2026-10-15",
+   "kev": null,
+   "epss": 0.086,
+   "percentile": 0.95,
+   "cvss": 8.6,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "poc",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
    "id": "CVE-2026-111215",
    "vendor": "Netgate",
    "product": "pfSense CE",
@@ -1284,6 +1346,24 @@
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
+   "id": "CVE-2026-111224",
+   "vendor": "Netgate",
+   "product": "pfSense CE",
+   "name": "Netgate pfSense CE through 2.9.0 OS Command Injection via openvpn.connect_async.sh",
+   "published": "2026-10-15",
+   "kev": null,
+   "epss": 0.054,
+   "percentile": 0.925,
+   "cvss": 7.7,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "poc",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
    "id": "CVE-2026-111225",
    "vendor": "Netgate",
    "product": "pfSense CE",
@@ -1298,6 +1378,24 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "partial",
+   "cweId": "CWE-78",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
+   "id": "CVE-2026-111229",
+   "vendor": "Netgate",
+   "product": "pfSense CE",
+   "name": "Netgate pfSense CE 2.7.0 through 2.9.0 Command Injection via Captive Portal HA Sync",
+   "published": "2026-10-15",
+   "kev": null,
+   "epss": 0.064,
+   "percentile": 0.936,
+   "cvss": 8.6,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "poc",
+   "automatable": "no",
+   "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
@@ -1336,24 +1434,6 @@
    "impact": "total",
    "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
-  },
-  {
-   "id": "CVE-2026-92398",
-   "vendor": "Ruijie",
-   "product": "RG-EW3000GX",
-   "name": "Ruijie RG-EW3000GX user_list_note admin os command injection",
-   "published": "2026-09-16",
-   "kev": null,
-   "epss": 0.032,
-   "percentile": 0.878,
-   "cvss": 9.4,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-93349",
