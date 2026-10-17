@@ -272,6 +272,11 @@ fieldset{border:0;min-width:0}
 .chart .dot{fill:var(--s1)}
 .chart .pt{fill:var(--s1);stroke:var(--row-a);stroke-width:2;transition:fill-opacity .15s}
 .chart .col.hot .pt,.chart .col:focus .pt{fill-opacity:.78}
+.chart .pt.low{fill:var(--live-bg)}
+.chart .pt.high{fill:var(--good)}
+.chart .ref{stroke-width:1.5;stroke-dasharray:6 4}
+.chart .ref.target{stroke:var(--good)}
+.chart .ref.threshold{stroke:var(--live-bg)}
 .chart .val.halo{paint-order:stroke;stroke:var(--row-a);stroke-width:3px;stroke-linejoin:round}
 .chart .mark{fill:var(--text);stroke:var(--row-a);stroke-width:2}
 .chart .guide{stroke:var(--key);stroke-width:1}
@@ -1102,12 +1107,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     let showAll = false;
     $('fuel-more').addEventListener('click', () => { showAll = !showAll; renderFuel(); });
 
-    // MPG cell: red below 16.0, green above 20.0 (on the shown one-decimal value).
-    const MPG_LOW = 16, MPG_HIGH = 20;
+    // KPI: the EPA rating is the threshold, 20 MPG the target. On the shown one-decimal
+    // value, below the threshold is 'low' (red), at or above the target 'high' (green).
+    const MPG_THRESHOLD = 16, MPG_TARGET = 20;
+    const mpgTier = (v) => { const n = Number(dec1(v)); return n < MPG_THRESHOLD ? 'low' : n >= MPG_TARGET ? 'high' : null; };
+    const TIER_TEXT = { low: 'Below threshold', high: 'Meets target' };
     function mpgCell(v) {
       if (v == null) return el('td', { 'data-label': 'MPG', text: '—' });
-      const shown = dec1(v), n = Number(shown);
-      const tier = n < MPG_LOW ? 'low' : n > MPG_HIGH ? 'high' : null;
+      const shown = dec1(v), tier = mpgTier(v);
       return el('td', { class: tier ? `mpg-${tier}` : null, 'data-label': 'MPG' }, shown, tier ? el('span', { class: 'sr-only', text: ` ${tier}` }) : null);
     }
 
@@ -1252,11 +1259,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const vals = all.filter((p) => p.mpg != null).map((p) => p.mpg);
       // Fitted to the values: whole MPG a step beyond the lowest and highest point.
       const step = vals.length && Math.max(...vals) - Math.min(...vals) > 6 ? 2 : 1;
-      const lo = vals.length ? Math.floor(Math.min(...vals) / step) * step - step : 0;
-      const hi = vals.length ? Math.ceil(Math.max(...vals) / step) * step + step : 24;
+      // Always room for the threshold and target lines.
+      const lo = Math.min(vals.length ? Math.floor(Math.min(...vals) / step) * step - step : 0, MPG_THRESHOLD - step);
+      const hi = Math.max(vals.length ? Math.ceil(Math.max(...vals) / step) * step + step : 24, MPG_TARGET + step);
 
       const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
-      svg.setAttribute('aria-label', 'MPG by fill-up and month: ' + all.map((p) => `${p.name} ${p.mpg == null ? 'no fill-ups' : dec1(p.mpg)}`).join(', '));
+      svg.setAttribute('aria-label', `MPG by fill-up and month, target ${MPG_TARGET}, threshold ${MPG_THRESHOLD}: ` + all.map((p) => `${p.name} ${p.mpg == null ? 'no fill-ups' : dec1(p.mpg)}`).join(', '));
       svg.append(svgEl('title', null, 'MPG by fill-up and month'));
 
       const tip = el('div', { class: 'chart-tip', hidden: true, 'aria-hidden': 'true' });
@@ -1264,13 +1272,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const show = (g, p, x, yTop) => {
         hide();
         g.classList.add('hot');
+        const tier = p.mpg == null ? null : mpgTier(p.mpg);
         tip.replaceChildren(el('b', { text: p.mpg == null ? '—' : `${dec1(p.mpg)} MPG` }),
-          el('span', { text: p.fill ? `${p.name} · ${p.when}` : `${p.name} · ${p.fills ? plural(p.fills, 'fill-up') : 'No fill-ups'}` }));
+          el('span', { text: p.fill ? `${p.name} · ${p.when}` : `${p.name} · ${p.fills ? plural(p.fills, 'fill-up') : 'No fill-ups'}` }),
+          ...(tier ? [el('span', { text: TIER_TEXT[tier] })] : []));
         tip.hidden = false;
         const half = tip.offsetWidth / 2;
         tip.style.left = `${Math.min(Math.max(x + 6, half + 2), box.clientWidth - half - 2)}px`; // +6: chart padding
         tip.style.top = `${Math.max(yTop + 2, tip.offsetHeight + 2)}px`;
       };
+
+      const REFS = [['target', MPG_TARGET], ['threshold', MPG_THRESHOLD]];
 
       rows.forEach((slots, r) => {
         const top = r * rowH + M.top, band = plotW / slots.length, wide = band >= 30;
@@ -1284,6 +1296,23 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         const gap = slots.indexOf(null);
         if (gap >= 0) svg.append(svgEl('line', { class: 'guide', x1: cx(gap), x2: cx(gap), y1: top, y2: top + plotH }));
 
+        // Points along this row's line and KPI rules, every few px, so labels can keep clear of them.
+        const trace = [];
+        slots.forEach((p, i) => {
+          if (!p || p.mpg == null) return;
+          const q = slots[i + 1], x0 = cx(i), y0 = y(p.mpg);
+          trace.push([x0, y0]);
+          if (q && q.mpg != null) for (let k = 1, n = Math.ceil(band / 3); k < n; k++) trace.push([x0 + (band * k) / n, y0 + ((y(q.mpg) - y0) * k) / n]);
+        });
+        const free = (r) => !trace.some(([tx, ty]) => tx > r.x - 6 && tx < r.x + r.w + 6 && ty > r.y - 6 && ty < r.y + r.h + 6);
+
+        // Target and threshold: dashed rules.
+        for (const [cls, v] of REFS) {
+          svg.append(svgEl('line', { class: `ref ${cls}`, x1: M.left, x2: W - M.right, y1: y(v), y2: y(v) }));
+          for (let tx = M.left; tx <= W - M.right; tx += 3) trace.push([tx, y(v)]);
+        }
+        const placed = [];
+
         // Line through neighbouring points; a period with no fill-up breaks it.
         let d = '';
         slots.forEach((p, i) => {
@@ -1295,7 +1324,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         // A year under the first month and wherever the year turns, unless it would crowd the first.
         const runStart = (i) => slots[i] && (i === 0 || !slots[i - 1]);
-        const placed = [];
         slots.forEach((p, i) => {
           if (!p) return;
           const x = cx(i), isFill = !!p.fill;
@@ -1306,10 +1334,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const yp = y(p.mpg), w = dec1(p.mpg).length * 7;
             const box = (dn) => ({ x: x - w / 2, y: dn ? yp + 7 : yp - 20, w, h: 13 });
             const clear = (r) => !placed.some((o) => r.x < o.x + o.w + 2 && o.x < r.x + r.w + 2 && r.y < o.y + o.h && o.y < r.y + r.h);
-            let below = nb.length > 0 && nb.every((q) => q.mpg > p.mpg);
-            if (!clear(box(below)) && clear(box(!below))) below = !below;
+            // Prefer the side clear of other labels and the line, then just of labels.
+            const pref = nb.length > 0 && nb.every((q) => q.mpg > p.mpg);
+            const below = [pref, !pref].find((dn) => clear(box(dn)) && free(box(dn))) ?? [pref, !pref].find((dn) => clear(box(dn))) ?? pref;
             placed.push(box(below));
-            g.append(svgEl('circle', { class: 'pt', cx: x.toFixed(1), cy: yp.toFixed(1), r: 4 }));
+            const tier = mpgTier(p.mpg);
+            g.append(svgEl('circle', { class: tier ? `pt ${tier}` : 'pt', cx: x.toFixed(1), cy: yp.toFixed(1), r: 4 }));
             g.append(svgEl('text', { class: 'val halo', x: x.toFixed(1), y: (below ? yp + 18 : yp - 9).toFixed(1) }, dec1(p.mpg)));
           }
           g.append(svgEl('rect', { class: 'hit', x: M.left + band * i, y: top, width: band, height: plotH + M.bottom - 4 }));
@@ -1330,9 +1360,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       });
 
       // Table view for screen readers (the values the tooltip shows).
-      const table = el('div', { class: 'sr-only' }, el('table', null, el('caption', { text: 'MPG by fill-up and month' }),
-        el('thead', null, el('tr', null, el('th', { scope: 'col', text: 'Period' }), el('th', { scope: 'col', text: 'MPG' }), el('th', { scope: 'col', text: 'Fill-ups' }))),
-        el('tbody', null, ...all.map((p) => el('tr', null, el('td', { text: p.when ? `${p.name} (${p.when})` : p.name }), el('td', { text: p.mpg == null ? '—' : dec1(p.mpg) }), el('td', { text: String(p.fills) }))))));
+      const table = el('div', { class: 'sr-only' }, el('table', null, el('caption', { text: `MPG by fill-up and month, target ${MPG_TARGET}, threshold ${MPG_THRESHOLD}` }),
+        el('thead', null, el('tr', null, el('th', { scope: 'col', text: 'Period' }), el('th', { scope: 'col', text: 'MPG' }), el('th', { scope: 'col', text: 'Fill-ups' }), el('th', { scope: 'col', text: 'Status' }))),
+        el('tbody', null, ...all.map((p) => el('tr', null, el('td', { text: p.when ? `${p.name} (${p.when})` : p.name }), el('td', { text: p.mpg == null ? '—' : dec1(p.mpg) }), el('td', { text: String(p.fills) }),
+          el('td', { text: p.mpg == null ? '' : TIER_TEXT[mpgTier(p.mpg)] || '' }))))));
       box.replaceChildren(svg, table, tip);
     }
     new ResizeObserver(() => drawWbr()).observe($('mpg-chart'));

@@ -76,10 +76,13 @@ A Reject means make no changes and ask what to adjust.
   6-12: the last 6 tanks, ticked by their closing fill-up's number in the log
   (#57), a gap, then the last 12 calendar months
   ending this month; inline-SVG line, one hue, every point labelled, the line
-  breaks where a month has no fill-up, y axis fitted; fill-ups stack above
+  breaks where a month has no fill-up, y axis fitted to include dashed Target
+  20 (green) and Threshold 16 (red, the EPA rating) KPI lines (unlabelled),
+  dots red below
+  the threshold and green at or above the target; fill-ups stack above
   months when slots drop under 30px), then the MPG distribution (tanks per whole MPG, tallest bin
   labelled), then the 10 newest fill-ups (with miles per tank and flags; MPG red
-  below 16, green above 20) sit right. No cost is shown on Fuel
+  below the 16 MPG threshold, green at or above the 20 MPG target) sit right. No cost is shown on Fuel
   (fill-ups save cost 0). History (`#history`) is one full-width column of
   ownership charts: first To the Moon, an inline-SVG serigraph of the odometer
   along an Earth-to-Moon arc (238,855 mi), every milestone reached (1,000,
