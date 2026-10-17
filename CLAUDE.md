@@ -72,11 +72,11 @@ A Reject means make no changes and ask what to adjust.
   ignores the flags;
   Average, Last fill-up (each with its change) and Best MPG tally strip, then
   a mini strip (fill-ups, gallons, gal/100 mi, avg range as average MPG × the average gallons of tanks of 15+ gal,
-  best miles per fill-up counting only fills of 10+ gal), the MPG by week and month chart (WBR
-  6-12: last 6 Sunday-to-Saturday weeks, W1 holding Jan 1, a gap, then the
-  last 12 calendar months ending this month; inline-SVG line, one hue, every
-  point labelled, the line breaks where a period has no fill-up, y axis fitted;
-  weeks stack above months when slots drop under 30px), then the MPG distribution (tanks per whole MPG, tallest bin
+  best miles per fill-up counting only fills of 10+ gal), the MPG by fill-up and month chart (WBR
+  6-12: the last 6 tanks by fill date, a gap, then the last 12 calendar months
+  ending this month; inline-SVG line, one hue, every point labelled, the line
+  breaks where a month has no fill-up, y axis fitted; fill-ups stack above
+  months when slots drop under 30px), then the MPG distribution (tanks per whole MPG, tallest bin
   labelled), then the 10 newest fill-ups (with miles per tank and flags; MPG red
   below 16, green above 20) sit right. No cost is shown on Fuel
   (fill-ups save cost 0). History (`#history`) is one full-width column of

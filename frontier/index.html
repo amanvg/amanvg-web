@@ -627,7 +627,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             </section>
                         </div>
                         <div class="ledger-wrap">
-                            <h2 class="section-label" id="chart-l">MPG by week and month</h2>
+                            <h2 class="section-label" id="chart-l">MPG by fill-up and month</h2>
                             <div class="chart" id="mpg-chart" role="group" aria-labelledby="chart-l"></div>
                         </div>
                         <div class="ledger-wrap">
@@ -954,23 +954,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       }
       return months.map((o) => ({ key: o.key, year: o.year, month: o.month, fills: o.fills, mpg: o.gal > 0 ? o.mi / o.gal : null, mi: o.fills ? o.mi : null }));
     }
-    // MPG per Sunday-to-Saturday week for the `count` weeks ending with the week of
-    // `today`, numbered W1 from the week holding Jan 1 (2026-10-11 to 2026-10-17 is W42).
-    // Weeks with no fill-up have mpg null.
-    function weeklyMpg(tanks, today, count) {
-      const t = parseISO(today), sun = t - new Date(t).getUTCDay() * DAY_MS;
-      const weeks = [];
-      for (let k = count - 1; k >= 0; k--) {
-        const start = sun - k * 7 * DAY_MS, end = start + 6 * DAY_MS, year = new Date(end).getUTCFullYear();
-        const jan1 = Date.UTC(year, 0, 1), w1 = jan1 - new Date(jan1).getUTCDay() * DAY_MS;
-        weeks.push({ start, end, year, week: Math.round((start - w1) / (7 * DAY_MS)) + 1, mi: 0, gal: 0, fills: 0 });
-      }
-      for (const tk of tanks) {
-        const d = parseISO(tk.date), o = weeks.find((w) => d >= w.start && d <= w.end);
-        if (o) { o.mi += tk.dm; o.gal += tk.gallons; o.fills++; }
-      }
-      return weeks.map((o) => ({ start: o.start, end: o.end, year: o.year, week: o.week, fills: o.fills, mpg: o.gal > 0 ? o.mi / o.gal : null }));
-    }
     // Tanks per whole-MPG bin (lo <= MPG < lo + 1, on the shown one-decimal value),
     // from the lowest bin to the highest with empty bins kept.
     function mpgHistogram(tanks) {
@@ -1131,8 +1114,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
     // --- Miles by month (since the first fill-up); MPG 6-12 below ---------------------
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const CHART_MONTHS = 12;
-    const WBR_WEEKS = 6;
-    let wbr = { weeks: [], months: [] };
+    const WBR_FILLS = 6;
+    let wbr = { fills: [], months: [] };
     const SVGNS = 'http://www.w3.org/2000/svg';
     const svgEl = (tag, attrs, text) => {
       const n = document.createElementNS(SVGNS, tag);
@@ -1246,26 +1229,25 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     function renderChart(stats) {
       for (const c of CHARTS) { c.months = monthlyMpg(stats.segments, todayISO(), c.span()); drawChart(c); }
-      wbr = { weeks: weeklyMpg(stats.tanks, todayISO(), WBR_WEEKS), months: monthlyMpg(stats.tanks, todayISO(), CHART_MONTHS) };
+      wbr = { fills: stats.tanks.slice(-WBR_FILLS), months: monthlyMpg(stats.tanks, todayISO(), CHART_MONTHS) };
       drawWbr();
       distBins = mpgHistogram(stats.tanks); drawDist();
     }
     for (const c of CHARTS) new ResizeObserver(() => drawChart(c)).observe($(c.box));
 
-    // --- MPG 6-12: the last 6 weeks, a gap, then the last 12 months, every point labelled -
-    const isoDay = (t) => new Date(t).toISOString().slice(0, 10);
+    // --- MPG 6-12: the last 6 tanks, a gap, then the last 12 months, every point labelled -
     function drawWbr() {
       const box = $('mpg-chart');
       const W = box.clientWidth - 12; // minus side padding
       if (W < 120 || !wbr.months.length) return;
-      const weeks = wbr.weeks.map((w) => ({ ...w, tick: `W${w.week}`, name: `W${w.week}`, when: `${isoDay(w.start)} to ${isoDay(w.end)}` }));
+      const fills = wbr.fills.map((t) => ({ fill: true, mpg: t.mpg, fills: 1, year: Number(t.date.slice(0, 4)), tick: t.date.slice(5), name: t.date, when: `${int.format(t.dm)} mi · ${t.gallons.toFixed(3)} gal` }));
       const months = wbr.months.map((m) => ({ ...m, tick: MONTHS[m.month], name: `${MONTHS[m.month]} ${m.year}`, when: null }));
-      const all = [...weeks, ...months];
+      const all = [...fills, ...months];
       const M = { top: 22, right: 6, bottom: 40, left: 30 };
       const plotW = W - M.left - M.right;
-      // One row (weeks, a gap, months) when every slot is 30px or wider, else weeks above months.
-      const stacked = plotW / (weeks.length + 1 + months.length) < 30;
-      const rows = stacked ? [weeks, months] : [[...weeks, null, ...months]];
+      // One row (fill-ups, a gap, months) when every slot is 30px or wider, else fill-ups above months.
+      const stacked = plotW / (fills.length + 1 + months.length) < 30;
+      const rows = stacked ? [fills, months] : [[...fills, null, ...months]];
       const rowH = stacked ? 170 : W < 480 ? 200 : 240, plotH = rowH - M.top - M.bottom, H = rowH * rows.length;
       const vals = all.filter((p) => p.mpg != null).map((p) => p.mpg);
       // Fitted to the values: whole MPG a step beyond the lowest and highest point.
@@ -1274,8 +1256,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const hi = vals.length ? Math.ceil(Math.max(...vals) / step) * step + step : 24;
 
       const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
-      svg.setAttribute('aria-label', 'MPG by week and month: ' + all.map((p) => `${p.name} ${p.mpg == null ? 'no fill-ups' : dec1(p.mpg)}`).join(', '));
-      svg.append(svgEl('title', null, 'MPG by week and month'));
+      svg.setAttribute('aria-label', 'MPG by fill-up and month: ' + all.map((p) => `${p.name} ${p.mpg == null ? 'no fill-ups' : dec1(p.mpg)}`).join(', '));
+      svg.append(svgEl('title', null, 'MPG by fill-up and month'));
 
       const tip = el('div', { class: 'chart-tip', hidden: true, 'aria-hidden': 'true' });
       const hide = () => { tip.hidden = true; for (const g of box.querySelectorAll('.col.hot')) g.classList.remove('hot'); };
@@ -1283,7 +1265,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         hide();
         g.classList.add('hot');
         tip.replaceChildren(el('b', { text: p.mpg == null ? '—' : `${dec1(p.mpg)} MPG` }),
-          el('span', { text: `${p.name}${p.when ? ` · ${p.when}` : ''} · ${p.fills ? plural(p.fills, 'fill-up') : 'No fill-ups'}` }));
+          el('span', { text: p.fill ? `${p.name} · ${p.when}` : `${p.name} · ${p.fills ? plural(p.fills, 'fill-up') : 'No fill-ups'}` }));
         tip.hidden = false;
         const half = tip.offsetWidth / 2;
         tip.style.left = `${Math.min(Math.max(x + 6, half + 2), box.clientWidth - half - 2)}px`; // +6: chart padding
@@ -1298,7 +1280,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
           svg.append(svgEl('line', { class: 'grid', x1: M.left, x2: W - M.right, y1: y(v), y2: y(v) }));
           svg.append(svgEl('text', { class: 'tick', x: M.left - 6, y: y(v) + 4, 'text-anchor': 'end' }, String(v)));
         }
-        // The gap between weeks and months.
+        // The gap between fill-ups and months.
         const gap = slots.indexOf(null);
         if (gap >= 0) svg.append(svgEl('line', { class: 'guide', x1: cx(gap), x2: cx(gap), y1: top, y2: top + plotH }));
 
@@ -1311,12 +1293,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         });
         if (d) svg.append(svgEl('path', { class: 'line', d: d.trim() }));
 
-        // A year under each run's first period and each January, unless it would crowd the first.
+        // A year under each run's first period and wherever the year turns, unless it would crowd the first.
         const runStart = (i) => slots[i] && (i === 0 || !slots[i - 1]);
         const placed = [];
         slots.forEach((p, i) => {
           if (!p) return;
-          const x = cx(i), isWeek = p.week != null;
+          const x = cx(i), isFill = !!p.fill;
           const g = svgEl('g', { class: 'col', tabindex: '0' });
           if (p.mpg != null) {
             // Labels sit above the point, below it at a dip, and flip sides to clear the label before.
@@ -1332,10 +1314,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
           }
           g.append(svgEl('rect', { class: 'hit', x: M.left + band * i, y: top, width: band, height: plotH + M.bottom - 4 }));
           svg.append(g);
-          const label = wide ? p.tick : isWeek ? (band >= 26 ? p.tick : null) : p.tick[0];
+          // Fill dates (09-30) when they fit, else every other; month names, else initials.
+          const label = isFill ? (band >= 40 || (fills.length - 1 - i) % 2 === 0 ? p.tick : null) : wide ? p.tick : p.tick[0];
           if (label) svg.append(svgEl('text', { class: 'tick', x, y: top + plotH + 18, 'text-anchor': 'middle' }, label));
           let s = i; while (s > 0 && slots[s - 1]) s--;
-          const yearHere = runStart(i) || (!isWeek && p.month === 0 && (i - s) * band + band / 2 >= 52);
+          const yearHere = runStart(i) || (slots[i - 1].year !== p.year && (i - s) * band + band / 2 >= 52);
           if (yearHere) svg.append(svgEl('text', { class: 'tick year', x: runStart(i) ? M.left + band * i + 2 : x, y: top + plotH + 34, 'text-anchor': runStart(i) ? 'start' : 'middle' }, String(p.year)));
           const on = () => show(g, p, x, y(p.mpg == null ? lo : p.mpg));
           g.addEventListener('pointerenter', on);
@@ -1347,7 +1330,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       });
 
       // Table view for screen readers (the values the tooltip shows).
-      const table = el('div', { class: 'sr-only' }, el('table', null, el('caption', { text: 'MPG by week and month' }),
+      const table = el('div', { class: 'sr-only' }, el('table', null, el('caption', { text: 'MPG by fill-up and month' }),
         el('thead', null, el('tr', null, el('th', { scope: 'col', text: 'Period' }), el('th', { scope: 'col', text: 'MPG' }), el('th', { scope: 'col', text: 'Fill-ups' }))),
         el('tbody', null, ...all.map((p) => el('tr', null, el('td', { text: p.when ? `${p.name} (${p.when})` : p.name }), el('td', { text: p.mpg == null ? '—' : dec1(p.mpg) }), el('td', { text: String(p.fills) }))))));
       box.replaceChildren(svg, table, tip);
