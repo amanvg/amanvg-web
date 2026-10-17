@@ -79,7 +79,11 @@ A Reject means make no changes and ask what to adjust.
   below 16, green above 20) sit right. No cost is shown on Fuel
   (fill-ups save cost 0). History (`#history`) is one full-width column of
   ownership charts: first To the Moon, an inline-SVG serigraph of the odometer
-  along an Earth-to-Moon arc (238,855 mi) with a Driven / To go / Arrival
+  along an Earth-to-Moon arc (238,855 mi), every milestone reached (1,000,
+  10,000, then each 10,000; dated by the first fill-up at or past it) a ring on
+  the arc with a short dashed leader to a `10k - 2026-06-05` label placed newest
+  first where it overlaps nothing (newest in the path colour; no room leaves the
+  ring and its title), with a Driven / To go / Arrival
   tally strip (arrival at the first-to-latest reading pace), then Miles by month (same chart as MPG, miles
   from fill-up odometer distance by fill date, from the first fill-up's month
   to this month with a dashed average line; bars and labels scale to fit), then an Odometer line chart of

@@ -252,7 +252,12 @@ fieldset{border:0;min-width:0}
 .moon .tick{stroke:var(--moon-ink);stroke-width:1.5;opacity:.7}
 .moon .lbl{fill:var(--moon-ink);stroke:var(--moon-sky);stroke-width:4px;stroke-linejoin:round;paint-order:stroke;font-family:var(--label);font-weight:700;font-size:12px;letter-spacing:.04em}
 .moon .lbl.dim{opacity:.95;font-weight:600}
-.moon .here{fill:var(--moon-path);font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:.04em}
+.moon .here{fill:var(--moon-path);font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:.04em;paint-order:stroke;stroke:var(--moon-sky);stroke-width:5px;stroke-linejoin:round}
+.moon .ms-lead{fill:none;stroke:var(--moon-ink);stroke-width:1;stroke-dasharray:3 4;opacity:.55}
+.moon .ms-dot{fill:var(--moon-sky);stroke:var(--moon-ink);stroke-width:1.5}
+.moon .ms-lbl{fill:var(--moon-ink);stroke:var(--moon-sky);stroke-width:4px;stroke-linejoin:round;paint-order:stroke;font-family:var(--label);font-weight:600;font-size:11px;letter-spacing:.02em;opacity:.85}
+.moon .ms-lead.new,.moon .ms-dot.new{stroke:var(--moon-path);opacity:1}
+.moon .ms-lbl.new{fill:var(--moon-path);opacity:1}
 .moon .truck{outline:none;cursor:default}
 .moon .truck .body{fill:var(--moon-face)}
 .moon .truck .wheel{fill:var(--moon-sky);stroke:var(--moon-face);stroke-width:1.5}
@@ -1298,6 +1303,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const arrive = !left ? 'done' : pace > 0 ? new Date(last.t + (left / pace) * DAY_MS) : null;
       return { at, frac: Math.min(1, at / MOON_MI), left, pace, arrive };
     }
+    // Milestones (1,000, 10,000, then every 10,000), each dated by the first fill-up at or past it.
+    function moonMilestones(fuel) {
+      const fills = fuel.filter((f) => parseISO(f.date) != null).sort((a, b) => a.date.localeCompare(b.date) || a.miles - b.miles);
+      const out = [];
+      for (let m = 1000; m < MOON_MI; m = m < 10000 ? 10000 : m + 10000) {
+        const hit = fills.find((f) => f.miles >= m);
+        if (!hit) break;
+        out.push({ miles: m, date: hit.date });
+      }
+      return out;
+    }
     let moonDrawn = false;
 
     function drawMoon() {
@@ -1305,7 +1321,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const W = box.clientWidth;
       if (W < 120) return;
       const trip = moonTrip(odoPoints, data.truck.odometer);
-      const H = W < 560 ? 240 : 300;
+      const narrow = W < 560, H = narrow ? 240 : 300;
       const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img' });
       svg.setAttribute('aria-label', `To the Moon: ${int.format(trip.at)} of ${int.format(MOON_MI)} mi, ${(trip.frac * 100).toFixed(1)}%`);
       svg.append(svgEl('title', null, 'To the Moon'));
@@ -1363,15 +1379,18 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       svg.append(svgEl('path', { class: 'route', d: line(0, 1) }));
 
       // Every 50,000 mi: a tick across the route and its label outside the arc.
+      const busy = [{ x: mx - R, y: my - R, w: 2 * R, h: 2 * R + 26 }];
       for (let m = 50000; m < MOON_MI; m += 50000) {
         const q = along(m / MOON_MI), nx = Math.sin(q.ang), ny = -Math.cos(q.ang);
         svg.append(svgEl('line', { class: 'tick', x1: q.x - nx * 6, y1: q.y - ny * 6, x2: q.x + nx * 6, y2: q.y + ny * 6 }));
         svg.append(svgEl('text', { class: 'lbl dim', x: q.x + nx * 20, y: q.y + ny * 20 + 4, 'text-anchor': 'middle' }, `${m / 1000}k`));
+        busy.push({ x: q.x + nx * 20 - 18, y: q.y + ny * 20 - 9, w: 36, h: 16 });
       }
 
       // Driven so far, then the truck at the head of it.
       const done = svgEl('path', { class: 'done', d: line(0, Math.max(trip.frac, 0.001)) });
       svg.append(done);
+
       const q = along(trip.frac);
       const truck = svgEl('g', { class: 'truck', tabindex: '0', transform: `translate(${q.x.toFixed(1)},${q.y.toFixed(1)}) rotate(${(q.ang * 180 / Math.PI).toFixed(1)}) scale(${W < 560 ? 1.1 : 1.45})` });
       truck.append(svgEl('rect', { class: 'ring', x: -19, y: -21, width: 38, height: 26 }));
@@ -1380,10 +1399,38 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       svg.append(truck);
       const nx = Math.sin(q.ang), ny = -Math.cos(q.ang);
       // Odometer label: above the route on wide screens, in the open sky beside the truck on narrow ones.
-      const narrow = W < 560;
       const hx = narrow ? q.x + 22 : Math.min(Math.max(q.x + nx * 44, 48), W - 48);
       const hy = narrow ? q.y + 22 : Math.max(q.y + ny * 44 + 6, 20);
       svg.append(svgEl('text', { class: 'here', x: hx, y: hy, 'text-anchor': narrow ? 'start' : 'middle' }, `${int.format(trip.at)} mi`));
+      const hw = `${int.format(trip.at)} mi`.length * 10.5, ts = 26 * (narrow ? 1.1 : 1.45);
+      busy.push({ x: narrow ? hx : hx - hw / 2, y: hy - 18, w: hw, h: 22 }, { x: q.x - ts, y: q.y - ts, w: 2 * ts, h: 2 * ts });
+
+      // Milestones reached: a ring on the route each, labelled newest first beside it with a short dashed leader,
+      // inside the arc where there is room, else outside; a label with no clear spot leaves the ring and its title.
+      const ms = moonMilestones(data.fuel), last = ms[ms.length - 1];
+      const hits = (r) => r.x < 2 || r.y < 2 || r.x + r.w > W - 2 || r.y + r.h > H - 2
+        || busy.some((o) => r.x < o.x + o.w + 2 && o.x < r.x + r.w + 2 && r.y < o.y + o.h + 2 && o.y < r.y + r.h + 2)
+        || pts.some((p) => p.x > r.x - 4 && p.x < r.x + r.w + 4 && p.y > r.y - 4 && p.y < r.y + r.h + 4);
+      for (const m of [...ms].reverse()) {
+        const d = along(m.miles / MOON_MI), nx = Math.sin(d.ang), ny = -Math.cos(d.ang), cls = m === last ? ' new' : '';
+        const text = `${m.miles / 1000}k - ${m.date}`, w = text.length * 6.6;
+        for (const [ox, oy] of [[-nx * 30, -ny * 30], [-nx * 50, -ny * 50], [nx * 30, ny * 30], [-44, 0], [44, 0], [nx * 50, ny * 50], [0, 34], [0, 54], [-nx * 72, -ny * 72], [40, 30], [40, 50]]) {
+          const px = d.x + ox, py = d.y + oy, start = ox >= 0;
+          const r = { x: start ? px + 4 : px - 4 - w, y: py - 9, w, h: 13 };
+          if (hits(r)) continue;
+          busy.push(r);
+          const u = Math.hypot(ox, oy);
+          svg.append(svgEl('path', { class: `ms-lead${cls}`, d: `M${(d.x + (ox / u) * 6).toFixed(1)},${(d.y + (oy / u) * 6).toFixed(1)} L${px.toFixed(1)},${py.toFixed(1)}` }));
+          svg.append(svgEl('text', { class: `ms-lbl${cls}`, x: (start ? px + 4 : px - 4).toFixed(1), y: (py + 4).toFixed(1), 'text-anchor': start ? 'start' : 'end' }, text));
+          break;
+        }
+      }
+      for (const m of ms) {
+        const d = along(m.miles / MOON_MI), dot = svgEl('circle', { class: `ms-dot${m === last ? ' new' : ''}`, cx: d.x.toFixed(1), cy: d.y.toFixed(1), r: 3.5 });
+        dot.append(svgEl('title', null, `${int.format(m.miles)} mi · ${m.date}`));
+        svg.append(dot);
+      }
+      if (ms.length) svg.setAttribute('aria-label', `${svg.getAttribute('aria-label')}; milestones ${ms.map((m) => `${int.format(m.miles)} mi on ${m.date}`).join(', ')}`);
 
       const tip = el('div', { class: 'chart-tip', hidden: true, 'aria-hidden': 'true' });
       const show = () => {
