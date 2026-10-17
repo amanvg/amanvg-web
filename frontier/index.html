@@ -192,6 +192,10 @@ select:focus,input:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0
 .group .act{align-self:flex-start}
 
 .note{font-family:var(--label);font-weight:600;font-size:13px;line-height:19px;overflow-wrap:anywhere}
+/* Read only (no key): locked controls say so on hover, and a click points at Connect */
+body:not(.rw) .lock{cursor:not-allowed}
+body:not(.rw) .lock>*{pointer-events:none}
+.btn.nudge{outline:3px solid var(--accent);outline-offset:3px}
 .pills{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .pill{font-family:var(--label);font-weight:600;font-size:13px;line-height:19px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted)}
 :root:not([data-theme="dark"]) .pill{color:var(--muted)}
@@ -488,11 +492,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="pair">
                             <div class="field">
                                 <label for="year">Year</label>
-                                <div class="sel"><select id="year" disabled></select></div>
+                                <div class="sel lock"><select id="year" disabled></select></div>
                             </div>
                             <div class="field">
                                 <label for="drive">Drivetrain</label>
-                                <div class="sel">
+                                <div class="sel lock">
                                     <select id="drive" disabled><option value="">—</option><option value="2WD">2WD</option><option value="4WD">4WD</option></select>
                                 </div>
                             </div>
@@ -551,7 +555,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <div class="ledger-wrap">
                             <div class="group-head">
                                 <h2 class="section-label" id="sched-l">Schedule</h2>
-                                <div class="chips use-chips" id="use" role="group" aria-label="Use">
+                                <div class="chips use-chips lock" id="use" role="group" aria-label="Use">
                                     <button type="button" data-use="standard" class="active" aria-pressed="true" disabled>Standard</button><button type="button" data-use="severe" aria-pressed="false" disabled>Severe</button>
                                 </div>
                                 <span class="pill" id="n-none">0 not logged</span>
@@ -1739,7 +1743,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
     function paintStatus() {
       const text = siteState === 'loading' ? 'Loading' : siteState === 'error' ? 'Log unavailable'
-        : saveState === 'saving' ? 'Saving' : saveState === 'saved' ? 'Saved' : saveState === 'failed' ? 'Save failed' : apiKey ? 'Connected' : '';
+        : saveState === 'saving' ? 'Saving' : saveState === 'saved' ? 'Saved' : saveState === 'failed' ? 'Save failed' : apiKey ? 'Connected' : 'Read only';
       $('saved').textContent = note && siteState !== 'loading' ? (text ? `${text} · ${note}` : note) : text;
       $('export').hidden = siteState !== 'ok';
       $('connect').textContent = apiKey ? 'Disconnect' : 'Connect';
@@ -1748,7 +1752,19 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const lock = !canEdit() || saveState === 'saving';
       yearSel.disabled = driveSel.disabled = lock;
       for (const x of $('use').children) x.disabled = lock;
+      const ro = !canEdit() && siteState === 'ok';
+      for (const w of document.querySelectorAll('.lock')) w.title = ro ? 'Read only' : '';
+      for (const x of [yearSel, driveSel, ...$('use').children]) { if (ro) x.setAttribute('aria-describedby', 'saved'); else x.removeAttribute('aria-describedby'); }
     }
+    // A click on a locked control while read only rings Connect for a moment.
+    let nudgeTimer = 0;
+    for (const w of document.querySelectorAll('.lock')) w.addEventListener('click', () => {
+      if (canEdit() || siteState !== 'ok') return;
+      const b = $('connect');
+      b.classList.add('nudge');
+      clearTimeout(nudgeTimer);
+      nudgeTimer = setTimeout(() => b.classList.remove('nudge'), 1200);
+    });
 
     function renderAll() {
       renderSchedule(); renderHistory(); renderFuel();
