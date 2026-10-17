@@ -98,9 +98,11 @@ A Reject means make no changes and ask what to adjust.
   nav (`← amanvg` back link, centered title), `.card`, and form styles from the
   page itself rather than inventing new ones. Inter from Google Fonts, 20px
   card radius, accent `#3b82f6`. It keeps this look until it is migrated.
-- Desktop first. Design and verify at 1440×900 and 1024×768 before phone
-  widths: inputs and results visible together, key controls above the fold.
-  Collapse to one column below 960px.
+- Desktop first. Verify every UI change at these viewports (CSS px), desktops
+  before phones: 2560×1440 (4K 16:9 monitor scaled), 1728×1117 (16" MacBook
+  Pro default), 1512×982 (14" MacBook Pro default), 440×956 (iPhone Pro Max),
+  402×874 (iPhone Pro). Inputs and results visible together, key controls
+  above the fold. Collapse to one column below 960px.
 - UI text is labels, questions, counts, and attribution only. No taglines,
   help text, or explanatory sentences in the page.
 - Attribute data sources in the page footer or the map attribution.
