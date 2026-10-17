@@ -265,7 +265,7 @@ fieldset{border:0;min-width:0}
 .moon .truck:focus-visible .ring{stroke:var(--focus);stroke-width:2}
 .signs.moon-tally{margin-top:12px}
 @media(prefers-reduced-motion:reduce){.moon .done.draw{animation:none}}
-@media(max-width:600px){.signs.moon-tally{gap:10px}.moon-tally .num{font-size:clamp(22px,7vw,30px);min-height:36px}.moon-tally .sign-head{font-size:15px;line-height:20px;padding:6px 8px}}
+@media(max-width:600px){.signs.moon-tally{gap:10px}.moon-tally .num{font-size:clamp(22px,7vw,30px);min-height:36px}.moon-tally .sign-head{font-size:15px;line-height:20px;padding:6px 6px}.moon-tally .sign-body{padding:6px 6px 14px}.moon-tally .sign-unit{font-size:12px}}
 .chart .avg{stroke:var(--s2);stroke-width:1;stroke-dasharray:4 3}
 .chart .avg-l{fill:var(--text);font-family:var(--label);font-weight:700;font-size:12px;paint-order:stroke;stroke:var(--row-a);stroke-width:3px;stroke-linejoin:round}
 .chart .line{fill:none;stroke:var(--s1);stroke-width:2;stroke-linejoin:round}
@@ -399,6 +399,15 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 .minis .sign-body{padding:4px 12px 12px}
 .num{justify-content:flex-start;text-align:left}
 .sign-unit{text-align:left}
+/* Keep a value with its unit (or a date in one piece) on one line */
+.nw{white-space:nowrap}
+@media(max-width:600px){
+  .fuel-tally .sign-head{font-size:14px;line-height:20px;letter-spacing:.03em;padding:12px 8px 0}
+  .fuel-tally .sign-body{padding:6px 8px 14px}
+}
+@media(max-width:700px){
+  .ledger.stack.fuel tr{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+}
     </style>
 </head>
 <body>
@@ -595,7 +604,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 </div>
                 <div class="panel">
                     <div class="results">
-                        <div class="signs">
+                        <div class="signs fuel-tally">
                             <section class="sign" aria-labelledby="fs-avg-h">
                                 <h2 class="sign-head" id="fs-avg-h">Average</h2>
                                 <div class="sign-body"><output class="num" id="mpg-avg">—</output><div class="sign-unit" id="mpg-avg-u">MPG</div></div>
@@ -641,7 +650,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         </div>
                         <div class="ledger-wrap">
                             <h2 class="section-label" id="fuel-l">Fill-ups</h2>
-                            <table class="ledger stack" aria-labelledby="fuel-l">
+                            <table class="ledger stack fuel" aria-labelledby="fuel-l">
                                 <thead><tr><th scope="col">Date</th><th scope="col">Odometer</th><th scope="col">Miles</th><th scope="col">Gallons</th><th scope="col">MPG</th><th scope="col" class="act-col">Edit</th></tr></thead>
                                 <tbody id="fuel-body"></tbody>
                             </table>
@@ -1596,7 +1605,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('moon-done-u').textContent = `mi · ${(trip.frac * 100).toFixed(1)}%`;
       $('moon-left').textContent = int.format(trip.left);
       $('moon-eta').textContent = trip.arrive === 'done' ? 'Landed' : trip.arrive ? String(trip.arrive.getUTCFullYear()) : '—';
-      $('moon-eta-u').textContent = trip.arrive && trip.arrive !== 'done' ? `At ${int.format(trip.pace)} mi/day` : '';
+      $('moon-eta-u').replaceChildren(...(trip.arrive && trip.arrive !== 'done' ? ['At ', el('span', { class: 'nw', text: `${int.format(trip.pace)} mi/day` })] : []));
     }
     new ResizeObserver(() => drawMoon()).observe($('moon'));
 
@@ -1701,14 +1710,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       $('mpg-last').textContent = num1(stats.last);
       $('mpg-last-u').textContent = withDelta(stats.lastDelta);
       $('mpg-best').textContent = stats.best ? dec1(stats.best.mpg) : '—';
-      $('mpg-best-u').textContent = stats.best ? `MPG · ${stats.best.date}` : 'MPG';
+      $('mpg-best-u').replaceChildren(...(stats.best ? ['MPG · ', el('span', { class: 'nw', text: stats.best.date })] : ['MPG']));
       $('st-count').textContent = int.format(stats.fillups);
       $('st-gal').textContent = stats.fillups ? gal2.format(stats.gallons) : '—';
       $('st-g100').textContent = stats.gallonsPer100 == null ? '—' : stats.gallonsPer100.toFixed(2);
       $('st-avgmi').textContent = stats.avgRange == null ? '—' : dec1(stats.avgRange);
       $('st-avgmi-u').textContent = stats.rangeGal == null ? 'Gal' : `Per ${dec1(stats.rangeGal)} gal`;
       $('st-bestmi').textContent = stats.bestMiles ? int.format(stats.bestMiles.dm) : '—';
-      $('st-bestmi-u').textContent = stats.bestMiles ? `Mi · ${stats.bestMiles.date}` : 'Mi';
+      $('st-bestmi-u').replaceChildren(...(stats.bestMiles ? ['Mi · ', el('span', { class: 'nw', text: stats.bestMiles.date })] : ['Mi']));
       const all = data.fuel.slice().sort(byDateDesc);
       const more = $('fuel-more');
       more.hidden = all.length <= RECENT;
@@ -1718,7 +1727,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const flags = (f) => [f.partial && 'Partial', f.missed && 'Missed previous'].filter(Boolean).join(' · ');
       $('fuel-body').replaceChildren(...rows.map((f) => el('tr', { class: editing === f.id ? 'editing' : null },
         el('td', null, f.date, flags(f) ? el('span', { class: 'flag', text: flags(f) }) : null),
-        el('td', { 'data-label': 'Odometer', text: `${int.format(f.miles)} mi` }),
+        el('td', { 'data-label': 'Odometer' }, el('span', { class: 'nw', text: `${int.format(f.miles)} mi` })),
         el('td', { 'data-label': 'Miles', text: stats.tank[f.id] == null ? '—' : int.format(stats.tank[f.id]) }),
         el('td', { 'data-label': 'Gallons', text: f.gallons.toFixed(3) }),
         mpgCell(stats.perId[f.id]),
