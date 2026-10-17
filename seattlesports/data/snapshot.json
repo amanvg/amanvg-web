@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-16T05:39:22.328Z",
+ "generatedAt": "2026-10-17T05:25:17.875Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -809,7 +809,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "points",
