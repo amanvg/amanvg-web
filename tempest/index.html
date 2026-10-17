@@ -198,6 +198,18 @@ main{flex:1;padding:40px var(--margin) 0}
 .plot .cdot{fill:var(--well-bg);stroke:var(--text);stroke-width:2;opacity:0}
 .plot svg.on .cross,.plot svg.on .cdot{opacity:1}
 .plot.hov svg{cursor:crosshair;touch-action:pan-y}
+.plot.wbr{position:relative}
+.plot .guide{stroke:var(--key);stroke-width:1}
+.plot .pt{fill:var(--c);stroke:var(--well-bg);stroke-width:2;transition:fill-opacity .15s}
+.plot .col{outline:none}
+.plot .col.hot .pt,.plot .col:focus .pt{fill-opacity:.78}
+.plot .col:focus-visible .hit{stroke:var(--focus);stroke-width:2}
+.plot .hit{fill:transparent}
+.plot .val{fill:var(--text);font-family:var(--label);font-weight:700;font-size:12px;text-anchor:middle;font-variant-numeric:tabular-nums;paint-order:stroke;stroke:var(--well-bg);stroke-width:3px;stroke-linejoin:round}
+.plot .t.yr{font-weight:700;letter-spacing:.06em}
+.chart-tip{position:absolute;z-index:2;pointer-events:none;background:var(--card);color:var(--text);border:1px solid var(--key);padding:6px 10px;font-family:var(--label);white-space:nowrap;transform:translate(-50%,-100%)}
+.chart-tip b{display:block;font-size:16px;line-height:20px;font-variant-numeric:tabular-nums}
+.chart-tip span{display:block;font-size:12px;line-height:16px;color:var(--muted);font-weight:600}
 .empty{padding:48px 20px;text-align:center;font-family:var(--label);font-weight:600;font-size:14px;color:var(--muted)}
 
 .stat-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:2px solid var(--head-line)}
@@ -836,7 +848,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                             <span class="v">${n(yearSummary(m, ser[m.id]), m.dec)}${m.unit ? `<small>${m.unit}</small>` : ''}</span>
                             ${miniChart(ser[m.id].map(p => ({ x: p.x, y: p.y ?? p.avg })), m.min === 0)}
                         </button>`).join('')}
-                </div>`;
+                </div>
+                <section class="sign" id="wbr"></section>`;
         }
 
         // Tile value: the year total for rain, the peak for gust and solar, the mean otherwise.
@@ -878,7 +891,167 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     v: (m.band ? `${n(p.hi, m.dec)} / ${n(p.lo, m.dec)}` : n(m.id === 'rain' ? p.day : p.y, m.dec)) + unit
                 }), m.id === 'temp' ? p => ({ k: `${dayFmt(p.date)} · Normal`, v: `${n(p.nhi, m.dec)} / ${n(p.nlo, m.dec)}${unit}` }) : null);
             };
+            $('wbr').innerHTML = `
+                <h2 class="sign-head"><span>By week and month</span><span class="hv">${m.short} · ${wbrAgg(m)}</span></h2>
+                <div class="plot wbr" data-plot="wbr"></div>`;
+            plots.wbr = (el, w) => drawWbr(el, w, m);
             paintPlots();
+        }
+
+        // ── Weeks and months (WBR 6-12) ──────────────────────────
+        // The last 6 Monday–Sunday weeks, a gap, then the last 12 calendar months, from every station day.
+        const WBR_WEEKS = 6, WBR_MONTHS = 12;
+        const isoAdd = (d, k) => new Date(Date.parse(d + 'T00:00Z') + k * 864e5).toISOString().slice(0, 10);
+        function isoWeek(d) {
+            const t = new Date(d + 'T00:00Z');
+            t.setUTCDate(t.getUTCDate() + 3 - (t.getUTCDay() + 6) % 7);
+            return 1 + Math.floor((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 / 7);
+        }
+        // Periods roll up like the tiles: rain totals, gust and solar peak, the rest average.
+        const wbrAgg = m => m.id === 'rain' ? 'Total' : m.id === 'gust' || m.id === 'solar' ? 'Peak' : 'Average';
+        function dayValue(id, o) {
+            switch (id) {
+                case 'temp':  return o[DF.TEMP_AVG] == null || o[DF.TEMP_MAX] == null || o[DF.TEMP_MIN] == null ? null : tempDay(o).avg;
+                case 'hum':   return o[DF.HUM_AVG] ?? null;
+                case 'rain':  return mm2in(o[DF.RAIN] ?? 0);
+                case 'wind':  return o[DF.WIND_AVG] == null ? null : ms2mph(o[DF.WIND_AVG]);
+                case 'gust':  return o[DF.WIND_GUST] == null ? null : ms2mph(o[DF.WIND_GUST]);
+                case 'press': return o[DF.PRES_AVG] > 0 ? mb2inhg(o[DF.PRES_AVG]) : null;
+                case 'solar': { const v = o[DF.SOLAR_MAX]; return v == null ? null : v > 1500 ? 0 : v; }
+            }
+            return null;
+        }
+        function wbrData(m) {
+            const today = new Date().toLocaleDateString('en-CA', { timeZone: TZ });
+            const byDate = new Map((S.allObs || []).map(o => [String(o[DF.DATE]), o]));
+            const agg = vals => !vals.length ? null : m.id === 'rain' ? vals.reduce((s, v) => s + v, 0) : (m.id === 'gust' || m.id === 'solar') ? Math.max(...vals) : mean(vals);
+            const period = (start, end) => {
+                const vals = [], nv = [];
+                for (let d = start; d <= end && d <= today; d = isoAdd(d, 1)) {
+                    const o = byDate.get(d), v = o ? dayValue(m.id, o) : null;
+                    if (v != null) vals.push(v);
+                    const nd = S.norm?.[doy(d)];
+                    if (nd) nv.push((nd.hi + nd.lo) / 2);
+                }
+                return { v: agg(vals), days: vals.length, norm: m.id === 'temp' && vals.length && nv.length ? mean(nv) : null };
+            };
+            const monday = isoAdd(today, -((new Date(today + 'T00:00Z').getUTCDay() + 6) % 7));
+            const weeks = Array.from({ length: WBR_WEEKS }, (_, i) => {
+                const s = isoAdd(monday, -7 * (WBR_WEEKS - 1 - i)), e = isoAdd(s, 6), wk = isoWeek(s);
+                return { ...period(s, e), week: true, tick: `W${wk}`, name: `Week ${wk}`, when: `${dayFmt(s)} – ${dayFmt(e)}` };
+            });
+            const ty = +today.slice(0, 4), tm = +today.slice(5, 7) - 1;
+            const months = Array.from({ length: WBR_MONTHS }, (_, i) => {
+                const k = tm - (WBR_MONTHS - 1 - i), y = ty + Math.floor(k / 12), mo = ((k % 12) + 12) % 12;
+                const s = `${y}-${String(mo + 1).padStart(2, '0')}-01`;
+                const e = isoAdd(mo === 11 ? `${y + 1}-01-01` : `${y}-${String(mo + 2).padStart(2, '0')}-01`, -1);
+                return { ...period(s, e), year: y, tick: MONTHS[mo], name: `${MONTHS[mo]} ${y}`, when: null };
+            });
+            return { weeks, months };
+        }
+
+        function drawWbr(el, w, m) {
+            const { weeks, months } = wbrData(m), all = [...weeks, ...months];
+            const ys = all.flatMap(p => [p.v, p.norm]).filter(v => v != null);
+            if (!ys.length) { el.innerHTML = '<div class="empty">No data</div>'; return; }
+            const sc = niceScale(Math.min(...ys), Math.max(...ys), m.min);
+            const dp = Math.max(m.dec, decimals(sc.step));
+            const labels = sc.ticks.map(v => v.toFixed(dp) + m.tick);
+            const M = { t: 22, r: 6, b: 40, l: Math.ceil(Math.max(...labels.map(l => l.length)) * 6.8) + 14 };
+            const plotW = w - M.l - M.r;
+            // One row (weeks, a gap, months) when every slot is 30px or wider, else weeks above months.
+            const stacked = plotW / (all.length + 1) < 30;
+            const rows = stacked ? [weeks, months] : [[...weeks, null, ...months]];
+            const rowH = stacked ? 170 : w < 480 ? 200 : 240, plotH = rowH - M.t - M.b, H = rowH * rows.length;
+            const f = v => v.toFixed(1), val = v => n(v, m.dec), unit = !m.unit ? '' : /^[°%]/.test(m.unit) ? m.unit : ` ${m.unit}`;
+            let svg = '';
+            const cols = [];
+            rows.forEach((slots, r) => {
+                const top = r * rowH + M.t, band = plotW / slots.length, wide = band >= 30;
+                const y = v => top + plotH - (v - sc.min) / ((sc.max - sc.min) || 1) * plotH;
+                const cx = i => M.l + band * i + band / 2;
+                sc.ticks.forEach((v, i) => { svg += `<line class="g" x1="${M.l}" x2="${w - M.r}" y1="${f(y(v))}" y2="${f(y(v))}"/><text class="t" x="${M.l - 8}" y="${f(y(v) + 4)}" text-anchor="end">${labels[i]}</text>`; });
+                const gap = slots.indexOf(null);
+                if (gap >= 0) svg += `<line class="guide" x1="${f(cx(gap))}" x2="${f(cx(gap))}" y1="${top}" y2="${top + plotH}"/>`;
+
+                // Line through neighbouring periods; a period with no data breaks it. Normal is dashed.
+                const path = k => {
+                    let d = '';
+                    slots.forEach((p, i) => { if (!p || p[k] == null) return; const q = slots[i - 1]; d += `${q && q[k] != null ? 'L' : 'M'}${f(cx(i))},${f(y(p[k]))}`; });
+                    return d;
+                };
+                const dn = path('norm'), dl = path('v');
+                if (dn) svg += `<path class="nm" d="${dn}"/>`;
+                if (dl) svg += `<path class="ln" d="${dl}"/>`;
+
+                // Points along both lines every few px, so labels can keep clear of them.
+                const trace = [];
+                for (const k of ['v', 'norm']) slots.forEach((p, i) => {
+                    if (!p || p[k] == null) return;
+                    const q = slots[i + 1], x0 = cx(i), y0 = y(p[k]);
+                    trace.push([x0, y0]);
+                    if (q && q[k] != null) for (let j = 1, c = Math.ceil(band / 3); j < c; j++) trace.push([x0 + band * j / c, y0 + (y(q[k]) - y0) * j / c]);
+                });
+                const free = b => !trace.some(([tx, ty]) => tx > b.x - 6 && tx < b.x + b.w + 6 && ty > b.y - 6 && ty < b.y + b.h + 6);
+                const placed = [];
+                // Labels stay inside the plot, clear of the axis ticks below it.
+                const clear = b => b.y + b.h <= top + plotH && !placed.some(o => b.x < o.x + o.w + 2 && o.x < b.x + b.w + 2 && b.y < o.y + o.h && o.y < b.y + b.h);
+
+                const runStart = i => slots[i] && (i === 0 || !slots[i - 1]);
+                slots.forEach((p, i) => {
+                    if (!p) return;
+                    const x = cx(i);
+                    let g = `<g class="col" tabindex="0" data-i="${cols.length}">`;
+                    if (p.v != null) {
+                        // Labels sit above the point, below it at a dip, and flip sides to clear the label before.
+                        const nb = [slots[i - 1], slots[i + 1]].filter(q => q && q.v != null);
+                        const yp = y(p.v), lw = val(p.v).length * 7;
+                        // Above sits `up` lines higher when both sides are taken (narrow phone slots).
+                        const box = (dn, up = 0) => ({ x: x - lw / 2, y: dn ? yp + 7 : yp - 20 - 14 * up, w: lw, h: 13 });
+                        const pref = nb.length > 0 && nb.every(q => q.v > p.v);
+                        let up = 0;
+                        let below = [pref, !pref].find(dn => clear(box(dn)) && free(box(dn))) ?? [pref, !pref].find(dn => clear(box(dn)));
+                        if (below == null) { below = false; up = [1, 2, 3].find(k => clear(box(false, k))) ?? 0; }
+                        placed.push(box(below, up));
+                        g += `<circle class="pt" cx="${f(x)}" cy="${f(yp)}" r="4"/><text class="val" x="${f(x)}" y="${f(below ? yp + 18 : yp - 9 - 14 * up)}">${val(p.v)}</text>`;
+                    }
+                    g += `<rect class="hit" x="${f(M.l + band * i)}" y="${top}" width="${f(band)}" height="${plotH + M.b - 4}"/></g>`;
+                    svg += g;
+                    cols.push({ p, x, y: y(p.v ?? sc.min) });
+                    // Week numbers when they fit, else every other; month names, else initials.
+                    const label = p.week ? (wide || (WBR_WEEKS - 1 - i) % 2 === 0 ? p.tick : null) : wide ? p.tick : p.tick[0];
+                    if (label) svg += `<text class="t" x="${f(x)}" y="${top + plotH + 18}" text-anchor="middle">${label}</text>`;
+                    // A year under the first month and wherever the year turns, unless it would crowd the first.
+                    let s = i; while (s > 0 && slots[s - 1]) s--;
+                    if (!p.week && (runStart(i) || (slots[i - 1].year !== p.year && (i - s) * band + band / 2 >= 52))) {
+                        svg += `<text class="t yr" x="${f(runStart(i) ? M.l + band * i + 2 : x)}" y="${top + plotH + 34}" text-anchor="${runStart(i) ? 'start' : 'middle'}">${p.year}</text>`;
+                    }
+                });
+            });
+
+            const aria = `${m.label} ${wbrAgg(m).toLowerCase()} by week and month: ` + all.map(p => `${p.name} ${p.v == null ? 'no data' : val(p.v) + unit}`).join(', ');
+            el.innerHTML = `<svg viewBox="0 0 ${w} ${H}" style="--c:var(${m.color})" role="img" aria-label="${esc(aria)}">${svg}</svg><div class="chart-tip" hidden aria-hidden="true"></div>`;
+            const tip = el.querySelector('.chart-tip');
+            const hide = () => { tip.hidden = true; el.querySelectorAll('.col.hot').forEach(g => g.classList.remove('hot')); };
+            el.querySelectorAll('.col').forEach(g => {
+                const { p, x, y } = cols[+g.dataset.i];
+                const on = () => {
+                    hide();
+                    g.classList.add('hot');
+                    tip.innerHTML = `<b>${p.v == null ? '—' : val(p.v) + unit}</b><span>${p.name}${p.when ? ` · ${p.when}` : ''}</span>`
+                        + (p.norm != null ? `<span>Normal ${val(p.norm)}${unit}</span>` : '')
+                        + `<span>${p.days} ${p.days === 1 ? 'day' : 'days'}</span>`;
+                    tip.hidden = false;
+                    const half = tip.offsetWidth / 2;
+                    tip.style.left = `${Math.min(Math.max(x + 12, half + 2), el.clientWidth - half - 2)}px`; // +12: plot padding
+                    tip.style.top = `${Math.max(y + 2, tip.offsetHeight + 2)}px`;
+                };
+                g.addEventListener('pointerenter', on);
+                g.addEventListener('pointermove', on);
+                g.addEventListener('pointerleave', hide);
+                g.addEventListener('focus', on);
+                g.addEventListener('blur', hide);
+            });
         }
 
         // Left rail on History: the selected year at a glance.
@@ -929,8 +1102,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 for (let y = new Date().getFullYear(); y >= FIRST_YEAR; y--) ys.push(y);
                 const [obs, all] = await Promise.all([loadAnnual(S.year), Promise.allSettled(ys.map(loadAnnual))]);
                 if (seq !== stageSeq) return;
-                const allObs = all.flatMap(a => a.status === 'fulfilled' ? a.value : []);
-                st.innerHTML = head + renderHistoryBody(obs, S.year, normals(allObs));
+                S.allObs = all.flatMap(a => a.status === 'fulfilled' ? a.value : []);
+                S.norm = normals(S.allObs);
+                st.innerHTML = head + renderHistoryBody(obs, S.year, S.norm);
                 if (S.hist) renderYearBig();
                 renderYearRail();
             } catch (err) {
