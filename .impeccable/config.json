@@ -47,6 +47,12 @@
         ],
         "createdAt": "2026-10-05T11:54:33.758Z",
         "reason": "user confirmed: Odometer repeats as the label of separate form fields and table columns, each needed for accessibility"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "dseg7 classic",
+        "createdAt": "2026-10-17T15:53:00.728Z",
+        "reason": "user confirmed: asked for a seven-segment font for the D40 LCD odometer and approved DSEG7 Classic Bold on 2026-10-17"
       }
     ]
   }
