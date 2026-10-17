@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-16T21:06:50Z",
+ "generatedAt": "2026-10-17T04:23:59Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.16",
  "kevCount": 1748,
@@ -424,28 +424,6 @@
    "cwe": "Improper Validation of Certificate With Host Mismatch"
   },
   {
-   "id": "CVE-2026-58704",
-   "vendor": "Google",
-   "product": "Pixel",
-   "name": "Google Pixel Improper Authorization Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-16",
-    "due": "2026-09-19",
-    "ransomware": false
-   },
-   "epss": 0.006,
-   "percentile": 0.471,
-   "cvss": 8.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-693",
-   "cwe": "Protection Mechanism Failure"
-  },
-  {
    "id": "CVE-2026-65660",
    "vendor": "Microsoft",
    "product": "SharePoint",
@@ -534,28 +512,6 @@
    "cwe": "Stack-based buffer overflow"
   },
   {
-   "id": "CVE-2026-76460",
-   "vendor": "Cisco",
-   "product": "Identity Services Engine",
-   "name": "Cisco Identity Services Engine Incorrect Use of Privileged APIs Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-16",
-    "due": "2026-09-19",
-    "ransomware": false
-   },
-   "epss": 0.14,
-   "percentile": 0.965,
-   "cvss": 10.0,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-648",
-   "cwe": "Incorrect Use of Privileged APIs"
-  },
-  {
    "id": "CVE-2026-76504",
    "vendor": "Cisco",
    "product": "Catalyst SD-WAN Manager",
@@ -642,28 +598,6 @@
    "impact": "total",
    "cweId": "CWE-787",
    "cwe": "Out-of-bounds Write"
-  },
-  {
-   "id": "CVE-2026-87886",
-   "vendor": "Acronis",
-   "product": "Backup",
-   "name": "Acronis Backup Incorrect Default Permissions Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-16",
-    "due": "2026-09-19",
-    "ransomware": false
-   },
-   "epss": 0.002,
-   "percentile": 0.132,
-   "cvss": 7.8,
-   "cvssVersion": "3.0",
-   "cvssVector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-276",
-   "cwe": null
   },
   {
    "id": "CVE-2026-87902",
