@@ -73,7 +73,8 @@ A Reject means make no changes and ask what to adjust.
   Average, Last fill-up (each with its change) and Best MPG tally strip, then
   a mini strip (fill-ups, gallons, gal/100 mi, avg range as average MPG × the average gallons of tanks of 15+ gal,
   best miles per fill-up counting only fills of 10+ gal), the MPG by fill-up and month chart (WBR
-  6-12: the last 6 tanks by fill date, a gap, then the last 12 calendar months
+  6-12: the last 6 tanks, ticked by their closing fill-up's number in the log
+  (#57), a gap, then the last 12 calendar months
   ending this month; inline-SVG line, one hue, every point labelled, the line
   breaks where a month has no fill-up, y axis fitted; fill-ups stack above
   months when slots drop under 30px), then the MPG distribution (tanks per whole MPG, tallest bin

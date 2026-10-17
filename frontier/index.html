@@ -875,7 +875,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         const mpg = dm / g;
         perId[e.id] = mpg;
         tank[e.id] = dm;
-        tanks.push({ dm, gallons: g, mpg, date: e.date });
+        tanks.push({ dm, gallons: g, mpg, date: e.date, n: i + 1 }); // n: the closing fill-up's number in the log
         mi += dm; gal += g;
       }
       const n = tanks.length;
@@ -1240,7 +1240,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       const box = $('mpg-chart');
       const W = box.clientWidth - 12; // minus side padding
       if (W < 120 || !wbr.months.length) return;
-      const fills = wbr.fills.map((t) => ({ fill: true, mpg: t.mpg, fills: 1, year: Number(t.date.slice(0, 4)), tick: t.date.slice(5), name: t.date, when: `${int.format(t.dm)} mi · ${t.gallons.toFixed(3)} gal` }));
+      const fills = wbr.fills.map((t) => ({ fill: true, mpg: t.mpg, fills: 1, tick: `#${t.n}`, name: `Fill-up #${t.n}`, when: `${t.date} · ${int.format(t.dm)} mi · ${t.gallons.toFixed(3)} gal` }));
       const months = wbr.months.map((m) => ({ ...m, tick: MONTHS[m.month], name: `${MONTHS[m.month]} ${m.year}`, when: null }));
       const all = [...fills, ...months];
       const M = { top: 22, right: 6, bottom: 40, left: 30 };
@@ -1293,7 +1293,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         });
         if (d) svg.append(svgEl('path', { class: 'line', d: d.trim() }));
 
-        // A year under each run's first period and wherever the year turns, unless it would crowd the first.
+        // A year under the first month and wherever the year turns, unless it would crowd the first.
         const runStart = (i) => slots[i] && (i === 0 || !slots[i - 1]);
         const placed = [];
         slots.forEach((p, i) => {
@@ -1314,11 +1314,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
           }
           g.append(svgEl('rect', { class: 'hit', x: M.left + band * i, y: top, width: band, height: plotH + M.bottom - 4 }));
           svg.append(g);
-          // Fill dates (09-30) when they fit, else every other; month names, else initials.
-          const label = isFill ? (band >= 40 || (fills.length - 1 - i) % 2 === 0 ? p.tick : null) : wide ? p.tick : p.tick[0];
+          // Fill-up numbers (#57) when they fit, else every other; month names, else initials.
+          const label = isFill ? (band >= 30 || (fills.length - 1 - i) % 2 === 0 ? p.tick : null) : wide ? p.tick : p.tick[0];
           if (label) svg.append(svgEl('text', { class: 'tick', x, y: top + plotH + 18, 'text-anchor': 'middle' }, label));
           let s = i; while (s > 0 && slots[s - 1]) s--;
-          const yearHere = runStart(i) || (slots[i - 1].year !== p.year && (i - s) * band + band / 2 >= 52);
+          const yearHere = !isFill && (runStart(i) || (slots[i - 1].year !== p.year && (i - s) * band + band / 2 >= 52));
           if (yearHere) svg.append(svgEl('text', { class: 'tick year', x: runStart(i) ? M.left + band * i + 2 : x, y: top + plotH + 34, 'text-anchor': runStart(i) ? 'start' : 'middle' }, String(p.year)));
           const on = () => show(g, p, x, y(p.mpg == null ? lo : p.mpg));
           g.addEventListener('pointerenter', on);
