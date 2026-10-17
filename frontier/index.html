@@ -23,12 +23,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Vollkorn:ital,wght@0,400;1,400&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
     <style>
+@font-face{font-family:'DSEG7 Classic';src:url('fonts/DSEG7Classic-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 /* Federal Park Serigraph (light) */
 :root{
   color-scheme:light;
   --canvas:#f6efe1; --card:#ede3ce; --row-a:#f6efe1; --row-b:#ede3ce;
   --text:#181c16; --muted:#4d5843; --head-bg:#24422e; --head-text:#f6efe1; --head-line:#181c16;
+  --lcd-bg:#e98a2e; --lcd-ink:#1d140b; --lcd-ghost:rgba(29,20,11,.1);
   --key:#4d5843; --frame:#24422e; --divider:rgba(77,88,67,.25);
   --shadow:#181c16; --accent:#d9822b; --focus:#24422e; --sel-bg:#d9822b; --sel-fg:#181c16;
   --btn-hover-bg:#ede3ce; --btn-hover-fg:#24422e;
@@ -129,7 +131,9 @@ main{flex:1;padding:28px var(--margin) 0}
 .masthead h1{font-family:var(--display);font-weight:700;font-size:40px;line-height:48px;letter-spacing:.04em;text-transform:uppercase}
 .odo{display:flex;align-items:center;gap:12px}
 .odo label{font-family:var(--label);font-weight:600;font-size:13px;line-height:19px}
-.odo input[type=number]{width:200px;min-height:52px;text-align:right;font-family:var(--display);font-weight:700;font-size:34px;line-height:40px;letter-spacing:.02em;border-color:var(--head-line)}
+.odo .lcd{position:relative;display:flex;justify-content:flex-end;padding:10px 14px;background:var(--lcd-bg);border:1.5px solid var(--head-line);color:var(--lcd-ink);font-family:'DSEG7 Classic',monospace;font-weight:700;font-size:30px;line-height:30px;white-space:nowrap}
+.odo .lcd-ghost{color:var(--lcd-ghost)}
+.odo .lcd-val{position:absolute;right:14px;top:10px}
 .odo .unit{font-family:var(--label);font-weight:600;font-size:13px}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 28px;background:var(--b-sports);color:var(--f-sports);border-top:1px solid var(--band-line);border-bottom:1px solid var(--key)}
 .bar .btn{padding:8px 18px}
@@ -338,7 +342,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .minis .sign:nth-child(n+4){grid-column:span 3}
   .sign-body{padding-left:6px;padding-right:6px}
   .num{font-size:clamp(38px,4vw,64px)}
-  .odo input[type=number]{width:170px}
   .bar{gap:8px 14px}
 }
 @media(max-width:960px){
@@ -358,7 +361,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .bar-actions{width:100%;gap:8px}
   .bar .bar-actions .btn{flex:1;min-width:0;padding:8px 8px}
   .odo{width:100%}
-  .odo input[type=number]{width:auto;flex:1;min-width:0}
+  .odo .lcd{flex:1;min-width:0}
   .bar{padding:10px 16px}
   .panel{padding:20px 16px 24px}
   .signs{gap:10px}
@@ -456,7 +459,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <h1>Frontier Maintenance</h1>
                 <div class="odo">
                     <label for="odo">Odometer</label>
-                    <input type="number" id="odo" placeholder="—" readonly>
+                    <output class="lcd" id="odo"><span class="lcd-ghost" id="odo-ghost" aria-hidden="true">888888</span><span class="lcd-val" id="odo-v"></span></output>
                     <span class="unit">mi</span>
                 </div>
             </div>
@@ -1760,9 +1763,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
       renderYears();
       driveSel.value = data.truck.drive || '';
       paintUse();
-      odo.value = data.truck.odometer == null ? '' : String(data.truck.odometer);
-      if (!fuelMiles.dataset.typed) fuelMiles.value = odo.value;
-      if (!svcMiles.dataset.typed) svcMiles.value = odo.value;
+      // D40-style LCD: lit digits over unlit 8s, at least six wide.
+      const reading = data.truck.odometer == null ? '' : String(data.truck.odometer);
+      $('odo-ghost').textContent = '8'.repeat(Math.max(6, reading.length));
+      $('odo-v').textContent = reading;
+      if (!fuelMiles.dataset.typed) fuelMiles.value = reading;
+      if (!svcMiles.dataset.typed) svcMiles.value = reading;
       renderAll(); paintStatus();
     }
 

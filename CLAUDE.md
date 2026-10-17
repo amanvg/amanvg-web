@@ -63,7 +63,10 @@ A Reject means make no changes and ask what to adjust.
   the masthead, counts sit on tally strips, lists are ledgers.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
-  odometer is locked to the highest reading across fill-ups and services.
+  odometer is locked to the highest reading across fill-ups and services and
+  shows in the masthead as a D40-style amber LCD (flat, same in both themes,
+  DSEG7 Classic Bold self-hosted in `frontier/fonts/` under the SIL OFL, lit
+  digits over unlit `888888`).
   Truck setup sits left on Maintenance; due-status tally strip, schedule and
   history sit right. On Fuel the Add fill-up form (date, odometer, gallons, Partial and Missed
   previous flags) sits left (Connected only); a fill-up's pencil loads it into
