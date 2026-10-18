@@ -84,7 +84,13 @@
   }
 
   // ------------------------------------------------------------ grid construction
-  const colWidth = (c) => sheet().colWidths[c] || DEFAULT_W;
+  const baseWidth = (c) => sheet().colWidths[c] || sheet().defaultColWidth || DEFAULT_W;
+  const colWidth = (c) => (sheet().hiddenCols[c] ? 0 : baseWidth(c));
+  const rowHidden = (r) => !!sheet().hiddenRows[r];
+  const colHidden = (c) => !!sheet().hiddenCols[c];
+  // Excel column widths are in characters of the default font: 7px per character plus 5px of padding.
+  const pxToChars = (px) => Math.round((px >= 12 ? (px - 5) / 7 : px / 12) * 100) / 100;
+  const charsToPx = (ch) => Math.round(ch >= 1 ? ch * 7 + 5 : ch * 12);
   const tdAt = (r, c) => (tbody.rows[r] ? tbody.rows[r].cells[c + 1] : null);
 
   function rowHtml(from, to) {
@@ -105,7 +111,7 @@
     cg.innerHTML = cols;
     grid.prepend(cg);
     let head = '<tr><th class="corner" title="Select All"></th>';
-    for (let c = 0; c < S.cols; c++) head += `<th>${colName(c)}<span class="col-resizer" data-c="${c}"></span></th>`;
+    for (let c = 0; c < S.cols; c++) head += `<th${colHidden(c) ? ' class="hc"' : ''}>${colName(c)}<span class="col-resizer" data-c="${c}"></span></th>`;
     thead.innerHTML = head + '</tr>';
     tbody.innerHTML = rowHtml(0, S.rows);
     updateTableWidth();
@@ -122,7 +128,16 @@
     if (to <= from) return;
     tbody.insertAdjacentHTML('beforeend', rowHtml(from, to));
     S.rows = to;
-    for (let r = from; r < to; r++) for (let c = 0; c < S.cols; c++) renderCell(r, c);
+    for (let r = from; r < to; r++) { rowProps(r); for (let c = 0; c < S.cols; c++) renderCell(r, c); }
+  }
+  // Hidden rows and set row heights (in points, as in Excel).
+  function rowProps(r) {
+    const tr = tbody.rows[r];
+    if (!tr) return;
+    tr.classList.toggle('hr', rowHidden(r));
+    const h = sheet().rowHeights[r];
+    const v = h ? Math.round(h * 4 / 3) + 'px' : '';
+    if (tr.style.height !== v) tr.style.height = v;
   }
   function ensureSize(r, c) {
     if (c >= S.cols) { S.cols = Math.min(MAX_COLS, c + 10); buildGrid(); }
@@ -142,6 +157,7 @@
     let widened = false;
     const ext = sheet().extent();
     for (let c = c1; c <= Math.min(c2, S.cols - 1); c++) {
+      if (colHidden(c)) continue;
       let need = 0;
       for (let r = r1; r <= Math.min(r2, ext.rows - 1); r++) {
         const v = valueAt(r, c);
@@ -154,63 +170,182 @@
     if (widened) buildGrid();
   }
 
-  // Borders: style.bd = { t, b, l, r } of [weight, colour]; the older style.border means thin black on every side.
-  // A cell draws its own bottom and right edges (its gridlines) plus a neighbour's facing edge, and its top and left
-  // edges only in row 1 / column A. Extra weight is drawn inward with inset shadows so the grid never shifts.
-  const EDGE_RANK = { thin: 1, medium: 2, double: 3, thick: 4 };
-  function edgeOf(st, side) { return (st.bd && st.bd[side]) || (st.border ? ['thin', '#000'] : null); }
+  // Borders: style.bd = { t, b, l, r, du, dd } of [line style, colour]; the older style.border means thin black on
+  // every side. A cell draws its own bottom and right edges (its gridlines) plus a neighbour's facing edge, and its top
+  // and left edges only in row 1 / column A. Solid weight is drawn inward with inset shadows and dashed styles as
+  // background layers, so the grid never shifts.
+  // Excel's 13 line styles: [width px, dash pattern (null = solid, 'double')].
+  const LINE_STYLES = {
+    hair: [1, [1, 1]], dotted: [1, [2, 2]], dashDotDot: [1, [6, 2, 2, 2, 2, 2]], dashDot: [1, [6, 2, 2, 2]], dashed: [1, [4, 2]], thin: [1, null],
+    mediumDashDotDot: [2, [9, 3, 3, 3, 3, 3]], slantDashDot: [2, [9, 1, 3, 1]], mediumDashDot: [2, [9, 3, 3, 3]], mediumDashed: [2, [9, 3]],
+    medium: [2, null], thick: [3, null], double: [3, 'double'],
+  };
+  const LINE_ORDER = Object.keys(LINE_STYLES);
+  const lineDef = (style) => LINE_STYLES[style] || LINE_STYLES.thin;
+  const EDGE_RANK = Object.fromEntries(LINE_ORDER.map((k, i) => [k, lineDef(k)[0] * 20 + (lineDef(k)[1] === null ? 10 : lineDef(k)[1] === 'double' ? 5 : i / 20)]));
+  function edgeOf(st, side) { return (st.bd && st.bd[side]) || (st.border && side.length === 1 ? ['thin', '#000'] : null); }
   function edgeAt(r, c, side) { const cell = sheet().get(r, c); return cell && cell.style ? edgeOf(cell.style, side) : null; }
   const pickEdge = (own, other) => (!own ? other : other && EDGE_RANK[other[0]] > EDGE_RANK[own[0]] ? other : own);
-  function edgeShadows([weight, col], dx, dy, bg, hasLine) {
+  function edgeShadows([style, col], dx, dy, bg, hasLine) {
     const at = (n, c) => `inset ${dx * n}px ${dy * n}px 0 ${c}`;
-    if (weight === 'double') return hasLine ? [at(1, bg), at(2, col)] : [at(1, col), at(2, bg), at(3, col)];
-    const n = { thin: 1, medium: 2, thick: 3 }[weight] - (hasLine ? 1 : 0);
+    if (style === 'double') return hasLine ? [at(1, bg), at(2, col)] : [at(1, col), at(2, bg), at(3, col)];
+    const n = lineDef(style)[0] - (hasLine ? 1 : 0);
     return n > 0 ? [at(n, col)] : [];
   }
-
-  // Orientation: style.rot is 45 / -45 (degrees counterclockwise), 90 / -90 (rotate up / down) or 'v' (stacked).
-  // Each is laid out so the row grows to fit, as Excel's rows do.
-  function rotHtml(text, st) {
-    const t = esc(text);
-    if (st.rot === 'v') return `<span class="rot rot-v">${t}</span>`;
-    if (st.rot === 90 || st.rot === -90) return `<span class="rot ${st.rot > 0 ? 'rot-up' : 'rot-down'}">${t}</span>`;
-    const lh = (st.size || 11) * 4 / 3 * 1.25, k = Math.SQRT1_2;
-    const h = Math.ceil((textWidth(text, st) + lh) * k) + 2, x = Math.ceil(lh * k);
-    return `<span class="rot rot-a" style="height:${h}px"><span class="${st.rot > 0 ? 'ccw' : 'cw'}" style="left:${x}px">${t}</span></span>`;
+  // Excel's 18 fill patterns as 8x8 bitmaps, drawn in the pattern colour over the cell colour.
+  const PATTERNS = {
+    solid: null,
+    gray75: (x, y) => (x + 2 * (y % 2)) % 4 !== 0,
+    gray50: (x, y) => (x + y) % 2 === 0,
+    gray25: (x, y) => (x + 2 * (y % 2)) % 4 === 0,
+    gray125: (x, y) => y % 2 === 0 && (x + 2 * ((y / 2) % 2)) % 4 === 0,
+    gray0625: (x, y) => y % 2 === 0 && (x + 4 * ((y / 2) % 2)) % 8 === 0,
+    darkHorizontal: (x, y) => y % 4 < 2,
+    darkVertical: (x) => x % 4 < 2,
+    darkDown: (x, y) => (x - y + 8) % 4 < 2,
+    darkUp: (x, y) => (x + y) % 4 < 2,
+    darkGrid: (x, y) => (x % 4 < 2) === (y % 4 < 2),
+    darkTrellis: (x, y) => (x + y) % 4 < 2 || (x - y + 8) % 4 === 0,
+    lightHorizontal: (x, y) => y % 4 === 0,
+    lightVertical: (x) => x % 4 === 0,
+    lightDown: (x, y) => (x - y + 8) % 4 === 0,
+    lightUp: (x, y) => (x + y) % 4 === 0,
+    lightGrid: (x, y) => x % 4 === 0 || y % 4 === 0,
+    lightTrellis: (x, y) => (x + y) % 4 === 0 || (x - y + 8) % 4 === 0,
+  };
+  const PATTERN_NAMES = {
+    solid: 'Solid', gray75: '75% Gray', gray50: '50% Gray', gray25: '25% Gray', gray125: '12.5% Gray', gray0625: '6.25% Gray',
+    darkHorizontal: 'Horizontal Stripe', darkVertical: 'Vertical Stripe', darkDown: 'Reverse Diagonal Stripe', darkUp: 'Diagonal Stripe',
+    darkGrid: 'Diagonal Crosshatch', darkTrellis: 'Thick Diagonal Crosshatch', lightHorizontal: 'Thin Horizontal Stripe', lightVertical: 'Thin Vertical Stripe',
+    lightDown: 'Thin Reverse Diagonal Stripe', lightUp: 'Thin Diagonal Stripe', lightGrid: 'Thin Horizontal Crosshatch', lightTrellis: 'Thin Diagonal Crosshatch',
+  };
+  const patternCache = new Map();
+  function patternImage(id, col) {
+    const k = id + col;
+    if (!patternCache.has(k)) {
+      let d = '';
+      for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) if (PATTERNS[id](x, y)) d += `M${x} ${y}h1v1h-1z`;
+      patternCache.set(k, `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8' shape-rendering='crispEdges'><path fill='${col}' d='${d}'/></svg>`)}")`);
+    }
+    return patternCache.get(k);
+  }
+  // Fill Effects: style.grad = { c1, c2, style, variant }.
+  function gradientImage(g) {
+    const [a, b] = [g.c1 || '#ffffff', g.c2 || ACCENT[0]];
+    const v = g.variant || 1;
+    const lin = (dir) => (v === 3 ? `linear-gradient(${dir},${a},${b},${a})` : v === 2 ? `linear-gradient(${dir},${b},${a})` : `linear-gradient(${dir},${a},${b})`);
+    if (g.style === 'vertical') return lin('to right');
+    if (g.style === 'diagUp') return lin('to bottom right');
+    if (g.style === 'diagDown') return lin('to bottom left');
+    if (g.style === 'corner') return `radial-gradient(circle at ${['left top', 'right top', 'left bottom', 'right bottom'][v - 1] || 'left top'},${a},${b})`;
+    if (g.style === 'center') return v === 2 ? `radial-gradient(circle,${b},${a})` : `radial-gradient(circle,${a},${b})`;
+    return lin('to bottom');
+  }
+  // Fill colour, pattern, gradient and borders of a cell as inline CSS; edges = { b, r, t, l } already resolved.
+  function paintCss(st, edges, defaultBg) {
+    const css = [], shadows = [], layers = [];
+    const color = st.pat === 'solid' ? st.patColor || '#000000' : st.fill;
+    const bg = color || '#ffffff';
+    const sides = { b: [0, -1, true], r: [-1, 0, true], t: [0, 1, false], l: [1, 0, false] };
+    for (const side of ['b', 'r', 't', 'l']) {
+      const e = edges[side];
+      if (!e) continue;
+      const [dx, dy, hasLine] = sides[side];
+      const [w, dash] = lineDef(e[0]);
+      const patterned = Array.isArray(dash);
+      if (hasLine) css.push(`border-${side === 'b' ? 'bottom' : 'right'}-color:${patterned ? 'transparent' : e[1]}`);
+      if (!patterned) { shadows.push(...edgeShadows(e, dx, dy, bg, hasLine)); continue; }
+      const horiz = side === 'b' || side === 't';
+      let at = 0;
+      const stops = dash.map((len, i) => { const seg = `${i % 2 ? 'transparent' : e[1]} ${at}px ${at + len}px`; at += len; return seg; });
+      layers.push([`repeating-linear-gradient(${horiz ? 'to right' : 'to bottom'},${stops.join(',')})`, horiz ? `100% ${w}px` : `${w}px 100%`, { b: 'left bottom', t: 'left top', l: 'left top', r: 'right top' }[side], 'no-repeat']);
+    }
+    for (const [side, dir] of [['dd', 'to top right'], ['du', 'to bottom right']]) {
+      const e = st.bd && st.bd[side];
+      if (!e) continue;
+      const half = lineDef(e[0])[0] / 2 + 0.25;
+      layers.push([`linear-gradient(${dir},transparent calc(50% - ${half}px),${e[1]} calc(50% - ${half}px),${e[1]} calc(50% + ${half}px),transparent calc(50% + ${half}px))`, '100% 100%', '0 0', 'no-repeat']);
+    }
+    if (st.pat && st.pat !== 'solid' && PATTERNS[st.pat]) layers.push([patternImage(st.pat, st.patColor || '#000000'), '8px 8px', '0 0', 'repeat']);
+    if (st.grad) layers.push([gradientImage(st.grad), '100% 100%', '0 0', 'no-repeat']);
+    if (color || defaultBg) css.push('background-color:' + (color || defaultBg));
+    if (layers.length) {
+      css.push('background-image:' + layers.map((l) => l[0]).join(','), 'background-size:' + layers.map((l) => l[1]).join(','),
+        'background-position:' + layers.map((l) => l[2]).join(','), 'background-repeat:' + layers.map((l) => l[3]).join(','));
+    }
+    if (shadows.length) css.push('box-shadow:' + shadows.join(','));
+    return css;
   }
 
-  // Displayed text and its kind; numbers too wide for `avail` px show as ###, as in Excel.
+  // Orientation: style.rot is degrees counterclockwise (-90 to 90; 90 / -90 rotate up / down) or 'v' (stacked).
+  // Each is laid out so the row grows to fit, as Excel's rows do.
+  function rotHtml(text, st, inner = esc(text)) {
+    if (st.rot === 'v') return `<span class="rot rot-v">${inner}</span>`;
+    if (st.rot === 90 || st.rot === -90) return `<span class="rot ${st.rot > 0 ? 'rot-up' : 'rot-down'}">${inner}</span>`;
+    const rad = Math.abs(st.rot) * Math.PI / 180, lh = (st.size || 11) * 4 / 3 * 1.25;
+    const h = Math.ceil(textWidth(text, st) * Math.sin(rad) + lh * Math.cos(rad)) + 2, x = Math.ceil(lh * Math.sin(rad));
+    return `<span class="rot rot-a" style="height:${h}px"><span class="${st.rot > 0 ? 'ccw' : 'cw'}" style="left:${x}px;transform:rotate(${-st.rot}deg)">${inner}</span></span>`;
+  }
+  const angled = (st) => typeof st.rot === 'number' && Math.abs(st.rot) < 90 && st.rot !== 0;
+
+  // Displayed text, its kind and any format colour; numbers too wide for `avail` px show as ###, as in Excel.
   function displayText(r, c, st, avail) {
     const cell = sheet().get(r, c);
-    if (!cell || cell.input === '') return { text: '', kind: '' };
-    if (S.showFormulas && cell.formula) return { text: cell.input, kind: 'str' };
+    if (!cell || cell.input === '') return { text: '', kind: '', color: null };
+    if (S.showFormulas && cell.formula) return { text: cell.input, kind: 'str', color: null };
     const v = valueAt(r, c);
     let text = XL.formatValue(v, st);
     let kind = typeof v === 'number' ? 'num' : typeof v === 'boolean' ? 'bool' : XL.isErr(v) ? 'err' : 'str';
     if (st.fmt === 'text' && !cell.formula) kind = 'str';
-    if (kind === 'num' && !st.wrap && !st.rot && textWidth(text, st) > avail) text = '#'.repeat(Math.max(1, Math.floor(avail / textWidth('#', st))));
-    return { text, kind };
+    if (kind === 'num' && !st.wrap && !st.rot && !st.shrink && textWidth(text, st) > avail) text = '#'.repeat(Math.max(1, Math.floor(avail / textWidth('#', st))));
+    return { text, kind, color: XL.formatColor(v, st) };
   }
   function fontCss(st) {
     const css = [];
     if (st.bold) css.push('font-weight:700');
     if (st.italic) css.push('font-style:italic');
-    const deco = [st.underline && 'underline', st.strike && 'line-through'].filter(Boolean).join(' ');
-    if (deco) css.push('text-decoration:' + deco);
-    if (st.color) css.push('color:' + st.color);
+    const lines = [st.underline && 'underline', st.strike && 'line-through'].filter(Boolean);
+    if (lines.length) {
+      css.push('text-decoration-line:' + lines.join(' '));
+      if (st.underline === 'double' || st.underline === 'doubleAcc') css.push('text-decoration-style:double');
+      if (st.underline === 'singleAcc' || st.underline === 'doubleAcc') css.push('text-underline-offset:3px');
+    }
+    if (st.outline) css.push('color:transparent', `-webkit-text-stroke:0.6px ${st.color || '#000000'}`);
+    else if (st.color) css.push('color:' + st.color);
+    if (st.shadow) css.push('text-shadow:1px 1px 1px rgba(0,0,0,.4)');
     if (st.size) css.push(`font-size:${st.size}pt`);
     if (st.font) css.push(`font-family:"${st.font}",var(--cell-font)`);
     return css;
   }
-  function edgeCss(bottom, right, top, left, bg) {
-    const css = [], shadows = [];
-    if (bottom) { css.push('border-bottom-color:' + bottom[1]); shadows.push(...edgeShadows(bottom, 0, -1, bg, true)); }
-    if (right) { css.push('border-right-color:' + right[1]); shadows.push(...edgeShadows(right, -1, 0, bg, true)); }
-    if (top) shadows.push(...edgeShadows(top, 0, 1, bg, false));
-    if (left) shadows.push(...edgeShadows(left, 1, 0, bg, false));
-    if (shadows.length) css.push('box-shadow:' + shadows.join(','));
-    return css;
+  // Alignment, effects and content shared by grid cells and merged cells: { html, text, css, cls }.
+  function cellContent(st, text, kind, color, width) {
+    const css = [], cls = [];
+    const avail = width - 7 - (st.indent ? st.indent * 9 : 0);
+    if (color && !st.outline) css.push('color:' + color);
+    if (text && st.align === 'fill' && !st.rot) text = text.repeat(Math.max(1, Math.floor(avail / Math.max(1, textWidth(text, st)))));
+    if (st.shrink && !st.wrap && text && !st.rot) {
+      const w = textWidth(text, st);
+      if (w > avail) css.push(`font-size:${((st.size || 11) * avail / w).toFixed(2)}pt`);
+    }
+    if (st.wrap || ['justify', 'distributed'].includes(st.align) || ['justify', 'distributed'].includes(st.valign)) cls.push('wrap');
+    if (st.align === 'distributed' || st.jdist) css.push('text-align-last:justify');
+    if (st.valign) css.push('vertical-align:' + (st.valign === 'justify' || st.valign === 'distributed' ? 'top' : st.valign));
+    if (st.indent) css.push(`${st.align === 'right' ? 'padding-right' : 'padding-left'}:${3 + st.indent * 9}px`);
+    if (st.indent && st.align === 'distributed') css.push(`padding-right:${3 + st.indent * 9}px`);
+    if (st.dir) css.push('direction:' + st.dir);
+    let inner = esc(text);
+    if (st.script && text) inner = `<span class="xs-${st.script}">${inner}</span>`;
+    const html = st.rot && text ? rotHtml(text, st, inner) : st.script && text ? inner : null;
+    return { html, text, css, cls };
   }
+  const hAlign = (st, kind, across) => {
+    const a = st.align;
+    if (a === 'centerAcross') return across ? 'left' : 'center';
+    if (a === 'fill') return 'left';
+    if (a === 'justify' || a === 'distributed') return 'justify';
+    if (a) return a;
+    return st.dir === 'rtl' && kind === 'str' ? 'right' : null;
+  };
   // Center Across Selection: the text centres over this cell and the empty, same-aligned cells to its right.
   function centerAcrossWidth(r, c) {
     let k = c + 1, w = colWidth(c);
@@ -220,11 +355,17 @@
 
   function renderCell(r, c, td = tdAt(r, c)) {
     if (!td) return;
+    if (colHidden(c)) {
+      if (td._rot || td.textContent) { td._rot = null; td.textContent = ''; }
+      td.className = 'hc';
+      td.removeAttribute('style');
+      return;
+    }
     const m = mergeAt(r, c);
     if (m) { // drawn by the merged cell laid over the grid
       // A one-row merge's top-left cell keeps an invisible line of its font so the row stays tall enough.
       const strut = m.r1 === m.r2 && r === m.r1 && c === m.c1 && filled(r, c);
-      const text = strut ? '\u00a0' : '';
+      const text = strut ? ' ' : '';
       if (td._rot || td.textContent !== text) { td._rot = null; td.textContent = text; }
       td.className = view().freezeCol && c === 0 ? 'frozen-col' : '';
       const cssText = strut ? [...fontCss(S.wb.getStyle(S.si, r, c)), 'color:transparent'].join(';') : '';
@@ -234,26 +375,28 @@
     const cell = sheet().get(r, c);
     const st = (cell && cell.style) || {};
     const across = st.align === 'centerAcross' && cell && cell.input !== '' && !st.rot ? centerAcrossWidth(r, c) : 0;
-    const { text, kind } = displayText(r, c, st, (across || colWidth(c)) - 7);
-    let cls = kind;
-    if (st.wrap) cls += ' wrap';
-    else if (kind === 'str' && text && (!st.align || st.align === 'left') && !filled(r, c + 1)) cls += ' ov';
-    if (st.rot && text && (st.rot === 45 || st.rot === -45) && !cls.includes(' ov') && !filled(r, c + 1)) cls += ' ov';
+    const shown = displayText(r, c, st, (across || colWidth(c)) - 7);
+    const { kind } = shown;
+    const content = cellContent(st, shown.text, kind, shown.color, across || colWidth(c));
+    const text = content.text;
+    let cls = [kind, ...content.cls].filter(Boolean).join(' ');
+    const plainLeft = !st.align || st.align === 'left';
+    if (!cls.includes('wrap') && kind === 'str' && text && plainLeft && st.dir !== 'rtl' && !filled(r, c + 1)) cls += ' ov';
+    if (text && angled(st) && !cls.includes(' ov') && !filled(r, c + 1)) cls += ' ov';
     if (across && !cls.includes(' ov')) cls += ' ov';
     if (view().freezeCol && c === 0) cls += ' frozen-col';
     const css = fontCss(st);
-    if (st.fill) css.push('background:' + st.fill);
-    if (st.align) css.push('text-align:' + (st.align === 'centerAcross' ? (across ? 'left' : 'center') : st.align));
-    if (st.valign) css.push('vertical-align:' + st.valign);
-    if (st.indent) css.push(`padding-left:${3 + st.indent * 9}px`);
+    const ha = hAlign(st, kind, across);
+    if (ha) css.push('text-align:' + ha);
+    css.push(...content.css);
     const bottom = pickEdge(edgeOf(st, 'b'), edgeAt(r + 1, c, 't'));
     const right = pickEdge(edgeOf(st, 'r'), edgeAt(r, c + 1, 'l'));
-    css.push(...edgeCss(bottom, right, r === 0 && edgeOf(st, 't'), c === 0 && edgeOf(st, 'l'), st.fill || '#fff'));
+    css.push(...paintCss(st, { b: bottom, r: right, t: r === 0 && edgeOf(st, 't'), l: c === 0 && edgeOf(st, 'l') }));
     if (cls.includes(' ov')) css.push('overflow:visible;position:relative;z-index:1');
-    const html = st.rot && text ? rotHtml(text, st) : across && text ? `<span class="ca" style="width:${across - 7}px">${esc(text)}</span>` : null;
+    const html = content.html || (across && text ? `<span class="ca" style="width:${across - 7}px">${esc(text)}</span>` : null);
     if (html) { if (td._rot !== html) { td.innerHTML = html; td._rot = html; } }
     else if (td._rot || td.textContent !== text) { td._rot = null; td.textContent = text; }
-    td.className = cls;
+    td.className = cls.trim();
     const cssText = css.join(';');
     if (td.getAttribute('style') !== cssText) { if (cssText) td.setAttribute('style', cssText); else td.removeAttribute('style'); }
   }
@@ -283,20 +426,20 @@
       const box = boxFor(m.r1, m.c1, m.r2, m.c2);
       if (!box) return;
       const st = S.wb.getStyle(S.si, m.r1, m.c1);
-      const { text, kind } = displayText(m.r1, m.c1, st, box.width - 7);
-      const h = st.align === 'centerAcross' ? 'center' : st.align || (kind === 'num' ? 'right' : kind === 'bool' || kind === 'err' ? 'center' : 'left');
+      const shown = displayText(m.r1, m.c1, st, box.width - 7);
+      const content = cellContent(st, shown.text, shown.kind, shown.color, box.width);
+      const h = hAlign(st, shown.kind, false) || (shown.kind === 'num' ? 'right' : shown.kind === 'bool' || shown.kind === 'err' ? 'center' : 'left');
       const css = fontCss(st);
-      css.push('background:' + (st.fill || '#fff'));
-      css.push('align-items:' + (st.valign === 'top' ? 'flex-start' : st.valign === 'middle' ? 'center' : 'flex-end'));
-      if (st.indent) css.push(`padding-left:${3 + st.indent * 9}px`);
+      css.push('align-items:' + (st.valign === 'middle' ? 'center' : st.valign && st.valign !== 'bottom' ? 'flex-start' : 'flex-end'));
+      css.push(...content.css.filter((x) => !x.startsWith('vertical-align')));
       const bottom = pickEdge(edgeOf(st, 'b'), edgeAt(m.r2 + 1, m.c1, 't'));
       const right = pickEdge(edgeOf(st, 'r'), edgeAt(m.r1, m.c2 + 1, 'l'));
-      css.push(...edgeCss(bottom, right, m.r1 === 0 && edgeOf(st, 't'), m.c1 === 0 && edgeOf(st, 'l'), st.fill || '#fff'));
+      css.push(...paintCss(st, { b: bottom, r: right, t: m.r1 === 0 && edgeOf(st, 't'), l: m.c1 === 0 && edgeOf(st, 'l') }, '#ffffff'));
       const el = document.createElement('div');
-      el.className = 'merge-cell' + (st.wrap ? ' wrap' : '');
+      el.className = 'merge-cell' + (content.cls.includes('wrap') ? ' wrap' : '');
       el.dataset.i = i;
       el.setAttribute('style', css.join(';'));
-      el.innerHTML = `<div class="mc-in" style="text-align:${h}">${st.rot && text ? rotHtml(text, st) : esc(text)}</div>`;
+      el.innerHTML = `<div class="mc-in" style="text-align:${h}">${content.html || esc(content.text)}</div>`;
       gridInner.appendChild(el);
     });
     placeMerges();
@@ -361,7 +504,7 @@
   }
 
   function renderAll() {
-    for (let r = 0; r < S.rows; r++) for (let c = 0; c < S.cols; c++) renderCell(r, c);
+    for (let r = 0; r < S.rows; r++) { rowProps(r); for (let c = 0; c < S.cols; c++) renderCell(r, c); }
     renderMerges();
     const firstRow = tbody.rows[0];
     for (const tr of tbody.rows) tr.classList.remove('frozen');
@@ -390,7 +533,13 @@
 
   // ------------------------------------------------------------ selection
   function boxFor(r1, c1, r2, c2) {
-    const a = tdAt(r1, c1), b = tdAt(Math.min(r2, S.rows - 1), Math.min(c2, S.cols - 1));
+    r2 = Math.min(r2, S.rows - 1); c2 = Math.min(c2, S.cols - 1);
+    while (r1 < r2 && rowHidden(r1)) r1++;
+    while (r2 > r1 && rowHidden(r2)) r2--;
+    while (c1 < c2 && colHidden(c1)) c1++;
+    while (c2 > c1 && colHidden(c2)) c2--;
+    if (rowHidden(r1)) return null;
+    const a = tdAt(r1, c1), b = tdAt(r2, c2);
     if (!a || !b) return null;
     return { left: a.offsetLeft, top: a.offsetTop, width: b.offsetLeft + b.offsetWidth - a.offsetLeft, height: b.offsetTop + b.offsetHeight - a.offsetTop };
   }
@@ -421,7 +570,7 @@
     for (let c = c1; c <= Math.min(c2, S.cols - 1); c++) headRow.cells[c + 1].classList.add('hl', ...(fullCols ? ['full'] : []));
     for (let r = r1; r <= Math.min(r2, S.rows - 1); r++) tbody.rows[r].cells[0].classList.add('hl', ...(fullRows ? ['full'] : []));
     if (!S.editing) {
-      bar.value = S.wb.getInput(S.si, S.sel.ar, S.sel.ac);
+      bar.value = view().protected && S.wb.getStyle(S.si, S.sel.ar, S.sel.ac).hideFormula ? '' : S.wb.getInput(S.si, S.sel.ar, S.sel.ac);
       if (document.activeElement !== nameBox) {
         nameBox.value = S.drag && S.drag.type === 'select' && (r1 !== r2 || c1 !== c2) ? `${r2 - r1 + 1}R x ${c2 - c1 + 1}C` : addr(S.sel.ar, S.sel.ac);
       }
@@ -499,6 +648,8 @@
       } else if (m) { if (dr > 0) r = m.r2; if (dc > 0) c = m.c2; }
       r = clamp(r + dr, 0, MAX_ROWS - 1); c = clamp(c + dc, 0, MAX_COLS - 1);
     }
+    while (dr && rowHidden(r) && r + dr >= 0 && r + dr < MAX_ROWS) r += dr;
+    while (dc && colHidden(c) && c + dc >= 0 && c + dc < MAX_COLS) c += dc;
     ensureSize(r, c);
     if (extend) { S.sel.fr = r; S.sel.fc = c; updateSelection(); }
     else { const t = mergeAt(r, c); if (t) { r = t.r1; c = t.c1; } setSel(r, c); }
@@ -532,8 +683,13 @@
   // ------------------------------------------------------------ editing
   const activeInput = () => (S.editing && S.editing.src === 'bar' ? bar : editor);
 
-  function guard() {
-    if (view().protected) {
+  // On a protected sheet only unlocked cells take content; everything else is refused.
+  function allUnlocked(rect) {
+    for (let r = rect.r1; r <= rect.r2; r++) for (let c = rect.c1; c <= rect.c2; c++) if (!S.wb.getStyle(S.si, r, c).unlocked) return false;
+    return true;
+  }
+  function guard(rect) {
+    if (view().protected && !(rect && allUnlocked(rect))) {
       msg('This cell is on a protected sheet. To change it, turn off Protect Sheet on the Review tab.');
       return true;
     }
@@ -542,7 +698,7 @@
 
   function startEdit(mode, initial, src = 'cell') {
     if (S.editing) return true;
-    if (guard()) return false;
+    if (guard({ r1: S.sel.ar, c1: S.sel.ac, r2: S.sel.ar, c2: S.sel.ac })) return false;
     const { ar: r, ac: c } = S.sel;
     setSel(r, c, S.sel.fr, S.sel.fc);
     ensureVisible(r, c);
@@ -839,22 +995,22 @@
 
   function pasteText(text) {
     if (S.clip && normClip(text) === normClip(S.clip.text)) return pasteInternal();
-    if (guard()) return;
     const rows = parseDelimited(text.replace(/\n+$/, ''), '\t');
-    pushUndo();
     const { r1, c1 } = selRect();
+    if (guard({ r1, c1, r2: r1 + rows.length - 1, c2: c1 + Math.max(...rows.map((r) => r.length)) - 1 })) return;
+    pushUndo();
     rows.forEach((row, i) => row.forEach((v, j) => { ensureSize(r1 + i, c1 + j); S.wb.setInput(S.si, r1 + i, c1 + j, v); }));
     setSel(r1, c1, r1 + rows.length - 1, c1 + Math.max(...rows.map((r) => r.length)) - 1);
     changed();
   }
   function pasteInternal() {
-    if (guard()) return;
     const clip = S.clip;
     const h = clip.cells.length, w = clip.cells[0].length;
     const { r1, c1, r2, c2 } = selRect();
     const reps = (span, n) => (span % n === 0 ? span / n : 1);
     const rr = reps(r2 - r1 + 1, h), rc = reps(c2 - c1 + 1, w);
     const target = { r1, c1, r2: r1 + rr * h - 1, c2: c1 + rc * w - 1 };
+    if (guard(target)) return;
     if (sheet().merges.some((m) => overlaps(m, target) && !(m.r1 >= target.r1 && m.c1 >= target.c1 && m.r2 <= target.r2 && m.c2 <= target.c2))) return msg("We can't do that to a merged cell.");
     pushUndo();
     sheet().merges = sheet().merges.filter((m) => !overlaps(m, target));
@@ -1011,10 +1167,11 @@
   // ------------------------------------------------------------ cell styles (Excel's gallery, Office 2023+ theme)
   // A style formats only the categories it includes; the rest of the cell's formatting is kept.
   const STYLE_CATS = {
-    number: ['fmt', 'dec'], align: ['align', 'valign', 'wrap', 'indent', 'rot'],
-    font: ['font', 'size', 'bold', 'italic', 'underline', 'strike', 'color'], border: ['border', 'bd'], fill: ['fill'],
+    number: ['fmt', 'dec', 'sep', 'neg', 'sym', 'pattern'], align: ['align', 'valign', 'wrap', 'indent', 'rot', 'shrink', 'dir', 'jdist'],
+    font: ['font', 'size', 'bold', 'italic', 'underline', 'strike', 'color', 'script', 'outline', 'shadow'], border: ['border', 'bd'],
+    fill: ['fill', 'pat', 'patColor', 'grad'], protect: ['unlocked', 'hideFormula'],
   };
-  const CAT_LABEL = { number: 'Number', align: 'Alignment', font: 'Font', border: 'Border', fill: 'Fill' };
+  const CAT_LABEL = { number: 'Number', align: 'Alignment', font: 'Font', border: 'Border', fill: 'Fill', protect: 'Protection' };
   const ALL_CATS = Object.keys(STYLE_CATS);
   const box = (weight, col) => ({ t: [weight, col], b: [weight, col], l: [weight, col], r: [weight, col] });
   const TEXT2 = '#0e2841';
@@ -1138,13 +1295,14 @@
   }
 
   // New / Duplicate / Modify: a name plus the categories the style includes, taken by example.
-  const STYLE_ORDER = ['number', 'align', 'font', 'border', 'fill'];
+  const STYLE_ORDER = ['number', 'align', 'font', 'border', 'fill', 'protect'];
   function describeCat(cat, d) {
-    if (cat === 'number') return d.fmt ? $(`#numFmt option[value="${d.fmt}"]`)?.textContent || d.fmt : 'General';
+    if (cat === 'number') return d.fmt === 'custom' ? d.pattern : d.fmt ? $(`#numFmt option[value="${d.fmt}"]`)?.textContent || d.fmt : 'General';
     if (cat === 'align') return [d.align === 'centerAcross' ? 'Center Across Selection' : d.align ? d.align[0].toUpperCase() + d.align.slice(1) : 'General', `${d.valign ? d.valign[0].toUpperCase() + d.valign.slice(1) : 'Bottom'} Aligned`, d.wrap && 'Wrap', d.indent && `Indent ${d.indent}`, d.rot && (d.rot === 'v' ? 'Vertical' : `${d.rot}°`)].filter(Boolean).join(', ');
     if (cat === 'font') return [`${d.font || 'Aptos Narrow'} ${d.size || 11}`, d.bold && 'Bold', d.italic && 'Italic', d.underline && 'Underline', d.color && d.color.toUpperCase()].filter(Boolean).join(', ');
     if (cat === 'border') return d.bd || d.border ? 'Borders' : 'No Borders';
-    return d.fill ? d.fill.toUpperCase() : 'No Shading';
+    if (cat === 'protect') return [d.unlocked ? 'Unlocked' : 'Locked', d.hideFormula && 'Hidden'].filter(Boolean).join(', ');
+    return d.grad ? 'Gradient' : d.pat ? PATTERN_NAMES[d.pat] : d.fill ? d.fill.toUpperCase() : 'No Shading';
   }
   function uniqueStyleName(base, n = 1) {
     while (styleNameTaken(`${base} ${n}`)) n++;
@@ -1202,6 +1360,8 @@
     const on = (cmd, v) => document.querySelectorAll(`.ribbon [data-cmd="${cmd}"]`).forEach((b) => b.classList.toggle('on', !!v));
     on('bold', st.bold); on('italic', st.italic); on('underline', st.underline); on('strike', st.strike);
     on('mergeCenter', !!mergeAt(S.sel.ar, S.sel.ac));
+    on('lockCell', !st.unlocked);
+    $('#fmtProtect').lastChild.textContent = view().protected ? 'Unprotect Sheet' : 'Protect Sheet';
     on('rotCCW', st.rot === 45); on('rotCW', st.rot === -45); on('rotVertical', st.rot === 'v'); on('rotUp', st.rot === 90); on('rotDown', st.rot === -90);
     document.querySelectorAll('#orientMenu [data-cmd]').forEach((b) => b.setAttribute('aria-checked', b.classList.contains('on')));
     $('[data-menu="orientMenu"]').classList.toggle('on', !!st.rot);
@@ -1209,6 +1369,7 @@
     on('valignTop', st.valign === 'top'); on('valignMiddle', st.valign === 'middle'); on('valignBottom', !st.valign || st.valign === 'bottom');
     on('showFormulas', S.showFormulas); on('protect', view().protected); on('freezeRow', view().freezeRow); on('freezeCol', view().freezeCol);
     on('printGridlines', view().printGridlines); on('formatPainter', S.painter);
+    $('#fmtProtect').classList.remove('on');
     $('#fontFamily').value = st.font || 'Aptos Narrow';
     $('#fontSize').value = String(st.size || 11);
     if (![...$('#fontSize').options].some((o) => o.value === String(st.size || 11))) $('#fontSize').add(new Option(String(st.size)));
@@ -1236,13 +1397,13 @@
     scheduleSave();
   }
   function deleteSheet(i = S.si) {
-    if (S.wb.sheets.length === 1) return msg('A workbook must contain at least one visible worksheet.');
+    if (S.wb.sheets.filter((x) => !x.hidden).length === 1 && !S.wb.sheets[i].hidden) return msg(ONE_VISIBLE);
     const sh = S.wb.sheets[i];
     const go = () => {
       pushUndo();
       S.wb.sheets.splice(i, 1);
       S.wb.recalc();
-      S.si = Math.min(S.si, S.wb.sheets.length - 1);
+      S.si = nearestVisible(Math.min(S.si, S.wb.sheets.length - 1), -1);
       rebuild();
     };
     if (sh.cells.size) confirmBox(`Delete "${sh.name}"? Its data will be removed. You can undo this with ⌘Z.`, go);
@@ -1263,7 +1424,7 @@
   }
   function renderTabs() {
     const host = $('#sheetTabs');
-    host.innerHTML = S.wb.sheets.map((s, i) => `<div class="sheet-tab${i === S.si ? ' active' : ''}" data-si="${i}" draggable="true">${esc(s.name)}</div>`).join('');
+    host.innerHTML = S.wb.sheets.map((s, i) => (s.hidden ? '' : `<div class="sheet-tab${i === S.si ? ' active' : ''}" data-si="${i}" draggable="true"${s.tabColor ? ` data-color style="--tab:${s.tabColor};--tab-fg:${readableOn(s.tabColor)}"` : ''}>${esc(s.name)}</div>`)).join('');
   }
   function renameSheetInline(i) {
     const tab = $(`#sheetTabs [data-si="${i}"]`);
@@ -1646,7 +1807,7 @@
     };
   }
   const hideCtx = () => { ctxMenu.style.display = 'none'; };
-  const closeMenus = () => { endPreview(); document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open')); };
+  const closeMenus = () => { endPreview(); document.querySelectorAll('.menu.open, .sub.open').forEach((m) => m.classList.remove('open')); };
 
   // ------------------------------------------------------------ document title flyout
   const titleBtn = $('#docTitleBtn'), flyout = $('#titleFlyout'), flyName = $('#flyName'), flyErr = $('#flyErr');
@@ -1712,11 +1873,17 @@
     download(`${S.docName}${S.wb.sheets.length > 1 ? ' - ' + sheet().name : ''}.csv`, new Blob([lines.join('\r\n')], { type: 'text/csv' }));
   }
   const ERR_CODES = { '#NULL!': 0x00, '#DIV/0!': 0x07, '#VALUE!': 0x0f, '#REF!': 0x17, '#NAME?': 0x1d, '#NUM!': 0x24, '#N/A': 0x2a };
+  // The Excel format code for a style's number format (Custom shows it; .xlsx saves it).
   function numFmtCode(st) {
+    if (st.fmt === 'custom') return st.pattern || 'General';
     const d = st.dec ?? 2;
     const dec = d ? '.' + '0'.repeat(d) : '';
+    const negs = (b) => ({ red: `${b};[Red]${b}`, paren: `${b}_);(${b})`, redparen: `${b}_);[Red](${b})` }[st.neg] || b);
+    const sym = st.sym === 'none' ? '' : '"$"';
+    if (!st.fmt && st.dec !== undefined) return `0${dec}`;
     return {
-      number: `#,##0${dec}`, currency: `"$"#,##0${dec}`, accounting: `_("$"* #,##0${dec}_)`, percent: `0${st.dec !== undefined ? dec : '.00'}%`,
+      number: negs(`${st.sep === false ? '0' : '#,##0'}${dec}`), currency: negs(`${sym}#,##0${dec}`),
+      accounting: `_(${sym}* #,##0${dec}_);_(${sym}* (#,##0${dec});_(${sym}* "-"${'?'.repeat(d)}_);_(@_)`, percent: `0${st.dec !== undefined ? dec : '.00'}%`,
       date: 'yyyy-mm-dd', longdate: 'dddd, mmmm d, yyyy', datetime: 'yyyy-mm-dd hh:mm', time: 'hh:mm:ss', scientific: `0${dec}E+00`, text: '@',
     }[st.fmt];
   }
@@ -1744,7 +1911,8 @@
       for (const m of sh.merges) { maxR = Math.max(maxR, m.r2); maxC = Math.max(maxC, m.c2); }
       if (sh.merges.length) ws['!merges'] = sh.merges.map((m) => ({ s: { r: m.r1, c: m.c1 }, e: { r: m.r2, c: m.c2 } }));
       ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: maxR, c: maxC } });
-      ws['!cols'] = Array.from({ length: maxC + 1 }, (_, c) => ({ wpx: sh.colWidths[c] || DEFAULT_W }));
+      ws['!cols'] = Array.from({ length: maxC + 1 }, (_, c) => ({ wpx: sh.colWidths[c] || sh.defaultColWidth || DEFAULT_W, ...(sh.hiddenCols[c] ? { hidden: true } : {}) }));
+      ws['!rows'] = Array.from({ length: maxR + 1 }, (_, r) => ({ ...(sh.rowHeights[r] ? { hpt: sh.rowHeights[r] } : {}), ...(sh.hiddenRows[r] ? { hidden: true } : {}) }));
       XLSX.utils.book_append_sheet(out, ws, sh.name);
     });
     XLSX.writeFile(out, `${S.docName}.xlsx`);
@@ -1762,7 +1930,7 @@
     if (plain.includes(',')) return { fmt: 'number', dec };
     if (plain === '@') return { fmt: 'text' };
     if (/^0(\.0+)?$/.test(plain)) return { fmt: 'general', dec };
-    return null;
+    return { fmt: 'custom', pattern: z };
   }
   function fromXlsx(xwb) {
     const wb = new XL.Workbook();
@@ -1790,7 +1958,8 @@
         }
       }
       sh.merges = (ws['!merges'] || []).map((m) => ({ r1: m.s.r, c1: m.s.c, r2: m.e.r, c2: m.e.c }));
-      (ws['!cols'] || []).forEach((col, i) => { if (col && (col.wpx || col.wch)) sh.colWidths[i] = Math.round(col.wpx || col.wch * 7 + 5); });
+      (ws['!cols'] || []).forEach((col, i) => { if (col && (col.wpx || col.wch)) sh.colWidths[i] = Math.round(col.wpx || col.wch * 7 + 5); if (col && col.hidden) sh.hiddenCols[i] = true; });
+      (ws['!rows'] || []).forEach((row, i) => { if (row && row.hpt && row.customHeight !== false) sh.rowHeights[i] = row.hpt; if (row && row.hidden) sh.hiddenRows[i] = true; });
     });
     if (!wb.sheets.length) wb.addSheet('Sheet1');
     wb.recalc();
@@ -1930,12 +2099,12 @@
     zoomIn: () => setZoom(S.zoom + 10),
     zoomOut: () => setZoom(S.zoom - 10),
     zoom100: () => setZoom(100),
-    prevSheet: () => switchSheet(S.si - 1),
-    nextSheet: () => switchSheet(S.si + 1),
+    prevSheet: () => switchSheet(nearestVisible(S.si - 1, -1)),
+    nextSheet: () => switchSheet(nearestVisible(S.si + 1, 1)),
   };
   function clearCells(contents, formats) {
     if (S.editing && !commitEdit()) return;
-    if (guard()) return;
+    if (guard(contents && !formats ? selRect() : undefined)) return;
     pushUndo();
     if (formats) { const rect = selRect(); sheet().merges = sheet().merges.filter((m) => !overlaps(m, rect)); }
     forSel((r, c) => {
@@ -1944,6 +2113,631 @@
     });
     changed();
   }
+
+  // ------------------------------------------------------------ colour palette (Excel's theme and standard colours)
+  const THEME_BASE = ['#ffffff', '#000000', '#e8e8e8', '#0e2841', ...ACCENT];
+  const STANDARD_COLORS = ['#c00000', '#ff0000', '#ffc000', '#ffff00', '#92d050', '#00b050', '#00b0f0', '#0070c0', '#002060', '#7030a0'];
+  function hexToHsl(hex) {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn, l = (mx + mn) / 2;
+    let h = 0, sat = 0;
+    if (d) { sat = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn); h = (mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4) / 6; }
+    return [h, sat, l];
+  }
+  function hslToHex([h, sat, l]) {
+    const q = l < 0.5 ? l * (1 + sat) : l + sat - l * sat, p = 2 * l - q;
+    const f = (t) => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < 0.5 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; };
+    return '#' + [h + 1 / 3, h, h - 1 / 3].map((t) => Math.round(f(t) * 255).toString(16).padStart(2, '0')).join('');
+  }
+  // Excel lightens (+) or darkens (-) a theme colour by changing its HSL lightness.
+  const tintHex = (hex, t) => { const [h, sat, l] = hexToHsl(hex); return hslToHex([h, sat, t >= 0 ? l * (1 - t) + t : l * (1 + t)]); };
+  const THEME_STEPS = (hex, i) => (i === 0 ? [-0.05, -0.15, -0.25, -0.35, -0.5] : i === 1 ? [0.5, 0.35, 0.25, 0.15, 0.05]
+    : i === 2 ? [-0.1, -0.25, -0.5, -0.75, -0.9] : i === 3 ? [0.9, 0.75, 0.5, 0.25, 0.1] : [0.8, 0.6, 0.4, -0.25, -0.5]);
+  const THEME_GRID = THEME_BASE.map((hex, i) => [hex, ...THEME_STEPS(hex, i).map((t) => tintHex(hex, t))]);
+  function readableOn(hex) { const [, , l] = hexToHsl(hex); return l > 0.6 ? '#000000' : '#ffffff'; }
+  // The palette as HTML: an optional "No Color"/"Automatic" row, theme colours, standard colours and More Colors.
+  function paletteHtml(current, none) {
+    const sw = (hex) => `<button class="sw${current && current.toLowerCase() === hex ? ' on' : ''}" data-color="${hex}" title="${hex.toUpperCase()}" style="background:${hex}"></button>`;
+    let html = none ? `<button class="pal-none${current ? '' : ' on'}" data-color="">${none}</button>` : '';
+    html += '<div class="pal-head">Theme Colors</div><div class="pal-grid">';
+    for (let row = 0; row < 6; row++) for (let col = 0; col < 10; col++) html += sw(THEME_GRID[col][row]);
+    html += '</div><div class="pal-head">Standard Colors</div><div class="pal-grid">' + STANDARD_COLORS.map(sw).join('') + '</div>';
+    return html + '<label class="pal-more">More Colors…<input type="color" data-more></label>';
+  }
+  // Wires a palette container: a swatch click or a More Colors pick calls onPick(hex or null).
+  function bindPalette(host, onPick) {
+    host.onclick = (e) => {
+      if (e.target.closest('.pal-more')) { e.stopPropagation(); return; }
+      const b = e.target.closest('[data-color]');
+      if (b) { e.stopPropagation(); onPick(b.dataset.color || null); }
+    };
+    const more = host.querySelector('[data-more]');
+    if (more) { more.onclick = (e) => e.stopPropagation(); more.onchange = () => onPick(more.value); }
+  }
+  // A palette popover under a button, used by the Format Cells dialog.
+  const palPop = document.createElement('div');
+  palPop.className = 'pal-pop';
+  document.body.appendChild(palPop);
+  function openPalette(btn, current, none, onPick) {
+    palPop.innerHTML = paletteHtml(current, none);
+    const host = btn.closest('dialog') || document.body;
+    host.appendChild(palPop);
+    palPop.style.display = 'block';
+    const b = btn.getBoundingClientRect();
+    palPop.style.left = Math.max(8, Math.min(b.left, window.innerWidth - palPop.offsetWidth - 8)) + 'px';
+    palPop.style.top = (b.bottom + palPop.offsetHeight + 8 > window.innerHeight ? Math.max(8, b.top - palPop.offsetHeight - 4) : b.bottom + 4) + 'px';
+    bindPalette(palPop, (hex) => { palPop.style.display = 'none'; onPick(hex); });
+  }
+  document.addEventListener('mousedown', (e) => { if (palPop.style.display === 'block' && !palPop.contains(e.target) && !e.target.closest('[data-pal]')) palPop.style.display = 'none'; });
+
+  // ------------------------------------------------------------ Format menu (Cells group)
+  const ONE_VISIBLE = 'A workbook must contain at least one visible worksheet.\n\nTo hide, delete, or move the selected sheet(s), you must first insert a new sheet or unhide a sheet that is already hidden.';
+  // The nearest sheet that isn't hidden, looking from i in direction dir and then the other way.
+  function nearestVisible(i, dir) {
+    const n = S.wb.sheets.length;
+    for (let k = clamp(i, 0, n - 1); k >= 0 && k < n; k += dir) if (!S.wb.sheets[k].hidden) return k;
+    for (let k = clamp(i, 0, n - 1); k >= 0 && k < n; k -= dir) if (!S.wb.sheets[k].hidden) return k;
+    return 0;
+  }
+  // A one-number dialog (Row Height, Column Width, Standard Width).
+  function numberDialog(title, label, value, max, maxMsg, onOk) {
+    if (S.editing && !commitEdit()) return;
+    const d = $('#numDialog');
+    $('#numTitle').textContent = title;
+    $('#numLabel').textContent = label;
+    $('#numInput').value = value;
+    $('#numErr').hidden = true;
+    $('#numOk').onclick = (e) => {
+      const v = Number($('#numInput').value);
+      if ($('#numInput').value.trim() === '' || !isFinite(v) || v < 0 || v > max) { e.preventDefault(); $('#numErr').textContent = maxMsg; $('#numErr').hidden = false; $('#numInput').focus(); }
+    };
+    d.returnValue = '';
+    d.onclose = () => { if (d.returnValue === 'ok') onOk(Number($('#numInput').value)); focusGrid(); };
+    d.showModal();
+    $('#numInput').select();
+  }
+  const sameOr = (vals) => (vals.every((v) => v === vals[0]) ? vals[0] : '');
+  const selRows = () => { const { r1, r2 } = selRect(); return Array.from({ length: Math.min(r2, S.rows - 1) - r1 + 1 }, (_, i) => r1 + i); };
+  const selCols = () => { const { c1, c2 } = selRect(); return Array.from({ length: Math.min(c2, S.cols - 1) - c1 + 1 }, (_, i) => c1 + i); };
+  function formatRows(fn) { if (guard()) return; pushUndo(); selRows().forEach(fn); buildGrid(); changed(); }
+  function formatCols(fn) { if (guard()) return; pushUndo(); selCols().forEach(fn); buildGrid(); changed(); }
+  function rowHeightDialog() {
+    if (guard()) return;
+    const pts = selRows().filter((r) => !rowHidden(r)).map((r) => sheet().rowHeights[r] || Math.round(tbody.rows[r].offsetHeight * 0.75 * 4) / 4);
+    numberDialog('Row Height', 'Row height:', sameOr(pts), 409, 'Row height must be between 0 and 409.', (pt) => formatRows((r) => {
+      if (pt === 0) sheet().hiddenRows[r] = true; else { sheet().rowHeights[r] = pt; delete sheet().hiddenRows[r]; }
+    }));
+  }
+  function colWidthDialog() {
+    if (guard()) return;
+    numberDialog('Column Width', 'Column width:', sameOr(selCols().filter((c) => !colHidden(c)).map((c) => pxToChars(baseWidth(c)))), 255, 'Column width must be between 0 and 255 characters.', (ch) => formatCols((c) => {
+      if (ch === 0) sheet().hiddenCols[c] = true; else { sheet().colWidths[c] = charsToPx(ch); delete sheet().hiddenCols[c]; }
+    }));
+  }
+  function defaultWidthDialog() {
+    if (guard()) return;
+    numberDialog('Standard Width', 'Standard column width:', pxToChars(sheet().defaultColWidth || DEFAULT_W), 255, 'Column width must be between 0 and 255 characters.', (ch) => {
+      pushUndo();
+      sheet().defaultColWidth = ch ? charsToPx(ch) : null;
+      buildGrid(); changed();
+    });
+  }
+  function autofitCols() {
+    if (guard()) return;
+    const { r1, r2 } = selRect();
+    const whole = r1 === 0 && r2 >= S.rows - 1;
+    pushUndo();
+    selCols().filter((c) => !colHidden(c)).forEach((c) => autofitColumn(c, whole ? 0 : r1, whole ? Infinity : r2, true));
+    buildGrid(); changed();
+  }
+  function hideSheet() {
+    if (guard()) return;
+    if (S.wb.sheets.filter((x) => !x.hidden).length === 1) return msg(ONE_VISIBLE);
+    pushUndo();
+    sheet().hidden = true;
+    switchSheet(nearestVisible(S.si + 1, 1));
+    renderTabs(); scheduleSave();
+  }
+  function unhideSheetDialog() {
+    const hidden = S.wb.sheets.map((x, i) => [x, i]).filter(([x]) => x.hidden);
+    if (!hidden.length) return;
+    const d = $('#uhDialog');
+    $('#uhList').innerHTML = hidden.map(([x, i], k) => `<option value="${i}"${k === 0 ? ' selected' : ''}>${esc(x.name)}</option>`).join('');
+    d.returnValue = '';
+    d.onclose = () => {
+      const pick = [...$('#uhList').selectedOptions].map((o) => +o.value);
+      if (d.returnValue === 'ok' && pick.length) {
+        pushUndo();
+        pick.forEach((i) => { S.wb.sheets[i].hidden = false; });
+        switchSheet(pick[0]);
+        renderTabs(); scheduleSave();
+      }
+      focusGrid();
+    };
+    d.showModal();
+  }
+  // Copies sheet i to position `to` with Excel's "Name (2)" naming.
+  function copySheet(i, to) {
+    const copy = XL.Workbook.fromJSON({ sheets: [S.wb.toJSON().sheets[i]] }).sheets[0];
+    const base = copy.name.replace(/ \(\d+\)$/, '');
+    let n = 2;
+    while (S.wb.sheetIndex(`${base} (${n})`) >= 0) n++;
+    copy.name = `${base} (${n})`;
+    copy.hidden = false;
+    S.wb.sheets.splice(to, 0, copy);
+    S.wb.recalc();
+    return to;
+  }
+  function moveCopyDialog(i = S.si) {
+    if (S.editing && !commitEdit()) return;
+    const d = $('#mcDialog');
+    $('#mcBook').innerHTML = `<option>${esc(S.docName)}</option>`;
+    $('#mcBefore').innerHTML = S.wb.sheets.map((x, k) => (x.hidden ? '' : `<option value="${k}"${k === i ? ' selected' : ''}>${esc(x.name)}</option>`)).join('') + `<option value="${S.wb.sheets.length}">(move to end)</option>`;
+    $('#mcCopy').checked = false;
+    d.returnValue = '';
+    d.onclose = () => {
+      const opt = $('#mcBefore').selectedOptions[0];
+      if (d.returnValue === 'ok' && opt) {
+        const before = +opt.value;
+        pushUndo();
+        if ($('#mcCopy').checked) switchSheet(copySheet(i, before));
+        else if (before !== i && before !== i + 1) {
+          const [sh] = S.wb.sheets.splice(i, 1);
+          const to = before > i ? before - 1 : before;
+          S.wb.sheets.splice(to, 0, sh);
+          S.wb.recalc();
+          switchSheet(to);
+        }
+        renderTabs(); scheduleSave();
+      }
+      focusGrid();
+    };
+    d.showModal();
+  }
+  function setTabColor(hex) {
+    closeMenus();
+    pushUndo();
+    sheet().tabColor = hex;
+    renderTabs(); scheduleSave(); focusGrid();
+  }
+  const tabColorMenu = $('#tabColorMenu');
+  bindPalette(tabColorMenu, setTabColor);
+  const FORMAT_CMDS = {
+    rowHeight: rowHeightDialog,
+    autofitRows: () => formatRows((r) => { delete sheet().rowHeights[r]; }),
+    colWidth: colWidthDialog,
+    autofitCols,
+    defaultWidth: defaultWidthDialog,
+    hideRows: () => formatRows((r) => { sheet().hiddenRows[r] = true; }),
+    hideCols: () => formatCols((c) => { sheet().hiddenCols[c] = true; }),
+    hideSheet,
+    unhideRows: () => formatRows((r) => { delete sheet().hiddenRows[r]; }),
+    unhideCols: () => formatCols((c) => { delete sheet().hiddenCols[c]; }),
+    unhideSheet: unhideSheetDialog,
+    renameSheet: () => renameSheetInline(S.si),
+    moveCopySheet: () => moveCopyDialog(),
+    lockCell: () => applyStyle({ unlocked: activeStyle().unlocked ? undefined : true }),
+    formatCells: () => openFormatCells(),
+  };
+  Object.assign(CMD, FORMAT_CMDS);
+
+  // ------------------------------------------------------------ Format Cells dialog
+  const fcd = $('#fcDialog');
+  const SAMPLE_DATE = 40982.5625; // 2012-03-14 13:30, Excel's own sample
+  const DATE_TYPES = ['yyyy-mm-dd', 'm/d/yyyy', 'dddd, mmmm d, yyyy', 'm/d', 'm/d/yy', 'mm/dd/yy', 'd-mmm', 'd-mmm-yy', 'dd-mmm-yy', 'mmm-yy', 'mmmm-yy', 'mmmm d, yyyy', 'm/d/yy h:mm AM/PM', 'm/d/yy h:mm', 'yyyy-mm-dd hh:mm', 'mmmmm', 'mmmmm-yy', 'd-mmm-yyyy'];
+  const TIME_TYPES = ['hh:mm:ss', 'h:mm:ss AM/PM', 'h:mm', 'h:mm AM/PM', 'h:mm:ss', 'mm:ss', 'mm:ss.0', '[h]:mm:ss', 'm/d/yy h:mm AM/PM', 'm/d/yy h:mm', 'yyyy-mm-dd hh:mm:ss'];
+  const FRACTION_TYPES = [['# ?/?', 'Up to one digit (1/4)'], ['# ??/??', 'Up to two digits (21/25)'], ['# ???/???', 'Up to three digits (312/943)'], ['# ?/2', 'As halves (1/2)'], ['# ?/4', 'As quarters (2/4)'], ['# ?/8', 'As eighths (4/8)'], ['# ??/16', 'As sixteenths (8/16)'], ['# ?/10', 'As tenths (3/10)'], ['# ??/100', 'As hundredths (30/100)']];
+  const SPECIAL_TYPES = [['00000', 'Zip Code'], ['00000-0000', 'Zip Code + 4'], ['[<=9999999]###-####;(###) ###-####', 'Phone Number'], ['000-00-0000', 'Social Security Number']];
+  const CUSTOM_TYPES = ['General', '0', '0.00', '#,##0', '#,##0.00', '#,##0_);(#,##0)', '#,##0_);[Red](#,##0)', '#,##0.00_);(#,##0.00)', '#,##0.00_);[Red](#,##0.00)',
+    '"$"#,##0_);("$"#,##0)', '"$"#,##0_);[Red]("$"#,##0)', '"$"#,##0.00_);("$"#,##0.00)', '"$"#,##0.00_);[Red]("$"#,##0.00)', '0%', '0.00%', '0.00E+00', '##0.0E+0',
+    '# ?/?', '# ??/??', 'yyyy-mm-dd', 'm/d/yyyy', 'd-mmm-yy', 'd-mmm', 'mmm-yy', 'h:mm AM/PM', 'h:mm:ss AM/PM', 'h:mm', 'h:mm:ss', 'm/d/yyyy h:mm', 'mm:ss', 'mm:ss.0', '@', '[h]:mm:ss',
+    '_("$"* #,##0_);_("$"* (#,##0);_("$"* "-"_);_(@_)', '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', '_("$"* #,##0.00_);_("$"* (#,##0.00);_("$"* "-"??_);_(@_)', '_(* #,##0.00_);_(* (#,##0.00);_(* "-"??_);_(@_)'];
+  const BUILTIN_CODE = { 'yyyy-mm-dd': { fmt: 'date' }, 'dddd, mmmm d, yyyy': { fmt: 'longdate' }, 'yyyy-mm-dd hh:mm': { fmt: 'datetime' }, 'hh:mm:ss': { fmt: 'time' } };
+  const FC = { tab: 'number', st: {}, touched: new Set(), edges: {}, multi: false, lineStyle: 'thin', lineColor: '#000000' };
+  const fcTouch = (...keys) => keys.forEach((k) => FC.touched.add(k));
+  const fcSt = () => FC.st;
+
+  // -- Number
+  function numCategory(st) {
+    if (st.fmt === 'custom') {
+      const p = st.pattern || 'General';
+      if (DATE_TYPES.includes(p)) return ['Date', p];
+      if (TIME_TYPES.includes(p)) return ['Time', p];
+      if (FRACTION_TYPES.some(([c]) => c === p)) return ['Fraction', p];
+      if (SPECIAL_TYPES.some(([c]) => c === p)) return ['Special', p];
+      return ['Custom', p];
+    }
+    return ({ number: ['Number'], currency: ['Currency'], accounting: ['Accounting'], percent: ['Percentage'], scientific: ['Scientific'], text: ['Text'],
+      date: ['Date', 'yyyy-mm-dd'], longdate: ['Date', 'dddd, mmmm d, yyyy'], datetime: ['Date', 'yyyy-mm-dd hh:mm'], time: ['Time', 'hh:mm:ss'] }[st.fmt])
+      || (st.dec !== undefined ? ['Number'] : ['General']);
+  }
+  const customCodesInUse = () => {
+    const out = new Set();
+    for (const sh of S.wb.sheets) for (const cell of sh.cells.values()) if (cell.style && cell.style.fmt === 'custom' && cell.style.pattern) out.add(cell.style.pattern);
+    return [...out].filter((c) => !CUSTOM_TYPES.includes(c));
+  };
+  // The number-format part of a style built from the Number tab's controls.
+  function numberPatch() {
+    const cat = $('#fcCat').value, dec = clamp(Math.round(+$('#fcDec').value || 0), 0, 30);
+    const p = { fmt: undefined, dec: undefined, sep: undefined, neg: undefined, sym: undefined, pattern: undefined };
+    const type = $('#fcType').value;
+    if (cat === 'Number') Object.assign(p, { fmt: 'number', dec, sep: $('#fcSep').checked ? undefined : false, neg: $('#fcNeg').value || undefined });
+    else if (cat === 'Currency') Object.assign(p, { fmt: 'currency', dec, sym: $('#fcSym').value === 'none' ? 'none' : undefined, neg: $('#fcNeg').value || undefined });
+    else if (cat === 'Accounting') Object.assign(p, { fmt: 'accounting', dec, sym: $('#fcSym').value === 'none' ? 'none' : undefined });
+    else if (cat === 'Percentage') Object.assign(p, { fmt: 'percent', dec });
+    else if (cat === 'Scientific') Object.assign(p, { fmt: 'scientific', dec });
+    else if (cat === 'Text') p.fmt = 'text';
+    else if (cat === 'Date' || cat === 'Time' || cat === 'Fraction' || cat === 'Special') Object.assign(p, BUILTIN_CODE[type] || { fmt: 'custom', pattern: type });
+    else if (cat === 'Custom') { const code = $('#fcCode').value.trim(); if (code && code !== 'General') Object.assign(p, BUILTIN_CODE[code] || { fmt: 'custom', pattern: code }); }
+    return p;
+  }
+  function fcSampleValue() { const v = valueAt(S.sel.ar, S.sel.ac); return filled(S.sel.ar, S.sel.ac) ? v : null; }
+  function renderNumberPane(keepType) {
+    const cat = $('#fcCat').value;
+    fcd.querySelectorAll('[data-fcpane="number"] [data-show]').forEach((el) => { el.hidden = !el.dataset.show.split(' ').includes(cat); });
+    const dec = clamp(Math.round(+$('#fcDec').value || 0), 0, 30), sym = $('#fcSym').value === 'none' ? '' : '$';
+    if (cat === 'Number' || cat === 'Currency') {
+      const keep = $('#fcNeg').value;
+      const base = { fmt: cat === 'Number' ? 'number' : 'currency', dec, sep: cat === 'Number' && !$('#fcSep').checked ? false : undefined, sym: sym ? undefined : 'none' };
+      $('#fcNeg').innerHTML = ['', 'red', 'paren', 'redparen'].map((n) => {
+        const st = { ...base, neg: n || undefined };
+        return `<option value="${n}"${XL.formatColor(-1234.1, st) ? ' class="neg-red"' : ''}>${esc(XL.formatValue(-1234.1, st))}</option>`;
+      }).join('');
+      $('#fcNeg').value = keep || '';
+      if ($('#fcNeg').selectedIndex < 0) $('#fcNeg').selectedIndex = 0;
+    }
+    if (!keepType) {
+      const list = cat === 'Date' ? DATE_TYPES.map((c) => [c, XL.formatCode(SAMPLE_DATE, c).text]) : cat === 'Time' ? TIME_TYPES.map((c) => [c, XL.formatCode(SAMPLE_DATE, c).text])
+        : cat === 'Fraction' ? FRACTION_TYPES : cat === 'Special' ? SPECIAL_TYPES : cat === 'Custom' ? [...CUSTOM_TYPES, ...customCodesInUse()].map((c) => [c, c]) : [];
+      $('#fcType').innerHTML = list.map(([c, label]) => `<option value="${esc(c)}">${esc(label)}</option>`).join('');
+    }
+    fcSampleUpdate();
+  }
+  function fcSampleUpdate() {
+    const v = fcSampleValue();
+    const st = { ...fcSt(), ...numberPatch() };
+    const out = $('#fcSample');
+    out.textContent = v === null ? '' : XL.formatValue(v, st);
+    out.style.color = (v !== null && XL.formatColor(v, st)) || '';
+  }
+  function fcSetCategory(cat, code) {
+    $('#fcCat').value = cat;
+    renderNumberPane(false);
+    if (code !== undefined) {
+      if (cat === 'Custom') { $('#fcCode').value = code; if (![...$('#fcType').options].some((o) => o.value === code)) $('#fcType').add(new Option(code, code)); }
+      $('#fcType').value = code;
+    }
+    if ($('#fcType').selectedIndex < 0 && $('#fcType').options.length) $('#fcType').selectedIndex = 0;
+    if (cat === 'Custom' && !$('#fcCode').value) $('#fcCode').value = $('#fcType').value;
+    fcSampleUpdate();
+  }
+
+  // -- Alignment
+  function renderDial() {
+    const st = fcSt();
+    const deg = typeof st.rot === 'number' ? st.rot : 0;
+    const cx = 18, cy = 65, R = 52;
+    let svg = '';
+    for (let a = -90; a <= 90; a += 15) {
+      const t = a * Math.PI / 180, x = cx + R * Math.cos(t), y = cy - R * Math.sin(t);
+      svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${a % 45 ? 2 : 3}" class="dot${a === deg && st.rot !== 'v' ? ' on' : ''}" data-deg="${a}"/>`;
+    }
+    if (st.rot !== 'v') svg += `<g transform="rotate(${-deg} ${cx} ${cy})"><text x="${cx + 4}" y="${cy + 4}" class="dial-text">Text</text><line x1="${cx + 34}" y1="${cy}" x2="${cx + R - 6}" y2="${cy}" class="dial-line"/></g>`;
+    $('#fcDial').innerHTML = svg;
+    $('#fcVert').setAttribute('aria-pressed', st.rot === 'v' ? 'true' : 'false');
+    $('#fcDeg').value = st.rot === 'v' ? '' : deg;
+    $('#fcDeg').disabled = st.rot === 'v';
+  }
+  function setRot(v) { fcSt().rot = v === 0 ? undefined : v; fcTouch('rot'); renderDial(); }
+
+  // -- Font
+  const FONT_SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
+  const fontNames = () => [...new Set([...[...$('#fontFamily').options].map((o) => o.value), 'Aptos', 'Aptos Display'])];
+  function renderFontPane() {
+    const st = fcSt();
+    const style = st.bold && st.italic ? 'Bold Italic' : st.bold ? 'Bold' : st.italic ? 'Italic' : 'Regular';
+    $('#fcFont').value = st.font || 'Aptos Narrow';
+    $('#fcFontList').value = st.font || 'Aptos Narrow';
+    $('#fcStyle').value = style; $('#fcStyleTxt').value = style;
+    $('#fcSize').value = st.size || 11;
+    $('#fcSizeList').value = String(st.size || 11);
+    $('#fcUnderline').value = st.underline === true ? 'single' : st.underline || '';
+    setPalBtn($('#fcColor'), st.color, 'Automatic');
+    $('#fcStrike').checked = !!st.strike; $('#fcSup').checked = st.script === 'sup'; $('#fcSub').checked = st.script === 'sub';
+    $('#fcOutline').checked = !!st.outline; $('#fcShadow').checked = !!st.shadow;
+    $('#fcNormal').checked = !['font', 'size', 'bold', 'italic', 'underline', 'strike', 'color', 'script', 'outline', 'shadow'].some((k) => st[k]);
+    const pv = $('#fcFontPreview');
+    pv.setAttribute('style', fontCss({ ...st, size: Math.min(st.size || 11, 28) }).join(';'));
+    pv.textContent = st.font || 'Aptos Narrow';
+    pv.innerHTML = st.script ? `<span class="xs-${st.script}">${esc(pv.textContent)}</span>` : esc(pv.textContent);
+  }
+  function setPalBtn(btn, hex, none) {
+    btn.querySelector('i').style.background = hex || (none === 'Automatic' ? '#000000' : 'transparent');
+    btn.querySelector('span').textContent = hex ? hex.toUpperCase() : none;
+    btn.dataset.value = hex || '';
+  }
+
+  // -- Border: FC.edges holds t, b, l, r, h, v, du, dd as an edge, null (none) or 'mixed'.
+  function readEdges() {
+    const { r1, c1, r2, c2 } = selRect();
+    const R2 = Math.min(r2, Math.max(r1, sheet().extent().rows)), C2 = Math.min(c2, Math.max(c1, sheet().extent().cols));
+    const same = (list) => { const k = list.map((e) => JSON.stringify(e || null)); return k.every((x) => x === k[0]) ? JSON.parse(k[0]) : 'mixed'; };
+    const at = (r, c, side) => edgeAt(r, c, side);
+    const own = (r, c, side, nr, nc, nside) => pickEdge(at(r, c, side), at(nr, nc, nside));
+    const cols = Array.from({ length: C2 - c1 + 1 }, (_, i) => c1 + i), rows = Array.from({ length: R2 - r1 + 1 }, (_, i) => r1 + i);
+    FC.multi = r2 > r1 || c2 > c1;
+    FC.edges = {
+      t: same(cols.map((c) => own(r1, c, 't', r1 - 1, c, 'b'))),
+      b: same(cols.map((c) => own(R2, c, 'b', R2 + 1, c, 't'))),
+      l: same(rows.map((r) => own(r, c1, 'l', r, c1 - 1, 'r'))),
+      r: same(rows.map((r) => own(r, C2, 'r', r, C2 + 1, 'l'))),
+      h: R2 > r1 ? same(rows.slice(0, -1).flatMap((r) => cols.map((c) => own(r, c, 'b', r + 1, c, 't')))) : null,
+      v: C2 > c1 ? same(cols.slice(0, -1).flatMap((c) => rows.map((r) => own(r, c, 'r', r, c + 1, 'l')))) : null,
+      du: same(rows.flatMap((r) => cols.map((c) => at(r, c, 'du')))),
+      dd: same(rows.flatMap((r) => cols.map((c) => at(r, c, 'dd')))),
+    };
+    FC.edgesTouched = new Set();
+  }
+  const dashAttr = (style) => { const [w, d] = lineDef(style); return `stroke-width="${w}"${Array.isArray(d) ? ` stroke-dasharray="${d.join(' ')}"` : ''}`; };
+  function svgLine(x1, y1, x2, y2, e) {
+    if (!e) return '';
+    if (e === 'mixed') return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#b0b0b0" stroke-width="2"/>`;
+    if (e[0] === 'double') {
+      const dx = y1 === y2 ? 0 : 1.5, dy = y1 === y2 ? 1.5 : 0;
+      if (x1 !== x2 && y1 !== y2) return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${e[1]}" stroke-width="3"/>`;
+      return `<line x1="${x1 - dx}" y1="${y1 - dy}" x2="${x2 - dx}" y2="${y2 - dy}" stroke="${e[1]}" stroke-width="1"/><line x1="${x1 + dx}" y1="${y1 + dy}" x2="${x2 + dx}" y2="${y2 + dy}" stroke="${e[1]}" stroke-width="1"/>`;
+    }
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${e[1]}" ${dashAttr(e[0])}/>`;
+  }
+  function renderBorderPane() {
+    const E = FC.edges, L = 20, T = 15, R = 140, B = 105, MX = 80, MY = 60;
+    let svg = '';
+    const corner = (x, y) => `<path d="M${x - 6} ${y}h-6M${x} ${y - 6}v-6M${x + 6} ${y}h6M${x} ${y + 6}v6" class="tick"/>`;
+    svg += corner(L, T) + corner(R, T) + corner(L, B) + corner(R, B);
+    const texts = FC.multi ? [[(L + MX) / 2, (T + MY) / 2], [(MX + R) / 2, (T + MY) / 2], [(L + MX) / 2, (MY + B) / 2], [(MX + R) / 2, (MY + B) / 2]] : [[(L + R) / 2, (T + B) / 2]];
+    svg += texts.map(([x, y]) => `<text x="${x}" y="${y + 4}" text-anchor="middle" class="bp-text">Text</text>`).join('');
+    svg += svgLine(L, T, R, T, E.t) + svgLine(L, B, R, B, E.b) + svgLine(L, T, L, B, E.l) + svgLine(R, T, R, B, E.r);
+    if (FC.multi) svg += svgLine(L, MY, R, MY, E.h) + svgLine(MX, T, MX, B, E.v);
+    svg += svgLine(L, B, R, T, E.du) + svgLine(L, T, R, B, E.dd);
+    // Click targets along each edge, as in Excel's preview.
+    const hit = (side, x, y, w, h) => `<rect data-edge="${side}" x="${x}" y="${y}" width="${w}" height="${h}" class="hit"/>`;
+    svg += hit('t', L, T - 6, R - L, 12) + hit('b', L, B - 6, R - L, 12) + hit('l', L - 6, T, 12, B - T) + hit('r', R - 6, T, 12, B - T);
+    if (FC.multi) svg += hit('h', L + 8, MY - 5, R - L - 16, 10) + hit('v', MX - 5, T + 8, 10, B - T - 16);
+    $('#fcBorderPreview').innerHTML = svg;
+    fcd.querySelectorAll('[data-edge]').forEach((b) => { if (b.tagName === 'BUTTON') { b.classList.toggle('on', !!E[b.dataset.edge] && E[b.dataset.edge] !== 'mixed'); b.disabled = (b.dataset.edge === 'h' || b.dataset.edge === 'v') && !FC.multi; } });
+    fcd.querySelector('[data-preset="inside"]').disabled = !FC.multi;
+    $('#fcLines').querySelectorAll('[data-line]').forEach((b) => b.classList.toggle('on', b.dataset.line === FC.lineStyle));
+    setPalBtn($('#fcLineColor'), FC.lineColor === '#000000' ? null : FC.lineColor, 'Automatic');
+  }
+  function toggleEdge(side) {
+    const cur = FC.edges[side], next = FC.lineStyle === 'none' ? null : [FC.lineStyle, FC.lineColor];
+    FC.edges[side] = cur && cur !== 'mixed' && next && cur[0] === next[0] && cur[1] === next[1] ? null : next;
+    FC.edgesTouched.add(side);
+    renderBorderPane();
+  }
+
+  // -- Fill
+  function renderFillPane() {
+    const st = fcSt();
+    const pal = $('#fcFillPal');
+    pal.innerHTML = paletteHtml(st.grad ? null : st.fill, 'No Color');
+    bindPalette(pal, (hex) => { st.fill = hex || undefined; st.grad = undefined; if (!hex) { st.pat = undefined; st.patColor = undefined; } fcTouch('fill', 'grad', 'pat', 'patColor'); renderFillPane(); });
+    setPalBtn($('#fcPatColor'), st.patColor, 'Automatic');
+    $('#fcPatterns').innerHTML = `<button type="button" data-pat="" title="None" class="${st.pat ? '' : 'on'}"></button>` + Object.keys(PATTERNS).map((id) => {
+      const bgc = id === 'solid' ? st.patColor || '#000000' : '#ffffff';
+      const img = id === 'solid' ? '' : `background-image:${patternImage(id, st.patColor || '#000000')};`;
+      return `<button type="button" data-pat="${id}" title="${PATTERN_NAMES[id]}" class="${st.pat === id ? 'on' : ''}" style="${esc(`background-color:${bgc};${img}`)}"></button>`;
+    }).join('');
+    $('#fcFillSample').setAttribute('style', paintCss(st, {}, '#ffffff').join(';'));
+  }
+
+  // -- Fill Effects
+  const FE = { c1: '#ffffff', c2: ACCENT[0], style: 'horizontal', variant: 1 };
+  function renderFillEffects() {
+    setPalBtn($('#feC1'), FE.c1, ''); setPalBtn($('#feC2'), FE.c2, '');
+    fcd.ownerDocument.querySelectorAll('[name="feStyle"]').forEach((r) => { r.checked = r.value === FE.style; });
+    const n = FE.style === 'corner' ? 4 : FE.style === 'center' ? 2 : 3;
+    if (FE.variant > n) FE.variant = 1;
+    $('#feVariants').innerHTML = Array.from({ length: n }, (_, i) => `<button type="button" data-variant="${i + 1}" class="${FE.variant === i + 1 ? 'on' : ''}" style="background-image:${gradientImage({ ...FE, variant: i + 1 })}"></button>`).join('');
+    $('#feSample').style.backgroundImage = gradientImage(FE);
+  }
+  function openFillEffects() {
+    const g = fcSt().grad;
+    Object.assign(FE, g || { c1: '#ffffff', c2: fcSt().fill || ACCENT[0], style: 'horizontal', variant: 1 });
+    const d = $('#feDialog');
+    renderFillEffects();
+    d.returnValue = '';
+    d.onclose = () => { if (d.returnValue === 'ok') { const st = fcSt(); st.grad = { ...FE }; st.pat = undefined; st.patColor = undefined; fcTouch('grad', 'fill', 'pat', 'patColor'); renderFillPane(); } };
+    d.showModal();
+  }
+
+  // -- open / apply
+  function fcShowTab(tab) {
+    FC.tab = tab;
+    fcd.querySelectorAll('[data-fctab]').forEach((b) => { b.classList.toggle('on', b.dataset.fctab === tab); b.setAttribute('aria-selected', b.dataset.fctab === tab); });
+    fcd.querySelectorAll('[data-fcpane]').forEach((p) => { p.hidden = p.dataset.fcpane !== tab; });
+  }
+  function openFormatCells(tab = FC.tab) {
+    if (S.editing && !commitEdit()) return;
+    if (guard()) return;
+    hideCtx(); closeMenus();
+    const st0 = activeStyle();
+    FC.st = JSON.parse(JSON.stringify(st0));
+    FC.touched = new Set();
+    // Number
+    const [cat, code] = numCategory(st0);
+    $('#fcDec').value = st0.dec ?? (cat === 'Percentage' && st0.fmt === 'percent' ? 2 : 2);
+    $('#fcSep').checked = st0.fmt === 'number' && st0.sep !== false;
+    $('#fcSym').value = st0.sym === 'none' ? 'none' : '$';
+    $('#fcNeg').innerHTML = `<option value="${st0.neg || ''}"></option>`;
+    $('#fcNeg').value = st0.neg || '';
+    $('#fcCode').value = cat === 'Custom' ? code : numFmtCode(st0) || 'General';
+    fcSetCategory(cat, code);
+    // Alignment
+    $('#fcHAlign').value = st0.align || '';
+    $('#fcIndent').value = st0.indent || 0;
+    $('#fcVAlign').value = st0.valign || '';
+    $('#fcJDist').checked = !!st0.jdist;
+    $('#fcWrap').checked = !!st0.wrap; $('#fcShrink').checked = !!st0.shrink;
+    const { r1, c1, r2, c2 } = selRect();
+    const m = mergeAt(S.sel.ar, S.sel.ac);
+    $('#fcMerge').checked = !!m && m.r1 === r1 && m.c1 === c1 && m.r2 === r2 && m.c2 === c2;
+    $('#fcMerge').indeterminate = !$('#fcMerge').checked && sheet().merges.some((x) => overlaps(x, { r1, c1, r2, c2 }));
+    $('#fcDir').value = st0.dir || '';
+    fcAlignEnable();
+    renderDial();
+    // Font
+    $('#fcFontList').innerHTML = fontNames().map((f) => `<option>${esc(f)}</option>`).join('');
+    $('#fcSizeList').innerHTML = FONT_SIZES.map((n) => `<option>${n}</option>`).join('');
+    renderFontPane();
+    // Border
+    readEdges();
+    FC.lineStyle = 'thin'; FC.lineColor = '#000000';
+    $('#fcLines').innerHTML = ['none', ...LINE_ORDER].map((id) => `<button type="button" data-line="${id}" title="${id === 'none' ? 'None' : id.replace(/([A-Z])/g, ' $1').replace(/^./, (x) => x.toUpperCase())}">${id === 'none' ? 'None' : `<svg viewBox="0 0 60 10"><line x1="2" y1="5" x2="58" y2="5" stroke="#000" ${dashAttr(id)}${id === 'double' ? ' stroke-width="1"' : ''}/>${id === 'double' ? '<line x1="2" y1="8" x2="58" y2="8" stroke="#000" stroke-width="1"/>' : ''}</svg>`}</button>`).join('');
+    renderBorderPane();
+    // Fill
+    renderFillPane();
+    // Protection
+    $('#fcLocked').checked = !st0.unlocked;
+    $('#fcHidden').checked = !!st0.hideFormula;
+    fcShowTab(tab);
+    fcd.returnValue = '';
+    fcd.onclose = () => { palPop.style.display = 'none'; if (fcd.returnValue === 'ok') applyFormatCells(); focusGrid(); };
+    fcd.showModal();
+  }
+  function fcAlignEnable() {
+    const h = $('#fcHAlign').value;
+    $('#fcIndent').disabled = !['left', 'right', 'distributed'].includes(h);
+    $('#fcJDist').closest('label').hidden = h !== 'distributed';
+  }
+  function applyFormatCells() {
+    const st = fcSt(), keys = [...FC.touched];
+    const patch = {};
+    for (const k of keys) patch[k] = st[k] === false ? undefined : st[k];
+    if (FC.touched.has('number')) { delete patch.number; Object.assign(patch, numberPatch()); }
+    const borders = FC.edgesTouched.size > 0;
+    const mergeTouched = FC.touched.has('merge');
+    delete patch.merge;
+    if (!Object.keys(patch).length && !borders && !mergeTouched) return;
+    pushUndo();
+    const rect = selRect();
+    forSel((r, c) => {
+      let cur = { ...S.wb.getStyle(S.si, r, c) };
+      Object.assign(cur, patch);
+      S.wb.setStyle(S.si, r, c, cur, true);
+    });
+    if (borders) applyEdges(rect);
+    if ('fmt' in patch || 'dec' in patch || 'size' in patch) fitNumbers(rect.c1, rect.c2, rect.r1, rect.r2);
+    if (mergeTouched) {
+      if ($('#fcMerge').checked) { sheet().merges = sheet().merges.filter((m) => !overlaps(m, rect)); if (rect.r2 > rect.r1 || rect.c2 > rect.c1) sheet().merges.push({ ...rect }); }
+      else sheet().merges = sheet().merges.filter((m) => !overlaps(m, rect));
+    }
+    changed();
+  }
+  // Writes the dialog's edges to the selection; an edge set to none is cleared on both cells that share it.
+  function applyEdges({ r1, c1, r2, c2 }) {
+    const E = FC.edges, T = FC.edgesTouched;
+    const R2 = Math.min(r2, S.rows - 1), C2 = Math.min(c2, S.cols - 1);
+    const setSide = (r, c, side, e) => {
+      if (r < 0 || c < 0) return;
+      const st = { ...S.wb.getStyle(S.si, r, c) };
+      const bd = { ...(st.bd || {}) };
+      if (st.border) { for (const s2 of ['t', 'b', 'l', 'r']) bd[s2] = bd[s2] || ['thin', '#000']; delete st.border; }
+      if (e) bd[side] = e; else delete bd[side];
+      st.bd = Object.keys(bd).length ? bd : undefined;
+      S.wb.setStyle(S.si, r, c, st, true);
+    };
+    const put = (side, r, c, e, nr, nc, nside) => { setSide(r, c, side, e); if (nr !== undefined) setSide(nr, nc, nside, null); };
+    for (let c = c1; c <= C2; c++) {
+      if (T.has('t') && E.t !== 'mixed') put('t', r1, c, E.t, r1 - 1, c, 'b');
+      if (T.has('b') && E.b !== 'mixed') put('b', R2, c, E.b, R2 + 1, c, 't');
+    }
+    for (let r = r1; r <= R2; r++) {
+      if (T.has('l') && E.l !== 'mixed') put('l', r, c1, E.l, r, c1 - 1, 'r');
+      if (T.has('r') && E.r !== 'mixed') put('r', r, C2, E.r, r, C2 + 1, 'l');
+      for (let c = c1; c <= C2; c++) {
+        if (T.has('h') && E.h !== 'mixed' && r < R2) put('b', r, c, E.h, r + 1, c, 't');
+        if (T.has('v') && E.v !== 'mixed' && c < C2) put('r', r, c, E.v, r, c + 1, 'l');
+        if (T.has('du') && E.du !== 'mixed') setSide(r, c, 'du', E.du);
+        if (T.has('dd') && E.dd !== 'mixed') setSide(r, c, 'dd', E.dd);
+      }
+    }
+  }
+
+  // -- control events
+  fcd.querySelector('.fc-tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-fctab]'); if (b) fcShowTab(b.dataset.fctab); });
+  $('#fcCat').addEventListener('change', () => { fcTouch('number'); const cat = $('#fcCat').value; if (['Number', 'Currency', 'Accounting', 'Percentage', 'Scientific'].includes(cat) && $('#fcDec').value === '') $('#fcDec').value = 2; if (cat === 'Number' && !fcSt().fmt) $('#fcSep').checked = false; fcSetCategory(cat); });
+  for (const id of ['#fcDec', '#fcSym', '#fcSep', '#fcNeg']) $(id).addEventListener(id === '#fcDec' ? 'input' : 'change', () => { fcTouch('number'); renderNumberPane(true); });
+  $('#fcType').addEventListener('change', () => { fcTouch('number'); if ($('#fcCat').value === 'Custom') $('#fcCode').value = $('#fcType').value; fcSampleUpdate(); });
+  $('#fcCode').addEventListener('input', () => { fcTouch('number'); fcSampleUpdate(); });
+  $('#fcDelete').addEventListener('click', () => {
+    const code = $('#fcType').value;
+    if (!code || CUSTOM_TYPES.includes(code)) return;
+    pushUndo();
+    // Excel returns cells that used a deleted custom format to General.
+    for (const sh of S.wb.sheets) for (const cell of sh.cells.values()) if (cell.style && cell.style.fmt === 'custom' && cell.style.pattern === code) { delete cell.style.fmt; delete cell.style.pattern; }
+    changed();
+    renderNumberPane(false);
+    $('#fcType').selectedIndex = 0;
+    $('#fcCode').value = $('#fcType').value;
+    fcSampleUpdate();
+  });
+  $('#fcHAlign').addEventListener('change', () => { fcSt().align = $('#fcHAlign').value || undefined; fcTouch('align'); if (!['left', 'right', 'distributed'].includes(fcSt().align)) { fcSt().indent = undefined; $('#fcIndent').value = 0; fcTouch('indent'); } fcAlignEnable(); });
+  $('#fcIndent').addEventListener('input', () => { fcSt().indent = clamp(Math.round(+$('#fcIndent').value || 0), 0, 15) || undefined; fcTouch('indent'); });
+  $('#fcVAlign').addEventListener('change', () => { fcSt().valign = $('#fcVAlign').value || undefined; fcTouch('valign'); });
+  $('#fcJDist').addEventListener('change', () => { fcSt().jdist = $('#fcJDist').checked || undefined; fcTouch('jdist'); });
+  $('#fcWrap').addEventListener('change', () => { fcSt().wrap = $('#fcWrap').checked || undefined; if ($('#fcWrap').checked) { $('#fcShrink').checked = false; fcSt().shrink = undefined; fcTouch('shrink'); } fcTouch('wrap'); });
+  $('#fcShrink').addEventListener('change', () => { fcSt().shrink = $('#fcShrink').checked || undefined; if ($('#fcShrink').checked) { $('#fcWrap').checked = false; fcSt().wrap = undefined; fcTouch('wrap'); } fcTouch('shrink'); });
+  $('#fcMerge').addEventListener('change', () => fcTouch('merge'));
+  $('#fcDir').addEventListener('change', () => { fcSt().dir = $('#fcDir').value || undefined; fcTouch('dir'); });
+  $('#fcVert').addEventListener('click', () => setRot(fcSt().rot === 'v' ? 0 : 'v'));
+  $('#fcDial').addEventListener('click', (e) => {
+    const dot = e.target.closest('[data-deg]');
+    if (dot) return setRot(+dot.dataset.deg);
+    const r = $('#fcDial').getBoundingClientRect(), x = (e.clientX - r.left) * 120 / r.width - 18, y = 65 - (e.clientY - r.top) * 130 / r.height;
+    if (x > 0) setRot(clamp(Math.round(Math.atan2(y, x) * 180 / Math.PI), -90, 90));
+  });
+  $('#fcDeg').addEventListener('input', () => { const v = Math.round(+$('#fcDeg').value); if (isFinite(v)) { fcSt().rot = clamp(v, -90, 90) || undefined; fcTouch('rot'); renderDial(); } });
+  const fontTouch = (...k) => { fcTouch(...k); renderFontPane(); };
+  $('#fcFont').addEventListener('change', () => { const f = $('#fcFont').value.trim(); fcSt().font = !f || f === 'Aptos Narrow' ? undefined : f; fontTouch('font'); });
+  $('#fcFontList').addEventListener('change', () => { const f = $('#fcFontList').value; fcSt().font = f === 'Aptos Narrow' ? undefined : f; fontTouch('font'); });
+  $('#fcStyle').addEventListener('change', () => { const v = $('#fcStyle').value; fcSt().bold = v.includes('Bold') || undefined; fcSt().italic = v.includes('Italic') || undefined; fontTouch('bold', 'italic'); });
+  const setSize = (n) => { if (n > 0 && n <= 409) { fcSt().size = n === 11 ? undefined : n; fontTouch('size'); } };
+  $('#fcSize').addEventListener('change', () => setSize(+$('#fcSize').value));
+  $('#fcSizeList').addEventListener('change', () => setSize(+$('#fcSizeList').value));
+  $('#fcUnderline').addEventListener('change', () => { const v = $('#fcUnderline').value; fcSt().underline = v === 'single' ? true : v || undefined; fontTouch('underline'); });
+  $('#fcColor').addEventListener('click', () => openPalette($('#fcColor'), fcSt().color, 'Automatic', (hex) => { fcSt().color = hex || undefined; fontTouch('color'); }));
+  $('#fcStrike').addEventListener('change', () => { fcSt().strike = $('#fcStrike').checked || undefined; fontTouch('strike'); });
+  $('#fcSup').addEventListener('change', () => { fcSt().script = $('#fcSup').checked ? 'sup' : undefined; fontTouch('script'); });
+  $('#fcSub').addEventListener('change', () => { fcSt().script = $('#fcSub').checked ? 'sub' : undefined; fontTouch('script'); });
+  $('#fcOutline').addEventListener('change', () => { fcSt().outline = $('#fcOutline').checked || undefined; fontTouch('outline'); });
+  $('#fcShadow').addEventListener('change', () => { fcSt().shadow = $('#fcShadow').checked || undefined; fontTouch('shadow'); });
+  $('#fcNormal').addEventListener('change', () => {
+    if (!$('#fcNormal').checked) return renderFontPane();
+    const keys = ['font', 'size', 'bold', 'italic', 'underline', 'strike', 'color', 'script', 'outline', 'shadow'];
+    keys.forEach((k) => { fcSt()[k] = undefined; });
+    fontTouch(...keys);
+  });
+  $('#fcLines').addEventListener('click', (e) => { const b = e.target.closest('[data-line]'); if (b) { FC.lineStyle = b.dataset.line; renderBorderPane(); } });
+  $('#fcLineColor').addEventListener('click', () => openPalette($('#fcLineColor'), FC.lineColor, 'Automatic', (hex) => { FC.lineColor = hex || '#000000'; renderBorderPane(); }));
+  fcd.querySelector('.fc-presets').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-preset]');
+    if (!b) return;
+    const e2 = FC.lineStyle === 'none' ? null : [FC.lineStyle, FC.lineColor];
+    const sides = b.dataset.preset === 'none' ? ['t', 'b', 'l', 'r', 'h', 'v'] : b.dataset.preset === 'outline' ? ['t', 'b', 'l', 'r'] : FC.multi ? ['h', 'v'] : [];
+    sides.forEach((sd) => { if ((sd === 'h' || sd === 'v') && !FC.multi) return; FC.edges[sd] = b.dataset.preset === 'none' ? null : e2; FC.edgesTouched.add(sd); });
+    renderBorderPane();
+  });
+  fcd.querySelector('[data-fcpane="border"]').addEventListener('click', (e) => { const b = e.target.closest('[data-edge]'); if (b && !b.disabled) toggleEdge(b.dataset.edge); });
+  $('#fcPatColor').addEventListener('click', () => openPalette($('#fcPatColor'), fcSt().patColor, 'Automatic', (hex) => { fcSt().patColor = hex || undefined; fcSt().grad = undefined; fcTouch('patColor', 'grad'); renderFillPane(); }));
+  $('#fcPatterns').addEventListener('click', (e) => { const b = e.target.closest('[data-pat]'); if (b) { fcSt().pat = b.dataset.pat || undefined; fcSt().grad = undefined; fcTouch('pat', 'grad'); renderFillPane(); } });
+  $('#fcFillEffects').addEventListener('click', openFillEffects);
+  $('#feC1').addEventListener('click', () => openPalette($('#feC1'), FE.c1, null, (hex) => { if (hex) { FE.c1 = hex; renderFillEffects(); } }));
+  $('#feC2').addEventListener('click', () => openPalette($('#feC2'), FE.c2, null, (hex) => { if (hex) { FE.c2 = hex; renderFillEffects(); } }));
+  $('#feDialog').addEventListener('change', (e) => { if (e.target.name === 'feStyle') { FE.style = e.target.value; FE.variant = 1; renderFillEffects(); } });
+  $('#feVariants').addEventListener('click', (e) => { const b = e.target.closest('[data-variant]'); if (b) { FE.variant = +b.dataset.variant; renderFillEffects(); } });
+  $('#fcLocked').addEventListener('change', () => { fcSt().unlocked = $('#fcLocked').checked ? undefined : true; fcTouch('unlocked'); });
+  $('#fcHidden').addEventListener('change', () => { fcSt().hideFormula = $('#fcHidden').checked || undefined; fcTouch('hideFormula'); });
 
   // ------------------------------------------------------------ events: ribbon
   document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {
@@ -1976,6 +2770,7 @@
       const open = !m.classList.contains('open');
       closeMenus();
       if (open && m.id === 'cellStyles') renderGallery();
+      if (open && m.id === 'formatMenu') { tabColorMenu.innerHTML = paletteHtml(sheet().tabColor, 'No Color'); bindPalette(tabColorMenu, setTabColor); }
       m.classList.toggle('open', open);
       // The ribbon scrolls sideways, which clips anything below it; pin ribbon menus to the viewport under their button.
       if (open && m.closest('.ribbon')) {
@@ -1984,10 +2779,14 @@
         m.style.top = b.bottom + 'px';
         m.style.left = Math.max(8, Math.min(b.left, window.innerWidth - m.offsetWidth - 8)) + 'px';
         if (m.id === 'cellStyles') m.style.maxHeight = `${window.innerHeight - b.bottom - 8}px`;
+        // Submenus open to the left when there's no room on the right.
+        m.classList.toggle('flip-sub', m.getBoundingClientRect().right + 250 > window.innerWidth);
       }
       return;
     }
     if (!e.target.closest('.ctx-menu')) hideCtx();
+    const subBtn = e.target.closest('.has-sub');
+    if (subBtn) { const sub = subBtn.parentElement; sub.parentElement.querySelectorAll('.sub.open').forEach((x) => x !== sub && x.classList.remove('open')); sub.classList.toggle('open'); return; }
     const styleBtn = e.target.closest('[data-style]');
     if (styleBtn) { closeMenus(); applyCellStyle(styleBtn.dataset.style); return; }
     const catBtn = e.target.closest('[data-fncat]');
@@ -2033,7 +2832,10 @@
 
   $('#fontFamily').addEventListener('change', (e) => applyStyle({ font: e.target.value === 'Aptos Narrow' ? undefined : e.target.value }));
   $('#fontSize').addEventListener('change', (e) => applyStyle({ size: +e.target.value === 11 ? undefined : +e.target.value }));
-  $('#numFmt').addEventListener('change', (e) => applyStyle({ fmt: e.target.value === 'general' ? undefined : e.target.value, dec: undefined }));
+  $('#numFmt').addEventListener('change', (e) => {
+    if (e.target.value === 'more') { updateRibbonState(); return openFormatCells('number'); }
+    applyStyle({ fmt: e.target.value === 'general' ? undefined : e.target.value, dec: undefined, sep: undefined, neg: undefined, sym: undefined, pattern: undefined });
+  });
   $('#fillColor').addEventListener('input', (e) => { $('#fillSwatch').style.background = e.target.value; });
   $('#fillColor').addEventListener('change', (e) => applyStyle({ fill: e.target.value }));
   $('#fontColor').addEventListener('input', (e) => { $('#fontSwatch').style.background = e.target.value; });
@@ -2219,17 +3021,18 @@
     const td = e.target.closest('td');
     if (td && !S.editing) startEdit('edit');
   });
-  function autofitColumn(c) {
+  function autofitColumn(c, r1 = 0, r2 = Infinity, batch = false) {
     const ctx = document.createElement('canvas').getContext('2d');
     let w = 20;
     const ext = sheet().extent();
-    for (let r = 0; r < ext.rows; r++) {
+    for (let r = r1; r <= Math.min(r2, ext.rows - 1); r++) {
       const cell = sheet().get(r, c);
       if (!cell || cell.input === '') continue;
       const st = cell.style || {};
       ctx.font = `${st.bold ? '700 ' : ''}${st.size || 11}pt ${st.font ? `"${st.font}"` : getComputedStyle(grid).fontFamily}`;
       w = Math.max(w, ctx.measureText(XL.formatValue(valueAt(r, c), st)).width + 12);
     }
+    if (batch) { sheet().colWidths[c] = Math.ceil(w); return; }
     pushUndo();
     sheet().colWidths[c] = Math.ceil(w);
     buildGrid();
@@ -2255,9 +3058,10 @@
     const items = [
       { label: 'Cut', run: CMD.cut }, { label: 'Copy', run: CMD.copy }, { label: 'Paste', run: CMD.paste }, '-',
     ];
-    if (isCols) items.push({ label: 'Insert Columns', run: CMD.insertCol }, { label: 'Delete Columns', run: CMD.deleteCol }, { label: 'Column Width: Autofit', run: () => autofitColumn(S.sel.ac) });
+    if (isCols) items.push({ label: 'Insert Columns', run: CMD.insertCol }, { label: 'Delete Columns', run: CMD.deleteCol }, { label: 'Column Width…', run: colWidthDialog }, { label: 'Column Width: Autofit', run: () => autofitColumn(S.sel.ac) }, { label: 'Hide', run: CMD.hideCols }, { label: 'Unhide', run: CMD.unhideCols });
+    else if (th && !th.classList.contains('corner')) items.push({ label: 'Insert Rows', run: CMD.insertRow }, { label: 'Delete Rows', run: CMD.deleteRow }, { label: 'Row Height…', run: rowHeightDialog }, { label: 'Hide', run: CMD.hideRows }, { label: 'Unhide', run: CMD.unhideRows });
     else items.push({ label: 'Insert Rows', run: CMD.insertRow }, { label: 'Delete Rows', run: CMD.deleteRow }, { label: 'Insert Columns', run: CMD.insertCol }, { label: 'Delete Columns', run: CMD.deleteCol });
-    items.push({ label: 'Clear Contents', run: CMD.clearContents }, '-', { label: 'Sort A to Z', run: CMD.sortAsc }, { label: 'Sort Z to A', run: CMD.sortDesc }, '-', { label: 'Insert Function…', run: CMD.insertFunction });
+    items.push({ label: 'Clear Contents', run: CMD.clearContents }, { label: 'Format Cells…', run: () => openFormatCells() }, '-', { label: 'Sort A to Z', run: CMD.sortAsc }, { label: 'Sort Z to A', run: CMD.sortDesc }, '-', { label: 'Insert Function…', run: CMD.insertFunction });
     showCtx(e.clientX, e.clientY, items);
   });
 
@@ -2288,17 +3092,10 @@
       { label: 'Insert Sheet', run: newSheet },
       { label: 'Delete', run: () => deleteSheet(i) },
       { label: 'Rename', run: () => renameSheetInline(i) },
-      { label: 'Duplicate', run: () => {
-        pushUndo();
-        const copy = XL.Workbook.fromJSON({ sheets: [S.wb.toJSON().sheets[i]] }).sheets[0];
-        let n = 2;
-        while (S.wb.sheetIndex(`${copy.name} (${n})`) >= 0) n++;
-        copy.name = `${copy.name} (${n})`;
-        S.wb.sheets.splice(i + 1, 0, copy);
-        S.wb.recalc();
-        switchSheet(i + 1);
-        scheduleSave();
-      } },
+      { label: 'Duplicate', run: () => { pushUndo(); switchSheet(copySheet(i, i + 1)); scheduleSave(); } },
+      { label: 'Move or Copy…', run: () => moveCopyDialog(i) }, '-',
+      { label: 'Hide', run: hideSheet },
+      { label: 'Unhide…', run: unhideSheetDialog },
     ]);
   });
   let dragTab = null;
@@ -2335,7 +3132,7 @@
       const lower = k.toLowerCase();
       const map = {
         b: CMD.bold, i: CMD.italic, u: CMD.underline, d: () => fillFromEdge(true), r: () => fillFromEdge(false),
-        a: () => setSel(0, 0, S.rows - 1, S.cols - 1), y: redo, '`': CMD.showFormulas,
+        a: () => setSel(0, 0, S.rows - 1, S.cols - 1), y: redo, '`': CMD.showFormulas, 1: () => openFormatCells(),
       };
       if (lower === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); return; }
       if (map[lower]) { e.preventDefault(); map[lower](); return; }

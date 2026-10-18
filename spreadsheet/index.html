@@ -155,6 +155,7 @@
               <option value="date">Short Date</option><option value="longdate">Long Date</option>
               <option value="time">Time</option><option value="percent">Percentage</option>
               <option value="scientific">Scientific</option><option value="text">Text</option>
+              <option value="more">More Number Formats…</option>
             </select>
           </div>
           <div class="row">
@@ -193,6 +194,41 @@
               <button data-cmd="deleteRow">Delete Sheet Rows</button>
               <button data-cmd="deleteCol">Delete Sheet Columns</button>
               <button data-cmd="deleteSheet">Delete Sheet</button>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="big" data-icon="format" data-menu="formatMenu">Format</button>
+            <div class="menu fmt-menu" id="formatMenu" role="menu">
+              <div class="menu-head">Cell Size</div>
+              <button data-cmd="rowHeight" data-icon="rowHeight" role="menuitem">Row Height…</button>
+              <button data-cmd="autofitRows" role="menuitem">AutoFit Row Height</button>
+              <button data-cmd="colWidth" data-icon="colWidth" role="menuitem">Column Width…</button>
+              <button data-cmd="autofitCols" role="menuitem">AutoFit Column Width</button>
+              <button data-cmd="defaultWidth" role="menuitem">Default Width…</button>
+              <div class="menu-head">Visibility</div>
+              <div class="sub">
+                <button class="has-sub" role="menuitem" aria-haspopup="true">Hide &amp; Unhide</button>
+                <div class="menu submenu" role="menu">
+                  <button data-cmd="hideRows" role="menuitem">Hide Rows</button>
+                  <button data-cmd="hideCols" role="menuitem">Hide Columns</button>
+                  <button data-cmd="hideSheet" role="menuitem">Hide Sheet</button>
+                  <hr>
+                  <button data-cmd="unhideRows" role="menuitem">Unhide Rows</button>
+                  <button data-cmd="unhideCols" role="menuitem">Unhide Columns</button>
+                  <button data-cmd="unhideSheet" role="menuitem">Unhide Sheet…</button>
+                </div>
+              </div>
+              <div class="menu-head">Organize Sheets</div>
+              <button data-cmd="renameSheet" role="menuitem">Rename Sheet</button>
+              <button data-cmd="moveCopySheet" role="menuitem">Move or Copy Sheet…</button>
+              <div class="sub">
+                <button class="has-sub" data-icon="tabColor" role="menuitem" aria-haspopup="true">Tab Color</button>
+                <div class="menu submenu pal-menu" id="tabColorMenu" role="menu"></div>
+              </div>
+              <div class="menu-head">Protection</div>
+              <button data-cmd="protect" data-icon="lock" id="fmtProtect" role="menuitem">Protect Sheet</button>
+              <button data-cmd="lockCell" data-icon="lockCell" role="menuitemcheckbox">Lock Cell</button>
+              <button data-cmd="formatCells" data-icon="formatCells" role="menuitem">Format Cells…</button>
             </div>
           </div>
         </div>
@@ -386,6 +422,182 @@
     <h2 id="msgTitle">Spreadsheet</h2>
     <p id="msgText"></p>
     <div class="actions"><button value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="fcDialog" class="dialog fc">
+  <form method="dialog">
+    <h2>Format Cells</h2>
+    <div class="fc-tabs" role="tablist">
+      <button type="button" role="tab" data-fctab="number">Number</button>
+      <button type="button" role="tab" data-fctab="alignment">Alignment</button>
+      <button type="button" role="tab" data-fctab="font">Font</button>
+      <button type="button" role="tab" data-fctab="border">Border</button>
+      <button type="button" role="tab" data-fctab="fill">Fill</button>
+      <button type="button" role="tab" data-fctab="protection">Protection</button>
+    </div>
+    <div class="fc-body">
+      <section class="fc-pane" data-fcpane="number">
+        <label class="field-col fc-cat">Category:<select id="fcCat" size="12">
+          <option>General</option><option>Number</option><option>Currency</option><option>Accounting</option><option>Date</option><option>Time</option>
+          <option>Percentage</option><option>Fraction</option><option>Scientific</option><option>Text</option><option>Special</option><option>Custom</option>
+        </select></label>
+        <div class="fc-col">
+          <fieldset class="fc-box"><legend>Sample</legend><div id="fcSample" class="fc-sample"></div></fieldset>
+          <label class="field" data-show="Number Currency Accounting Percentage Scientific">Decimal places:<input id="fcDec" type="number" min="0" max="30"></label>
+          <label class="field" data-show="Currency Accounting">Symbol:<select id="fcSym"><option value="$">$</option><option value="none">None</option></select></label>
+          <label class="check" data-show="Number"><input type="checkbox" id="fcSep">Use 1000 Separator (,)</label>
+          <label class="field-col" data-show="Number Currency">Negative numbers:<select id="fcNeg" size="4"></select></label>
+          <label class="field-col" data-show="Custom">Type:<input id="fcCode" type="text" autocomplete="off" spellcheck="false"></label>
+          <label class="field-col" data-show="Date Time Fraction Special Custom"><span data-show="Date Time Fraction Special">Type:</span><select id="fcType" size="9"></select></label>
+          <div class="fc-row" data-show="Custom"><button type="button" id="fcDelete">Delete</button></div>
+        </div>
+      </section>
+      <section class="fc-pane" data-fcpane="alignment">
+        <div class="fc-col">
+          <label class="field">Horizontal alignment:<select id="fcHAlign">
+            <option value="">General</option><option value="left">Left (Indent)</option><option value="center">Center</option><option value="right">Right (Indent)</option>
+            <option value="fill">Fill</option><option value="justify">Justify</option><option value="centerAcross">Center Across Selection</option><option value="distributed">Distributed (Indent)</option>
+          </select></label>
+          <label class="field">Indent:<input id="fcIndent" type="number" min="0" max="15"></label>
+          <label class="field">Vertical alignment:<select id="fcVAlign">
+            <option value="top">Top</option><option value="middle">Center</option><option value="">Bottom</option><option value="justify">Justify</option><option value="distributed">Distributed</option>
+          </select></label>
+          <label class="check"><input type="checkbox" id="fcJDist">Justify distributed</label>
+          <fieldset class="fc-box"><legend>Text control:</legend>
+            <label class="check"><input type="checkbox" id="fcWrap">Wrap text</label>
+            <label class="check"><input type="checkbox" id="fcShrink">Shrink to fit</label>
+            <label class="check"><input type="checkbox" id="fcMerge">Merge cells</label>
+          </fieldset>
+          <label class="field">Text direction:<select id="fcDir"><option value="">Context</option><option value="ltr">Left-to-Right</option><option value="rtl">Right-to-Left</option></select></label>
+        </div>
+        <fieldset class="fc-box fc-orient"><legend>Orientation:</legend>
+          <div class="fc-orient-row">
+            <button type="button" id="fcVert" class="fc-vert" aria-pressed="false" title="Vertical text">T<br>e<br>x<br>t</button>
+            <svg id="fcDial" viewBox="0 0 120 130" aria-label="Orientation"></svg>
+          </div>
+          <label class="field">Degrees:<input id="fcDeg" type="number" min="-90" max="90"></label>
+        </fieldset>
+      </section>
+      <section class="fc-pane" data-fcpane="font">
+        <div class="fc-font-grid">
+          <label class="field-col">Font:<input id="fcFont" type="text" autocomplete="off" spellcheck="false"><select id="fcFontList" size="6"></select></label>
+          <label class="field-col">Font style:<input id="fcStyleTxt" type="text" readonly><select id="fcStyle" size="6"><option>Regular</option><option>Italic</option><option>Bold</option><option>Bold Italic</option></select></label>
+          <label class="field-col">Size:<input id="fcSize" type="number" min="1" max="409" step="0.5"><select id="fcSizeList" size="6"></select></label>
+        </div>
+        <div class="fc-font-grid">
+          <label class="field-col">Underline:<select id="fcUnderline"><option value="">None</option><option value="single">Single</option><option value="double">Double</option><option value="singleAcc">Single Accounting</option><option value="doubleAcc">Double Accounting</option></select></label>
+          <div class="field-col">Color:<button type="button" id="fcColor" class="pal-btn" data-pal><i></i><span>Automatic</span></button></div>
+          <label class="check fc-normal"><input type="checkbox" id="fcNormal">Normal font</label>
+        </div>
+        <div class="fc-font-grid">
+          <fieldset class="fc-box"><legend>Effects:</legend>
+            <label class="check"><input type="checkbox" id="fcStrike">Strikethrough</label>
+            <label class="check"><input type="checkbox" id="fcSup">Superscript</label>
+            <label class="check"><input type="checkbox" id="fcSub">Subscript</label>
+            <label class="check"><input type="checkbox" id="fcOutline">Outline</label>
+            <label class="check"><input type="checkbox" id="fcShadow">Shadow</label>
+          </fieldset>
+          <fieldset class="fc-box fc-span2"><legend>Preview</legend><div id="fcFontPreview" class="fc-preview">AaBbCcYyZz</div></fieldset>
+        </div>
+      </section>
+      <section class="fc-pane" data-fcpane="border">
+        <div class="fc-col fc-lines">
+          <div class="field-col">Line Style:<div id="fcLines" class="fc-line-grid"></div></div>
+          <div class="field-col">Line Color:<button type="button" id="fcLineColor" class="pal-btn" data-pal><i></i><span>Automatic</span></button></div>
+        </div>
+        <div class="fc-col">
+          <div class="field-col">Presets:<div class="fc-presets">
+            <button type="button" data-preset="none"><svg viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22" class="pg"/></svg>None</button>
+            <button type="button" data-preset="outline"><svg viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22" class="pg"/><rect x="3" y="3" width="22" height="22" class="pk"/></svg>Outline</button>
+            <button type="button" data-preset="inside"><svg viewBox="0 0 28 28"><rect x="3" y="3" width="22" height="22" class="pg"/><path d="M14 3v22M3 14h22" class="pk"/></svg>Inside</button>
+          </div></div>
+          <div class="field-col">Border:
+            <div class="fc-border-grid">
+              <div class="fc-edge-col">
+                <button type="button" data-edge="t" title="Top"><svg viewBox="0 0 20 20"><path d="M3 3h14" class="pk"/><path d="M3 17h14M3 3v14M17 3v14" class="pg"/></svg></button>
+                <button type="button" data-edge="h" title="Horizontal"><svg viewBox="0 0 20 20"><path d="M3 10h14" class="pk"/><rect x="3" y="3" width="14" height="14" class="pg"/></svg></button>
+                <button type="button" data-edge="b" title="Bottom"><svg viewBox="0 0 20 20"><path d="M3 17h14" class="pk"/><path d="M3 3h14M3 3v14M17 3v14" class="pg"/></svg></button>
+              </div>
+              <svg id="fcBorderPreview" viewBox="0 0 160 120" aria-label="Border preview"></svg>
+              <div class="fc-edge-row">
+                <button type="button" data-edge="du" title="Diagonal Up"><svg viewBox="0 0 20 20"><path d="M3 17L17 3" class="pk"/><rect x="3" y="3" width="14" height="14" class="pg"/></svg></button>
+                <button type="button" data-edge="l" title="Left"><svg viewBox="0 0 20 20"><path d="M3 3v14" class="pk"/><path d="M17 3v14M3 3h14M3 17h14" class="pg"/></svg></button>
+                <button type="button" data-edge="v" title="Vertical"><svg viewBox="0 0 20 20"><path d="M10 3v14" class="pk"/><rect x="3" y="3" width="14" height="14" class="pg"/></svg></button>
+                <button type="button" data-edge="r" title="Right"><svg viewBox="0 0 20 20"><path d="M17 3v14" class="pk"/><path d="M3 3v14M3 3h14M3 17h14" class="pg"/></svg></button>
+                <button type="button" data-edge="dd" title="Diagonal Down"><svg viewBox="0 0 20 20"><path d="M3 3l14 14" class="pk"/><rect x="3" y="3" width="14" height="14" class="pg"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="fc-pane" data-fcpane="fill">
+        <div class="fc-col">
+          <div class="field-col">Background color:<div id="fcFillPal" class="pal-inline"></div></div>
+          <div class="fc-row"><button type="button" id="fcFillEffects">Fill Effects…</button></div>
+        </div>
+        <div class="fc-col">
+          <div class="field-col">Pattern color:<button type="button" id="fcPatColor" class="pal-btn" data-pal><i></i><span>Automatic</span></button></div>
+          <div class="field-col">Pattern style:<div id="fcPatterns" class="fc-pat-grid"></div></div>
+          <fieldset class="fc-box"><legend>Sample</legend><div id="fcFillSample" class="fc-fill-sample"></div></fieldset>
+        </div>
+      </section>
+      <section class="fc-pane" data-fcpane="protection">
+        <label class="check"><input type="checkbox" id="fcLocked">Locked</label>
+        <label class="check"><input type="checkbox" id="fcHidden">Hidden</label>
+      </section>
+    </div>
+    <div class="actions"><button value="cancel">Cancel</button><button id="fcOk" value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="feDialog" class="dialog">
+  <form method="dialog">
+    <h2>Fill Effects</h2>
+    <div class="fe-grid">
+      <fieldset class="fc-box"><legend>Colors</legend>
+        <div class="field">Color 1:<button type="button" id="feC1" class="pal-btn" data-pal><i></i><span></span></button></div>
+        <div class="field">Color 2:<button type="button" id="feC2" class="pal-btn" data-pal><i></i><span></span></button></div>
+      </fieldset>
+      <fieldset class="fc-box"><legend>Shading styles</legend>
+        <label class="check"><input type="radio" name="feStyle" value="horizontal">Horizontal</label>
+        <label class="check"><input type="radio" name="feStyle" value="vertical">Vertical</label>
+        <label class="check"><input type="radio" name="feStyle" value="diagUp">Diagonal up</label>
+        <label class="check"><input type="radio" name="feStyle" value="diagDown">Diagonal down</label>
+        <label class="check"><input type="radio" name="feStyle" value="corner">From corner</label>
+        <label class="check"><input type="radio" name="feStyle" value="center">From center</label>
+      </fieldset>
+      <fieldset class="fc-box"><legend>Variants</legend><div id="feVariants" class="fe-variants"></div></fieldset>
+      <fieldset class="fc-box"><legend>Sample</legend><div id="feSample" class="fc-fill-sample"></div></fieldset>
+    </div>
+    <div class="actions"><button value="cancel">Cancel</button><button value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="numDialog" class="dialog">
+  <form method="dialog">
+    <h2 id="numTitle"></h2>
+    <label class="field"><span id="numLabel"></span><input id="numInput" type="number" step="any" min="0"></label>
+    <p id="numErr" class="cs-err" hidden></p>
+    <div class="actions"><button value="cancel">Cancel</button><button id="numOk" value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="uhDialog" class="dialog">
+  <form method="dialog">
+    <h2>Unhide</h2>
+    <label class="field-col">Unhide sheet:<select id="uhList" multiple size="6"></select></label>
+    <div class="actions"><button value="cancel">Cancel</button><button value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="mcDialog" class="dialog">
+  <form method="dialog">
+    <h2>Move or Copy</h2>
+    <label class="field">To book:<select id="mcBook" disabled></select></label>
+    <label class="field-col">Before sheet:<select id="mcBefore" size="7"></select></label>
+    <label class="check"><input type="checkbox" id="mcCopy">Create a copy</label>
+    <div class="actions"><button value="cancel">Cancel</button><button value="ok" class="primary">OK</button></div>
   </form>
 </dialog>
 

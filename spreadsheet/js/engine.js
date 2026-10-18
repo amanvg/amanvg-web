@@ -715,20 +715,263 @@
     return (n < 0 && Number(s) !== 0 ? '-' : '') + int + (frac ? '.' + frac : '');
   }
 
-  // A small subset of Excel number-format codes, enough for TEXT() and custom formats.
-  function formatPattern(v, pattern) {
-    if (typeof v !== 'number') {
-      const lit = parseLiteral(toStr(v)).value;
-      if (typeof lit !== 'number') return toStr(v);
-      v = lit;
+  // ---------------------------------------------------------------- Excel number-format codes
+  // Implements Excel's format-code language for custom formats and TEXT(): up to four sections
+  // (positive;negative;zero;text), [Color] and [condition] prefixes, quoted and \ literals, _ spacing,
+  // * fill, 0 # ? digit placeholders, thousands and scaling commas, %, E+ scientific, fractions,
+  // @ text, General, and date/time codes including AM/PM and elapsed [h]:mm:ss.
+  const CODE_COLORS = { black: '#000000', white: '#ffffff', red: '#ff0000', green: '#00ff00', blue: '#0000ff', yellow: '#ffff00', magenta: '#ff00ff', cyan: '#00ffff' };
+  function splitSections(code) {
+    const out = [];
+    let cur = '', q = false;
+    for (let i = 0; i < code.length; i++) {
+      const ch = code[i];
+      if (q) { cur += ch; if (ch === '"') q = false; continue; }
+      if (ch === '"') { q = true; cur += ch; continue; }
+      if (ch === '\\' || ch === '_' || ch === '*') { cur += ch + (code[i + 1] ?? ''); i++; continue; }
+      if (ch === '[') { const j = code.indexOf(']', i); if (j > i) { cur += code.slice(i, j + 1); i = j; continue; } }
+      if (ch === ';') { out.push(cur); cur = ''; continue; }
+      cur += ch;
     }
-    if (/[ydhsm]/i.test(pattern.replace(/"[^"]*"/g, '')) && !/[0#]/.test(pattern)) return formatDate(v, pattern);
-    if (pattern.includes('%')) v *= 100;
-    const core = /[#0][#0,]*(\.[0#]+)?|\.[0#]+/.exec(pattern);
-    if (!core) return pattern;
-    const decimals = (core[1] || '').length ? core[1].length - 1 : 0;
-    const body = formatNumber(v, decimals, core[0].includes(','));
-    return (pattern.slice(0, core.index) + body + pattern.slice(core.index + core[0].length)).replace(/"([^"]*)"/g, '$1');
+    out.push(cur);
+    return out;
+  }
+  // Splits a section into tokens: literals, placeholders, date parts, brackets.
+  function lexSection(sec) {
+    const toks = [];
+    let color = null, cond = null;
+    const lit = (v) => { const last = toks[toks.length - 1]; if (last && last.t === 'lit') last.v += v; else toks.push({ t: 'lit', v }); };
+    for (let i = 0; i < sec.length; i++) {
+      const ch = sec[i], rest = sec.slice(i);
+      let m;
+      if (ch === '"') { const j = sec.indexOf('"', i + 1); lit(sec.slice(i + 1, j < 0 ? undefined : j)); i = j < 0 ? sec.length : j; continue; }
+      if (ch === '\\') { lit(sec[i + 1] ?? ''); i++; continue; }
+      if (ch === '_') { lit(' '); i++; continue; }
+      if (ch === '*') { lit(sec[i + 1] === ' ' ? ' ' : ''); i++; continue; }
+      if (ch === '[') {
+        const j = sec.indexOf(']', i), inner = sec.slice(i + 1, j);
+        i = j;
+        if ((m = /^(<=|>=|<>|<|>|=)\s*(-?[\d.]+)$/.exec(inner))) { cond = { op: m[1], n: +m[2] }; continue; }
+        if (CODE_COLORS[inner.toLowerCase()]) { color = CODE_COLORS[inner.toLowerCase()]; continue; }
+        if (/^color\d+$/i.test(inner)) continue;
+        if (/^(h+|m+|s+)$/i.test(inner)) { toks.push({ t: 'date', v: inner.toLowerCase(), elapsed: true }); continue; }
+        if (inner[0] === '$') { lit(inner.slice(1).split('-')[0]); continue; }
+        continue;
+      }
+      if (/^general/i.test(rest)) { toks.push({ t: 'general' }); i += 6; continue; }
+      if ((m = /^(am\/pm|a\/p)/i.exec(rest))) { toks.push({ t: 'ampm', v: m[1] }); i += m[1].length - 1; continue; }
+      if ((m = /^(y+|m+|d+|h+|s+)/i.exec(rest))) { toks.push({ t: 'date', v: m[1].toLowerCase() }); i += m[1].length - 1; continue; }
+      if ('0#?'.includes(ch)) { toks.push({ t: 'ph', v: ch }); continue; }
+      if (ch === '.') { toks.push({ t: 'dot' }); continue; }
+      if (ch === ',') { toks.push({ t: 'comma' }); continue; }
+      if (ch === '%') { toks.push({ t: 'pct' }); continue; }
+      if (ch === '@') { toks.push({ t: 'text' }); continue; }
+      if ((ch === 'E' || ch === 'e') && (sec[i + 1] === '+' || sec[i + 1] === '-')) { toks.push({ t: 'exp', v: sec[i + 1] }); i++; continue; }
+      if (ch === '/' && toks.some((t) => t.t === 'ph')) { toks.push({ t: 'slash' }); continue; }
+      lit(ch);
+    }
+    return { toks, color, cond };
+  }
+  const testCond = (c, v) => ({ '<': v < c.n, '>': v > c.n, '=': v === c.n, '<=': v <= c.n, '>=': v >= c.n, '<>': v !== c.n }[c.op]);
+
+  function fmtDateToks(v, toks) {
+    const hasAmPm = toks.some((t) => t.t === 'ampm');
+    // "m"/"mm" right after an hour or right before seconds means minutes.
+    const parts = toks.map((t) => ({ ...t }));
+    const dateIdx = parts.map((t, i) => (t.t === 'date' ? i : -1)).filter((i) => i >= 0);
+    dateIdx.forEach((i, k) => {
+      const t = parts[i];
+      if (t.v[0] !== 'm' || t.v.length > 2 || t.elapsed) return;
+      const prev = parts[dateIdx[k - 1]], next = parts[dateIdx[k + 1]];
+      if ((prev && prev.v[0] === 'h') || (next && next.v[0] === 's')) t.min = true;
+    });
+    const fracTok = toks.findIndex((t, i) => t.t === 'dot' && toks[i + 1] && toks[i + 1].t === 'ph' && toks[i - 1] && toks[i - 1].t === 'date' && toks[i - 1].v[0] === 's');
+    let fracDigits = 0;
+    if (fracTok >= 0) for (let i = fracTok + 1; toks[i] && toks[i].t === 'ph'; i++) fracDigits++;
+    const total = v * 86400;
+    const rounded = Math.round(total * 10 ** fracDigits) / 10 ** fracDigits;
+    const whole = Math.floor(rounded), frac = rounded - whole;
+    const d = serialToDate(Math.floor(v));
+    const secs = whole - Math.floor(v) * 86400;
+    const H = Math.floor(secs / 3600), M = Math.floor((secs % 3600) / 60), Sx = secs % 60;
+    let out = '';
+    for (let i = 0; i < parts.length; i++) {
+      const t = parts[i];
+      if (t.t === 'lit') out += t.v;
+      else if (t.t === 'ampm') out += t.v.length > 3 ? (H < 12 ? 'AM' : 'PM') : (H < 12 ? 'A' : 'P');
+      else if (t.t === 'dot' && i === fracTok) { out += '.' + frac.toFixed(fracDigits).slice(2); while (parts[i + 1] && parts[i + 1].t === 'ph') i++; }
+      else if (t.t === 'date') {
+        const n = t.v.length, c = t.v[0];
+        if (t.elapsed) out += pad(c === 'h' ? Math.floor(total / 3600) : c === 'm' ? Math.floor(total / 60) : Math.floor(total), n);
+        else if (c === 'y') out += n <= 2 ? pad(d.getUTCFullYear() % 100) : d.getUTCFullYear();
+        else if (c === 'm' && t.min) out += n === 1 ? M : pad(M);
+        else if (c === 'm') out += n === 1 ? d.getUTCMonth() + 1 : n === 2 ? pad(d.getUTCMonth() + 1) : n === 3 ? MONTHS[d.getUTCMonth()].slice(0, 3) : n === 5 ? MONTHS[d.getUTCMonth()][0] : MONTHS[d.getUTCMonth()];
+        else if (c === 'd') out += n === 1 ? d.getUTCDate() : n === 2 ? pad(d.getUTCDate()) : n === 3 ? DAYS_[d.getUTCDay()].slice(0, 3) : DAYS_[d.getUTCDay()];
+        else if (c === 'h') { const h = hasAmPm ? (H % 12 || 12) : H; out += n === 1 ? h : pad(h); }
+        else if (c === 's') out += n === 1 ? Sx : pad(Sx);
+      } else if (t.t === 'ph' || t.t === 'dot' || t.t === 'comma' || t.t === 'pct' || t.t === 'slash') out += { ph: t.v, dot: '.', comma: ',', pct: '%', slash: '/' }[t.t];
+    }
+    return out;
+  }
+
+  // Best fraction for x with a denominator of at most maxDen digits, or exactly `fixed`.
+  function toFraction(x, maxDen, fixed) {
+    if (fixed) return [Math.round(x * fixed), fixed];
+    let best = [0, 1], err = Infinity;
+    for (let den = 1; den <= maxDen; den++) {
+      const num = Math.round(x * den), e = Math.abs(x - num / den);
+      if (e < err - 1e-12) { best = [num, den]; err = e; }
+    }
+    return best;
+  }
+
+  function fmtNumberToks(v, toks, signed) {
+    let x = Math.abs(v);
+    const neg = signed && v < 0;
+    const phIdx = toks.map((t, i) => (t.t === 'ph' ? i : -1)).filter((i) => i >= 0);
+    const pct = toks.filter((t) => t.t === 'pct').length;
+    x *= 100 ** pct;
+    const dotAt = toks.findIndex((t) => t.t === 'dot');
+    const expAt = toks.findIndex((t) => t.t === 'exp');
+    const slashAt = toks.findIndex((t) => t.t === 'slash');
+    const lastPh = phIdx[phIdx.length - 1] ?? -1;
+    const intEnd = dotAt >= 0 ? dotAt : expAt >= 0 ? expAt : slashAt >= 0 ? slashAt : lastPh + 1;
+    // Commas right after the last integer placeholder scale by 1000; commas between placeholders group thousands.
+    let scale = 0, group = false;
+    toks.forEach((t, i) => {
+      if (t.t !== 'comma') return;
+      const before = phIdx.some((p) => p < i), after = phIdx.some((p) => p > i && p < intEnd);
+      if (before && after && i < intEnd) group = true;
+      else if (before && !after) scale++;
+    });
+    x /= 1000 ** scale;
+    const fracPh = dotAt >= 0 ? phIdx.filter((p) => p > dotAt && (expAt < 0 || p < expAt)) : [];
+    let intPh = phIdx.filter((p) => p < intEnd);
+    let expPh = expAt >= 0 ? phIdx.filter((p) => p > expAt) : [];
+    let exponent = 0;
+    if (expAt >= 0 && x !== 0) {
+      const intDigits = Math.max(1, intPh.length);
+      exponent = Math.floor(Math.log10(x)) - (intDigits - 1);
+      x /= 10 ** exponent;
+      if (+x.toFixed(fracPh.length) >= 10 ** intDigits) { x /= 10; exponent++; }
+    }
+    // Fractions: "# ?/?" (integer, numerator, denominator) or "?/?".
+    let fracParts = null;
+    if (slashAt >= 0) {
+      const numPh = phIdx.filter((p) => p < slashAt && !intPh.slice(0, -0).includes(p));
+      const denToks = [];
+      for (let i = slashAt + 1; i < toks.length && (toks[i].t === 'ph' || (toks[i].t === 'lit' && /^\d+$/.test(toks[i].v))); i++) denToks.push(toks[i]);
+      const fixed = denToks.length === 1 && denToks[0].t === 'lit' ? +denToks[0].v : null;
+      // The numerator is the run of placeholders just before "/"; any earlier placeholders are the integer part.
+      let k = slashAt - 1;
+      const numRun = [];
+      while (k >= 0 && toks[k].t === 'ph') numRun.unshift(k--);
+      const intRun = phIdx.filter((p) => p < (numRun[0] ?? slashAt));
+      const hasInt = intRun.length > 0;
+      const whole = hasInt ? Math.floor(x) : 0;
+      const [num, den] = toFraction(x - whole, 10 ** Math.max(1, denToks.filter((t) => t.t === 'ph').length) - 1, fixed);
+      let w = whole, n = num;
+      if (fixed ? n === den : n === den) { w += 1; n = 0; }
+      fracParts = { intRun, numRun, denToks, w, n, d: den, hasInt };
+      intPh = intRun;
+    }
+    const decimals = fracPh.length;
+    let intStr, fracStr = '';
+    if (fracParts) intStr = String(fracParts.w);
+    else {
+      const fixedS = x.toFixed(decimals);
+      [intStr, fracStr = ''] = fixedS.split('.');
+    }
+    if (intStr === '0' && !intPh.some((p) => toks[p].v === '0')) intStr = '';
+    // Fill integer placeholders right to left; spare leading digits go before the first one.
+    const fill = new Map();
+    const intDigits = intStr.split('');
+    for (let k = intPh.length - 1; k >= 0; k--) {
+      const ph = toks[intPh[k]].v;
+      const dgt = intDigits.length ? intDigits.pop() : null;
+      fill.set(intPh[k], dgt ?? (ph === '0' ? '0' : ph === '?' ? ' ' : ''));
+    }
+    if (intPh.length && intDigits.length) fill.set(intPh[0], intDigits.join('') + fill.get(intPh[0]));
+    if (group && intPh.length) {
+      // Re-render the integer run with thousands separators.
+      const digits = intPh.map((p) => fill.get(p)).join('');
+      const trimmed = digits.replace(/^ +/, '');
+      const grouped = trimmed.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      intPh.forEach((p, k) => fill.set(p, k === 0 ? ' '.repeat(digits.length - trimmed.length) + grouped : ''));
+    }
+    // Decimal placeholders left to right; trailing zeros drop for # and become spaces for ?.
+    const fd = fracStr.split('');
+    let keep = fd.length;
+    while (keep > 0 && fd[keep - 1] === '0' && toks[fracPh[keep - 1]].v !== '0') keep--;
+    fracPh.forEach((p, k) => fill.set(p, k < keep ? fd[k] : toks[p].v === '?' ? ' ' : ''));
+    if (expAt >= 0) {
+      const es = String(Math.abs(exponent)).padStart(expPh.filter((p) => toks[p].v === '0').length, '0');
+      expPh.forEach((p, k) => fill.set(p, k === 0 ? es : ''));
+    }
+    if (fracParts) {
+      const { numRun, denToks, n, d, w, hasInt } = fracParts;
+      const showFrac = n !== 0 || !hasInt;
+      const ns = String(n), ds = String(d);
+      numRun.forEach((p, k) => fill.set(p, k === numRun.length - 1 ? (showFrac ? ns.padStart(numRun.length, ' ') : ' '.repeat(numRun.length)) : ''));
+      fill.set('den', showFrac ? ds.padEnd(denToks.filter((t) => t.t === 'ph').length, ' ') : ' '.repeat(denToks.length));
+      if (hasInt && w === 0 && n !== 0) fracParts.intRun.forEach((p) => { if (toks[p].v === '#') fill.set(p, ''); });
+      fracParts.showFrac = showFrac;
+    }
+    let out = '';
+    for (let i = 0; i < toks.length; i++) {
+      const t = toks[i];
+      if (t.t === 'ph') out += fill.get(i) ?? '';
+      else if (t.t === 'lit') out += t.v;
+      else if (t.t === 'dot') out += '.';
+      else if (t.t === 'pct') out += '%';
+      else if (t.t === 'exp') out += 'E' + (exponent < 0 ? '-' : t.v === '+' ? '+' : '');
+      else if (t.t === 'slash') {
+        out += fracParts.showFrac ? '/' : ' ';
+        out += fill.get('den');
+        i += fracParts.denToks.length;
+      } else if (t.t === 'general') out += formatGeneral(x);
+      else if (t.t === 'date') out += t.v;
+    }
+    if (neg && /[1-9]/.test(out)) out = '-' + out;
+    return out;
+  }
+
+  function formatCode(v, code) {
+    const raw = code == null || code === '' ? 'General' : String(code);
+    const secs = splitSections(raw).map(lexSection);
+    if (typeof v === 'boolean') return { text: v ? 'TRUE' : 'FALSE', color: null };
+    if (typeof v === 'string') {
+      const tsec = secs.length >= 4 ? secs[3] : secs.find((s) => s.toks.some((t) => t.t === 'text'));
+      if (!tsec) return { text: v, color: null };
+      return { text: tsec.toks.map((t) => (t.t === 'text' ? v : t.t === 'lit' ? t.v : '')).join(''), color: tsec.color };
+    }
+    if (typeof v !== 'number' || !isFinite(v)) return { text: toStr(v), color: null };
+    let sec, signed = true;
+    if (secs.some((s) => s.cond)) {
+      const conds = secs.filter((s) => s.cond);
+      sec = conds.find((s) => testCond(s.cond, v)) || secs.find((s) => !s.cond && !s.toks.some((t) => t.t === 'text')) || secs[0];
+      signed = !(sec !== secs[0] && v < 0 && !sec.cond && secs.indexOf(sec) === 1);
+    } else if (v < 0 && secs.length >= 2 && secs[1].toks.length) { sec = secs[1]; signed = false; }
+    else if (v === 0 && secs.length >= 3 && secs[2].toks.length) sec = secs[2];
+    else sec = secs[0];
+    const { toks, color } = sec;
+    const only = toks.filter((t) => t.t !== 'lit');
+    if (!only.length && !toks.length) return { text: '', color };
+    if (only.length === 1 && only[0].t === 'general' || toks.every((t) => t.t === 'lit' || t.t === 'general') && toks.some((t) => t.t === 'general')) {
+      const g = formatGeneral(signed ? v : Math.abs(v));
+      return { text: toks.map((t) => (t.t === 'general' ? g : t.v)).join(''), color };
+    }
+    if (toks.some((t) => t.t === 'text') && !toks.some((t) => t.t === 'ph')) return { text: toks.map((t) => (t.t === 'text' ? formatGeneral(v) : t.t === 'lit' ? t.v : '')).join(''), color };
+    const isDate = toks.some((t) => t.t === 'date' || t.t === 'ampm') && !toks.some((t, i) => t.t === 'ph' && !(toks[i - 1] && (toks[i - 1].t === 'dot' || toks[i - 1].t === 'ph') && toks.slice(0, i).some((x) => x.t === 'date' && x.v[0] === 's')));
+    if (isDate) return { text: v < 0 ? '#'.repeat(8) : fmtDateToks(v, toks), color };
+    if (!toks.some((t) => t.t === 'ph')) return { text: toks.map((t) => (t.t === 'lit' ? t.v : t.t === 'pct' ? '%' : '')).join(''), color };
+    return { text: fmtNumberToks(v, toks, signed), color };
+  }
+
+  // TEXT() and older callers: format code to text. Text that looks like a number is formatted as one.
+  function formatPattern(v, pattern) {
+    if (typeof v === 'string') { const lit = parseLiteral(v).value; if (typeof lit === 'number') v = lit; }
+    return formatCode(v, pattern).text;
   }
 
   // Formats a cell value for display using the cell's style (number format + decimal override).
@@ -736,18 +979,25 @@
     if (v === null || v === undefined) return '';
     if (isErr(v)) return v.code;
     if (typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
-    if (typeof v === 'string') return v;
+    if (typeof v === 'string') return style.fmt === 'custom' ? formatCode(v, style.pattern).text : v;
     const fmt = style.fmt || 'general';
     const dec = style.dec;
+    // Number and Currency take Excel's negative styles: style.neg = 'red' | 'paren' | 'redparen' (default "-").
+    const sym = style.sym === 'none' ? '' : '$';
+    const signed = (body, isNeg) => (!isNeg ? body : style.neg === 'paren' || style.neg === 'redparen' ? `(${body})` : style.neg === 'red' ? body : '-' + body);
     switch (fmt) {
-      case 'number': return formatNumber(v, dec ?? 2, true);
+      case 'number': {
+        const s = formatNumber(Math.abs(v), dec ?? 2, style.sep !== false);
+        return signed(s, v < 0 && /[1-9]/.test(s));
+      }
       case 'currency': {
         const s = formatNumber(Math.abs(v), dec ?? 2, true);
-        return (v < 0 && Number(s.replace(/,/g, '')) !== 0 ? '-$' : '$') + s;
+        return signed(sym + s, v < 0 && /[1-9]/.test(s));
       }
       case 'accounting': {
         const s = formatNumber(Math.abs(v), dec ?? 2, true);
-        return v < 0 ? `$ (${s})` : v === 0 ? '$ -' : `$ ${s}`;
+        const lead = sym ? sym + ' ' : '';
+        return v < 0 ? `${lead}(${s})` : v === 0 ? `${lead}-` : `${lead}${s}`;
       }
       case 'percent': return formatNumber(v * 100, dec ?? 2, false) + '%';
       case 'scientific': return v.toExponential(dec ?? 2).toUpperCase().replace(/E([+-])(\d)$/, 'E$10$2');
@@ -756,11 +1006,19 @@
       case 'datetime': return formatDate(v, 'yyyy-mm-dd hh:mm');
       case 'time': return formatDate(v, 'hh:mm:ss');
       case 'text': return formatGeneral(v);
-      case 'custom': return formatPattern(v, style.pattern || 'General');
+      case 'custom': return formatCode(v, style.pattern || 'General').text;
       default:
         if (dec !== undefined) return formatNumber(v, dec, false);
         return formatGeneral(v);
     }
+  }
+
+  // The colour a number format gives a value: red negatives, or a [Color] in a custom code.
+  function formatColor(v, style = {}) {
+    if (typeof v !== 'number') return style.fmt === 'custom' && typeof v === 'string' ? formatCode(v, style.pattern).color : null;
+    if (style.fmt === 'custom') return formatCode(v, style.pattern).color;
+    if ((style.fmt === 'number' || style.fmt === 'currency') && v < 0 && (style.neg === 'red' || style.neg === 'redparen')) return '#ff0000';
+    return null;
   }
 
   // ---------------------------------------------------------------- workbook model
@@ -774,6 +1032,11 @@
       this.rowHeights = {};
       this.view = {};
       this.merges = []; // merged ranges { r1, c1, r2, c2 }; the top-left cell holds the value
+      this.hiddenRows = {}; // index -> true
+      this.hiddenCols = {};
+      this.hidden = false; // hidden sheet
+      this.tabColor = null;
+      this.defaultColWidth = null; // px; null = the app default
     }
     get(r, c) { return this.cells.get(key(r, c)); }
     extent() {
@@ -1028,14 +1291,15 @@
         moved.set(key(r, c), cell);
       }
       sh.cells = moved;
-      const sizes = axis === 'row' ? 'rowHeights' : 'colWidths';
-      const resized = {};
-      for (const [i, w] of Object.entries(sh[sizes])) {
-        const n = +i;
-        if (count < 0 && n >= at && n < at - count) continue;
-        resized[n >= at ? n + count : n] = w;
+      for (const prop of axis === 'row' ? ['rowHeights', 'hiddenRows'] : ['colWidths', 'hiddenCols']) {
+        const moved2 = {};
+        for (const [i, w] of Object.entries(sh[prop])) {
+          const n = +i;
+          if (count < 0 && n >= at && n < at - count) continue;
+          moved2[n >= at ? n + count : n] = w;
+        }
+        sh[prop] = moved2;
       }
-      sh[sizes] = resized;
       // Merged ranges move with the rows/columns, grow when rows/columns are inserted inside them and shrink on delete.
       const [lo, hi] = axis === 'row' ? ['r1', 'r2'] : ['c1', 'c2'];
       sh.merges = sh.merges.map((m) => {
@@ -1083,6 +1347,11 @@
           view: s.view,
           cells: [...s.cells].map(([k, cell]) => [k, cell.input, cell.style || null]),
           ...(s.merges.length ? { merges: s.merges } : {}),
+          ...(Object.keys(s.hiddenRows).length ? { hiddenRows: s.hiddenRows } : {}),
+          ...(Object.keys(s.hiddenCols).length ? { hiddenCols: s.hiddenCols } : {}),
+          ...(s.hidden ? { hidden: true } : {}),
+          ...(s.tabColor ? { tabColor: s.tabColor } : {}),
+          ...(s.defaultColWidth ? { defaultColWidth: s.defaultColWidth } : {}),
         })),
         ...(this.cellStyles.length ? { cellStyles: this.cellStyles } : {}),
       };
@@ -1095,6 +1364,11 @@
         sh.rowHeights = s.rowHeights || {};
         sh.view = s.view || {};
         sh.merges = s.merges || [];
+        sh.hiddenRows = s.hiddenRows || {};
+        sh.hiddenCols = s.hiddenCols || {};
+        sh.hidden = !!s.hidden;
+        sh.tabColor = s.tabColor || null;
+        sh.defaultColWidth = s.defaultColWidth || null;
         for (const [k, input, style] of s.cells) {
           const cell = { input: '' };
           wb.setCellInput(cell, input);
@@ -1113,7 +1387,7 @@
     XLError, E, RangeVal, Workbook, Sheet, SyntaxErr,
     colName, colIndex, addr, parseAddr, parseRangeAddr,
     tokenize, parse, shiftFormula, rewriteRefs,
-    parseLiteral, formatValue, formatGeneral, formatPattern,
+    parseLiteral, formatValue, formatColor, formatGeneral, formatPattern, formatCode,
     dateToSerial, serialToDate, isErr,
     FUNCTIONS: F,
   };
