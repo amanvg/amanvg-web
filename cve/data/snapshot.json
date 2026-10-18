@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-17T20:35:48Z",
+ "generatedAt": "2026-10-18T15:51:11Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.16",
  "kevCount": 1748,
- "epssDate": "2026-10-17",
+ "epssDate": "2026-10-18",
  "items": [
   {
    "id": "CVE-2015-3306",
@@ -765,7 +765,7 @@
     "ransomware": false
    },
    "epss": 0.015,
-   "percentile": 0.74,
+   "percentile": 0.741,
    "cvss": 8.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
