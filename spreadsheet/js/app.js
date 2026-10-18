@@ -168,6 +168,17 @@
     return n > 0 ? [at(n, col)] : [];
   }
 
+  // Orientation: style.rot is 45 / -45 (degrees counterclockwise), 90 / -90 (rotate up / down) or 'v' (stacked).
+  // Each is laid out so the row grows to fit, as Excel's rows do.
+  function rotHtml(text, st) {
+    const t = esc(text);
+    if (st.rot === 'v') return `<span class="rot rot-v">${t}</span>`;
+    if (st.rot === 90 || st.rot === -90) return `<span class="rot ${st.rot > 0 ? 'rot-up' : 'rot-down'}">${t}</span>`;
+    const lh = (st.size || 11) * 4 / 3 * 1.25, k = Math.SQRT1_2;
+    const h = Math.ceil((textWidth(text, st) + lh) * k) + 2, x = Math.ceil(lh * k);
+    return `<span class="rot rot-a" style="height:${h}px"><span class="${st.rot > 0 ? 'ccw' : 'cw'}" style="left:${x}px">${t}</span></span>`;
+  }
+
   function renderCell(r, c, td = tdAt(r, c)) {
     if (!td) return;
     const cell = sheet().get(r, c);
@@ -180,7 +191,7 @@
         text = XL.formatValue(v, st);
         kind = typeof v === 'number' ? 'num' : typeof v === 'boolean' ? 'bool' : XL.isErr(v) ? 'err' : 'str';
         if (st.fmt === 'text' && !cell.formula) kind = 'str';
-        if (kind === 'num' && !st.wrap) {
+        if (kind === 'num' && !st.wrap && !st.rot) {
           const avail = colWidth(c) - 7;
           if (textWidth(text, st) > avail) text = '#'.repeat(Math.max(1, Math.floor(avail / textWidth('#', st))));
         }
@@ -189,6 +200,7 @@
     let cls = kind;
     if (st.wrap) cls += ' wrap';
     else if (kind === 'str' && text && (!st.align || st.align === 'left') && !filled(r, c + 1)) cls += ' ov';
+    if (st.rot && text && (st.rot === 45 || st.rot === -45) && !cls.includes(' ov') && !filled(r, c + 1)) cls += ' ov';
     if (view().freezeCol && c === 0) cls += ' frozen-col';
     const css = [];
     if (st.bold) css.push('font-weight:700');
@@ -214,7 +226,9 @@
       if (shadows.length) css.push('box-shadow:' + shadows.join(','));
     }
     if (cls.includes(' ov')) css.push('overflow:visible;position:relative;z-index:1');
-    if (td.textContent !== text) td.textContent = text;
+    const html = st.rot && text ? rotHtml(text, st) : null;
+    if (html) { if (td._rot !== html) { td.innerHTML = html; td._rot = html; } }
+    else if (td._rot || td.textContent !== text) { td._rot = null; td.textContent = text; }
     td.className = cls;
     const cssText = css.join(';');
     if (td.getAttribute('style') !== cssText) { if (cssText) td.setAttribute('style', cssText); else td.removeAttribute('style'); }
@@ -844,7 +858,7 @@
   // ------------------------------------------------------------ cell styles (Excel's gallery, Office 2023+ theme)
   // A style formats only the categories it includes; the rest of the cell's formatting is kept.
   const STYLE_CATS = {
-    number: ['fmt', 'dec'], align: ['align', 'valign', 'wrap', 'indent'],
+    number: ['fmt', 'dec'], align: ['align', 'valign', 'wrap', 'indent', 'rot'],
     font: ['font', 'size', 'bold', 'italic', 'underline', 'strike', 'color'], border: ['border', 'bd'], fill: ['fill'],
   };
   const CAT_LABEL = { number: 'Number', align: 'Alignment', font: 'Font', border: 'Border', fill: 'Fill' };
@@ -974,7 +988,7 @@
   const STYLE_ORDER = ['number', 'align', 'font', 'border', 'fill'];
   function describeCat(cat, d) {
     if (cat === 'number') return d.fmt ? $(`#numFmt option[value="${d.fmt}"]`)?.textContent || d.fmt : 'General';
-    if (cat === 'align') return [d.align ? d.align[0].toUpperCase() + d.align.slice(1) : 'General', `${d.valign ? d.valign[0].toUpperCase() + d.valign.slice(1) : 'Bottom'} Aligned`, d.wrap && 'Wrap', d.indent && `Indent ${d.indent}`].filter(Boolean).join(', ');
+    if (cat === 'align') return [d.align ? d.align[0].toUpperCase() + d.align.slice(1) : 'General', `${d.valign ? d.valign[0].toUpperCase() + d.valign.slice(1) : 'Bottom'} Aligned`, d.wrap && 'Wrap', d.indent && `Indent ${d.indent}`, d.rot && (d.rot === 'v' ? 'Vertical' : `${d.rot}°`)].filter(Boolean).join(', ');
     if (cat === 'font') return [`${d.font || 'Aptos Narrow'} ${d.size || 11}`, d.bold && 'Bold', d.italic && 'Italic', d.underline && 'Underline', d.color && d.color.toUpperCase()].filter(Boolean).join(', ');
     if (cat === 'border') return d.bd || d.border ? 'Borders' : 'No Borders';
     return d.fill ? d.fill.toUpperCase() : 'No Shading';
@@ -1034,6 +1048,9 @@
     const st = activeStyle();
     const on = (cmd, v) => document.querySelectorAll(`.ribbon [data-cmd="${cmd}"]`).forEach((b) => b.classList.toggle('on', !!v));
     on('bold', st.bold); on('italic', st.italic); on('underline', st.underline); on('strike', st.strike);
+    on('rotCCW', st.rot === 45); on('rotCW', st.rot === -45); on('rotVertical', st.rot === 'v'); on('rotUp', st.rot === 90); on('rotDown', st.rot === -90);
+    document.querySelectorAll('#orientMenu [data-cmd]').forEach((b) => b.setAttribute('aria-checked', b.classList.contains('on')));
+    $('[data-menu="orientMenu"]').classList.toggle('on', !!st.rot);
     on('wrap', st.wrap); on('alignLeft', st.align === 'left'); on('alignCenter', st.align === 'center'); on('alignRight', st.align === 'right');
     on('valignTop', st.valign === 'top'); on('valignMiddle', st.valign === 'middle'); on('valignBottom', !st.valign || st.valign === 'bottom');
     on('showFormulas', S.showFormulas); on('protect', view().protected); on('freezeRow', view().freezeRow); on('freezeCol', view().freezeCol);
@@ -1685,6 +1702,11 @@
     valignMiddle: () => applyStyle({ valign: 'middle' }),
     valignBottom: () => applyStyle({ valign: undefined }),
     wrap: () => toggleStyle('wrap'),
+    rotCCW: () => toggleValue('rot', 45),
+    rotCW: () => toggleValue('rot', -45),
+    rotVertical: () => toggleValue('rot', 'v'),
+    rotUp: () => toggleValue('rot', 90),
+    rotDown: () => toggleValue('rot', -90),
     alignLeft: () => toggleValue('align', 'left'),
     alignCenter: () => toggleValue('align', 'center'),
     alignRight: () => toggleValue('align', 'right'),

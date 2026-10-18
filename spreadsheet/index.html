@@ -110,6 +110,16 @@
             <button data-cmd="valignTop" data-icon="vtop" title="Top Align"></button>
             <button data-cmd="valignMiddle" data-icon="vmid" title="Middle Align"></button>
             <button data-cmd="valignBottom" data-icon="vbot" title="Bottom Align"></button>
+            <div class="dropdown">
+              <button data-icon="orient" data-menu="orientMenu" title="Orientation" aria-label="Orientation" class="drop">▾</button>
+              <div class="menu" id="orientMenu" role="menu">
+                <button data-cmd="rotCCW" data-icon="rotCCW" role="menuitemcheckbox">Angle Counterclockwise</button>
+                <button data-cmd="rotCW" data-icon="rotCW" role="menuitemcheckbox">Angle Clockwise</button>
+                <button data-cmd="rotVertical" data-icon="rotVertical" role="menuitemcheckbox">Vertical Text</button>
+                <button data-cmd="rotUp" data-icon="rotUp" role="menuitemcheckbox">Rotate Text Up</button>
+                <button data-cmd="rotDown" data-icon="rotDown" role="menuitemcheckbox">Rotate Text Down</button>
+              </div>
+            </div>
             <span class="sep"></span>
             <button data-cmd="wrap" data-icon="wrap" title="Wrap Text">Wrap Text</button>
           </div>
