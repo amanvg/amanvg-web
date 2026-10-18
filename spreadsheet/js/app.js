@@ -1582,6 +1582,9 @@
   document.addEventListener('mousedown', (e) => { if (!flyout.hidden && !e.target.closest('.doc-title')) closeFlyout(false); });
   // Keep keyboard focus on the grid/editor when using ribbon buttons.
   document.querySelector('.ribbon').addEventListener('mousedown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
+  // Pinned menus would drift from their button, so close them when the ribbon scrolls or the window resizes.
+  document.querySelector('.ribbon').addEventListener('scroll', closeMenus);
+  window.addEventListener('resize', closeMenus);
   document.addEventListener('click', (e) => {
     const menuBtn = e.target.closest('[data-menu]');
     if (menuBtn) {
@@ -1589,6 +1592,13 @@
       const open = !m.classList.contains('open');
       closeMenus();
       m.classList.toggle('open', open);
+      // The ribbon scrolls sideways, which clips anything below it; pin ribbon menus to the viewport under their button.
+      if (open && m.closest('.ribbon')) {
+        const b = menuBtn.getBoundingClientRect();
+        m.classList.add('pinned');
+        m.style.top = b.bottom + 'px';
+        m.style.left = Math.max(8, Math.min(b.left, window.innerWidth - m.offsetWidth - 8)) + 'px';
+      }
       return;
     }
     if (!e.target.closest('.ctx-menu')) hideCtx();

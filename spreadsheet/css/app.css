@@ -91,6 +91,7 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .dropdown { position: relative; }
 .menu { display: none; position: absolute; top: 100%; left: 0; z-index: 50; min-width: 180px; background: #fff; border: 1px solid #cfcfcf; border-radius: 6px; padding: 4px; box-shadow: 0 8px 24px rgba(0, 0, 0, .14); }
 .menu.open { display: block; }
+.menu.pinned { position: fixed; }
 .menu button { display: flex; width: 100%; text-align: left; padding: 6px 10px; border-radius: 4px; }
 .st-good { background: #c6efce !important; color: #006100; }
 .st-bad { background: #ffc7ce !important; color: #9c0006; }
