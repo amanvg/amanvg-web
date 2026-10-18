@@ -1,0 +1,63 @@
+// Minimal stroke icon set (24×24). Any element with data-icon="name" gets the SVG prepended.
+(function () {
+  'use strict';
+  const P = {
+    save: 'M5 3h11l3 3v15H5zM8 3v5h7V3M8 21v-7h8v7',
+    undo: 'M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3',
+    redo: 'M15 14l5-5-5-5M20 9H10a6 6 0 0 0 0 12h3',
+    file: 'M6 2h9l5 5v15H6zM14 2v6h6',
+    folder: 'M3 6h6l2 2h10v12H3z',
+    download: 'M12 3v12M7 10l5 5 5-5M4 21h16',
+    print: 'M6 9V3h12v6M6 18H4v-8h16v8h-2M7 14h10v7H7z',
+    paste: 'M9 4h6v3H9zM7 5H5v16h14V5h-2M9 12h6M9 16h6',
+    cut: 'M6 6a3 3 0 1 0 0 .1M6 18a3 3 0 1 0 0 .1M8.5 7.5 20 19M8.5 16.5 20 5',
+    copy: 'M9 9h11v12H9zM5 15H4V3h12v1',
+    brush: 'M14 3l7 7-6 2-3-3zM12 9l-7 7a2 2 0 0 0 3 3l7-7',
+    grid: 'M4 4h16v16H4zM4 10h16M4 15h16M10 4v16M15 4v16',
+    square: 'M4 4h16v16H4z',
+    bucket: 'M5 11l7-7 7 7-7 7zM19 15s2 2.5 2 4a2 2 0 0 1-4 0c0-1.5 2-4 2-4',
+    vtop: 'M4 4h16M12 8v12M8 12l4-4 4 4',
+    vmid: 'M4 12h16M12 3v6M12 15v6',
+    vbot: 'M4 20h16M12 4v12M8 12l4 4 4-4',
+    wrap: 'M4 6h16M4 12h13a3 3 0 0 1 0 6h-4M15 16l-2 2 2 2M4 18h6',
+    alignL: 'M4 6h16M4 10h10M4 14h16M4 18h10',
+    alignC: 'M4 6h16M7 10h10M4 14h16M7 18h10',
+    alignR: 'M4 6h16M10 10h10M4 14h16M10 18h10',
+    indent: 'M10 6h10M10 10h10M10 14h10M10 18h10M4 9l3 3-3 3',
+    outdent: 'M10 6h10M10 10h10M10 14h10M10 18h10M7 9l-3 3 3 3',
+    styles: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+    insertRow: 'M4 4h16v6H4zM4 14h16v6H4zM12 11v2',
+    insertCol: 'M4 4h6v16H4zM14 4h6v16h-6z',
+    deleteRow: 'M4 9h16v6H4zM9 4l6 3M15 4 9 7',
+    down: 'M12 4v14M6 12l6 6 6-6',
+    eraser: 'M16 3l5 5-11 11H5l-2-2zM13 6l5 5M10 21h11',
+    sort: 'M7 4v16M3 16l4 4 4-4M14 6h7M14 11h5M14 16h3',
+    sortAsc: 'M7 4v16M3 16l4 4 4-4M14 6h3M14 11h5M14 16h7',
+    sortDesc: 'M7 4v16M3 16l4 4 4-4M14 6h7M14 11h5M14 16h3',
+    search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l5 5',
+    chart: 'M4 20h16M7 16v-5M12 16V6M17 16v-8',
+    lineChart: 'M4 20h16M4 16l5-6 4 3 7-8',
+    fx: 'M10 4c-3 0-3 3-3 6s0 8-3 8M4 10h7M14 10l6 8M20 10l-6 8',
+    calendar: 'M4 6h16v14H4zM4 10h16M8 3v5M16 3v5',
+    page: 'M6 3h12v18H6z',
+    sigma: 'M18 5H6l6 7-6 7h12',
+    money: 'M3 7h18v10H3zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6',
+    logic: 'M4 12h4l3-6 3 12 3-6h3',
+    text: 'M5 6h14M12 6v13',
+    calc: 'M6 3h12v18H6zM9 7h6M9 12h1M14 12h1M9 16h1M14 16h1',
+    dedupe: 'M4 4h10v10H4zM10 10h10v10H10z',
+    stats: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
+    lock: 'M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4',
+    freezeRow: 'M4 4h16v16H4zM4 9h16',
+    freezeCol: 'M4 4h16v16H4zM9 4v16',
+    zoomIn: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l5 5M8 11h6M11 8v6',
+    zoomOut: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l5 5M8 11h6',
+  };
+  function svg(name) {
+    const d = P[name];
+    if (!d) return '';
+    return `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+  }
+  window.Icons = { svg };
+  document.querySelectorAll('[data-icon]').forEach((el) => el.insertAdjacentHTML('afterbegin', svg(el.dataset.icon)));
+})();

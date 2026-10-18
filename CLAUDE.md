@@ -101,6 +101,10 @@ A Reject means make no changes and ask what to adjust.
   `data/visited.json`; a "Create your own" button switches to a blank,
   browser-saved copy with Export/Import in the same schema. No personal name
   appears in these or any new UI text.
+- `/spreadsheet/`: keeps its own spreadsheet look (green `#107c41` title bar,
+  ribbon, grid), not `DESIGN.md`. It is an installable web app
+  (`manifest.webmanifest`, network-first `sw.js`; bump `CACHE` in `sw.js` when
+  adding files) with SheetJS 0.18.5 vendored in `vendor/`.
 - `/carpicker/` (unlinked): still the old dark theme. Copy the `:root` tokens,
   nav (`← amanvg` back link, centered title), `.card`, and form styles from the
   page itself rather than inventing new ones. Inter from Google Fonts, 20px
@@ -162,6 +166,8 @@ A Reject means make no changes and ask what to adjust.
   Frontier, due status from odometer and date against Nissan's schedule, cost
   and MPG ledgers; fill-ups and services are logged from the page once a device
   is Connected.
+- `/spreadsheet/` Spreadsheet: workbook with formulas, sheets, charts and
+  .xlsx/.csv open and save, saved in `localStorage` (`spreadsheet:workbook`).
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
   dashboards and maps; `carpicker/` is an older, unlinked page.
 - Home categories: Sports, Personal (Frontier, US States, Countries, MLB

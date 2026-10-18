@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spreadsheet</title>
+  <meta name="theme-color" content="#107c41">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/icon-180.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div id="app">
+  <!-- Title bar: quick access toolbar + document title (XLWorkbookWindow) -->
+  <header class="titlebar">
+    <div class="qat">
+      <span class="app-badge" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 2h12v12H2zM2 6h12M2 10h12M6 2v12M10 2v12" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <button class="qat-btn" data-cmd="save" title="Save (⌘S)" data-icon="save"></button>
+      <button class="qat-btn" data-cmd="undo" title="Undo (⌘Z)" data-icon="undo"></button>
+      <button class="qat-btn" data-cmd="redo" title="Redo (⌘Y)" data-icon="redo"></button>
+    </div>
+    <div class="doc-title"><span id="docName">Book1</span><span class="muted"> — Saved to this browser</span></div>
+    <div class="title-right">
+      <input id="searchBox" class="search" type="search" placeholder="Search (⌘F)" aria-label="Search sheet">
+    </div>
+  </header>
+
+  <!-- Ribbon -->
+  <nav class="ribbon-tabs" role="tablist">
+    <button class="tab file-tab" data-tab="file">File</button>
+    <button class="tab active" data-tab="home">Home</button>
+    <button class="tab" data-tab="insert">Insert</button>
+    <button class="tab" data-tab="pagelayout">Page Layout</button>
+    <button class="tab" data-tab="formulas">Formulas</button>
+    <button class="tab" data-tab="data">Data</button>
+    <button class="tab" data-tab="review">Review</button>
+    <button class="tab" data-tab="view">View</button>
+  </nav>
+
+  <div class="ribbon">
+    <section class="panel" data-panel="file">
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="new" data-icon="file">New</button>
+        <button class="big" data-cmd="open" data-icon="folder">Open…</button>
+        <button class="big" data-cmd="saveXlsx" data-icon="save">Save as .xlsx</button>
+        <button class="big" data-cmd="exportCsv" data-icon="download">Export CSV</button>
+        <button class="big" data-cmd="print" data-icon="print">Print</button>
+      </div><div class="label">File</div></div>
+    </section>
+
+    <section class="panel active" data-panel="home">
+      <div class="group">
+        <div class="row">
+          <button class="big" data-cmd="paste" data-icon="paste" title="Paste (⌘V)">Paste</button>
+          <div class="stack">
+            <button data-cmd="cut" data-icon="cut" title="Cut (⌘X)"></button>
+            <button data-cmd="copy" data-icon="copy" title="Copy (⌘C)"></button>
+            <button data-cmd="formatPainter" data-icon="brush" title="Format Painter"></button>
+          </div>
+        </div>
+        <div class="label">Clipboard</div>
+      </div>
+      <div class="group">
+        <div class="stack">
+          <div class="row">
+            <select id="fontFamily" title="Font">
+              <option>Aptos Narrow</option><option>Calibri</option><option>Arial</option><option>Helvetica</option>
+              <option>Georgia</option><option>Times New Roman</option><option>Courier New</option><option>Verdana</option>
+            </select>
+            <select id="fontSize" title="Font Size">
+              <option>8</option><option>9</option><option>10</option><option selected>11</option><option>12</option>
+              <option>14</option><option>16</option><option>18</option><option>20</option><option>24</option><option>28</option><option>36</option>
+            </select>
+            <button data-cmd="growFont" title="Increase Font Size" class="txt">A<sup>▲</sup></button>
+            <button data-cmd="shrinkFont" title="Decrease Font Size" class="txt">A<sup>▼</sup></button>
+          </div>
+          <div class="row">
+            <button data-cmd="bold" title="Bold (⌘B)" class="txt"><b>B</b></button>
+            <button data-cmd="italic" title="Italic (⌘I)" class="txt"><i>I</i></button>
+            <button data-cmd="underline" title="Underline (⌘U)" class="txt"><u>U</u></button>
+            <button data-cmd="strike" title="Strikethrough" class="txt"><s>ab</s></button>
+            <span class="sep"></span>
+            <button data-cmd="borders" data-icon="grid" title="All Borders"></button>
+            <button data-cmd="noBorders" data-icon="square" title="No Border"></button>
+            <span class="sep"></span>
+            <label class="color-btn" title="Fill Color"><span data-icon="bucket"></span><i id="fillSwatch" style="background:#ffff00"></i><input type="color" id="fillColor" value="#ffff00"></label>
+            <button data-cmd="applyFill" class="mini" title="Apply Fill Color">▾</button>
+            <label class="color-btn" title="Font Color"><span class="txt-a">A</span><i id="fontSwatch" style="background:#c00000"></i><input type="color" id="fontColor" value="#c00000"></label>
+            <button data-cmd="applyFontColor" class="mini" title="Apply Font Color">▾</button>
+          </div>
+        </div>
+        <div class="label">Font</div>
+      </div>
+      <div class="group">
+        <div class="stack">
+          <div class="row">
+            <button data-cmd="valignTop" data-icon="vtop" title="Top Align"></button>
+            <button data-cmd="valignMiddle" data-icon="vmid" title="Middle Align"></button>
+            <button data-cmd="valignBottom" data-icon="vbot" title="Bottom Align"></button>
+            <span class="sep"></span>
+            <button data-cmd="wrap" data-icon="wrap" title="Wrap Text">Wrap Text</button>
+          </div>
+          <div class="row">
+            <button data-cmd="alignLeft" data-icon="alignL" title="Align Left"></button>
+            <button data-cmd="alignCenter" data-icon="alignC" title="Center"></button>
+            <button data-cmd="alignRight" data-icon="alignR" title="Align Right"></button>
+            <span class="sep"></span>
+            <button data-cmd="indent" data-icon="indent" title="Increase Indent"></button>
+            <button data-cmd="outdent" data-icon="outdent" title="Decrease Indent"></button>
+          </div>
+        </div>
+        <div class="label">Alignment</div>
+      </div>
+      <div class="group">
+        <div class="stack">
+          <div class="row">
+            <select id="numFmt" title="Number Format">
+              <option value="general">General</option><option value="number">Number</option>
+              <option value="currency">Currency</option><option value="accounting">Accounting</option>
+              <option value="date">Short Date</option><option value="longdate">Long Date</option>
+              <option value="time">Time</option><option value="percent">Percentage</option>
+              <option value="scientific">Scientific</option><option value="text">Text</option>
+            </select>
+          </div>
+          <div class="row">
+            <button data-cmd="fmtCurrency" class="txt" title="Accounting Number Format (USD)">$</button>
+            <button data-cmd="fmtPercent" class="txt" title="Percent Style">%</button>
+            <button data-cmd="fmtComma" class="txt" title="Comma Style">,</button>
+            <span class="sep"></span>
+            <button data-cmd="incDecimal" class="txt" title="Increase Decimal">.0<sub>←</sub></button>
+            <button data-cmd="decDecimal" class="txt" title="Decrease Decimal">.0<sub>→</sub></button>
+          </div>
+        </div>
+        <div class="label">Number</div>
+      </div>
+      <div class="group">
+        <div class="row">
+          <div class="dropdown">
+            <button class="big" data-icon="styles" data-menu="cellStyles">Cell Styles</button>
+            <div class="menu" id="cellStyles">
+              <button data-style="normal">Normal</button>
+              <button data-style="good" class="st-good">Good</button>
+              <button data-style="bad" class="st-bad">Bad</button>
+              <button data-style="neutral" class="st-neutral">Neutral</button>
+              <button data-style="heading" class="st-heading">Heading 1</button>
+              <button data-style="title" class="st-title">Title</button>
+              <button data-style="total" class="st-total">Total</button>
+            </div>
+          </div>
+        </div>
+        <div class="label">Styles</div>
+      </div>
+      <div class="group">
+        <div class="row">
+          <div class="dropdown">
+            <button class="big" data-icon="insertRow" data-menu="insertMenu">Insert</button>
+            <div class="menu" id="insertMenu">
+              <button data-cmd="insertRow">Insert Sheet Rows</button>
+              <button data-cmd="insertCol">Insert Sheet Columns</button>
+              <button data-cmd="newSheet">Insert Sheet</button>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="big" data-icon="deleteRow" data-menu="deleteMenu">Delete</button>
+            <div class="menu" id="deleteMenu">
+              <button data-cmd="deleteRow">Delete Sheet Rows</button>
+              <button data-cmd="deleteCol">Delete Sheet Columns</button>
+              <button data-cmd="deleteSheet">Delete Sheet</button>
+            </div>
+          </div>
+        </div>
+        <div class="label">Cells</div>
+      </div>
+      <div class="group">
+        <div class="row">
+          <div class="stack">
+            <button data-cmd="autoSum" class="txt wide" title="AutoSum">Σ AutoSum</button>
+            <button data-cmd="fillDown" data-icon="down" title="Fill Down (⌘D)">Fill</button>
+            <div class="dropdown">
+              <button data-icon="eraser" data-menu="clearMenu">Clear</button>
+              <div class="menu" id="clearMenu">
+                <button data-cmd="clearAll">Clear All</button>
+                <button data-cmd="clearFormats">Clear Formats</button>
+                <button data-cmd="clearContents">Clear Contents</button>
+              </div>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="big" data-icon="sort" data-menu="sortMenu">Sort &amp; Filter</button>
+            <div class="menu" id="sortMenu">
+              <button data-cmd="sortAsc">Sort A to Z</button>
+              <button data-cmd="sortDesc">Sort Z to A</button>
+            </div>
+          </div>
+          <button class="big" data-cmd="find" data-icon="search">Find</button>
+        </div>
+        <div class="label">Editing</div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="insert">
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="chartColumn" data-icon="chart">Column Chart</button>
+        <button class="big" data-cmd="chartLine" data-icon="lineChart">Line Chart</button>
+      </div><div class="label">Charts</div></div>
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="insertRow" data-icon="insertRow">Rows</button>
+        <button class="big" data-cmd="insertCol" data-icon="insertCol">Columns</button>
+        <button class="big" data-cmd="newSheet" data-icon="file">Sheet</button>
+      </div><div class="label">Cells</div></div>
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="insertFunction" data-icon="fx">Function</button>
+        <button class="big" data-cmd="insertToday" data-icon="calendar">Today's Date</button>
+      </div><div class="label">Symbols</div></div>
+    </section>
+
+    <section class="panel" data-panel="pagelayout">
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="orientation" data-icon="page" id="orientBtn">Portrait</button>
+        <button class="big toggle" data-cmd="printGridlines" data-icon="grid" id="printGridBtn">Print Gridlines</button>
+        <button class="big" data-cmd="print" data-icon="print">Print</button>
+      </div><div class="label">Page Setup</div></div>
+    </section>
+
+    <section class="panel" data-panel="formulas">
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="insertFunction" data-icon="fx">Insert Function</button>
+        <button class="big" data-cmd="autoSum" data-icon="sigma">AutoSum</button>
+        <button class="big" data-fncat="Financial" data-icon="money">Financial</button>
+        <button class="big" data-fncat="Logical" data-icon="logic">Logical</button>
+        <button class="big" data-fncat="Text" data-icon="text">Text</button>
+        <button class="big" data-fncat="Date &amp; Time" data-icon="calendar">Date &amp; Time</button>
+        <button class="big" data-fncat="Lookup &amp; Reference" data-icon="search">Lookup &amp; Reference</button>
+        <button class="big" data-fncat="Math &amp; Trig" data-icon="sigma">Math &amp; Trig</button>
+        <button class="big" data-fncat="Statistical" data-icon="chart">More Functions</button>
+      </div><div class="label">Function Library</div></div>
+      <div class="group"><div class="row">
+        <button class="big toggle" data-cmd="showFormulas" data-icon="fx" id="showFormulasBtn">Show Formulas</button>
+      </div><div class="label">Formula Auditing</div></div>
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="calcNow" data-icon="calc">Calculate Now</button>
+      </div><div class="label">Calculation</div></div>
+    </section>
+
+    <section class="panel" data-panel="data">
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="open" data-icon="folder">Get Data (CSV/XLSX)</button>
+        <button class="big" data-cmd="exportCsv" data-icon="download">Export CSV</button>
+      </div><div class="label">Get &amp; Transform Data</div></div>
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="sortAsc" data-icon="sortAsc">Sort A→Z</button>
+        <button class="big" data-cmd="sortDesc" data-icon="sortDesc">Sort Z→A</button>
+      </div><div class="label">Sort &amp; Filter</div></div>
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="removeDuplicates" data-icon="dedupe">Remove Duplicates</button>
+      </div><div class="label">Data Tools</div></div>
+    </section>
+
+    <section class="panel" data-panel="review">
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="stats" data-icon="stats">Workbook Statistics</button>
+      </div><div class="label">Proofing</div></div>
+      <div class="group"><div class="row">
+        <button class="big toggle" data-cmd="protect" data-icon="lock" id="protectBtn">Protect Sheet</button>
+      </div><div class="label">Protection</div></div>
+    </section>
+
+    <section class="panel" data-panel="view">
+      <div class="group"><div class="row">
+        <button class="big toggle" data-cmd="freezeRow" data-icon="freezeRow" id="freezeRowBtn">Freeze Top Row</button>
+        <button class="big toggle" data-cmd="freezeCol" data-icon="freezeCol" id="freezeColBtn">Freeze First Column</button>
+      </div><div class="label">Window</div></div>
+      <div class="group"><div class="stack">
+        <label class="check"><input type="checkbox" id="optGridlines" checked> Gridlines</label>
+        <label class="check"><input type="checkbox" id="optHeadings" checked> Headings</label>
+        <label class="check"><input type="checkbox" id="optFormulaBar" checked> Formula Bar</label>
+      </div><div class="label">Show</div></div>
+      <div class="group"><div class="row">
+        <button class="big" data-cmd="zoomIn" data-icon="zoomIn">Zoom In</button>
+        <button class="big" data-cmd="zoomOut" data-icon="zoomOut">Zoom Out</button>
+        <button class="big" data-cmd="zoom100" data-icon="search">100%</button>
+      </div><div class="label">Zoom</div></div>
+    </section>
+  </div>
+
+  <!-- Formula bar (FormulaBar.nib / XLFormulaBar.strings: Name Box, Cancel, Enter, Insert Function) -->
+  <div class="formula-row" id="formulaRow">
+    <input id="nameBox" class="name-box" aria-label="Name Box" spellcheck="false">
+    <div class="fx-buttons">
+      <button id="fxCancel" title="Cancel" disabled>✕</button>
+      <button id="fxEnter" title="Enter" disabled>✓</button>
+      <button id="fxInsert" title="Insert Function"><i>fx</i></button>
+    </div>
+    <textarea id="formulaBar" class="formula-input" rows="1" spellcheck="false" aria-label="Formula bar"></textarea>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-wrap" id="gridWrap" tabindex="0">
+    <div class="grid-inner" id="gridInner">
+      <table id="grid" class="grid"><thead></thead><tbody></tbody></table>
+      <div id="refBoxes"></div>
+      <div id="selBox" class="sel-box"><div id="fillHandle" class="fill-handle"></div></div>
+      <div id="fillPreview" class="fill-preview"></div>
+      <div id="copyMarquee" class="marquee"></div>
+      <textarea id="cellEditor" class="cell-editor" spellcheck="false" wrap="off"></textarea>
+      <div id="charts"></div>
+    </div>
+  </div>
+  <div id="autocomplete" class="autocomplete"></div>
+  <div id="fnTip" class="fn-tip"></div>
+
+  <!-- Sheet tabs (XLSheetTabsViewController) + status bar -->
+  <div class="sheetbar">
+    <div class="sheet-nav">
+      <button data-cmd="prevSheet" title="Previous sheet">◀</button>
+      <button data-cmd="nextSheet" title="Next sheet">▶</button>
+    </div>
+    <div id="sheetTabs" class="sheet-tabs"></div>
+    <button class="add-sheet" data-cmd="newSheet" title="Insert Sheet">+</button>
+  </div>
+  <footer class="statusbar">
+    <span id="modeText">Ready</span>
+    <span id="circText" class="circ"></span>
+    <span class="spacer"></span>
+    <span id="aggText"></span>
+    <div class="zoom">
+      <button data-cmd="zoomOut">−</button>
+      <input type="range" id="zoomSlider" min="50" max="200" step="10" value="100" aria-label="Zoom">
+      <button data-cmd="zoomIn">+</button>
+      <span id="zoomText">100%</span>
+    </div>
+  </footer>
+</div>
+
+<!-- Dialogs -->
+<dialog id="fnDialog" class="dialog">
+  <form method="dialog">
+    <h2>Insert Function</h2>
+    <div class="row gap">
+      <input id="fnSearch" type="search" placeholder="Search" autocomplete="off">
+      <select id="fnCategory"></select>
+    </div>
+    <ul id="fnList" class="fn-list"></ul>
+    <div id="fnDetail" class="fn-detail"></div>
+    <div class="actions"><button value="cancel">Cancel</button><button id="fnOk" value="ok" class="primary">Insert Function</button></div>
+  </form>
+</dialog>
+
+<dialog id="statsDialog" class="dialog">
+  <form method="dialog">
+    <h2>Workbook Statistics</h2>
+    <table id="statsTable" class="stats"></table>
+    <div class="actions"><button value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="msgDialog" class="dialog">
+  <form method="dialog">
+    <h2 id="msgTitle">Spreadsheet</h2>
+    <p id="msgText"></p>
+    <div class="actions"><button value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<div id="ctxMenu" class="ctx-menu"></div>
+<input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt" hidden>
+
+<script src="vendor/xlsx.full.min.js" defer></script>
+<script src="js/engine.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
