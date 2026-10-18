@@ -773,6 +773,7 @@
       this.colWidths = {};
       this.rowHeights = {};
       this.view = {};
+      this.merges = []; // merged ranges { r1, c1, r2, c2 }; the top-left cell holds the value
     }
     get(r, c) { return this.cells.get(key(r, c)); }
     extent() {
@@ -1035,6 +1036,18 @@
         resized[n >= at ? n + count : n] = w;
       }
       sh[sizes] = resized;
+      // Merged ranges move with the rows/columns, grow when rows/columns are inserted inside them and shrink on delete.
+      const [lo, hi] = axis === 'row' ? ['r1', 'r2'] : ['c1', 'c2'];
+      sh.merges = sh.merges.map((m) => {
+        const n = { ...m };
+        if (count > 0) { if (n[lo] >= at) n[lo] += count; if (n[hi] >= at) n[hi] += count; }
+        else {
+          const end = at - count;
+          n[lo] = n[lo] < at ? n[lo] : n[lo] >= end ? n[lo] + count : at;
+          n[hi] = n[hi] < at ? n[hi] : n[hi] >= end ? n[hi] + count : at - 1;
+        }
+        return n;
+      }).filter((m) => m.r2 >= m.r1 && m.c2 >= m.c1 && (m.r2 > m.r1 || m.c2 > m.c1));
 
       const prop = axis === 'row' ? 'r' : 'c';
       const thisName = sh.name.toLowerCase();
@@ -1069,6 +1082,7 @@
           rowHeights: s.rowHeights,
           view: s.view,
           cells: [...s.cells].map(([k, cell]) => [k, cell.input, cell.style || null]),
+          ...(s.merges.length ? { merges: s.merges } : {}),
         })),
         ...(this.cellStyles.length ? { cellStyles: this.cellStyles } : {}),
       };
@@ -1080,6 +1094,7 @@
         sh.colWidths = s.colWidths || {};
         sh.rowHeights = s.rowHeights || {};
         sh.view = s.view || {};
+        sh.merges = s.merges || [];
         for (const [k, input, style] of s.cells) {
           const cell = { input: '' };
           wb.setCellInput(cell, input);

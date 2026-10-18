@@ -33,7 +33,7 @@
   const filled = (r, c) => { const cell = sheet().get(r, c); return !!cell && cell.input !== ''; };
   const selRect = () => {
     const { ar, ac, fr, fc } = S.sel;
-    return { r1: Math.min(ar, fr), c1: Math.min(ac, fc), r2: Math.max(ar, fr), c2: Math.max(ac, fc) };
+    return expandToMerges({ r1: Math.min(ar, fr), c1: Math.min(ac, fc), r2: Math.max(ar, fr), c2: Math.max(ac, fc) });
   };
   const isTextField = (el) => el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT');
 
@@ -179,54 +179,78 @@
     return `<span class="rot rot-a" style="height:${h}px"><span class="${st.rot > 0 ? 'ccw' : 'cw'}" style="left:${x}px">${t}</span></span>`;
   }
 
-  function renderCell(r, c, td = tdAt(r, c)) {
-    if (!td) return;
+  // Displayed text and its kind; numbers too wide for `avail` px show as ###, as in Excel.
+  function displayText(r, c, st, avail) {
     const cell = sheet().get(r, c);
-    const st = (cell && cell.style) || {};
-    let text = '', kind = '';
-    if (cell && cell.input !== '') {
-      const v = valueAt(r, c);
-      if (S.showFormulas && cell.formula) { text = cell.input; kind = 'str'; }
-      else {
-        text = XL.formatValue(v, st);
-        kind = typeof v === 'number' ? 'num' : typeof v === 'boolean' ? 'bool' : XL.isErr(v) ? 'err' : 'str';
-        if (st.fmt === 'text' && !cell.formula) kind = 'str';
-        if (kind === 'num' && !st.wrap && !st.rot) {
-          const avail = colWidth(c) - 7;
-          if (textWidth(text, st) > avail) text = '#'.repeat(Math.max(1, Math.floor(avail / textWidth('#', st))));
-        }
-      }
-    }
-    let cls = kind;
-    if (st.wrap) cls += ' wrap';
-    else if (kind === 'str' && text && (!st.align || st.align === 'left') && !filled(r, c + 1)) cls += ' ov';
-    if (st.rot && text && (st.rot === 45 || st.rot === -45) && !cls.includes(' ov') && !filled(r, c + 1)) cls += ' ov';
-    if (view().freezeCol && c === 0) cls += ' frozen-col';
+    if (!cell || cell.input === '') return { text: '', kind: '' };
+    if (S.showFormulas && cell.formula) return { text: cell.input, kind: 'str' };
+    const v = valueAt(r, c);
+    let text = XL.formatValue(v, st);
+    let kind = typeof v === 'number' ? 'num' : typeof v === 'boolean' ? 'bool' : XL.isErr(v) ? 'err' : 'str';
+    if (st.fmt === 'text' && !cell.formula) kind = 'str';
+    if (kind === 'num' && !st.wrap && !st.rot && textWidth(text, st) > avail) text = '#'.repeat(Math.max(1, Math.floor(avail / textWidth('#', st))));
+    return { text, kind };
+  }
+  function fontCss(st) {
     const css = [];
     if (st.bold) css.push('font-weight:700');
     if (st.italic) css.push('font-style:italic');
     const deco = [st.underline && 'underline', st.strike && 'line-through'].filter(Boolean).join(' ');
     if (deco) css.push('text-decoration:' + deco);
     if (st.color) css.push('color:' + st.color);
-    if (st.fill) css.push('background:' + st.fill);
     if (st.size) css.push(`font-size:${st.size}pt`);
     if (st.font) css.push(`font-family:"${st.font}",var(--cell-font)`);
-    if (st.align) css.push('text-align:' + st.align);
+    return css;
+  }
+  function edgeCss(bottom, right, top, left, bg) {
+    const css = [], shadows = [];
+    if (bottom) { css.push('border-bottom-color:' + bottom[1]); shadows.push(...edgeShadows(bottom, 0, -1, bg, true)); }
+    if (right) { css.push('border-right-color:' + right[1]); shadows.push(...edgeShadows(right, -1, 0, bg, true)); }
+    if (top) shadows.push(...edgeShadows(top, 0, 1, bg, false));
+    if (left) shadows.push(...edgeShadows(left, 1, 0, bg, false));
+    if (shadows.length) css.push('box-shadow:' + shadows.join(','));
+    return css;
+  }
+  // Center Across Selection: the text centres over this cell and the empty, same-aligned cells to its right.
+  function centerAcrossWidth(r, c) {
+    let k = c + 1, w = colWidth(c);
+    while (k < S.cols && !filled(r, k) && !mergeAt(r, k) && S.wb.getStyle(S.si, r, k).align === 'centerAcross') w += colWidth(k++);
+    return k > c + 1 ? w : 0;
+  }
+
+  function renderCell(r, c, td = tdAt(r, c)) {
+    if (!td) return;
+    const m = mergeAt(r, c);
+    if (m) { // drawn by the merged cell laid over the grid
+      // A one-row merge's top-left cell keeps an invisible line of its font so the row stays tall enough.
+      const strut = m.r1 === m.r2 && r === m.r1 && c === m.c1 && filled(r, c);
+      const text = strut ? '\u00a0' : '';
+      if (td._rot || td.textContent !== text) { td._rot = null; td.textContent = text; }
+      td.className = view().freezeCol && c === 0 ? 'frozen-col' : '';
+      const cssText = strut ? [...fontCss(S.wb.getStyle(S.si, r, c)), 'color:transparent'].join(';') : '';
+      if (cssText) td.setAttribute('style', cssText); else td.removeAttribute('style');
+      return;
+    }
+    const cell = sheet().get(r, c);
+    const st = (cell && cell.style) || {};
+    const across = st.align === 'centerAcross' && cell && cell.input !== '' && !st.rot ? centerAcrossWidth(r, c) : 0;
+    const { text, kind } = displayText(r, c, st, (across || colWidth(c)) - 7);
+    let cls = kind;
+    if (st.wrap) cls += ' wrap';
+    else if (kind === 'str' && text && (!st.align || st.align === 'left') && !filled(r, c + 1)) cls += ' ov';
+    if (st.rot && text && (st.rot === 45 || st.rot === -45) && !cls.includes(' ov') && !filled(r, c + 1)) cls += ' ov';
+    if (across && !cls.includes(' ov')) cls += ' ov';
+    if (view().freezeCol && c === 0) cls += ' frozen-col';
+    const css = fontCss(st);
+    if (st.fill) css.push('background:' + st.fill);
+    if (st.align) css.push('text-align:' + (st.align === 'centerAcross' ? (across ? 'left' : 'center') : st.align));
     if (st.valign) css.push('vertical-align:' + st.valign);
     if (st.indent) css.push(`padding-left:${3 + st.indent * 9}px`);
     const bottom = pickEdge(edgeOf(st, 'b'), edgeAt(r + 1, c, 't'));
     const right = pickEdge(edgeOf(st, 'r'), edgeAt(r, c + 1, 'l'));
-    const top = r === 0 && edgeOf(st, 't'), left = c === 0 && edgeOf(st, 'l');
-    if (bottom || right || top || left) {
-      const bg = st.fill || '#fff', shadows = [];
-      if (bottom) { css.push('border-bottom-color:' + bottom[1]); shadows.push(...edgeShadows(bottom, 0, -1, bg, true)); }
-      if (right) { css.push('border-right-color:' + right[1]); shadows.push(...edgeShadows(right, -1, 0, bg, true)); }
-      if (top) shadows.push(...edgeShadows(top, 0, 1, bg, false));
-      if (left) shadows.push(...edgeShadows(left, 1, 0, bg, false));
-      if (shadows.length) css.push('box-shadow:' + shadows.join(','));
-    }
+    css.push(...edgeCss(bottom, right, r === 0 && edgeOf(st, 't'), c === 0 && edgeOf(st, 'l'), st.fill || '#fff'));
     if (cls.includes(' ov')) css.push('overflow:visible;position:relative;z-index:1');
-    const html = st.rot && text ? rotHtml(text, st) : null;
+    const html = st.rot && text ? rotHtml(text, st) : across && text ? `<span class="ca" style="width:${across - 7}px">${esc(text)}</span>` : null;
     if (html) { if (td._rot !== html) { td.innerHTML = html; td._rot = html; } }
     else if (td._rot || td.textContent !== text) { td._rot = null; td.textContent = text; }
     td.className = cls;
@@ -234,8 +258,111 @@
     if (td.getAttribute('style') !== cssText) { if (cssText) td.setAttribute('style', cssText); else td.removeAttribute('style'); }
   }
 
+  // ------------------------------------------------------------ merged cells
+  // A merged range is drawn as one cell laid over the grid; the covered cells render blank underneath.
+  const overlaps = (m, x) => !(m.r2 < x.r1 || m.r1 > x.r2 || m.c2 < x.c1 || m.c1 > x.c2);
+  const mergeAt = (r, c) => sheet().merges.find((m) => r >= m.r1 && r <= m.r2 && c >= m.c1 && c <= m.c2) || null;
+  // A selection covers every merged range it touches, as in Excel; whole rows and columns stay as they are.
+  function expandToMerges(rect) {
+    const ms = sheet().merges;
+    const whole = (rect.r1 === 0 && rect.r2 >= S.rows - 1) || (rect.c1 === 0 && rect.c2 >= S.cols - 1);
+    for (let grown = ms.length > 0 && !whole; grown;) {
+      grown = false;
+      for (const m of ms) {
+        if (!overlaps(m, rect) || (m.r1 >= rect.r1 && m.r2 <= rect.r2 && m.c1 >= rect.c1 && m.c2 <= rect.c2)) continue;
+        rect = { r1: Math.min(rect.r1, m.r1), c1: Math.min(rect.c1, m.c1), r2: Math.max(rect.r2, m.r2), c2: Math.max(rect.c2, m.c2) };
+        grown = true;
+      }
+    }
+    return rect;
+  }
+  function renderMerges() {
+    gridInner.querySelectorAll('.merge-cell').forEach((el) => el.remove());
+    sheet().merges.forEach((m, i) => {
+      if (m.r1 >= S.rows || m.c1 >= S.cols) return;
+      const box = boxFor(m.r1, m.c1, m.r2, m.c2);
+      if (!box) return;
+      const st = S.wb.getStyle(S.si, m.r1, m.c1);
+      const { text, kind } = displayText(m.r1, m.c1, st, box.width - 7);
+      const h = st.align === 'centerAcross' ? 'center' : st.align || (kind === 'num' ? 'right' : kind === 'bool' || kind === 'err' ? 'center' : 'left');
+      const css = fontCss(st);
+      css.push('background:' + (st.fill || '#fff'));
+      css.push('align-items:' + (st.valign === 'top' ? 'flex-start' : st.valign === 'middle' ? 'center' : 'flex-end'));
+      if (st.indent) css.push(`padding-left:${3 + st.indent * 9}px`);
+      const bottom = pickEdge(edgeOf(st, 'b'), edgeAt(m.r2 + 1, m.c1, 't'));
+      const right = pickEdge(edgeOf(st, 'r'), edgeAt(m.r1, m.c2 + 1, 'l'));
+      css.push(...edgeCss(bottom, right, m.r1 === 0 && edgeOf(st, 't'), m.c1 === 0 && edgeOf(st, 'l'), st.fill || '#fff'));
+      const el = document.createElement('div');
+      el.className = 'merge-cell' + (st.wrap ? ' wrap' : '');
+      el.dataset.i = i;
+      el.setAttribute('style', css.join(';'));
+      el.innerHTML = `<div class="mc-in" style="text-align:${h}">${st.rot && text ? rotHtml(text, st) : esc(text)}</div>`;
+      gridInner.appendChild(el);
+    });
+    placeMerges();
+  }
+  // Keeps merged cells over their ranges after resizing, and pinned with a frozen first row or column.
+  function placeMerges() {
+    const z = S.zoom / 100;
+    gridInner.querySelectorAll('.merge-cell').forEach((el) => {
+      const m = sheet().merges[+el.dataset.i];
+      const box = m && boxFor(m.r1, m.c1, m.r2, m.c2);
+      if (!box) { el.style.display = 'none'; return; }
+      Object.assign(el.style, { display: '', left: box.left + 'px', top: box.top + 'px', width: box.width + 'px', height: box.height + 'px' });
+      const frozenR = view().freezeRow && m.r1 === 0, frozenC = view().freezeCol && m.c1 === 0;
+      const dy = frozenR ? Math.max(0, gridWrap.scrollTop / z + COL_HEADER_H - box.top) : 0;
+      const dx = frozenC ? Math.max(0, gridWrap.scrollLeft / z + ROW_HEADER_W - box.left) : 0;
+      el.style.transform = dx || dy ? `translate(${dx}px,${dy}px)` : '';
+      el.classList.toggle('frozen', frozenR || frozenC);
+    });
+  }
+
+  // Merge & Center, Merge Across, Merge Cells: Excel keeps the first value (reading order), gives every cell
+  // the top-left cell's format, and warns before discarding other values.
+  const MERGE_LOSS = 'Merging cells only keeps the upper-left value and discards other values.';
+  function mergeSel(kind) {
+    if (S.editing && !commitEdit()) return;
+    if (guard()) return;
+    const rect = selRect();
+    if (kind === 'center' && sheet().merges.some((m) => m.r1 === rect.r1 && m.c1 === rect.c1 && m.r2 === rect.r2 && m.c2 === rect.c2)) return unmergeSel();
+    const groups = (kind === 'across'
+      ? Array.from({ length: rect.r2 - rect.r1 + 1 }, (_, i) => ({ r1: rect.r1 + i, c1: rect.c1, r2: rect.r1 + i, c2: rect.c2 }))
+      : [rect]).filter((g) => g.r2 > g.r1 || g.c2 > g.c1);
+    if (!groups.length) return;
+    const filledIn = (g) => { const out = []; for (let r = g.r1; r <= g.r2; r++) for (let c = g.c1; c <= g.c2; c++) if (filled(r, c)) out.push([r, c]); return out; };
+    const run = () => {
+      pushUndo();
+      sheet().merges = sheet().merges.filter((m) => !groups.some((g) => overlaps(m, g)));
+      for (const g of groups) {
+        const first = filledIn(g)[0];
+        const input = first ? S.wb.getInput(S.si, ...first) : '';
+        const st = { ...S.wb.getStyle(S.si, g.r1, g.c1) };
+        if (kind === 'center') st.align = 'center';
+        for (let r = g.r1; r <= g.r2; r++) for (let c = g.c1; c <= g.c2; c++) {
+          S.wb.setInput(S.si, r, c, r === g.r1 && c === g.c1 ? input : '');
+          S.wb.setStyle(S.si, r, c, Object.keys(st).length ? st : null, true);
+        }
+        sheet().merges.push({ r1: g.r1, c1: g.c1, r2: g.r2, c2: g.c2 });
+      }
+      S.wb.recalc();
+      setSel(rect.r1, rect.c1, rect.r2, rect.c2);
+      changed();
+    };
+    if (groups.some((g) => filledIn(g).length > 1)) confirmBox(MERGE_LOSS, run); else run();
+  }
+  function unmergeSel() {
+    if (S.editing && !commitEdit()) return;
+    if (guard()) return;
+    const rect = selRect();
+    if (!sheet().merges.some((m) => overlaps(m, rect))) return;
+    pushUndo();
+    sheet().merges = sheet().merges.filter((m) => !overlaps(m, rect));
+    changed();
+  }
+
   function renderAll() {
     for (let r = 0; r < S.rows; r++) for (let c = 0; c < S.cols; c++) renderCell(r, c);
+    renderMerges();
     const firstRow = tbody.rows[0];
     for (const tr of tbody.rows) tr.classList.remove('frozen');
     if (view().freezeRow && firstRow) firstRow.classList.add('frozen');
@@ -277,6 +404,14 @@
   }
 
   function updateSelection() {
+    const { ar, ac, fr, fc } = S.sel;
+    const whole = (Math.min(ar, fr) === 0 && Math.max(ar, fr) >= S.rows - 1) || (Math.min(ac, fc) === 0 && Math.max(ac, fc) >= S.cols - 1);
+    const am = !whole && mergeAt(ar, ac);
+    if (am && (am.r1 !== ar || am.c1 !== ac)) {
+      if (S.sel.fr === S.sel.ar && S.sel.fc === S.sel.ac) { S.sel.fr = am.r1; S.sel.fc = am.c1; }
+      S.sel.ar = am.r1; S.sel.ac = am.c1;
+    }
+    placeMerges();
     const { r1, c1, r2, c2 } = selRect();
     place(selBox, boxFor(r1, c1, r2, c2));
     for (const th of grid.querySelectorAll('th.hl, th.full')) th.classList.remove('hl', 'full');
@@ -355,10 +490,18 @@
     let r = extend ? S.sel.fr : S.sel.ar;
     let c = extend ? S.sel.fc : S.sel.ac;
     if (jump) [r, c] = jumpEdge(r, c, dr, dc);
-    else { r = clamp(r + dr, 0, MAX_ROWS - 1); c = clamp(c + dc, 0, MAX_COLS - 1); }
+    else {
+      // Merged cells are one cell: step from the selection's far edge rather than from inside a merge.
+      const box = selRect(), m = mergeAt(r, c);
+      if (extend) {
+        if (dr) r = (S.sel.fr > S.sel.ar || (S.sel.fr === S.sel.ar && dr > 0) ? box.r2 : box.r1);
+        if (dc) c = (S.sel.fc > S.sel.ac || (S.sel.fc === S.sel.ac && dc > 0) ? box.c2 : box.c1);
+      } else if (m) { if (dr > 0) r = m.r2; if (dc > 0) c = m.c2; }
+      r = clamp(r + dr, 0, MAX_ROWS - 1); c = clamp(c + dc, 0, MAX_COLS - 1);
+    }
     ensureSize(r, c);
     if (extend) { S.sel.fr = r; S.sel.fc = c; updateSelection(); }
-    else setSel(r, c);
+    else { const t = mergeAt(r, c); if (t) { r = t.r1; c = t.c1; } setSel(r, c); }
     ensureVisible(r, c);
   }
 
@@ -366,7 +509,7 @@
   function updateStatus() {
     const { r1, c1, r2, c2 } = selRect();
     const out = $('#aggText');
-    if (r1 === r2 && c1 === c2) { out.textContent = ''; return; }
+    if ((r1 === r2 && c1 === c2) || sheet().merges.some((m) => m.r1 === r1 && m.c1 === c1 && m.r2 === r2 && m.c2 === c2)) { out.textContent = ''; return; }
     const ext = sheet().extent();
     let sum = 0, nums = 0, count = 0;
     for (let r = r1; r <= Math.min(r2, ext.rows - 1); r++) {
@@ -420,6 +563,7 @@
     const { r, c } = S.editing;
     const td = tdAt(r, c);
     const st = S.wb.getStyle(S.si, r, c);
+    const em = mergeAt(r, c), area = em ? boxFor(em.r1, em.c1, em.r2, em.c2) : { width: td.offsetWidth, height: td.offsetHeight };
     editor.style.display = 'block';
     editor.style.left = td.offsetLeft - 1 + 'px';
     editor.style.top = td.offsetTop - 1 + 'px';
@@ -429,8 +573,8 @@
     editor.style.fontFamily = st.font ? `"${st.font}"` : '';
     editor.style.width = '0px';
     editor.style.height = '0px';
-    editor.style.width = Math.max(td.offsetWidth + 2, Math.min(editor.scrollWidth + 12, 640)) + 'px';
-    editor.style.height = Math.max(td.offsetHeight + 2, editor.scrollHeight + 4) + 'px';
+    editor.style.width = Math.max(area.width + 2, Math.min(editor.scrollWidth + 12, 640)) + 'px';
+    editor.style.height = Math.max(area.height + 2, editor.scrollHeight + 4) + 'px';
   }
 
   function onEditInput(fromPoint = false) {
@@ -685,7 +829,9 @@
       cells.push(row);
       lines.push(line.join('\t'));
     }
-    S.clip = { si: S.si, r1, c1, r2: R2, c2: C2, cells, text: lines.join('\n'), cut };
+    const merges = sheet().merges.filter((m) => m.r1 >= r1 && m.c1 >= c1 && m.r2 <= R2 && m.c2 <= C2)
+      .map((m) => ({ r1: m.r1 - r1, c1: m.c1 - c1, r2: m.r2 - r1, c2: m.c2 - c1 }));
+    S.clip = { si: S.si, r1, c1, r2: R2, c2: C2, cells, merges, text: lines.join('\n'), cut };
     updateSelection();
     return S.clip.text;
   }
@@ -708,7 +854,14 @@
     const { r1, c1, r2, c2 } = selRect();
     const reps = (span, n) => (span % n === 0 ? span / n : 1);
     const rr = reps(r2 - r1 + 1, h), rc = reps(c2 - c1 + 1, w);
+    const target = { r1, c1, r2: r1 + rr * h - 1, c2: c1 + rc * w - 1 };
+    if (sheet().merges.some((m) => overlaps(m, target) && !(m.r1 >= target.r1 && m.c1 >= target.c1 && m.r2 <= target.r2 && m.c2 <= target.c2))) return msg("We can't do that to a merged cell.");
     pushUndo();
+    sheet().merges = sheet().merges.filter((m) => !overlaps(m, target));
+    if (clip.cut) { const src = S.wb.sheets[clip.si]; src.merges = src.merges.filter((m) => !overlaps(m, clip)); }
+    for (let a = 0; a < rr; a++) for (let b = 0; b < rc; b++) for (const m of clip.merges || []) {
+      sheet().merges.push({ r1: r1 + a * h + m.r1, c1: c1 + b * w + m.c1, r2: r1 + a * h + m.r2, c2: c1 + b * w + m.c2 });
+    }
     if (clip.cut) {
       for (let i = 0; i < h; i++) for (let j = 0; j < w; j++) {
         S.wb.setStyle(clip.si, clip.r1 + i, clip.c1 + j, null, true);
@@ -988,7 +1141,7 @@
   const STYLE_ORDER = ['number', 'align', 'font', 'border', 'fill'];
   function describeCat(cat, d) {
     if (cat === 'number') return d.fmt ? $(`#numFmt option[value="${d.fmt}"]`)?.textContent || d.fmt : 'General';
-    if (cat === 'align') return [d.align ? d.align[0].toUpperCase() + d.align.slice(1) : 'General', `${d.valign ? d.valign[0].toUpperCase() + d.valign.slice(1) : 'Bottom'} Aligned`, d.wrap && 'Wrap', d.indent && `Indent ${d.indent}`, d.rot && (d.rot === 'v' ? 'Vertical' : `${d.rot}°`)].filter(Boolean).join(', ');
+    if (cat === 'align') return [d.align === 'centerAcross' ? 'Center Across Selection' : d.align ? d.align[0].toUpperCase() + d.align.slice(1) : 'General', `${d.valign ? d.valign[0].toUpperCase() + d.valign.slice(1) : 'Bottom'} Aligned`, d.wrap && 'Wrap', d.indent && `Indent ${d.indent}`, d.rot && (d.rot === 'v' ? 'Vertical' : `${d.rot}°`)].filter(Boolean).join(', ');
     if (cat === 'font') return [`${d.font || 'Aptos Narrow'} ${d.size || 11}`, d.bold && 'Bold', d.italic && 'Italic', d.underline && 'Underline', d.color && d.color.toUpperCase()].filter(Boolean).join(', ');
     if (cat === 'border') return d.bd || d.border ? 'Borders' : 'No Borders';
     return d.fill ? d.fill.toUpperCase() : 'No Shading';
@@ -1048,6 +1201,7 @@
     const st = activeStyle();
     const on = (cmd, v) => document.querySelectorAll(`.ribbon [data-cmd="${cmd}"]`).forEach((b) => b.classList.toggle('on', !!v));
     on('bold', st.bold); on('italic', st.italic); on('underline', st.underline); on('strike', st.strike);
+    on('mergeCenter', !!mergeAt(S.sel.ar, S.sel.ac));
     on('rotCCW', st.rot === 45); on('rotCW', st.rot === -45); on('rotVertical', st.rot === 'v'); on('rotUp', st.rot === 90); on('rotDown', st.rot === -90);
     document.querySelectorAll('#orientMenu [data-cmd]').forEach((b) => b.setAttribute('aria-checked', b.classList.contains('on')));
     $('[data-menu="orientMenu"]').classList.toggle('on', !!st.rot);
@@ -1211,6 +1365,14 @@
     if (guard()) return;
     const reg = dataRegion();
     if (reg.r2 <= reg.start) return;
+    // Excel sorts merged cells only when every row holds the same one-row merges, which then stay in place.
+    const inSort = sheet().merges.filter((m) => overlaps(m, { r1: reg.start, c1: reg.c1, r2: reg.r2, c2: reg.c2 }));
+    if (inSort.length) {
+      const spans = (r) => inSort.filter((m) => m.r1 === r).map((m) => `${m.c1}-${m.c2}`).sort().join();
+      const same = inSort.every((m) => m.r1 === m.r2 && m.c1 >= reg.c1 && m.c2 <= reg.c2)
+        && Array.from({ length: reg.r2 - reg.start + 1 }, (_, i) => spans(reg.start + i)).every((x, _, all) => x === all[0]);
+      if (!same) return msg('To do this, all the merged cells need to be the same size.');
+    }
     const key = clamp(S.sel.ac, reg.c1, reg.c2);
     const rows = [];
     for (let r = reg.start; r <= reg.r2; r++) rows.push({ r, key: valueAt(r, key), cells: readRow(r, reg.c1, reg.c2) });
@@ -1579,6 +1741,8 @@
         if (z) o.z = z;
         ws[XLSX.utils.encode_cell({ r, c })] = o;
       }
+      for (const m of sh.merges) { maxR = Math.max(maxR, m.r2); maxC = Math.max(maxC, m.c2); }
+      if (sh.merges.length) ws['!merges'] = sh.merges.map((m) => ({ s: { r: m.r1, c: m.c1 }, e: { r: m.r2, c: m.c2 } }));
       ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: maxR, c: maxC } });
       ws['!cols'] = Array.from({ length: maxC + 1 }, (_, c) => ({ wpx: sh.colWidths[c] || DEFAULT_W }));
       XLSX.utils.book_append_sheet(out, ws, sh.name);
@@ -1625,6 +1789,7 @@
           if (f) wb.setStyle(si, r, c, f);
         }
       }
+      sh.merges = (ws['!merges'] || []).map((m) => ({ r1: m.s.r, c1: m.s.c, r2: m.e.r, c2: m.e.c }));
       (ws['!cols'] || []).forEach((col, i) => { if (col && (col.wpx || col.wch)) sh.colWidths[i] = Math.round(col.wpx || col.wch * 7 + 5); });
     });
     if (!wb.sheets.length) wb.addSheet('Sheet1');
@@ -1702,6 +1867,11 @@
     valignMiddle: () => applyStyle({ valign: 'middle' }),
     valignBottom: () => applyStyle({ valign: undefined }),
     wrap: () => toggleStyle('wrap'),
+    mergeCenter: () => mergeSel('center'),
+    mergeAcross: () => mergeSel('across'),
+    mergeCells: () => mergeSel('merge'),
+    unmergeCells: () => unmergeSel(),
+    centerAcross: () => applyStyle({ align: 'centerAcross' }),
     rotCCW: () => toggleValue('rot', 45),
     rotCW: () => toggleValue('rot', -45),
     rotVertical: () => toggleValue('rot', 'v'),
@@ -1767,6 +1937,7 @@
     if (S.editing && !commitEdit()) return;
     if (guard()) return;
     pushUndo();
+    if (formats) { const rect = selRect(); sheet().merges = sheet().merges.filter((m) => !overlaps(m, rect)); }
     forSel((r, c) => {
       if (formats) S.wb.setStyle(S.si, r, c, null, true);
       if (contents) S.wb.setInput(S.si, r, c, '');
@@ -2091,6 +2262,7 @@
   });
 
   gridWrap.addEventListener('scroll', () => {
+    if (view().freezeRow || view().freezeCol) placeMerges();
     if (gridWrap.scrollTop + gridWrap.clientHeight > gridWrap.scrollHeight - 300 && S.rows < MAX_ROWS) appendRows(100);
     if (gridWrap.scrollLeft + gridWrap.clientWidth > gridWrap.scrollWidth - 200 && S.cols < MAX_COLS) {
       const left = gridWrap.scrollLeft;

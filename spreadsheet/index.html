@@ -130,6 +130,18 @@
             <span class="sep"></span>
             <button data-cmd="indent" data-icon="indent" title="Increase Indent"></button>
             <button data-cmd="outdent" data-icon="outdent" title="Decrease Indent"></button>
+            <span class="sep"></span>
+            <div class="dropdown split">
+              <button data-cmd="mergeCenter" data-icon="mergeCenter" title="Merge &amp; Center">Merge &amp; Center</button>
+              <button data-menu="mergeMenu" class="drop" title="Merge Options" aria-label="Merge Options">▾</button>
+              <div class="menu" id="mergeMenu" role="menu">
+                <button data-cmd="mergeCenter" data-icon="mergeCenter" role="menuitem">Merge &amp; Center</button>
+                <button data-cmd="mergeAcross" data-icon="mergeAcross" role="menuitem">Merge Across</button>
+                <button data-cmd="mergeCells" data-icon="mergeCells" role="menuitem">Merge Cells</button>
+                <button data-cmd="unmergeCells" data-icon="unmergeCells" role="menuitem">Unmerge Cells</button>
+                <button data-cmd="centerAcross" data-icon="centerAcross" role="menuitem">Center Across Selection</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="label">Alignment</div>
