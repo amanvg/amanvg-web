@@ -52,11 +52,12 @@
   }
   function saveNow() {
     clearTimeout(saveTimer);
+    if (stylePreview) return scheduleSave(); // never save a hover preview
     try { localStorage.setItem(STORE_KEY, JSON.stringify({ name: S.docName, workbook: S.wb.toJSON() })); } catch (e) { /* storage unavailable */ }
   }
 
   // ------------------------------------------------------------ undo
-  const snapshot = () => ({ wb: JSON.stringify(S.wb.toJSON()), si: S.si, sel: { ...S.sel } });
+  const snapshot = () => { endPreview(); return { wb: JSON.stringify(S.wb.toJSON()), si: S.si, sel: { ...S.sel } }; };
   function pushUndo(snap = snapshot()) {
     S.undo.push(snap);
     if (S.undo.length > 100) S.undo.shift();
@@ -153,7 +154,19 @@
     if (widened) buildGrid();
   }
 
-  function hasBorder(r, c) { const cell = sheet().get(r, c); return !!(cell && cell.style && cell.style.border); }
+  // Borders: style.bd = { t, b, l, r } of [weight, colour]; the older style.border means thin black on every side.
+  // A cell draws its own bottom and right edges (its gridlines) plus a neighbour's facing edge, and its top and left
+  // edges only in row 1 / column A. Extra weight is drawn inward with inset shadows so the grid never shifts.
+  const EDGE_RANK = { thin: 1, medium: 2, double: 3, thick: 4 };
+  function edgeOf(st, side) { return (st.bd && st.bd[side]) || (st.border ? ['thin', '#000'] : null); }
+  function edgeAt(r, c, side) { const cell = sheet().get(r, c); return cell && cell.style ? edgeOf(cell.style, side) : null; }
+  const pickEdge = (own, other) => (!own ? other : other && EDGE_RANK[other[0]] > EDGE_RANK[own[0]] ? other : own);
+  function edgeShadows([weight, col], dx, dy, bg, hasLine) {
+    const at = (n, c) => `inset ${dx * n}px ${dy * n}px 0 ${c}`;
+    if (weight === 'double') return hasLine ? [at(1, bg), at(2, col)] : [at(1, col), at(2, bg), at(3, col)];
+    const n = { thin: 1, medium: 2, thick: 3 }[weight] - (hasLine ? 1 : 0);
+    return n > 0 ? [at(n, col)] : [];
+  }
 
   function renderCell(r, c, td = tdAt(r, c)) {
     if (!td) return;
@@ -185,12 +198,21 @@
     if (st.color) css.push('color:' + st.color);
     if (st.fill) css.push('background:' + st.fill);
     if (st.size) css.push(`font-size:${st.size}pt`);
-    if (st.font) css.push(`font-family:"${st.font}"`);
+    if (st.font) css.push(`font-family:"${st.font}",var(--cell-font)`);
     if (st.align) css.push('text-align:' + st.align);
     if (st.valign) css.push('vertical-align:' + st.valign);
     if (st.indent) css.push(`padding-left:${3 + st.indent * 9}px`);
-    if (st.border || hasBorder(r, c + 1)) css.push('border-right-color:#000');
-    if (st.border || hasBorder(r + 1, c)) css.push('border-bottom-color:#000');
+    const bottom = pickEdge(edgeOf(st, 'b'), edgeAt(r + 1, c, 't'));
+    const right = pickEdge(edgeOf(st, 'r'), edgeAt(r, c + 1, 'l'));
+    const top = r === 0 && edgeOf(st, 't'), left = c === 0 && edgeOf(st, 'l');
+    if (bottom || right || top || left) {
+      const bg = st.fill || '#fff', shadows = [];
+      if (bottom) { css.push('border-bottom-color:' + bottom[1]); shadows.push(...edgeShadows(bottom, 0, -1, bg, true)); }
+      if (right) { css.push('border-right-color:' + right[1]); shadows.push(...edgeShadows(right, -1, 0, bg, true)); }
+      if (top) shadows.push(...edgeShadows(top, 0, 1, bg, false));
+      if (left) shadows.push(...edgeShadows(left, 1, 0, bg, false));
+      if (shadows.length) css.push('box-shadow:' + shadows.join(','));
+    }
     if (cls.includes(' ov')) css.push('overflow:visible;position:relative;z-index:1');
     if (td.textContent !== text) td.textContent = text;
     td.className = cls;
@@ -819,24 +841,192 @@
     const next = sizes[clamp((i < 0 ? sizes.length - 1 : i) + dir, 0, sizes.length - 1)];
     applyStyle({ size: next === 11 ? undefined : next });
   }
-  const CELL_STYLES = {
-    normal: null,
-    good: { fill: '#c6efce', color: '#006100' },
-    bad: { fill: '#ffc7ce', color: '#9c0006' },
-    neutral: { fill: '#ffeb9c', color: '#9c5700' },
-    heading: { bold: true, size: 15, color: '#1f3864' },
-    title: { size: 18, color: '#1f3864' },
-    total: { bold: true, border: true },
+  // ------------------------------------------------------------ cell styles (Excel's gallery, Office 2023+ theme)
+  // A style formats only the categories it includes; the rest of the cell's formatting is kept.
+  const STYLE_CATS = {
+    number: ['fmt', 'dec'], align: ['align', 'valign', 'wrap', 'indent'],
+    font: ['font', 'size', 'bold', 'italic', 'underline', 'strike', 'color'], border: ['border', 'bd'], fill: ['fill'],
   };
-  function applyCellStyle(name) {
+  const CAT_LABEL = { number: 'Number', align: 'Alignment', font: 'Font', border: 'Border', fill: 'Fill' };
+  const ALL_CATS = Object.keys(STYLE_CATS);
+  const box = (weight, col) => ({ t: [weight, col], b: [weight, col], l: [weight, col], r: [weight, col] });
+  const TEXT2 = '#0e2841';
+  const ACCENT = ['#156082', '#e97132', '#196b24', '#0f9ed5', '#a02b93', '#4ea72e'];
+  const TINT = { // theme accents lightened in HSL, as Excel does: 20% = tint .8, 40% = .6, 60% = .4
+    20: ['#c1e5f5', '#fbe3d6', '#c2f1c8', '#caeefb', '#f2cfee', '#d9f2d0'],
+    40: ['#83cbeb', '#f6c6ad', '#84e291', '#96dcf8', '#e59edd', '#b4e5a2'],
+    60: ['#46b1e1', '#f2aa84', '#47d45a', '#61cbf4', '#d86ecc', '#8ed973'],
+  };
+  const FF = ['font', 'fill'], FFB = ['font', 'fill', 'border'], FB = ['font', 'border'];
+  const st_ = (key, name, inc, def) => ({ key, name, inc, def });
+  const STYLE_SECTIONS = [
+    ['Good, Bad and Neutral', [
+      st_('normal', 'Normal', ALL_CATS, {}),
+      st_('bad', 'Bad', FF, { fill: '#ffc7ce', color: '#9c0006' }),
+      st_('good', 'Good', FF, { fill: '#c6efce', color: '#006100' }),
+      st_('neutral', 'Neutral', FF, { fill: '#ffeb9c', color: '#9c5700' }),
+    ]],
+    ['Data and Model', [
+      st_('calculation', 'Calculation', FFB, { fill: '#f2f2f2', color: '#fa7d00', bold: true, bd: box('thin', '#7f7f7f') }),
+      st_('checkCell', 'Check Cell', FFB, { fill: '#a5a5a5', color: '#ffffff', bold: true, bd: box('double', '#3f3f3f') }),
+      st_('explanatory', 'Explanatory Text', ['font'], { color: '#7f7f7f', italic: true }),
+      st_('input', 'Input', FFB, { fill: '#ffcc99', color: '#3f3f76', bd: box('thin', '#7f7f7f') }),
+      st_('linkedCell', 'Linked Cell', FB, { color: '#fa7d00', bd: { b: ['double', '#ff8001'] } }),
+      st_('note', 'Note', ['fill', 'border'], { fill: '#ffffcc', bd: box('thin', '#b2b2b2') }),
+      st_('output', 'Output', FFB, { fill: '#f2f2f2', color: '#3f3f3f', bold: true, bd: box('thin', '#3f3f3f') }),
+      st_('warning', 'Warning Text', ['font'], { color: '#ff0000' }),
+    ]],
+    ['Titles and Headings', [
+      st_('heading1', 'Heading 1', FB, { bold: true, size: 15, color: TEXT2, bd: { b: ['thick', ACCENT[0]] } }),
+      st_('heading2', 'Heading 2', FB, { bold: true, size: 13, color: TEXT2, bd: { b: ['thick', '#64bee6'] } }),
+      st_('heading3', 'Heading 3', FB, { bold: true, color: TEXT2, bd: { b: ['medium', TINT[60][0]] } }),
+      st_('heading4', 'Heading 4', ['font'], { bold: true, color: TEXT2 }),
+      st_('title', 'Title', ['font'], { font: 'Aptos Display', size: 18, color: TEXT2 }),
+      st_('total', 'Total', FB, { bold: true, bd: { t: ['thin', ACCENT[0]], b: ['double', ACCENT[0]] } }),
+    ]],
+    ['Themed Cell Styles', [
+      ...[20, 40, 60].flatMap((p) => ACCENT.map((_, i) => st_(`accent${i + 1}_${p}`, `${p}% - Accent${i + 1}`, FF, { fill: TINT[p][i], color: p === 60 ? '#ffffff' : undefined }))),
+      ...ACCENT.map((a, i) => st_(`accent${i + 1}`, `Accent${i + 1}`, FF, { fill: a, color: '#ffffff' })),
+    ]],
+    ['Number Format', [
+      st_('comma', 'Comma', ['number'], { fmt: 'number', dec: 2 }),
+      st_('comma0', 'Comma [0]', ['number'], { fmt: 'number', dec: 0 }),
+      st_('currency', 'Currency', ['number'], { fmt: 'accounting', dec: 2 }),
+      st_('currency0', 'Currency [0]', ['number'], { fmt: 'accounting', dec: 0 }),
+      st_('percent', 'Percent', ['number'], { fmt: 'percent', dec: 0 }),
+    ]],
+  ];
+  const BUILTIN_STYLES = new Map(STYLE_SECTIONS.flatMap(([, list]) => list.map((x) => [x.key, x])));
+  const customKey = (name) => 'c:' + name;
+  const customStyles = () => S.wb.cellStyles.map((x) => ({ ...x, key: customKey(x.name) }));
+  const styleDef = (key) => BUILTIN_STYLES.get(key) || customStyles().find((x) => x.key === key);
+  const styleNameTaken = (name, except) => [...BUILTIN_STYLES.values(), ...customStyles()]
+    .some((x) => x.name.toLowerCase() === name.toLowerCase() && x.key !== except);
+
+  function styledWith(cur, def) {
+    const out = { ...cur };
+    for (const cat of def.inc) for (const p of STYLE_CATS[cat]) { delete out[p]; if (def.def[p] !== undefined) out[p] = def.def[p]; }
+    if (def.key === 'normal') delete out.cs; else out.cs = def.key;
+    return out;
+  }
+  function applyCellStyle(key) {
+    const def = styleDef(key);
+    if (!def) return;
     if (S.editing && !commitEdit()) return;
     if (guard()) return;
     pushUndo();
+    forSel((r, c) => S.wb.setStyle(S.si, r, c, styledWith(S.wb.getStyle(S.si, r, c), def), true));
+    if (def.inc.includes('number') || def.inc.includes('font')) { const { r1, c1, r2, c2 } = selRect(); fitNumbers(c1, c2, r1, r2); }
+    changed();
+  }
+  // Every cell carrying a style, across all sheets.
+  function forStyled(key, fn) {
+    S.wb.sheets.forEach((sh, si) => { for (const [k, cell] of sh.cells) if (cell.style && cell.style.cs === key) fn(si, ...k.split(',').map(Number), cell.style); });
+  }
+
+  // Live preview: hovering a tile formats the selection until the pointer leaves or the gallery closes.
+  let stylePreview = null;
+  function startPreview(key) {
+    if (stylePreview && stylePreview.key === key) return;
+    endPreview(false);
+    const def = styleDef(key);
+    if (!def || S.editing || view().protected) return renderAll();
+    stylePreview = { key, saved: new Map() };
     forSel((r, c) => {
-      const keep = S.wb.getStyle(S.si, r, c);
-      const base = keep.fmt ? { fmt: keep.fmt, dec: keep.dec } : {};
-      S.wb.setStyle(S.si, r, c, CELL_STYLES[name] ? { ...base, ...CELL_STYLES[name] } : base, true);
+      const cur = S.wb.getStyle(S.si, r, c);
+      stylePreview.saved.set(`${r},${c}`, Object.keys(cur).length ? cur : null);
+      S.wb.setStyle(S.si, r, c, styledWith(cur, def), true);
     });
+    renderAll();
+  }
+  function endPreview(render = true) {
+    if (!stylePreview) return;
+    for (const [k, st] of stylePreview.saved) { const [r, c] = k.split(',').map(Number); S.wb.setStyle(S.si, r, c, st, true); }
+    stylePreview = null;
+    if (render) renderAll();
+  }
+
+  function tileCss(d) {
+    const css = [];
+    if (d.fill) css.push('background:' + d.fill);
+    if (d.color) css.push('color:' + d.color);
+    if (d.bold) css.push('font-weight:700');
+    if (d.italic) css.push('font-style:italic');
+    const deco = [d.underline && 'underline', d.strike && 'line-through'].filter(Boolean).join(' ');
+    if (deco) css.push('text-decoration:' + deco);
+    if (d.font) css.push(`font-family:"${d.font}",var(--cell-font)`);
+    if (d.size) css.push(`font-size:${Math.round(13 + (clamp(d.size, 8, 20) - 11) * 0.8)}px`);
+    const bg = d.fill || '#fff', shadows = [];
+    [['t', 0, 1], ['b', 0, -1], ['l', 1, 0], ['r', -1, 0]].forEach(([side, dx, dy]) => { const e = edgeOf(d, side); if (e) shadows.push(...edgeShadows(e, dx, dy, bg, false)); });
+    if (shadows.length) css.push('box-shadow:' + shadows.join(','));
+    return css.join(';');
+  }
+  function renderGallery() {
+    const cur = activeStyle().cs || (Object.keys(activeStyle()).length ? '' : 'normal');
+    const tile = (x) => `<button class="cs-tile${x.key === cur ? ' current' : ''}" role="menuitem" data-style="${esc(x.key)}" title="${esc(x.name)}" style="${tileCss(x.def)}">${esc(x.name)}</button>`;
+    const custom = customStyles();
+    const sections = custom.length ? [['Custom', custom], ...STYLE_SECTIONS] : STYLE_SECTIONS;
+    $('#cellStyles').innerHTML = sections.map(([head, list]) => `<div class="cs-head">${esc(head)}</div><div class="cs-grid">${list.map(tile).join('')}</div>`).join('')
+      + '<div class="cs-foot"><button data-cmd="newCellStyle" role="menuitem">New Cell Style…</button></div>';
+  }
+
+  // New / Duplicate / Modify: a name plus the categories the style includes, taken by example.
+  const STYLE_ORDER = ['number', 'align', 'font', 'border', 'fill'];
+  function describeCat(cat, d) {
+    if (cat === 'number') return d.fmt ? $(`#numFmt option[value="${d.fmt}"]`)?.textContent || d.fmt : 'General';
+    if (cat === 'align') return [d.align ? d.align[0].toUpperCase() + d.align.slice(1) : 'General', `${d.valign ? d.valign[0].toUpperCase() + d.valign.slice(1) : 'Bottom'} Aligned`, d.wrap && 'Wrap', d.indent && `Indent ${d.indent}`].filter(Boolean).join(', ');
+    if (cat === 'font') return [`${d.font || 'Aptos Narrow'} ${d.size || 11}`, d.bold && 'Bold', d.italic && 'Italic', d.underline && 'Underline', d.color && d.color.toUpperCase()].filter(Boolean).join(', ');
+    if (cat === 'border') return d.bd || d.border ? 'Borders' : 'No Borders';
+    return d.fill ? d.fill.toUpperCase() : 'No Shading';
+  }
+  function uniqueStyleName(base, n = 1) {
+    while (styleNameTaken(`${base} ${n}`)) n++;
+    return `${base} ${n}`;
+  }
+  function openStyleDialog(mode, key) {
+    if (S.editing && !commitEdit()) return;
+    const src = key ? styleDef(key) : null;
+    const def = src ? { ...src.def } : Object.fromEntries(Object.entries(activeStyle()).filter(([p]) => p !== 'cs'));
+    const inc = src ? src.inc : ALL_CATS;
+    const d = $('#csDialog');
+    styleDialogKey = mode === 'modify' ? key : null;
+    $('#csTitle').textContent = mode === 'modify' ? 'Modify Cell Style' : mode === 'duplicate' ? 'Duplicate Cell Style' : 'New Cell Style';
+    $('#csName').value = mode === 'modify' ? src.name : mode === 'duplicate' ? uniqueStyleName(src.name, 2) : uniqueStyleName('Style');
+    $('#csErr').hidden = true;
+    $('#csIncludes').innerHTML = STYLE_ORDER.map((cat) => `<label class="check"><input type="checkbox" value="${cat}"${inc.includes(cat) ? ' checked' : ''}><span>${CAT_LABEL[cat]}</span><span class="cs-desc">${esc(describeCat(cat, def))}</span></label>`).join('');
+    d.returnValue = '';
+    d.onclose = () => {
+      if (d.returnValue === 'ok') saveCustomStyle(mode, src, $('#csName').value.trim(), [...$('#csIncludes').querySelectorAll('input:checked')].map((i) => i.value), def);
+      focusGrid();
+    };
+    d.showModal();
+    $('#csName').select();
+  }
+  let styleDialogKey = null; // the style being modified, so it may keep its own name
+  function styleDialogError() {
+    const name = $('#csName').value.trim();
+    return !name ? 'Enter a style name.' : styleNameTaken(name, styleDialogKey) ? 'A style with this name already exists.' : '';
+  }
+  function saveCustomStyle(mode, src, name, inc, def) {
+    pushUndo();
+    const keep = Object.fromEntries(inc.flatMap((cat) => STYLE_CATS[cat].filter((p) => def[p] !== undefined).map((p) => [p, def[p]])));
+    const entry = { name, inc: STYLE_ORDER.filter((c) => inc.includes(c)), def: keep };
+    if (mode === 'modify') {
+      const i = S.wb.cellStyles.findIndex((x) => x.name === src.name);
+      S.wb.cellStyles[i] = entry;
+      const next = { ...entry, key: customKey(name) };
+      forStyled(src.key, (si, r, c, st) => S.wb.setStyle(si, r, c, styledWith(st, next), true));
+    } else {
+      S.wb.cellStyles.push(entry);
+    }
+    changed();
+  }
+  function deleteCustomStyle(key) {
+    const def = styleDef(key);
+    pushUndo();
+    S.wb.cellStyles = S.wb.cellStyles.filter((x) => customKey(x.name) !== key);
+    // Excel returns the cells to Normal for every category the deleted style included.
+    forStyled(key, (si, r, c, st) => S.wb.setStyle(si, r, c, styledWith(st, { ...BUILTIN_STYLES.get('normal'), inc: def.inc }), true));
     changed();
   }
 
@@ -1277,7 +1467,7 @@
     };
   }
   const hideCtx = () => { ctxMenu.style.display = 'none'; };
-  const closeMenus = () => document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open'));
+  const closeMenus = () => { endPreview(); document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open')); };
 
   // ------------------------------------------------------------ document title flyout
   const titleBtn = $('#docTitleBtn'), flyout = $('#titleFlyout'), flyName = $('#flyName'), flyErr = $('#flyErr');
@@ -1515,6 +1705,7 @@
     fillDown: () => fillFromEdge(true),
     clearAll: () => clearCells(true, true),
     clearFormats: () => clearCells(false, true),
+    newCellStyle: () => openStyleDialog('new'),
     clearContents: () => clearCells(true, false),
     sortAsc: () => sortData(false),
     sortDesc: () => sortData(true),
@@ -1591,6 +1782,7 @@
       const m = document.getElementById(menuBtn.dataset.menu);
       const open = !m.classList.contains('open');
       closeMenus();
+      if (open && m.id === 'cellStyles') renderGallery();
       m.classList.toggle('open', open);
       // The ribbon scrolls sideways, which clips anything below it; pin ribbon menus to the viewport under their button.
       if (open && m.closest('.ribbon')) {
@@ -1598,6 +1790,7 @@
         m.classList.add('pinned');
         m.style.top = b.bottom + 'px';
         m.style.left = Math.max(8, Math.min(b.left, window.innerWidth - m.offsetWidth - 8)) + 'px';
+        if (m.id === 'cellStyles') m.style.maxHeight = `${window.innerHeight - b.bottom - 8}px`;
       }
       return;
     }
@@ -1621,6 +1814,30 @@
       changed();
     }
   });
+  const gallery = $('#cellStyles');
+  const previewFrom = (e) => { const t = e.target.closest('[data-style]'); if (t) startPreview(t.dataset.style); else endPreview(); };
+  gallery.addEventListener('mouseover', previewFrom);
+  gallery.addEventListener('focusin', previewFrom);
+  gallery.addEventListener('mouseleave', () => endPreview());
+  gallery.addEventListener('contextmenu', (e) => {
+    const t = e.target.closest('[data-style]');
+    if (!t) return;
+    e.preventDefault();
+    const key = t.dataset.style, custom = key.startsWith('c:');
+    const items = [{ label: 'Apply', run: () => { closeMenus(); applyCellStyle(key); } }];
+    if (custom) items.push({ label: 'Modify…', run: () => { closeMenus(); openStyleDialog('modify', key); } });
+    items.push({ label: 'Duplicate…', run: () => { closeMenus(); openStyleDialog('duplicate', key); } });
+    if (custom) items.push({ label: 'Delete', run: () => { closeMenus(); deleteCustomStyle(key); } });
+    showCtx(e.clientX, e.clientY, items);
+  });
+  $('#csOk').addEventListener('click', (e) => {
+    const err = styleDialogError();
+    $('#csErr').textContent = err;
+    $('#csErr').hidden = !err;
+    if (err) { e.preventDefault(); $('#csName').focus(); }
+  });
+  $('#csName').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('#csOk').click(); } });
+
   $('#fontFamily').addEventListener('change', (e) => applyStyle({ font: e.target.value === 'Aptos Narrow' ? undefined : e.target.value }));
   $('#fontSize').addEventListener('change', (e) => applyStyle({ size: +e.target.value === 11 ? undefined : +e.target.value }));
   $('#numFmt').addEventListener('change', (e) => applyStyle({ fmt: e.target.value === 'general' ? undefined : e.target.value, dec: undefined }));
@@ -1918,6 +2135,7 @@
     // Keys typed into the cell editor or formula bar are handled by onEditKey.
     if (S.editing || e.target === editor || e.target === bar || isTextField(document.activeElement)) return;
     if (ctxMenu.style.display === 'block' && e.key === 'Escape') { hideCtx(); return; }
+    if (e.key === 'Escape' && document.querySelector('.menu.open')) { closeMenus(); focusGrid(); return; }
     const k = e.key;
     if (mod) {
       const lower = k.toLowerCase();

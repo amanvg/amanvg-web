@@ -150,15 +150,7 @@
         <div class="row">
           <div class="dropdown">
             <button class="big" data-icon="styles" data-menu="cellStyles">Cell Styles</button>
-            <div class="menu" id="cellStyles">
-              <button data-style="normal">Normal</button>
-              <button data-style="good" class="st-good">Good</button>
-              <button data-style="bad" class="st-bad">Bad</button>
-              <button data-style="neutral" class="st-neutral">Neutral</button>
-              <button data-style="heading" class="st-heading">Heading 1</button>
-              <button data-style="title" class="st-title">Title</button>
-              <button data-style="total" class="st-total">Total</button>
-            </div>
+            <div class="menu cs-gallery" id="cellStyles" role="menu" aria-label="Cell Styles"></div>
           </div>
         </div>
         <div class="label">Styles</div>
@@ -372,6 +364,19 @@
     <h2 id="msgTitle">Spreadsheet</h2>
     <p id="msgText"></p>
     <div class="actions"><button value="ok" class="primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="csDialog" class="dialog">
+  <form method="dialog">
+    <h2 id="csTitle">Style</h2>
+    <label class="cs-name">Style name: <input id="csName" type="text" autocomplete="off" spellcheck="false"></label>
+    <p id="csErr" class="cs-err" hidden></p>
+    <fieldset class="cs-inc">
+      <legend>Style Includes (By Example)</legend>
+      <div id="csIncludes"></div>
+    </fieldset>
+    <div class="actions"><button value="cancel">Cancel</button><button id="csOk" value="ok" class="primary">OK</button></div>
   </form>
 </dialog>
 

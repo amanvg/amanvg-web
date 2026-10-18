@@ -790,6 +790,7 @@
   class Workbook {
     constructor() {
       this.sheets = [];
+      this.cellStyles = []; // custom cell styles: { name, inc: [categories], def: style props }
       this.calcId = 1;
       this.circular = null;
     }
@@ -1069,6 +1070,7 @@
           view: s.view,
           cells: [...s.cells].map(([k, cell]) => [k, cell.input, cell.style || null]),
         })),
+        ...(this.cellStyles.length ? { cellStyles: this.cellStyles } : {}),
       };
     }
     static fromJSON(data) {
@@ -1085,6 +1087,7 @@
           sh.cells.set(k, cell);
         }
       }
+      wb.cellStyles = data.cellStyles || [];
       if (!wb.sheets.length) wb.addSheet();
       wb.recalc();
       return wb;
