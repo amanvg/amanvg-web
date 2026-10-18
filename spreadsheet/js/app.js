@@ -1279,6 +1279,46 @@
   const hideCtx = () => { ctxMenu.style.display = 'none'; };
   const closeMenus = () => document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open'));
 
+  // ------------------------------------------------------------ document title flyout
+  const titleBtn = $('#docTitleBtn'), flyout = $('#titleFlyout'), flyName = $('#flyName'), flyErr = $('#flyErr');
+  const BAD_NAME = /[\\/:*?"<>|]/;
+  const nameError = (n) => (!n ? 'Enter a file name.' : BAD_NAME.test(n) ? 'Name can’t contain \\ / : * ? " < > |' : '');
+  function showNameError(text) {
+    flyErr.textContent = text;
+    flyErr.hidden = !text;
+    flyName.classList.toggle('invalid', !!text);
+  }
+  function openFlyout() {
+    if (S.editing && !commitEdit()) return;
+    hideCtx(); closeMenus();
+    flyName.value = S.docName;
+    showNameError('');
+    flyout.hidden = false;
+    titleBtn.setAttribute('aria-expanded', 'true');
+    flyName.focus();
+    flyName.select();
+  }
+  function closeFlyout(refocus = true) {
+    if (flyout.hidden) return;
+    flyout.hidden = true;
+    titleBtn.setAttribute('aria-expanded', 'false');
+    if (refocus) focusGrid();
+  }
+  // Returns false (and keeps the field open) when the name is rejected.
+  function commitName() {
+    const n = flyName.value.trim();
+    const err = nameError(n);
+    if (err) { showNameError(err); return false; }
+    showNameError('');
+    if (n !== S.docName) {
+      S.docName = n;
+      $('#docName').textContent = n;
+      document.title = `${n} — Spreadsheet`;
+      saveNow();
+    }
+    return true;
+  }
+
   // ------------------------------------------------------------ files
   function download(name, blob) {
     const a = document.createElement('a');
@@ -1526,6 +1566,20 @@
     document.querySelectorAll('.tab').forEach((x) => x.classList.toggle('active', x === t));
     document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('active', p.dataset.panel === t.dataset.tab));
   }));
+  // A click toggles the flyout; the second click of a double-click keeps it open.
+  titleBtn.addEventListener('click', (e) => {
+    if (flyout.hidden) openFlyout();
+    else if (e.detail < 2) closeFlyout();
+    else { flyName.focus(); flyName.select(); }
+  });
+  flyName.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); if (commitName()) closeFlyout(); } });
+  // Once an error shows, clear it as soon as the name becomes valid.
+  flyName.addEventListener('input', () => { if (!flyErr.hidden) showNameError(nameError(flyName.value.trim())); });
+  // Leaving the field renames; a rejected name reverts.
+  flyName.addEventListener('blur', () => { if (!commitName()) { flyName.value = S.docName; showNameError(''); } });
+  flyout.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.preventDefault(); flyName.value = S.docName; closeFlyout(); } });
+  flyout.addEventListener('click', (e) => { if (e.target.closest('[data-cmd]')) closeFlyout(false); });
+  document.addEventListener('mousedown', (e) => { if (!flyout.hidden && !e.target.closest('.doc-title')) closeFlyout(false); });
   // Keep keyboard focus on the grid/editor when using ribbon buttons.
   document.querySelector('.ribbon').addEventListener('mousedown', (e) => { if (e.target.closest('button')) e.preventDefault(); });
   document.addEventListener('click', (e) => {

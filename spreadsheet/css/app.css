@@ -29,8 +29,23 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .qat-btn { background: none; border: 0; color: #fff; width: 28px; height: 26px; border-radius: 4px; display: grid; place-items: center; cursor: pointer; }
 .qat-btn:hover { background: rgba(255, 255, 255, .18); }
 .qat-btn .ico { stroke: #fff; }
-.doc-title { flex: 1; text-align: center; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-title { flex: 1; min-width: 0; display: flex; justify-content: center; position: relative; }
+.doc-title-btn { max-width: 100%; background: none; border: 0; color: #fff; font-weight: 600; padding: 3px 8px; border-radius: 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-title-btn:hover, .doc-title-btn[aria-expanded="true"] { background: rgba(255, 255, 255, .18); }
 .doc-title .muted { color: rgba(255, 255, 255, .75); font-weight: 400; }
+.title-flyout { position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); z-index: 60; width: 300px; max-width: calc(100vw - 32px); background: #fff; color: var(--text); border: 1px solid #cfcfcf; border-radius: 8px; padding: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, .18); text-align: left; }
+.title-flyout[hidden] { display: none; }
+@media (max-width: 600px) { .title-flyout { position: fixed; top: 44px; left: 16px; right: 16px; width: auto; max-width: none; transform: none; } }
+.fly-label { display: block; color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+.fly-name { width: 100%; height: 28px; padding: 0 8px; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
+.fly-name:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 1px var(--green); }
+.fly-name.invalid { border-color: #c50f1f; box-shadow: 0 0 0 1px #c50f1f; }
+.fly-err { color: #c50f1f; font-size: 11px; margin-top: 4px; }
+.fly-place { display: flex; justify-content: space-between; margin-top: 10px; }
+.fly-place span:first-child { color: var(--muted); }
+.title-flyout hr { border: 0; border-top: 1px solid var(--border); margin: 10px -12px 6px; }
+.title-flyout button { display: flex; align-items: center; gap: 8px; width: 100%; background: none; border: 0; text-align: left; padding: 6px 8px; border-radius: 4px; cursor: pointer; }
+.title-flyout button:hover { background: var(--green-tint-2); }
 .search { width: 220px; height: 24px; border-radius: 5px; border: 0; padding: 0 8px; background: rgba(255, 255, 255, .92); color: var(--text); }
 
 /* ---------- ribbon */

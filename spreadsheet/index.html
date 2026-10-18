@@ -20,7 +20,19 @@
       <button class="qat-btn" data-cmd="undo" title="Undo (⌘Z)" data-icon="undo"></button>
       <button class="qat-btn" data-cmd="redo" title="Redo (⌘Y)" data-icon="redo"></button>
     </div>
-    <div class="doc-title"><span id="docName">Book1</span><span class="muted"> — Saved to this browser</span></div>
+    <div class="doc-title">
+      <button id="docTitleBtn" class="doc-title-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="titleFlyout"><span id="docName">Book1</span><span class="muted"> — Saved to this browser</span></button>
+      <!-- Document title flyout: rename, place, save a copy -->
+      <div id="titleFlyout" class="title-flyout" role="dialog" aria-label="Document" hidden>
+        <label class="fly-label" for="flyName">File Name</label>
+        <input id="flyName" class="fly-name" type="text" spellcheck="false" autocomplete="off" maxlength="200">
+        <div id="flyErr" class="fly-err" role="alert" hidden></div>
+        <div class="fly-place"><span>Place</span><span>This browser</span></div>
+        <hr>
+        <button data-cmd="saveXlsx" data-icon="download">Save a Copy (.xlsx)</button>
+        <button data-cmd="exportCsv" data-icon="download">Export CSV</button>
+      </div>
+    </div>
     <div class="title-right">
       <input id="searchBox" class="search" type="search" placeholder="Search (⌘F)" aria-label="Search sheet">
     </div>
