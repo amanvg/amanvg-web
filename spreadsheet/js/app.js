@@ -135,9 +135,12 @@
     const tr = tbody.rows[r];
     if (!tr) return;
     tr.classList.toggle('hr', rowHidden(r));
+    // A set height holds the row exactly, even below its text (Excel clips the text); --rh is the cell height
+    // without the 1px gridline.
     const h = sheet().rowHeights[r];
-    const v = h ? Math.round(h * 4 / 3) + 'px' : '';
-    if (tr.style.height !== v) tr.style.height = v;
+    tr.classList.toggle('fixed-h', !!h);
+    const v = h ? Math.max(0, Math.round(h * 4 / 3) - 1) + 'px' : '';
+    if (tr.style.getPropertyValue('--rh') !== v) { if (v) tr.style.setProperty('--rh', v); else tr.style.removeProperty('--rh'); }
   }
   function ensureSize(r, c) {
     if (c >= S.cols) { S.cols = Math.min(MAX_COLS, c + 10); buildGrid(); }
@@ -364,7 +367,7 @@
     const m = mergeAt(r, c);
     if (m) { // drawn by the merged cell laid over the grid
       // A one-row merge's top-left cell keeps an invisible line of its font so the row stays tall enough.
-      const strut = m.r1 === m.r2 && r === m.r1 && c === m.c1 && filled(r, c);
+      const strut = m.r1 === m.r2 && r === m.r1 && c === m.c1 && filled(r, c) && !sheet().rowHeights[r];
       const text = strut ? ' ' : '';
       if (td._rot || td.textContent !== text) { td._rot = null; td.textContent = text; }
       td.className = view().freezeCol && c === 0 ? 'frozen-col' : '';
@@ -393,7 +396,12 @@
     const right = pickEdge(edgeOf(st, 'r'), edgeAt(r, c + 1, 'l'));
     css.push(...paintCss(st, { b: bottom, r: right, t: r === 0 && edgeOf(st, 't'), l: c === 0 && edgeOf(st, 'l') }));
     if (cls.includes(' ov')) css.push('overflow:visible;position:relative;z-index:1');
-    const html = content.html || (across && text ? `<span class="ca" style="width:${across - 7}px">${esc(text)}</span>` : null);
+    let html = content.html || (across && text ? `<span class="ca" style="width:${across - 7}px">${esc(text)}</span>` : null);
+    // In a row with a set height the content sits in a box of that height, aligned like the cell and clipped above and below.
+    if (text && sheet().rowHeights[r]) {
+      const jc = st.valign === 'middle' ? 'center' : st.valign && st.valign !== 'bottom' ? 'flex-start' : 'flex-end';
+      html = `<div class="fh" style="justify-content:${jc}"><div class="fh-in">${html || esc(text)}</div></div>`;
+    }
     if (html) { if (td._rot !== html) { td.innerHTML = html; td._rot = html; } }
     else if (td._rot || td.textContent !== text) { td._rot = null; td.textContent = text; }
     td.className = cls.trim();

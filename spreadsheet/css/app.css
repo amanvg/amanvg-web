@@ -166,6 +166,10 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .grid td.bool, .grid td.err { text-align: center; }
 .grid td.wrap { white-space: pre-wrap; word-break: break-word; }
 .grid tr.hr { display: none; }
+.grid tr.fixed-h > td, .grid tr.fixed-h > th { height: var(--rh); padding-top: 0; padding-bottom: 0; }
+.grid tr.fixed-h > th { line-height: var(--rh); overflow: hidden; }
+.grid .fh { height: var(--rh); display: flex; flex-direction: column; clip-path: inset(0 -100vw); }
+.grid .fh-in { flex: none; }
 .grid .hc { padding: 0 !important; border-right-width: 0 !important; overflow: hidden !important; }
 .xs-sup { vertical-align: super; font-size: 70%; }
 .xs-sub { vertical-align: sub; font-size: 70%; }
