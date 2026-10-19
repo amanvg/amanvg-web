@@ -442,18 +442,19 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             redoStack.length = 0;
             fn();
             render();
+            fit();
         }
         function undo() {
             if (!undoStack.length) return;
             redoStack.push(JSON.stringify(S));
             S = JSON.parse(undoStack.pop());
-            fixSelection(); render();
+            fixSelection(); render(); fit();
         }
         function redo() {
             if (!redoStack.length) return;
             undoStack.push(JSON.stringify(S));
             S = JSON.parse(redoStack.pop());
-            fixSelection(); render();
+            fixSelection(); render(); fit();
         }
         function fixSelection() {
             if (sel && sel.kind === 'node' && !S.nodes[sel.id]) sel = null;
@@ -778,7 +779,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 const L = LEVELS[n.level], x = r1(n.x), y = r1(n.y);
                 const selected = ui && sel && sel.kind === 'node' && sel.id === n.id;
                 const source = ui && linkFrom === n.id;
+                const ctls = ui && !linkFrom && !editing && (selected || hoverId === n.id);
                 out.push(ui ? `<g data-node="${n.id}">` : `<g>`);
+                // Invisible pad so the pointer can travel from the box onto its + controls.
+                if (ctls) out.push(`<rect x="${x}" y="${y}" width="${W + 6 + CTL}" height="${H + CTL / 2}" fill="transparent"/>`);
                 out.push(`<rect class="box" x="${x}" y="${y}" width="${W}" height="${H}" fill="${P.box}" stroke="${selected || source ? P.sel : P.stroke}" stroke-width="${selected || source ? 3 : 1.5}"${source ? ' stroke-dasharray="6 4"' : ''}/>`);
                 out.push(`<rect x="${x}" y="${y}" width="${TAB}" height="${H}" fill="${L.fill}"/>`);
                 const tx = r1(n.x + TAB / 2), ty = r1(n.cy);
@@ -788,21 +792,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     const ly = r1(n.cy + (i - (n.lines.length - 1) / 2) * LH);
                     out.push(`<text x="${cx}" y="${ly}" text-anchor="middle" dominant-baseline="central" font-family="${esc(TEXT_FONT)}" font-weight="600" font-size="${FS}" fill="${P.text}">${esc(ln)}</text>`);
                 });
-                out.push(`</g>`);
-            });
-
-            // + controls on the selected box: right adds a child, below adds a sibling.
-            if (ui && sel && sel.kind === 'node' && !linkFrom && !editing) {
-                const n = model.map.get(sel.id);
-                if (n && n.x != null) {
+                // + controls on the selected or hovered box: right adds a child, below adds a sibling.
+                if (ctls) {
                     if (n.level < LEVELS.length - 1) {
                         const bx = n.x + W + 6, by = n.cy - CTL / 2;
-                        out.push(`<g data-ctl="child" role="button" aria-label="Add ${LEVELS[n.level + 1].name}"><rect x="${bx}" y="${by}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(bx, by, P)}</g>`);
+                        out.push(`<g data-ctl="child" data-for="${n.id}" role="button" aria-label="Add ${LEVELS[n.level + 1].name}"><rect x="${bx}" y="${by}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(bx, by, P)}</g>`);
                     }
                     const bx = n.x + W / 2 - CTL / 2, by = n.y + H - CTL / 2;
-                    out.push(`<g data-ctl="sibling" role="button" aria-label="Add ${LEVELS[n.level].name}"><rect x="${bx}" y="${by}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(bx, by, P)}</g>`);
+                    out.push(`<g data-ctl="sibling" data-for="${n.id}" role="button" aria-label="Add ${LEVELS[n.level].name}"><rect x="${bx}" y="${by}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(bx, by, P)}</g>`);
                 }
-            }
+                out.push(`</g>`);
+            });
             return { inner: out.join(''), width: Math.ceil(width), height: Math.ceil(height + (ui ? CTL : 0)), H };
         }
 
@@ -810,6 +810,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         const palette = () => PALETTES[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'];
         let lastAnnounce = '';
+        let hoverId = null;       // box under a mouse pointer, which shows its + controls
 
         function render() {
             fixSelection();
@@ -923,8 +924,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 sel = prev ? { kind: 'node', id: prev } : null;
             };
             if (!S.nodes[id]) { render(); return; }
-            if (!keep || !val) { if (isNew) revert(); render(); canvas.focus({ preventScroll: true }); return; }
-            if (isNew) { S.nodes[id].label = val; render(); }
+            if (!keep || !val) { if (isNew) { revert(); render(); fit(); } else render(); canvas.focus({ preventScroll: true }); return; }
+            if (isNew) { S.nodes[id].label = val; render(); fit(); }
             else if (val !== S.nodes[id].label) commit(() => { S.nodes[id].label = val; });
             else render();
             canvas.focus({ preventScroll: true });
@@ -1010,7 +1011,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             }
             const start = local(e);
             const ctl = e.target.closest('[data-ctl]');
-            if (ctl) { gesture = { kind: 'ctl', ctl: ctl.dataset.ctl, start }; return; }
+            if (ctl) { gesture = { kind: 'ctl', ctl: ctl.dataset.ctl, id: ctl.dataset.for, start }; return; }
             const g = e.target.closest('[data-node]');
             if (g) { gesture = { kind: 'node', id: g.dataset.node, start, moved: false, el: g }; return; }
             const hit = e.target.closest('[data-hit]');
@@ -1018,8 +1019,16 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             gesture = { kind: 'pan', start, x: T.x, y: T.y, moved: false };
         });
 
+        function setHover(id) {
+            if (id === hoverId) return;
+            hoverId = id;
+            render();
+        }
         board.addEventListener('pointermove', e => {
-            if (!pointers.has(e.pointerId)) return;
+            if (!pointers.has(e.pointerId)) {
+                if (e.pointerType === 'mouse' && !gesture) { const g = e.target.closest('[data-node]'); setHover(g ? g.dataset.node : null); }
+                return;
+            }
             const p = local(e);
             pointers.set(e.pointerId, p);
             if (!gesture) return;
@@ -1062,7 +1071,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             board.classList.remove('panning');
             if (!g || e.type === 'pointercancel') { render(); return; }
             if (g.kind === 'ctl') {
-                if (sel && sel.kind === 'node') g.ctl === 'child' ? addChild(sel.id) : addSibling(sel.id);
+                if (S.nodes[g.id]) { hoverId = null; g.ctl === 'child' ? addChild(g.id) : addSibling(g.id); }
             } else if (g.kind === 'node') {
                 if (g.moved) { sel = { kind: 'node', id: g.id }; if (!(g.target && move(g.id, g.target, g.after))) render(); }
                 else if (linkFrom) pickTarget(g.id);
@@ -1077,6 +1086,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             }
         }
         board.addEventListener('pointerup', endPointer);
+        board.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !pointers.size) setHover(null); });
         board.addEventListener('pointercancel', endPointer);
         board.addEventListener('dblclick', e => {
             const g = e.target.closest('[data-node]');
