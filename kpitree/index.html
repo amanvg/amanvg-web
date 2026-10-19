@@ -138,6 +138,7 @@ main{flex:1;padding:40px var(--margin) 0}
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
 .tgroup{display:flex}
 .tgroup .act+.act{margin-left:-2px}
+.tgroup .act:hover,.tgroup .act:focus-visible{position:relative;z-index:1}
 .act{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;min-width:44px;padding:6px 14px;border:2px solid var(--act-line);background:transparent;color:var(--act-fg);transition:background .15s,border-color .15s}
 .act svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .act:disabled{opacity:.4;cursor:default}
