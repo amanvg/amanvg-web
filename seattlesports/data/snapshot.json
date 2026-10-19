@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-19T00:01:40.452Z",
+ "generatedAt": "2026-10-19T05:08:05.334Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -908,6 +908,45 @@
      },
      {
       "team": {
+       "id": "3",
+       "abbreviation": "CGY",
+       "displayName": "Calgary Flames"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "12"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "4"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "2"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "8",
        "abbreviation": "LA",
        "displayName": "Los Angeles Kings"
@@ -942,45 +981,6 @@
         "name": "overtimeLosses",
         "abbreviation": "OTL",
         "displayValue": "2"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "3",
-       "abbreviation": "CGY",
-       "displayName": "Calgary Flames"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "14"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "6"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "2"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "1"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
        }
       ]
      }
