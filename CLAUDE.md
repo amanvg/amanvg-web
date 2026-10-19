@@ -61,6 +61,16 @@ A Reject means make no changes and ask what to adjust.
 - `/tempest/`, `/mlbstadiums/`, `/USStates/`, `/worldmap/`, `/trust/`: follow
   `DESIGN.md` like `/seattlesports/`; region, division and section chips live in
   the masthead, counts sit on tally strips, lists are ledgers.
+- `/kpitree/`: follows `DESIGN.md` like `/tirepressure/`; Copy, PNG and SVG
+  sit in the masthead, a level tally strip and the tree toolbar (Child,
+  Sibling, Link, Delete, undo/redo, zoom, Fit, Example, Clear) sit above a
+  full-width pan-and-zoom canvas. The tree is the editor (Miro-style, auto-tidy
+  left to right): select a box for + controls, type or double-click to edit,
+  drag onto a box to move under it or beside it. Boxes keep Bernie Smith's
+  level colours on their tab only (Strategic green, Theme orange, Tactical
+  purple, Measure blue); conflicts are red lines, companions double lines.
+  Exports always use the light colours on white with Work Sans and Oswald
+  inlined from Google Fonts (PNG at 3×).
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services and
@@ -166,6 +176,10 @@ A Reject means make no changes and ask what to adjust.
   Frontier, due status from odometer and date against Nissan's schedule, cost
   and MPG ledgers; fill-ups and services are logged from the page once a device
   is Connected.
+- `/kpitree/` KPI Tree: Bernie Smith-style KPI tree built by clicking (+ adds
+  the next level or a sibling; Link connects a shared box or draws a conflict
+  or companion line), saved in `localStorage` (`kpitree:tree`, version 2:
+  nodes with ordered children, roots, rels).
 - `/spreadsheet/` Spreadsheet: workbook with formulas, sheets, charts and
   .xlsx/.csv open and save, saved in `localStorage` (`spreadsheet:workbook`).
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
