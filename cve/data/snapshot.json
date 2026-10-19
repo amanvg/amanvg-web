@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-19T04:39:05Z",
+ "generatedAt": "2026-10-19T22:20:31Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.16",
  "kevCount": 1748,
- "epssDate": "2026-10-18",
+ "epssDate": "2026-10-19",
  "items": [
   {
    "id": "CVE-2015-3306",
@@ -171,7 +171,7 @@
     "ransomware": false
    },
    "epss": 0.013,
-   "percentile": 0.69,
+   "percentile": 0.691,
    "cvss": 8.7,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L/E:A/AU:Y/V:C",
@@ -193,7 +193,7 @@
     "ransomware": false
    },
    "epss": 0.005,
-   "percentile": 0.448,
+   "percentile": 0.449,
    "cvss": 8.5,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A/AU:Y/V:D",
@@ -237,7 +237,7 @@
     "ransomware": false
    },
    "epss": 0.022,
-   "percentile": 0.822,
+   "percentile": 0.823,
    "cvss": 9.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
@@ -326,14 +326,14 @@
    },
    "epss": null,
    "percentile": null,
-   "cvss": null,
-   "cvssVersion": null,
-   "cvssVector": null,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:H/SI:H/SA:H",
    "exploitation": "active",
-   "automatable": null,
-   "impact": null,
-   "cweId": null,
-   "cwe": null
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-552",
+   "cwe": "Files or Directories Accessible to External Parties"
   },
   {
    "id": "CVE-2026-5430",
@@ -347,7 +347,7 @@
     "ransomware": false
    },
    "epss": 0.006,
-   "percentile": 0.47,
+   "percentile": 0.471,
    "cvss": 10.0,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
@@ -391,7 +391,7 @@
     "ransomware": false
    },
    "epss": 0.01,
-   "percentile": 0.63,
+   "percentile": 0.631,
    "cvss": 6.9,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
@@ -523,7 +523,7 @@
     "ransomware": false
    },
    "epss": 0.012,
-   "percentile": 0.687,
+   "percentile": 0.688,
    "cvss": 8.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
@@ -567,7 +567,7 @@
     "ransomware": false
    },
    "epss": 0.011,
-   "percentile": 0.646,
+   "percentile": 0.647,
    "cvss": 9.5,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
@@ -611,7 +611,7 @@
     "ransomware": false
    },
    "epss": 0.006,
-   "percentile": 0.472,
+   "percentile": 0.473,
    "cvss": 8.7,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
@@ -655,7 +655,7 @@
     "ransomware": false
    },
    "epss": 0.011,
-   "percentile": 0.64,
+   "percentile": 0.641,
    "cvss": 10.0,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
@@ -677,7 +677,7 @@
     "ransomware": false
    },
    "epss": 0.022,
-   "percentile": 0.824,
+   "percentile": 0.825,
    "cvss": 9.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -771,7 +771,7 @@
    "published": "2026-09-28",
    "kev": null,
    "epss": 0.025,
-   "percentile": 0.841,
+   "percentile": 0.842,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -789,7 +789,7 @@
    "published": "2026-09-28",
    "kev": null,
    "epss": 0.02,
-   "percentile": 0.805,
+   "percentile": 0.806,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -933,7 +933,7 @@
    "published": "2026-09-29",
    "kev": null,
    "epss": 0.02,
-   "percentile": 0.805,
+   "percentile": 0.806,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -1041,7 +1041,7 @@
    "published": "2026-10-12",
    "kev": null,
    "epss": 0.022,
-   "percentile": 0.822,
+   "percentile": 0.823,
    "cvss": 9.4,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -1059,7 +1059,7 @@
    "published": "2026-10-12",
    "kev": null,
    "epss": 0.022,
-   "percentile": 0.822,
+   "percentile": 0.823,
    "cvss": 9.4,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -1320,24 +1320,6 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
-  },
-  {
-   "id": "CVE-2026-93742",
-   "vendor": "Totolink",
-   "product": "A3002MU",
-   "name": "Totolink A3002MU formWsc command injection",
-   "published": "2026-09-19",
-   "kev": null,
-   "epss": 0.023,
-   "percentile": 0.828,
-   "cvss": 9.4,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-77",
-   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-93958",
