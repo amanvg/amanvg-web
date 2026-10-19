@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-18T15:51:11Z",
+ "generatedAt": "2026-10-19T04:39:05Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.16",
  "kevCount": 1748,
@@ -114,50 +114,6 @@
    "impact": "total",
    "cweId": "CWE-312",
    "cwe": "Cleartext Storage of Sensitive Information"
-  },
-  {
-   "id": "CVE-2025-39682",
-   "vendor": "Linux",
-   "product": "Kernel",
-   "name": "Linux Kernel Improper Check for Unusual or Exceptional Conditions Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-18",
-    "due": "2026-09-21",
-    "ransomware": false
-   },
-   "epss": 0.029,
-   "percentile": 0.866,
-   "cvss": 9.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-754",
-   "cwe": "Improper Check for Unusual or Exceptional Conditions"
-  },
-  {
-   "id": "CVE-2025-39964",
-   "vendor": "Linux",
-   "product": "Kernel",
-   "name": "Linux Kernel Race Condition Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-18",
-    "due": "2026-09-21",
-    "ransomware": false
-   },
-   "epss": 0.014,
-   "percentile": 0.713,
-   "cvss": 7.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-362",
-   "cwe": "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')"
   },
   {
    "id": "CVE-2025-61624",
@@ -378,28 +334,6 @@
    "impact": null,
    "cweId": null,
    "cwe": null
-  },
-  {
-   "id": "CVE-2026-53266",
-   "vendor": "Linux",
-   "product": "Kernel",
-   "name": "Linux Kernel Out-of-Bounds Write Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-18",
-    "due": "2026-09-21",
-    "ransomware": false
-   },
-   "epss": 0.008,
-   "percentile": 0.567,
-   "cvss": 8.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-787",
-   "cwe": "Out-of-bounds Write"
   },
   {
    "id": "CVE-2026-5430",
