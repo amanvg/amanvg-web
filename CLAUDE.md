@@ -152,8 +152,11 @@ A Reject means make no changes and ask what to adjust.
   folder. `GET /log` is public and returns the `version`, `truck`, `services`,
   `fuel` shape; `GET /auth`, `POST /fuel`, `PUT /fuel/:id`, `DELETE /fuel/:id`, `POST /services`,
   `DELETE /services/:id` and `PUT /truck` need the
-  `FRONTIER_KEY` secret (`npx wrangler secret put FRONTIER_KEY`), which a
-  device pastes into Connect (kept in its `localStorage`, `frontier:key`).
+  `FRONTIER_KEY` secret, as do all KPI tree routes for `/kpitree/`, reads
+  included (`GET /kpi`, `GET /kpi/:id`, `PUT /kpi/:id`, `DELETE /kpi/:id`;
+  table `kpi_trees`, created on the remote database with
+  `npx wrangler d1 execute frontier --remote --file schema.sql`). The key
+  (`npx wrangler secret put FRONTIER_KEY`) is what a device pastes into Connect (kept in its `localStorage`, `frontier:key`).
   CORS allows only amanvg.com and localhost:8765. `frontier/data/log.json` is
   the Fuelly seed only (cost 0, no price data); the page does not read it.
   Preview: `npx wrangler dev --local --port 8787` in `frontier/worker/`
@@ -178,8 +181,13 @@ A Reject means make no changes and ask what to adjust.
   is Connected.
 - `/kpitree/` KPI Tree: Bernie Smith-style KPI tree built by clicking (+ adds
   the next level or a sibling; Link connects a shared box or draws a conflict
-  or companion line), saved in `localStorage` (`kpitree:tree`, version 2:
-  nodes with ordered children, roots, rels).
+  or companion line). Not connected it keeps one tree in `localStorage`
+  (`kpitree:tree`, version 2: nodes with ordered children, roots, rels).
+  Connected with the Frontier key (same `frontier:key`, so Connect or
+  Disconnect on either page does both), a tree picker with New, Rename,
+  Duplicate and Delete lists the trees on the Worker, edits autosave there,
+  and `kpitree:open` remembers the open tree; a first connect to an empty
+  server uploads the browser's saved tree.
 - `/spreadsheet/` Spreadsheet: workbook with formulas, sheets, charts and
   .xlsx/.csv open and save, saved in `localStorage` (`spreadsheet:workbook`).
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:

@@ -135,6 +135,18 @@ main{flex:1;padding:40px var(--margin) 0}
 .sign-head i{width:10px;height:10px;flex:none}
 .num{display:block;padding:2px 16px 10px;font-family:var(--display);font-weight:700;font-size:36px;line-height:44px;font-variant-numeric:tabular-nums}
 
+.treebar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding-bottom:16px;border-bottom:1px solid var(--key)}
+.pick{display:flex;align-items:center;gap:10px;min-width:0}
+.pick select,.pick input,.connect input{min-height:44px;min-width:0;width:min(320px,60vw);background:var(--well-bg);color:var(--text);border:1.5px solid var(--key);border-radius:0;padding:8px 12px;font-family:var(--body);font-size:16px;line-height:24px}
+.pick select:focus,.pick input:focus,.connect input:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 1px var(--focus)}
+.section-label{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;color:var(--muted)}
+.note{font-family:var(--label);font-weight:600;font-size:13px;line-height:19px;color:var(--muted)}
+.note:empty{display:none}
+.note.bad{color:var(--alert)}
+#connect{margin-left:auto}
+.connect{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;flex:1 1 100%}
+.connect input{flex:1 1 220px;max-width:420px;width:auto}
+#tree-del.armed{background:var(--live-bg);color:var(--live-fg);border-color:var(--live-bg)}
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
 .tgroup{display:flex}
 .tgroup .act+.act{margin-left:-2px}
@@ -249,6 +261,28 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 </div>
             </div>
             <div class="body" id="inputs">
+                <div class="treebar">
+                    <div class="pick" id="pick" hidden>
+                        <label class="section-label" for="tree-pick">Tree</label>
+                        <select id="tree-pick"></select>
+                        <input type="text" id="tree-name" maxlength="120" autocomplete="off" aria-label="Tree name" hidden>
+                    </div>
+                    <div class="tgroup" id="tree-actions" hidden>
+                        <button class="act" type="button" id="tree-new">New</button>
+                        <button class="act" type="button" id="tree-rename">Rename</button>
+                        <button class="act" type="button" id="tree-dup">Duplicate</button>
+                        <button class="act" type="button" id="tree-del">Delete</button>
+                    </div>
+                    <span class="note" id="save-state" role="status"></span>
+                    <button class="act" type="button" id="connect">Connect</button>
+                    <form class="connect" id="connect-form" novalidate hidden>
+                        <label class="section-label" for="key-input">Key</label>
+                        <input type="password" id="key-input" autocomplete="off" spellcheck="false" aria-describedby="connect-msg">
+                        <button class="act pri" type="submit">Connect</button>
+                        <button class="act" type="button" id="connect-cancel">Cancel</button>
+                        <span class="note" id="connect-msg" role="status" aria-live="polite"></span>
+                    </form>
+                </div>
                 <div class="signs" id="tally"></div>
                 <div class="toolbar" role="toolbar" aria-label="Tree">
                     <div class="tgroup">
@@ -394,7 +428,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             } catch (e) {}
             return fromOutline(EXAMPLE.outline, EXAMPLE.links);
         }
+        // Connected: the open tree saves to the server. Otherwise this browser keeps one tree.
         function save() {
+            if (remote) { scheduleRemote(); return; }
             try { localStorage.setItem(STORE_KEY, JSON.stringify({ version: 2, ...S })); } catch (e) {}
         }
 
@@ -1229,11 +1265,271 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         });
         paintMode();
 
+        // ── Server trees ────────────────────────────────────────
+        // Trees live in the Frontier D1 database behind frontier/worker/worker.js. Every /kpi
+        // route needs the Frontier key, so the key a device saved on /frontier/ works here too.
+
+        const API = ['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://localhost:8787' : 'https://frontier-log.amanvg.workers.dev';
+        const KEY_KEY = 'frontier:key', OPEN_KEY = 'kpitree:open';
+        const SAVE_TEXT = { loading: 'Loading', saving: 'Saving', saved: 'Saved', failed: 'Save failed', offline: 'Server unavailable' };
+        let apiKey = null;
+        try { apiKey = localStorage.getItem(KEY_KEY) || null; } catch (e) {}
+        // remote: { trees: [{ id, name, updated, unsaved }], cur, saved, savedName, timer }; null when not connected.
+        let remote = null;
+        let saveState = '';
+
+        async function api(path, opts = {}) {
+            const headers = { Authorization: `Bearer ${apiKey}` };
+            if (opts.body) headers['Content-Type'] = 'application/json';
+            const res = await fetch(API + path, { ...opts, headers });
+            if (res.status === 401) { const e = new Error('auth'); e.auth = true; throw e; }
+            if (!res.ok) throw new Error(String(res.status));
+            return res.status === 204 ? null : res.json();
+        }
+
+        const treeJson = () => JSON.stringify({ version: 2, ...S });
+        const fromData = d => ({ seq: d.seq || 0, nodes: d.nodes || {}, roots: d.roots || [], rels: Array.isArray(d.rels) ? d.rels : [] });
+        const rootLabel = st => { const r = st.roots[0] && st.nodes[st.roots[0]]; return r && r.label ? r.label.slice(0, 120) : ''; };
+        const hasNodes = () => Object.keys(S.nodes).length > 0;
+
+        function setSave(s) {
+            saveState = s;
+            const el = $('save-state');
+            el.textContent = s === 'auth' ? 'Key rejected' : SAVE_TEXT[s] || (remote ? '' : apiKey ? '' : 'This browser only');
+            el.classList.toggle('bad', s === 'failed' || s === 'offline' || s === 'auth');
+        }
+
+        function scheduleRemote() {
+            const cur = remote && remote.cur;
+            if (!cur) return;
+            if (treeJson() === remote.saved && cur.name === remote.savedName) return;
+            clearTimeout(remote.timer);
+            remote.timer = setTimeout(() => flush(), 800);
+        }
+
+        async function flush(keepalive) {
+            if (!remote) return;
+            clearTimeout(remote.timer);
+            remote.timer = null;
+            const cur = remote.cur;
+            if (!cur) return;
+            const body = treeJson();
+            if (body === remote.saved && cur.name === remote.savedName) return;
+            if (cur.unsaved && !hasNodes()) return;   // an untouched new tree is not kept
+            if (cur.name === 'Untitled' && rootLabel(S)) { cur.name = rootLabel(S); renderTrees(); }
+            const name = cur.name;
+            setSave('saving');
+            try {
+                const r = await api(`/kpi/${cur.id}`, { method: 'PUT', body: JSON.stringify({ name, data: JSON.parse(body) }), keepalive });
+                cur.unsaved = false;
+                cur.updated = r.updated;
+                if (remote && remote.cur === cur) {
+                    remote.saved = body;
+                    remote.savedName = name;
+                    setSave('saved');
+                    if (treeJson() !== body || cur.name !== name) scheduleRemote();
+                }
+            } catch (e) {
+                if (e.auth) return keyRejected();
+                setSave('failed');
+            }
+        }
+
+        function resetEditor() {
+            undoStack.length = 0; redoStack.length = 0;
+            sel = null; linkFrom = null;
+            if (editing) { editing = null; editor.hidden = true; }
+            closeMenu();
+        }
+
+        function dropUntouched() {
+            const cur = remote.cur;
+            if (cur && cur.unsaved && !hasNodes()) remote.trees = remote.trees.filter(t => t !== cur);
+        }
+
+        async function openTree(id) {
+            if (editing) finishEdit(true);
+            await flush();
+            dropUntouched();
+            setSave('loading');
+            try {
+                const t = await api(`/kpi/${encodeURIComponent(id)}`);
+                S = fromData(t.data);
+                const entry = remote.trees.find(x => x.id === id) || { id };
+                entry.name = t.name;
+                remote.cur = entry;
+                remote.saved = treeJson();
+                remote.savedName = t.name;
+                try { localStorage.setItem(OPEN_KEY, id); } catch (e) {}
+                resetEditor();
+                setSave('');
+                render(); fit(); renderTrees();
+            } catch (e) {
+                if (e.auth) return keyRejected();
+                setSave('offline');
+                renderTrees();
+            }
+        }
+
+        async function newTree(data, name) {
+            if (editing) finishEdit(true);
+            await flush();
+            dropUntouched();
+            const t = { id: crypto.randomUUID(), name, unsaved: true };
+            remote.trees.unshift(t);
+            remote.cur = t;
+            S = data;
+            remote.saved = '';
+            remote.savedName = null;
+            try { localStorage.setItem(OPEN_KEY, t.id); } catch (e) {}
+            resetEditor();
+            setSave('');
+            render(); fit(); renderTrees();
+            if (hasNodes()) flush();
+        }
+
+        let armTimer = null;
+        function disarm() { clearTimeout(armTimer); $('tree-del').classList.remove('armed'); $('tree-del').textContent = 'Delete'; }
+        // First click arms, the second deletes.
+        async function deleteTree() {
+            const btn = $('tree-del'), cur = remote && remote.cur;
+            if (!cur) return;
+            if (!btn.classList.contains('armed')) {
+                btn.classList.add('armed'); btn.textContent = 'Confirm';
+                armTimer = setTimeout(disarm, 4000);
+                return;
+            }
+            disarm();
+            clearTimeout(remote.timer); remote.timer = null;
+            if (!cur.unsaved) {
+                try { await api(`/kpi/${cur.id}`, { method: 'DELETE' }); }
+                catch (e) { if (e.auth) return keyRejected(); setSave('failed'); return; }
+            }
+            remote.trees = remote.trees.filter(t => t !== cur);
+            remote.cur = null;
+            if (remote.trees.length) openTree(remote.trees[0].id);
+            else newTree(blank(), 'Untitled');
+        }
+
+        function renderTrees() {
+            const on = !!remote;
+            $('pick').hidden = !on;
+            $('tree-actions').hidden = !on;
+            $('connect').textContent = apiKey ? 'Disconnect' : 'Connect';
+            if (!on) { setSave(saveState); return; }
+            const pick = $('tree-pick');
+            pick.replaceChildren(...remote.trees.map(t => new Option(t.name, t.id, false, remote.cur === t)));
+            ['tree-rename', 'tree-dup', 'tree-del'].forEach(id => { $(id).disabled = !remote.cur; });
+        }
+
+        // Rename swaps the picker for a text field; Enter or leaving it saves, Escape cancels.
+        function startRename() {
+            if (!remote || !remote.cur) return;
+            const input = $('tree-name');
+            input.value = remote.cur.name;
+            $('tree-pick').hidden = true;
+            input.hidden = false;
+            input.focus(); input.select();
+        }
+        function endRename(keep) {
+            const input = $('tree-name');
+            if (input.hidden) return;
+            input.hidden = true;
+            $('tree-pick').hidden = false;
+            const v = input.value.replace(/\s+/g, ' ').trim().slice(0, 120);
+            if (keep && v && remote && remote.cur && v !== remote.cur.name) {
+                remote.cur.name = v;
+                renderTrees();
+                if (!remote.cur.unsaved || hasNodes()) flush();
+            }
+        }
+        $('tree-name').addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); endRename(true); $('tree-pick').focus(); }
+            else if (e.key === 'Escape') { e.preventDefault(); endRename(false); $('tree-pick').focus(); }
+        });
+        $('tree-name').addEventListener('blur', () => endRename(true));
+        $('tree-pick').addEventListener('change', e => openTree(e.target.value));
+        $('tree-new').addEventListener('click', () => newTree(blank(), 'Untitled'));
+        $('tree-rename').addEventListener('click', startRename);
+        $('tree-dup').addEventListener('click', () => remote && remote.cur && newTree(JSON.parse(JSON.stringify(S)), `${remote.cur.name} copy`.slice(0, 120)));
+        $('tree-del').addEventListener('click', deleteTree);
+        $('tree-del').addEventListener('blur', disarm);
+
+        // Load the list; a first connect with an empty server uploads this browser's saved tree.
+        async function startRemote() {
+            const r = await api('/kpi');
+            let local = null;
+            try { if (localStorage.getItem(STORE_KEY)) local = load(); } catch (e) {}
+            remote = { trees: r.trees, cur: null, saved: '', savedName: null, timer: null };
+            if (!r.trees.length) {
+                if (local && Object.keys(local.nodes).length) return newTree(local, rootLabel(local) || 'Untitled');
+                return newTree(blank(), 'Untitled');
+            }
+            let want = null;
+            try { want = localStorage.getItem(OPEN_KEY); } catch (e) {}
+            return openTree(r.trees.some(t => t.id === want) ? want : r.trees[0].id);
+        }
+
+        function leaveRemote() {
+            if (remote) clearTimeout(remote.timer);
+            remote = null;
+            S = load();
+            resetEditor();
+            render(); fit(); renderTrees();
+        }
+        function keyRejected() {
+            try { localStorage.removeItem(KEY_KEY); } catch (e) {}
+            apiKey = null;
+            leaveRemote();
+            showConnect(true);
+            connectMsg('Key rejected', true);
+        }
+
+        const connectForm = $('connect-form'), keyInput = $('key-input');
+        function connectMsg(text, bad) { $('connect-msg').textContent = text; $('connect-msg').classList.toggle('bad', !!bad); keyInput.setAttribute('aria-invalid', bad ? 'true' : 'false'); }
+        function showConnect(open) {
+            connectForm.hidden = !open;
+            $('connect').hidden = open;
+            if (open) { keyInput.value = ''; connectMsg(''); keyInput.focus(); }
+        }
+        $('connect').addEventListener('click', async () => {
+            if (!apiKey) { showConnect(true); return; }
+            await flush();
+            try { localStorage.removeItem(KEY_KEY); } catch (e) {}
+            apiKey = null;
+            saveState = '';
+            leaveRemote();
+        });
+        $('connect-cancel').addEventListener('click', () => { showConnect(false); $('connect').focus(); });
+        connectForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const key = keyInput.value.trim();
+            if (!key) { connectMsg('Enter the key', true); return; }
+            apiKey = key;
+            connectMsg('Checking');
+            try {
+                await startRemote();
+                try { localStorage.setItem(KEY_KEY, key); } catch (x) {}
+                showConnect(false);
+                renderTrees();
+            } catch (x) {
+                apiKey = null;
+                remote = null;
+                connectMsg(x.auth ? 'Wrong key' : 'Server unavailable', true);
+            }
+        });
+
+        // Send a pending save when the page is closed or hidden.
+        addEventListener('pagehide', () => { if (remote && remote.timer) flush(true); });
+        document.addEventListener('visibilitychange', () => { if (document.hidden && remote && remote.timer) flush(true); });
+
         // ── Go ──────────────────────────────────────────────────
 
         S = load();
         render();
         fit();
+        renderTrees();
+        if (apiKey) startRemote().catch(e => { if (e.auth) keyRejected(); else { remote = null; setSave('offline'); renderTrees(); } });
         const refit = () => { render(); fit(); };
         document.fonts.load(`600 ${FS}px 'Work Sans'`).then(refit, () => {});
         document.fonts.ready.then(refit);

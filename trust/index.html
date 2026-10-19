@@ -256,8 +256,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
               <tr><td>/tirepressure/</td><td><code>tirepressure.hist.*</code></td><td>Open-Meteo history summary by rounded location</td><td>Replaced daily</td></tr>
               <tr><td>/cve/</td><td><code>cve.prefs</code>, <code>cve.watchlist</code></td><td>Window choice; watched CVEs</td><td>Watchlist remove; clearing site data</td></tr>
               <tr><td>/cve/</td><td><code>cve.rec.*</code> (sessionStorage)</td><td>CVE records</td><td>Closing the tab</td></tr>
-              <tr><td>/kpitree/</td><td><code>kpitree:tree</code></td><td>Tree boxes and relationships</td><td>Clearing site data</td></tr>
-              <tr><td>/frontier/</td><td><code>frontier:key</code></td><td>API key, after Connect</td><td>Disconnect</td></tr>
+              <tr><td>/kpitree/</td><td><code>kpitree:tree</code></td><td>Tree boxes and relationships, when not Connected</td><td>Clearing site data</td></tr>
+              <tr><td>/kpitree/</td><td><code>kpitree:open</code></td><td>Open tree, when Connected</td><td>Clearing site data</td></tr>
+              <tr><td>/frontier/, /kpitree/</td><td><code>frontier:key</code></td><td>API key, after Connect</td><td>Disconnect</td></tr>
               <tr><td>/frontier/</td><td><code>frontier:pane</code></td><td>Open tab</td><td>Clearing site data</td></tr>
               <tr><td>/USStates/, /worldmap/, /mlbstadiums/</td><td><code>USStates:mine</code>, <code>worldmap:mine</code>, <code>mlbstadiums:mine</code></td><td>"Create your own" visited list</td><td>Clear</td></tr>
               </tbody>
@@ -280,6 +281,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
               <tr><td>/tempest/</td><td>Weather station requests</td><td>WeatherFlow</td></tr>
               <tr><td>/cve/</td><td>CVE ID of an opened record</td><td>CVE Program (cveawg.mitre.org)</td></tr>
               <tr><td>/frontier/</td><td>Fuel and service log reads; writes with the API key once Connected</td><td>Cloudflare Workers and D1</td></tr>
+              <tr><td>/kpitree/</td><td>KPI trees, read and written only with the API key once Connected</td><td>Cloudflare Workers and D1</td></tr>
               <tr><td>/USStates/, /worldmap/, /mlbstadiums/</td><td>Map library and boundary files</td><td>jsDelivr</td></tr>
               </tbody>
             </table>
@@ -359,9 +361,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
               <thead><tr><th scope="col">Item</th><th scope="col">Status</th></tr></thead>
               <tbody>
               <tr><td>Host</td><td>Cloudflare Workers, D1 database</td></tr>
-              <tr><td>Stored</td><td>Truck setup, fill-ups, services; no visitor data</td></tr>
+              <tr><td>Stored</td><td>Truck setup, fill-ups, services; the owner's KPI trees; no visitor data</td></tr>
               <tr><td>Retention</td><td>Until deleted by the owner</td></tr>
-              <tr><td>Reads</td><td>Public, <code>GET /log</code></td></tr>
+              <tr><td>Reads</td><td>Public, <code>GET /log</code>; KPI trees need the key</td></tr>
               <tr><td>Writes</td><td>Bearer key, SHA-256 timing-safe compare</td></tr>
               <tr><td>CORS origins</td><td>amanvg.com, www.amanvg.com, localhost:8765</td></tr>
               <tr><td>Caching</td><td><code>no-store</code></td></tr>

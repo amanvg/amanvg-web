@@ -28,6 +28,14 @@ CREATE TABLE IF NOT EXISTS services (
 
 CREATE INDEX IF NOT EXISTS fuel_date ON fuel (date, miles);
 
+-- KPI trees for /kpitree/ (added 2026-10-19); data is the page's version 2 tree JSON.
+CREATE TABLE IF NOT EXISTS kpi_trees (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  data TEXT NOT NULL,
+  updated TEXT NOT NULL
+);
+
 -- Existing databases (added 2026-10-04):
 -- ALTER TABLE fuel ADD COLUMN partial INTEGER NOT NULL DEFAULT 0;
 -- ALTER TABLE fuel ADD COLUMN missed INTEGER NOT NULL DEFAULT 0;

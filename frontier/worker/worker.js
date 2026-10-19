@@ -1,10 +1,13 @@
 // Frontier log API: Cloudflare Worker + D1.
 // GET /log (public) · GET /auth · POST /fuel · PUT /fuel/:id · POST /services · DELETE /fuel/:id · DELETE /services/:id · PUT /truck (Bearer FRONTIER_KEY)
+// KPI trees for /kpitree/, all keyed (reads too): GET /kpi · GET /kpi/:id · PUT /kpi/:id · DELETE /kpi/:id
 
 const ORIGINS = ['https://www.amanvg.com', 'https://amanvg.com', 'http://localhost:8765'];
 const MAX_FUEL = 5000;
 const MAX_SERVICES = 5000;
 const MAX_VISIT_ITEMS = 25;
+const MAX_TREES = 500;
+const MAX_TREE_BYTES = 512 * 1024;
 
 const isDate = (s) => {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof s === 'string' ? s : '');
@@ -142,6 +145,43 @@ export default {
         env.DB.prepare(ODO_SQL),
       ]);
       return json(await readLog(env));
+    }
+
+    if (req.method === 'GET' && pathname === '/kpi') {
+      const { results } = await env.DB.prepare('SELECT id, name, updated FROM kpi_trees ORDER BY updated DESC').all();
+      return json({ trees: results });
+    }
+
+    const kpiId = pathname.match(/^\/kpi\/([\w-]{1,64})$/);
+    if (kpiId && req.method === 'GET') {
+      const row = await env.DB.prepare('SELECT id, name, data, updated FROM kpi_trees WHERE id = ?').bind(kpiId[1]).first();
+      if (!row) return fail(404, 'Not found');
+      return json({ id: row.id, name: row.name, updated: row.updated, data: JSON.parse(row.data) });
+    }
+    if (kpiId && req.method === 'PUT') {
+      let b;
+      try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
+      if (!b || typeof b !== 'object') return fail(400, 'Invalid body');
+      const name = typeof b.name === 'string' ? b.name.trim() : '';
+      if (!name || name.length > 120) return fail(400, 'Invalid name');
+      const d = b.data;
+      if (!d || typeof d !== 'object' || d.version !== 2 || !d.nodes || typeof d.nodes !== 'object' || !Array.isArray(d.roots) || !Array.isArray(d.rels)) return fail(400, 'Invalid tree');
+      const data = JSON.stringify(d);
+      if (data.length > MAX_TREE_BYTES) return fail(400, 'Tree too large');
+      const exists = await env.DB.prepare('SELECT 1 FROM kpi_trees WHERE id = ?').bind(kpiId[1]).first();
+      if (!exists) {
+        const { n } = await env.DB.prepare('SELECT COUNT(*) AS n FROM kpi_trees').first();
+        if (n >= MAX_TREES) return fail(400, 'Too many trees');
+      }
+      const updated = new Date().toISOString();
+      await env.DB.prepare('INSERT INTO kpi_trees (id, name, data, updated) VALUES (?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET name = excluded.name, data = excluded.data, updated = excluded.updated')
+        .bind(kpiId[1], name, data, updated).run();
+      return json({ id: kpiId[1], name, updated }, exists ? 200 : 201);
+    }
+    if (kpiId && req.method === 'DELETE') {
+      const r = await env.DB.prepare('DELETE FROM kpi_trees WHERE id = ?').bind(kpiId[1]).run();
+      if (!r.meta.changes) return fail(404, 'Not found');
+      return new Response(null, { status: 204, headers });
     }
 
     return fail(404, 'Not found');
