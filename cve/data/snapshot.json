@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-19T22:20:31Z",
+ "generatedAt": "2026-10-20T04:49:01Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.16",
  "kevCount": 1748,
@@ -1124,6 +1124,24 @@
    "cwe": "OS Command Injection"
   },
   {
+   "id": "CVE-2026-110636",
+   "vendor": "revolunet",
+   "product": "pypdftk",
+   "name": "pypdftk through 0.5 OS Command Injection via PDF and Output Paths",
+   "published": "2026-10-14",
+   "kev": null,
+   "epss": 0.023,
+   "percentile": 0.834,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "poc",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
    "id": "CVE-2026-110645",
    "vendor": "ArsalanDotMe",
    "product": "video-stitch",
@@ -1158,6 +1176,24 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
+   "id": "CVE-2026-110957",
+   "vendor": "Wavlink",
+   "product": "WL-WN530BE2-A",
+   "name": "Wavlink WL-WN530BE2-A Login Processing api.cgi sub_12580 os command injection",
+   "published": "2026-10-15",
+   "kev": null,
+   "epss": 0.035,
+   "percentile": 0.889,
+   "cvss": 10.0,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
+   "exploitation": "poc",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-111214",
@@ -1320,24 +1356,6 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
-  },
-  {
-   "id": "CVE-2026-93958",
-   "vendor": "D-Link",
-   "product": "R95",
-   "name": "D-Link R95 DHMAPI ssi system os command injection",
-   "published": "2026-09-20",
-   "kev": null,
-   "epss": 0.027,
-   "percentile": 0.857,
-   "cvss": 9.4,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-94095",
