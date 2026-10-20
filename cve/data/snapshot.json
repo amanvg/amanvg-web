@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-20T17:01:57Z",
+ "generatedAt": "2026-10-20T21:36:19Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.16",
- "kevCount": 1748,
+ "kevCatalogVersion": "2026.10.20",
+ "kevCount": 1754,
  "epssDate": "2026-10-20",
  "items": [
   {
@@ -312,6 +312,50 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "OS Command Injection"
+  },
+  {
+   "id": "CVE-2026-106931",
+   "vendor": "EG Secure Solutions",
+   "product": "SiteGuard Server Edition",
+   "name": "EG Secure Solutions SiteGuard Server Edition OS Command Injection Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-20",
+    "due": "2026-10-23",
+    "ransomware": false
+   },
+   "epss": 0.007,
+   "percentile": 0.508,
+   "cvss": 7.8,
+   "cvssVersion": "3.0",
+   "cvssVector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "Improper neutralization of special elements used in an OS command ('OS Command Injection')"
+  },
+  {
+   "id": "CVE-2026-110936",
+   "vendor": "Siemens",
+   "product": "Software Center",
+   "name": "Siemens Software Center Uncontrolled Search Path Element Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-20",
+    "due": "2026-11-03",
+    "ransomware": false
+   },
+   "epss": 0.001,
+   "percentile": 0.027,
+   "cvss": 6.7,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-427",
+   "cwe": "Uncontrolled Search Path Element"
   },
   {
    "id": "CVE-2026-21589",
@@ -686,6 +730,94 @@
    "impact": "total",
    "cweId": "CWE-122",
    "cwe": "Heap-based Buffer Overflow"
+  },
+  {
+   "id": "CVE-2026-96652",
+   "vendor": "Plex",
+   "product": "Media Server",
+   "name": "Plex Media Server Server-Side Request Forgery (SSRF) Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-20",
+    "due": "2026-11-03",
+    "ransomware": false
+   },
+   "epss": 0.002,
+   "percentile": 0.12,
+   "cvss": 4.3,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "partial",
+   "cweId": "CWE-918",
+   "cwe": "Server-Side Request Forgery (SSRF)"
+  },
+  {
+   "id": "CVE-2026-96654",
+   "vendor": "Plex",
+   "product": "Media Server",
+   "name": "Plex Media Server Improper Neutralization of Encoded URI Schemes in a Web Page Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-20",
+    "due": "2026-10-23",
+    "ransomware": false
+   },
+   "epss": 0.002,
+   "percentile": 0.126,
+   "cvss": 6.9,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "partial",
+   "cweId": "CWE-84",
+   "cwe": "Improper Neutralization of Encoded URI Schemes in a Web Page"
+  },
+  {
+   "id": "CVE-2026-96655",
+   "vendor": "Plex",
+   "product": "Media Server",
+   "name": "Plex Media Server Server-Side Request Forgery (SSRF) Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-20",
+    "due": "2026-11-03",
+    "ransomware": false
+   },
+   "epss": 0.002,
+   "percentile": 0.12,
+   "cvss": 4.3,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "partial",
+   "cweId": "CWE-918",
+   "cwe": "Server-Side Request Forgery (SSRF)"
+  },
+  {
+   "id": "CVE-2026-96656",
+   "vendor": "Plex",
+   "product": "Media Server",
+   "name": "Plex Media Server External Control of File Name or Path Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-20",
+    "due": "2026-10-23",
+    "ransomware": false
+   },
+   "epss": 0.004,
+   "percentile": 0.323,
+   "cvss": 8.6,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-73",
+   "cwe": "External Control of File Name or Path"
   },
   {
    "id": "CVE-2026-96951",
