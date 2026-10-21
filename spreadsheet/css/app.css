@@ -82,11 +82,9 @@ button, select, input, textarea { font: inherit; color: inherit; }
 #fontSize { width: 52px; }
 #numFmt { width: 140px; }
 .ico { width: 16px; height: 16px; fill: none; stroke: #3a3a3a; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.color-btn { position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 26px; height: 24px; border-radius: 4px; cursor: pointer; }
-.color-btn:hover { background: #ececec; }
+.ribbon button.color-btn { flex-direction: column; justify-content: center; gap: 0; width: 26px; padding: 0; }
 .color-btn i { display: block; width: 16px; height: 4px; margin-top: -1px; }
 .color-btn .ico { width: 14px; height: 14px; }
-.color-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .txt-a { font-weight: 700; font-size: 13px; line-height: 14px; }
 .check { display: flex; align-items: center; gap: 6px; padding: 2px 4px; cursor: pointer; }
 .check input { accent-color: var(--green); }

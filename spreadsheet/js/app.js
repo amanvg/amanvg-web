@@ -17,6 +17,7 @@
     editing: null, rows: 200, cols: 30,
     clip: null, painter: null, drag: null,
     border: { last: 'bottom', mode: null, style: 'thin', color: '#000000' }, // Borders button: last used, draw mode, line
+    fillColor: '#ffff00', fontColor: '#c00000', // Fill Color and Font Color buttons: last picked (null = No Color/Automatic)
     showFormulas: false, zoom: 100,
     undo: [], redo: [],
     tabStartCol: null, // Enter after a run of Tabs returns to this column, as in Excel
@@ -2267,8 +2268,8 @@
     bdDrawGrid: () => runBorder('grid'),
     bdErase: () => runBorder('erase'),
     moreBorders: () => { setBorderMode(null); openFormatCells('border'); },
-    applyFill: () => applyStyle({ fill: $('#fillColor').value }),
-    applyFontColor: () => applyStyle({ color: $('#fontColor').value }),
+    applyFill: () => applyStyle({ fill: S.fillColor || undefined }),
+    applyFontColor: () => applyStyle({ color: S.fontColor || undefined }),
     valignTop: () => applyStyle({ valign: 'top' }),
     valignMiddle: () => applyStyle({ valign: 'middle' }),
     valignBottom: () => applyStyle({ valign: undefined }),
@@ -2390,6 +2391,17 @@
     };
     const more = host.querySelector('[data-more]');
     if (more) { more.onclick = (e) => e.stopPropagation(); more.onchange = () => onPick(more.value); }
+  }
+  // Fill Color and Font Color split buttons: the button applies the last colour picked from the menu, as in Excel.
+  function renderColorMenu(m) {
+    const fill = m.id === 'fillMenu', key = fill ? 'fillColor' : 'fontColor';
+    m.innerHTML = paletteHtml(S[key], fill ? 'No Color' : 'Automatic');
+    bindPalette(m, (hex) => {
+      S[key] = hex;
+      $(fill ? '#fillSwatch' : '#fontSwatch').style.background = hex || 'transparent';
+      closeMenus();
+      CMD[fill ? 'applyFill' : 'applyFontColor']();
+    });
   }
   // A palette popover under a button, used by the Format Cells dialog.
   const palPop = document.createElement('div');
@@ -3122,6 +3134,7 @@
       closeMenus();
       if (open && m.id === 'cellStyles') renderGallery();
       if (open && m.id === 'bordersMenu') renderBordersMenu();
+      if (open && (m.id === 'fillMenu' || m.id === 'fontColorMenu')) renderColorMenu(m);
       if (open && m.id === 'formatMenu') { tabColorMenu.innerHTML = paletteHtml(sheet().tabColor, 'No Color'); bindPalette(tabColorMenu, setTabColor); }
       m.classList.toggle('open', open);
       // The ribbon scrolls sideways, which clips anything below it; pin ribbon menus to the viewport under their button.
@@ -3188,10 +3201,6 @@
     if (e.target.value === 'more') { updateRibbonState(); return openFormatCells('number'); }
     applyStyle({ fmt: e.target.value === 'general' ? undefined : e.target.value, dec: undefined, sep: undefined, neg: undefined, sym: undefined, pattern: undefined });
   });
-  $('#fillColor').addEventListener('input', (e) => { $('#fillSwatch').style.background = e.target.value; });
-  $('#fillColor').addEventListener('change', (e) => applyStyle({ fill: e.target.value }));
-  $('#fontColor').addEventListener('input', (e) => { $('#fontSwatch').style.background = e.target.value; });
-  $('#fontColor').addEventListener('change', (e) => applyStyle({ color: e.target.value }));
   $('#optGridlines').addEventListener('change', (e) => { view().gridlines = e.target.checked; applyViewOptions(); scheduleSave(); });
   $('#optHeadings').addEventListener('change', (e) => { view().headings = e.target.checked; applyViewOptions(); updateSelection(); scheduleSave(); });
   $('#optFormulaBar').addEventListener('change', (e) => { $('#formulaRow').style.display = e.target.checked ? '' : 'none'; });
