@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-21T01:53:40.097Z",
+ "generatedAt": "2026-10-21T07:20:41.868Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -556,13 +556,13 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-10-17T22:00Z",
+     "date": "2026-10-21T01:40Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "post",
-         "shortDetail": "Final",
+         "shortDetail": "Final/SO",
          "description": "Final"
         }
        },
@@ -570,53 +570,18 @@
         {
          "homeAway": "home",
          "winner": true,
-         "score": "8",
+         "score": "4",
          "team": {
-          "id": "26",
-          "abbreviation": "FLA",
-          "shortDisplayName": "Panthers",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/fla.png"
+          "id": "124292",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Kraken",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
          }
         },
         {
          "homeAway": "away",
          "winner": false,
          "score": "3",
-         "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
-         }
-        }
-       ],
-       "broadcasts": []
-      }
-     ]
-    },
-    "liveGame": {
-     "date": "2026-10-21T01:40Z",
-     "competitions": [
-      {
-       "status": {
-        "type": {
-         "state": "in",
-         "shortDetail": "18:20 - 1st",
-         "description": "In Progress"
-        }
-       },
-       "competitors": [
-        {
-         "homeAway": "home",
-         "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
          "team": {
           "id": "5",
           "abbreviation": "DET",
@@ -629,6 +594,7 @@
       }
      ]
     },
+    "liveGame": null,
     "nextGame": {
      "date": "2026-10-23T02:00Z",
      "competitions": [
@@ -681,7 +647,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "5"
+       "displayValue": "3"
       },
       {
        "name": "losses",
@@ -691,12 +657,12 @@
       {
        "name": "points",
        "abbreviation": "PTS",
-       "displayValue": "11"
+       "displayValue": "13"
       },
       {
        "name": "wins",
        "abbreviation": "W",
-       "displayValue": "5"
+       "displayValue": "6"
       },
       {
        "name": "overtimeLosses",
@@ -726,7 +692,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "points",
@@ -760,7 +726,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "3"
+        "displayValue": "1"
        },
        {
         "name": "losses",
@@ -770,12 +736,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "13"
+        "displayValue": "15"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "overtimeLosses",
@@ -799,7 +765,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "5"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -809,12 +775,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "11"
+        "displayValue": "13"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "5"
+        "displayValue": "6"
        },
        {
         "name": "overtimeLosses",
@@ -921,7 +887,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "points",
