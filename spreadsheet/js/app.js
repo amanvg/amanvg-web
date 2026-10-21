@@ -1419,13 +1419,25 @@
   }
 
   // ------------------------------------------------------------ structure: rows, columns, sheets
-  function insertCells(axis, del) {
+  // side 'before' | 'after' inserts next to the selection and copies the adjacent row/column's formatting.
+  function insertCells(axis, del, side) {
     if (S.editing && !commitEdit()) return;
     if (guard()) return;
     const { r1, c1, r2, c2 } = selRect();
-    const [at, n] = axis === 'row' ? [r1, r2 - r1 + 1] : [c1, c2 - c1 + 1];
+    const [lo, hi] = axis === 'row' ? [r1, r2] : [c1, c2];
+    const n = hi - lo + 1, at = side === 'after' ? hi + 1 : lo;
     pushUndo();
     S.wb.shift(S.si, axis, at, del ? -n : n);
+    if (side) {
+      const sh = S.wb.sheets[S.si], src = side === 'after' ? hi : lo + n;
+      const size = axis === 'row' ? sh.rowHeights : sh.colWidths;
+      for (const [k, cell] of [...sh.cells]) {
+        const [r, c] = k.split(',').map(Number);
+        if ((axis === 'row' ? r : c) !== src || !cell.style) continue;
+        for (let i = at; i < at + n; i++) S.wb.setStyle(S.si, axis === 'row' ? i : r, axis === 'row' ? c : i, cell.style, true);
+      }
+      if (size[src] !== undefined) for (let i = at; i < at + n; i++) size[i] = size[src];
+    }
     if (view().charts) view().charts = [];
     buildGrid();
     changed();
@@ -3455,8 +3467,8 @@
     const items = [
       { label: 'Cut', run: CMD.cut }, { label: 'Copy', run: CMD.copy }, { label: 'Paste', run: CMD.paste }, '-',
     ];
-    if (isCols) items.push({ label: 'Insert Columns', run: CMD.insertCol }, { label: 'Delete Columns', run: CMD.deleteCol }, { label: 'Column Width…', run: colWidthDialog }, { label: 'Column Width: Autofit', run: () => autofitColumn(S.sel.ac) }, { label: 'Hide', run: CMD.hideCols }, { label: 'Unhide', run: CMD.unhideCols });
-    else if (th && !th.classList.contains('corner')) items.push({ label: 'Insert Rows', run: CMD.insertRow }, { label: 'Delete Rows', run: CMD.deleteRow }, { label: 'Row Height…', run: rowHeightDialog }, { label: 'Hide', run: CMD.hideRows }, { label: 'Unhide', run: CMD.unhideRows });
+    if (isCols) items.push({ label: 'Insert Left', run: () => insertCells('col', false, 'before') }, { label: 'Insert Right', run: () => insertCells('col', false, 'after') },{ label: 'Delete Columns', run: CMD.deleteCol }, { label: 'Column Width…', run: colWidthDialog }, { label: 'Column Width: Autofit', run: () => autofitColumn(S.sel.ac) }, { label: 'Hide', run: CMD.hideCols }, { label: 'Unhide', run: CMD.unhideCols });
+    else if (th && !th.classList.contains('corner')) items.push({ label: 'Insert Above', run: () => insertCells('row', false, 'before') }, { label: 'Insert Below', run: () => insertCells('row', false, 'after') },{ label: 'Delete Rows', run: CMD.deleteRow }, { label: 'Row Height…', run: rowHeightDialog }, { label: 'Hide', run: CMD.hideRows }, { label: 'Unhide', run: CMD.unhideRows });
     else items.push({ label: 'Insert Rows', run: CMD.insertRow }, { label: 'Delete Rows', run: CMD.deleteRow }, { label: 'Insert Columns', run: CMD.insertCol }, { label: 'Delete Columns', run: CMD.deleteCol });
     items.push({ label: 'Clear Contents', run: CMD.clearContents }, { label: 'Format Cells…', run: () => openFormatCells() }, '-', { label: 'Sort A to Z', run: CMD.sortAsc }, { label: 'Sort Z to A', run: CMD.sortDesc }, '-', { label: 'Insert Function…', run: CMD.insertFunction });
     showCtx(e.clientX, e.clientY, items);
