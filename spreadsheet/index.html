@@ -124,32 +124,35 @@
         <div class="label">Font</div>
       </div>
       <div class="group">
-        <div class="stack">
-          <div class="row">
-            <button data-cmd="valignTop" data-icon="vtop" title="Top Align"></button>
-            <button data-cmd="valignMiddle" data-icon="vmid" title="Middle Align"></button>
-            <button data-cmd="valignBottom" data-icon="vbot" title="Bottom Align"></button>
-            <div class="dropdown">
-              <button data-icon="orient" data-menu="orientMenu" title="Orientation" aria-label="Orientation" class="drop">▾</button>
-              <div class="menu" id="orientMenu" role="menu">
-                <button data-cmd="rotCCW" data-icon="rotCCW" role="menuitemcheckbox">Angle Counterclockwise</button>
-                <button data-cmd="rotCW" data-icon="rotCW" role="menuitemcheckbox">Angle Clockwise</button>
-                <button data-cmd="rotVertical" data-icon="rotVertical" role="menuitemcheckbox">Vertical Text</button>
-                <button data-cmd="rotUp" data-icon="rotUp" role="menuitemcheckbox">Rotate Text Up</button>
-                <button data-cmd="rotDown" data-icon="rotDown" role="menuitemcheckbox">Rotate Text Down</button>
+        <div class="row">
+          <div class="stack">
+            <div class="row">
+              <button data-cmd="valignTop" data-icon="vtop" title="Top Align"></button>
+              <button data-cmd="valignMiddle" data-icon="vmid" title="Middle Align"></button>
+              <button data-cmd="valignBottom" data-icon="vbot" title="Bottom Align"></button>
+              <div class="dropdown">
+                <button data-icon="orient" data-menu="orientMenu" title="Orientation" aria-label="Orientation" class="drop">▾</button>
+                <div class="menu" id="orientMenu" role="menu">
+                  <button data-cmd="rotCCW" data-icon="rotCCW" role="menuitemcheckbox">Angle Counterclockwise</button>
+                  <button data-cmd="rotCW" data-icon="rotCW" role="menuitemcheckbox">Angle Clockwise</button>
+                  <button data-cmd="rotVertical" data-icon="rotVertical" role="menuitemcheckbox">Vertical Text</button>
+                  <button data-cmd="rotUp" data-icon="rotUp" role="menuitemcheckbox">Rotate Text Up</button>
+                  <button data-cmd="rotDown" data-icon="rotDown" role="menuitemcheckbox">Rotate Text Down</button>
+                </div>
               </div>
             </div>
-            <span class="sep"></span>
-            <button data-cmd="wrap" data-icon="wrap" title="Wrap Text">Wrap Text</button>
+            <div class="row">
+              <button data-cmd="alignLeft" data-icon="alignL" title="Align Left"></button>
+              <button data-cmd="alignCenter" data-icon="alignC" title="Center"></button>
+              <button data-cmd="alignRight" data-icon="alignR" title="Align Right"></button>
+              <span class="sep"></span>
+              <button data-cmd="indent" data-icon="indent" title="Increase Indent"></button>
+              <button data-cmd="outdent" data-icon="outdent" title="Decrease Indent"></button>
+            </div>
           </div>
-          <div class="row">
-            <button data-cmd="alignLeft" data-icon="alignL" title="Align Left"></button>
-            <button data-cmd="alignCenter" data-icon="alignC" title="Center"></button>
-            <button data-cmd="alignRight" data-icon="alignR" title="Align Right"></button>
-            <span class="sep"></span>
-            <button data-cmd="indent" data-icon="indent" title="Increase Indent"></button>
-            <button data-cmd="outdent" data-icon="outdent" title="Decrease Indent"></button>
-            <span class="sep"></span>
+          <span class="sep"></span>
+          <div class="stack start">
+            <button data-cmd="wrap" data-icon="wrap" title="Wrap Text">Wrap Text</button>
             <div class="dropdown split">
               <button data-cmd="mergeCenter" data-icon="mergeCenter" title="Merge &amp; Center">Merge &amp; Center</button>
               <button data-menu="mergeMenu" class="drop" title="Merge Options" aria-label="Merge Options">▾</button>
