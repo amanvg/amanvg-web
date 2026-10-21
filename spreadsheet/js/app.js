@@ -1900,16 +1900,132 @@
       date: 'yyyy-mm-dd', longdate: 'dddd, mmmm d, yyyy', datetime: 'yyyy-mm-dd hh:mm', time: 'hh:mm:ss', scientific: `0${dec}E+00`, text: '@',
     }[st.fmt];
   }
+  // ------------------------------------------------------------ .xlsx cell formatting
+  // SheetJS Community writes values, formulas and number formats only, so the export swaps in its own styles.xml and
+  // stamps each cell's s= index (adding the formatted empty cells SheetJS skips); the import reads them back.
+  const NS_MAIN = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+  const zipPart = (z, p) => z.FileIndex[z.FullPaths.findIndex((f) => f.toLowerCase().endsWith('/' + p.toLowerCase()))];
+  const zipText = (z, p) => { const e = zipPart(z, p); return e ? new TextDecoder().decode(e.content) : null; };
+  const zipXml = (z, p) => { const t = zipText(z, p); return t ? new DOMParser().parseFromString(t, 'application/xml') : null; };
+  const XML_DECL = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  const XML_SIDES = [['l', 'left'], ['r', 'right'], ['t', 'top'], ['b', 'bottom']];
+  const UNDERLINE = { true: 'single', single: 'single', double: 'double', singleAcc: 'singleAccounting', doubleAcc: 'doubleAccounting' };
+  const BUILTIN_FMT = { General: 0, 0: 1, '0.00': 2, '#,##0': 3, '#,##0.00': 4, '0%': 9, '0.00%': 10, '0.00E+00': 11, '@': 49 };
+  const argb = (hex) => { const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex || ''); return m ? 'FF' + (m[1].length === 3 ? m[1].replace(/./g, '$&$&') : m[1]).toUpperCase() : null; };
+  const colorXml = (tag, hex) => (argb(hex) ? `<${tag} rgb="${argb(hex)}"/>` : '');
+  function fontXml(st) {
+    const u = UNDERLINE[st.underline];
+    return `<font>${st.bold ? '<b/>' : ''}${st.italic ? '<i/>' : ''}${st.strike ? '<strike/>' : ''}${st.outline ? '<outline/>' : ''}${st.shadow ? '<shadow/>' : ''}`
+      + `${u ? `<u${u === 'single' ? '' : ` val="${u}"`}/>` : ''}${st.script ? `<vertAlign val="${st.script === 'sup' ? 'superscript' : 'subscript'}"/>` : ''}`
+      + `<sz val="${st.size || 11}"/>${colorXml('color', st.color)}<name val="${esc(st.font || 'Aptos Narrow')}"/></font>`;
+  }
+  // Gradients follow gradientImage: linear ones by degree (0 = left to right), corner and center ones as paths.
+  function fillXml(st) {
+    const g = st.grad;
+    if (g) {
+      const [a, b] = [g.c1 || '#ffffff', g.c2 || ACCENT[0]], v = g.variant || 1;
+      const stop = (pos, col) => `<stop position="${pos}">${colorXml('color', col)}</stop>`;
+      if (g.style === 'corner' || g.style === 'center') {
+        const [x, y] = g.style === 'center' ? [0.5, 0.5] : [[0, 0], [1, 0], [0, 1], [1, 1]][v - 1] || [0, 0];
+        const [c1, c2] = g.style === 'center' && v === 2 ? [b, a] : [a, b];
+        return `<fill><gradientFill type="path" left="${x}" right="${x}" top="${y}" bottom="${y}">${stop(0, c1)}${stop(1, c2)}</gradientFill></fill>`;
+      }
+      const stops = v === 3 ? stop(0, a) + stop(0.5, b) + stop(1, a) : v === 2 ? stop(0, b) + stop(1, a) : stop(0, a) + stop(1, b);
+      return `<fill><gradientFill degree="${{ vertical: 0, diagUp: 45, diagDown: 135 }[g.style] ?? 90}">${stops}</gradientFill></fill>`;
+    }
+    if (st.pat && st.pat !== 'solid' && PATTERNS[st.pat]) return `<fill><patternFill patternType="${st.pat}">${colorXml('fgColor', st.patColor || '#000000')}${colorXml('bgColor', st.fill)}</patternFill></fill>`;
+    const solid = st.pat === 'solid' ? st.patColor || '#000000' : st.fill;
+    return argb(solid) ? `<fill><patternFill patternType="solid">${colorXml('fgColor', solid)}<bgColor indexed="64"/></patternFill></fill>` : null;
+  }
+  function borderXml(st) {
+    const du = edgeOf(st, 'du'), dd = edgeOf(st, 'dd');
+    if (!du && !dd && XML_SIDES.every(([k]) => !edgeOf(st, k))) return null;
+    const edge = (tag, e) => (e ? `<${tag} style="${e[0]}">${colorXml('color', e[1]) || '<color auto="1"/>'}</${tag}>` : `<${tag}/>`);
+    return `<border${du ? ' diagonalUp="1"' : ''}${dd ? ' diagonalDown="1"' : ''}>${XML_SIDES.map(([k, tag]) => edge(tag, edgeOf(st, k))).join('')}${edge('diagonal', du || dd)}</border>`;
+  }
+  // Rotation: style.rot counterclockwise degrees become 0-90 up, 91-180 down, 255 stacked.
+  function alignXml(st) {
+    const a = [];
+    if (st.align) a.push(`horizontal="${st.align === 'centerAcross' ? 'centerContinuous' : st.align}"`);
+    if (st.valign && st.valign !== 'bottom') a.push(`vertical="${st.valign === 'middle' ? 'center' : st.valign}"`);
+    if (st.rot) a.push(`textRotation="${st.rot === 'v' ? 255 : st.rot < 0 ? 90 - st.rot : st.rot}"`);
+    if (st.wrap) a.push('wrapText="1"');
+    if (st.indent) a.push(`indent="${st.indent}"`);
+    if (st.jdist) a.push('justifyLastLine="1"');
+    if (st.shrink) a.push('shrinkToFit="1"');
+    if (st.dir) a.push(`readingOrder="${st.dir === 'rtl' ? 2 : 1}"`);
+    return a.length ? `<alignment ${a.join(' ')}/>` : '';
+  }
+  // Collects the distinct fonts, fills, borders, number formats and cell formats of a workbook; xf(style) is the s= index.
+  function xlsxStyles() {
+    const t = {
+      fmt: new Map(), font: new Map(), border: new Map([['<border><left/><right/><top/><bottom/><diagonal/></border>', 0]]), xf: new Map(),
+      fill: new Map([['<fill><patternFill patternType="none"/></fill>', 0], ['<fill><patternFill patternType="gray125"/></fill>', 1]]),
+    };
+    const id = (map, x, base = 0) => { if (!map.has(x)) map.set(x, base + map.size); return map.get(x); };
+    const list = (tag, map) => `<${tag} count="${map.size}">${[...map.keys()].join('')}</${tag}>`;
+    const xf = (st) => {
+      const code = numFmtCode(st) || 'General', fill = fillXml(st), border = borderXml(st), align = alignXml(st);
+      const ids = { numFmtId: BUILTIN_FMT[code] ?? id(t.fmt, code, 164), fontId: id(t.font, fontXml(st)), fillId: fill ? id(t.fill, fill) : 0, borderId: border ? id(t.border, border) : 0 };
+      const prot = st.unlocked || st.hideFormula ? `<protection${st.unlocked ? ' locked="0"' : ''}${st.hideFormula ? ' hidden="1"' : ''}/>` : '';
+      const apply = [ids.numFmtId && 'NumberFormat', ids.fontId && 'Font', ids.fillId && 'Fill', ids.borderId && 'Border', align && 'Alignment', prot && 'Protection'].filter(Boolean);
+      return id(t.xf, `<xf ${Object.entries(ids).map(([k, v]) => `${k}="${v}"`).join(' ')} xfId="0"${apply.map((k) => ` apply${k}="1"`).join('')}${align || prot ? `>${align}${prot}</xf>` : '/>'}`);
+    };
+    xf({});
+    return {
+      xf,
+      xml: () => XML_DECL + `<styleSheet xmlns="${NS_MAIN}">`
+        + (t.fmt.size ? `<numFmts count="${t.fmt.size}">${[...t.fmt].map(([code, n]) => `<numFmt numFmtId="${n}" formatCode="${esc(code)}"/>`).join('')}</numFmts>` : '')
+        + list('fonts', t.font) + list('fills', t.fill) + list('borders', t.border)
+        + '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' + list('cellXfs', t.xf)
+        + '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><dxfs count="0"/><tableStyles count="0"/></styleSheet>',
+    };
+  }
+  // Sets s= on each cell of a SheetJS sheet from styled ('r,c' → xf) and inserts the styled cells it left out.
+  function stampSheet(xml, styled) {
+    const doc = new DOMParser().parseFromString(xml, 'application/xml');
+    const data = doc.getElementsByTagName('sheetData')[0];
+    const rows = new Map([...data.children].map((row) => [+row.getAttribute('r') - 1, row]));
+    const colOf = (el) => XLSX.utils.decode_cell(el.getAttribute('r')).c;
+    const left = new Map(styled);
+    for (const row of rows.values()) {
+      row.removeAttribute('spans');
+      for (const el of row.children) {
+        const k = `${+row.getAttribute('r') - 1},${colOf(el)}`;
+        if (left.has(k)) el.setAttribute('s', left.get(k)); else el.removeAttribute('s');
+        left.delete(k);
+      }
+    }
+    const add = [...left].map(([k, s]) => [...k.split(',').map(Number), s]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    for (const [r, c, s] of add) {
+      let row = rows.get(r);
+      if (!row) {
+        row = doc.createElementNS(NS_MAIN, 'row');
+        row.setAttribute('r', r + 1);
+        data.insertBefore(row, [...data.children].find((el) => +el.getAttribute('r') > r + 1) || null);
+        rows.set(r, row);
+      }
+      const el = doc.createElementNS(NS_MAIN, 'c');
+      el.setAttribute('r', XLSX.utils.encode_cell({ r, c }));
+      el.setAttribute('s', s);
+      row.insertBefore(el, [...row.children].find((x) => colOf(x) > c) || null);
+    }
+    return XML_DECL + new XMLSerializer().serializeToString(doc).replace(/^<\?xml[^>]*\?>\s*/, '');
+  }
   function saveXlsx() {
     if (!window.XLSX) return msg('The .xlsx writer could not be loaded. Reload the page, or use Export CSV.');
     const out = XLSX.utils.book_new();
+    const styles = xlsxStyles(), stamps = [];
     S.wb.sheets.forEach((sh, si) => {
-      const ws = {};
+      const ws = {}, styled = new Map();
       let maxR = 0, maxC = 0;
       for (const [k, cell] of sh.cells) {
-        if (cell.input === '') continue;
+        const s = cell.style ? styles.xf(cell.style) : 0;
+        if (s) styled.set(k, s);
+        if (cell.input === '' && !s) continue;
         const [r, c] = k.split(',').map(Number);
         maxR = Math.max(maxR, r); maxC = Math.max(maxC, c);
+        if (cell.input === '') continue;
         const v = S.wb.getValue(si, r, c);
         const o = {};
         if (typeof v === 'number') { o.t = 'n'; o.v = v; }
@@ -1927,8 +2043,13 @@
       ws['!cols'] = Array.from({ length: maxC + 1 }, (_, c) => ({ wpx: sh.colWidths[c] || sh.defaultColWidth || DEFAULT_W, ...(sh.hiddenCols[c] ? { hidden: true } : {}) }));
       ws['!rows'] = Array.from({ length: maxR + 1 }, (_, r) => ({ ...(sh.rowHeights[r] ? { hpt: sh.rowHeights[r] } : {}), ...(sh.hiddenRows[r] ? { hidden: true } : {}) }));
       XLSX.utils.book_append_sheet(out, ws, sh.name);
+      stamps.push(styled);
     });
-    XLSX.writeFile(out, `${S.docName}.xlsx`);
+    const z = XLSX.CFB.read(new Uint8Array(XLSX.write(out, { type: 'array', bookType: 'xlsx' })), { type: 'array' });
+    const put = (p, xml) => { zipPart(z, p).content = new TextEncoder().encode(xml); };
+    put('xl/styles.xml', styles.xml());
+    stamps.forEach((styled, i) => put(`xl/worksheets/sheet${i + 1}.xml`, stampSheet(zipText(z, `xl/worksheets/sheet${i + 1}.xml`), styled)));
+    download(`${S.docName}.xlsx`, new Blob([XLSX.CFB.write(z, { fileType: 'zip', type: 'array' })], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
     saveNow();
   }
   function fmtFromCode(z) {
@@ -1945,7 +2066,100 @@
     if (/^0(\.0+)?$/.test(plain)) return { fmt: 'general', dec };
     return { fmt: 'custom', pattern: z };
   }
-  function fromXlsx(xwb) {
+  // Excel's default indexed palette; 64 and 65 are the system foreground and background (left as automatic).
+  const INDEXED = ('000000 FFFFFF FF0000 00FF00 0000FF FFFF00 FF00FF 00FFFF '.repeat(2) + '800000 008000 000080 808000 800080 008080 C0C0C0 808080 '
+    + '9999FF 993366 FFFFCC CCFFFF 660066 FF8080 0066CC CCCCFF 000080 FF00FF FFFF00 00FFFF 800080 800000 008080 0000FF 00CCFF CCFFFF CCFFCC FFFF99 '
+    + '99CCFF FF99CC CC99FF FFCC99 3366FF 33CCCC 99CC00 FFCC00 FF9900 FF6600 666699 969696 003366 339966 003300 333300 993300 993366 333399 333333').split(' ');
+  // Cell formatting of an .xlsx as Map(sheet name → Map('r,c' → style)), read from styles.xml, the theme and each
+  // sheet's s= indexes. Number formats come from SheetJS (cell.z) instead.
+  function xlsxCellStyles(bytes) {
+    const z = XLSX.CFB.read(new Uint8Array(bytes), { type: 'array' });
+    const styles = zipXml(z, 'xl/styles.xml'), book = zipXml(z, 'xl/workbook.xml'), rels = zipXml(z, 'xl/_rels/workbook.xml.rels');
+    const out = new Map();
+    if (!styles || !book || !rels) return out;
+    const kids = (el, tag) => (el ? [...el.children].filter((x) => x.localName === tag) : []);
+    const one = (el, tag) => kids(el, tag)[0] || null;
+    const section = (tag) => styles.getElementsByTagNameNS('*', tag)[0];
+    const on = (el, name) => ['1', 'true'].includes(el && el.getAttribute(name));
+    const relList = kids(rels.documentElement, 'Relationship');
+    const partOf = (target) => (target.startsWith('/') ? target.slice(1) : 'xl/' + target);
+    const themeRel = relList.find((r) => /\/theme$/.test(r.getAttribute('Type')));
+    const theme = themeRel && zipXml(z, partOf(themeRel.getAttribute('Target')));
+    const scheme = theme && theme.getElementsByTagNameNS('*', 'clrScheme')[0];
+    const schemeHex = scheme ? [...scheme.children].map((el) => el.firstElementChild && (el.firstElementChild.getAttribute('lastClr') || el.firstElementChild.getAttribute('val'))) : [];
+    const themeHex = schemeHex.length ? [schemeHex[1], schemeHex[0], schemeHex[3], schemeHex[2], ...schemeHex.slice(4)] : ['FFFFFF', '000000', 'E8E8E8', TEXT2.slice(1), ...ACCENT.map((a) => a.slice(1))];
+    const colorOf = (el) => {
+      if (!el || on(el, 'auto')) return null;
+      const hex = el.hasAttribute('rgb') ? el.getAttribute('rgb').slice(-6) : el.hasAttribute('theme') ? themeHex[+el.getAttribute('theme')] : INDEXED[+el.getAttribute('indexed')];
+      const tint = +el.getAttribute('tint') || 0;
+      return hex ? (tint ? tintHex('#' + hex, tint) : '#' + hex).toLowerCase() : null;
+    };
+    const val = (el, tag, missing) => { const x = one(el, tag); return x ? x.getAttribute('val') ?? missing : null; };
+    const flag = (el, tag) => { const x = one(el, tag); return !!x && !['0', 'false'].includes(x.getAttribute('val')); };
+    const fonts = kids(section('fonts'), 'font').map((f) => {
+      const name = val(f, 'name'), size = +val(f, 'sz'), u = val(f, 'u', 'single'), va = val(f, 'vertAlign'), color = colorOf(one(f, 'color'));
+      return {
+        font: name && name !== 'Aptos Narrow' ? name : undefined, size: size && size !== 11 ? size : undefined,
+        bold: flag(f, 'b'), italic: flag(f, 'i'), strike: flag(f, 'strike'), outline: flag(f, 'outline'), shadow: flag(f, 'shadow'),
+        underline: u && u !== 'none' ? { singleAccounting: 'singleAcc', doubleAccounting: 'doubleAcc' }[u] || u : undefined,
+        script: { superscript: 'sup', subscript: 'sub' }[va], color: color !== '#000000' ? color : undefined,
+      };
+    });
+    const fills = kids(section('fills'), 'fill').map((f) => {
+      const g = one(f, 'gradientFill'), p = one(f, 'patternFill');
+      if (g) {
+        const stops = kids(g, 'stop').map((s) => colorOf(one(s, 'color')) || '#ffffff');
+        const grad = { c1: stops[0], c2: stops[stops.length > 2 ? 1 : stops.length - 1], variant: stops.length > 2 ? 3 : 1 };
+        if (g.getAttribute('type') === 'path') {
+          const x = +g.getAttribute('left') || 0, y = +g.getAttribute('top') || 0;
+          return { grad: x === 0.5 && y === 0.5 ? { ...grad, style: 'center', variant: 1 } : { ...grad, style: 'corner', variant: 1 + (x ? 1 : 0) + (y ? 2 : 0) } };
+        }
+        return { grad: { ...grad, style: { 0: 'vertical', 45: 'diagUp', 135: 'diagDown' }[+g.getAttribute('degree') || 0] || 'horizontal' } };
+      }
+      const type = p && p.getAttribute('patternType');
+      if (!type || type === 'none') return {};
+      const fg = colorOf(one(p, 'fgColor')), bg = colorOf(one(p, 'bgColor'));
+      if (type === 'solid') return { fill: fg || '#000000' };
+      return PATTERNS[type] ? { pat: type, patColor: fg || '#000000', fill: bg || undefined } : {};
+    });
+    const borders = kids(section('borders'), 'border').map((b) => {
+      const edge = (tag) => { const e = one(b, tag), s = e && e.getAttribute('style'); return s && s !== 'none' ? [s, colorOf(one(e, 'color')) || '#000000'] : null; };
+      const bd = {}, diag = edge('diagonal');
+      for (const [k, tag] of XML_SIDES) if (edge(tag)) bd[k] = edge(tag);
+      if (diag && on(b, 'diagonalUp')) bd.du = diag;
+      if (diag && on(b, 'diagonalDown')) bd.dd = diag;
+      return Object.keys(bd).length ? { bd } : {};
+    });
+    const xfs = kids(section('cellXfs'), 'xf').map((xf) => {
+      const a = one(xf, 'alignment'), p = one(xf, 'protection'), at = (el, name) => el && el.getAttribute(name);
+      const h = at(a, 'horizontal'), v = at(a, 'vertical'), rot = +at(a, 'textRotation') || 0, dir = at(a, 'readingOrder');
+      const st = {
+        ...fonts[+xf.getAttribute('fontId') || 0], ...fills[+xf.getAttribute('fillId') || 0], ...borders[+xf.getAttribute('borderId') || 0],
+        align: h && h !== 'general' ? (h === 'centerContinuous' ? 'centerAcross' : h) : undefined,
+        valign: v && v !== 'bottom' ? (v === 'center' ? 'middle' : v) : undefined,
+        rot: rot === 255 ? 'v' : rot > 90 ? 90 - rot : rot || undefined,
+        wrap: on(a, 'wrapText'), indent: +at(a, 'indent') || undefined, jdist: on(a, 'justifyLastLine'), shrink: on(a, 'shrinkToFit'),
+        dir: { 1: 'ltr', 2: 'rtl' }[dir], unlocked: ['0', 'false'].includes(at(p, 'locked')), hideFormula: on(p, 'hidden'),
+      };
+      return Object.fromEntries(Object.entries(st).filter(([, x]) => x !== undefined && x !== false && x !== null));
+    });
+    const target = new Map(relList.map((r) => [r.getAttribute('Id'), r.getAttribute('Target')]));
+    for (const sh of book.getElementsByTagNameNS('*', 'sheet')) {
+      const rid = [...sh.attributes].find((x) => x.localName === 'id');
+      const doc = rid && target.has(rid.value) ? zipXml(z, partOf(target.get(rid.value))) : null;
+      if (!doc) continue;
+      const map = new Map();
+      for (const c of doc.getElementsByTagNameNS('*', 'c')) {
+        const s = +c.getAttribute('s') || 0, st = xfs[s];
+        if (!c.getAttribute('r') || (!s && !c.firstElementChild) || !st || !Object.keys(st).length) continue;
+        const { r, c: col } = XLSX.utils.decode_cell(c.getAttribute('r'));
+        map.set(`${r},${col}`, st);
+      }
+      out.set(sh.getAttribute('name'), map);
+    }
+    return out;
+  }
+  function fromXlsx(xwb, cellStyles = new Map()) {
     const wb = new XL.Workbook();
     xwb.SheetNames.forEach((name) => {
       const ws = xwb.Sheets[name];
@@ -1970,6 +2184,10 @@
           if (f) wb.setStyle(si, r, c, f);
         }
       }
+      for (const [k, st] of cellStyles.get(name) || []) {
+        const [r, c] = k.split(',').map(Number);
+        if (r <= 50000 && c <= 500) wb.setStyle(si, r, c, st);
+      }
       sh.merges = (ws['!merges'] || []).map((m) => ({ r1: m.s.r, c1: m.s.c, r2: m.e.r, c2: m.e.c }));
       (ws['!cols'] || []).forEach((col, i) => { if (col && (col.wpx || col.wch)) sh.colWidths[i] = Math.round(col.wpx || col.wch * 7 + 5); if (col && col.hidden) sh.hiddenCols[i] = true; });
       (ws['!rows'] || []).forEach((row, i) => { if (row && row.hpt && row.customHeight !== false) sh.rowHeights[i] = row.hpt; if (row && row.hidden) sh.hiddenRows[i] = true; });
@@ -1990,7 +2208,10 @@
         rows.forEach((row, r) => row.forEach((v, c) => { if (v !== '') wb.setInput(0, r, c, v); }));
       } else {
         if (!window.XLSX) return msg('The .xlsx reader could not be loaded. Reload the page and try again.');
-        wb = fromXlsx(XLSX.read(await file.arrayBuffer(), { cellFormula: true, cellNF: true, cellStyles: true }));
+        const bytes = await file.arrayBuffer();
+        let styles;
+        try { styles = ['xlsx', 'xlsm'].includes(ext) ? xlsxCellStyles(bytes) : undefined; } catch { styles = undefined; }
+        wb = fromXlsx(XLSX.read(bytes, { cellFormula: true, cellNF: true, cellStyles: true }), styles);
       }
       pushUndo();
       S.wb = wb;

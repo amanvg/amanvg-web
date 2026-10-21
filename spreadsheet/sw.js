@@ -1,5 +1,5 @@
 // Offline support: network first (so updates and reverts arrive on the next online launch), cache as fallback.
-const CACHE = 'spreadsheet-v2';
+const CACHE = 'spreadsheet-v3';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/engine.js', 'js/icons.js', 'js/app.js', 'vendor/xlsx.full.min.js',
