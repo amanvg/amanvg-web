@@ -3431,15 +3431,16 @@
     if (td && !S.editing) startEdit('edit');
   });
   function autofitColumn(c, r1 = 0, r2 = Infinity, batch = false) {
-    const ctx = document.createElement('canvas').getContext('2d');
     let w = 20;
     const ext = sheet().extent();
     for (let r = r1; r <= Math.min(r2, ext.rows - 1); r++) {
       const cell = sheet().get(r, c);
       if (!cell || cell.input === '') continue;
-      const st = cell.style || {};
-      ctx.font = `${st.bold ? '700 ' : ''}${st.size || 11}pt ${st.font ? `"${st.font}"` : getComputedStyle(grid).fontFamily}`;
-      w = Math.max(w, ctx.measureText(XL.formatValue(valueAt(r, c), st)).width + 12);
+      // Like Excel: merged cells spanning columns don't count, and each line of a wrapped value is measured on its own.
+      const m = mergeAt(r, c);
+      if (m && m.c1 !== m.c2) continue;
+      const st = S.wb.getStyle(S.si, r, c), text = String(XL.formatValue(valueAt(r, c), st));
+      for (const line of st.wrap ? text.split('\n') : [text.replace(/\n/g, ' ')]) w = Math.max(w, textWidth(line, st) + 12);
     }
     if (batch) { sheet().colWidths[c] = Math.ceil(w); return; }
     pushUndo();
