@@ -271,12 +271,38 @@
       const half = lineDef(e[0])[0] / 2 + 0.25;
       layers.push([`linear-gradient(${dir},transparent calc(50% - ${half}px),${e[1]} calc(50% - ${half}px),${e[1]} calc(50% + ${half}px),transparent calc(50% + ${half}px))`, '100% 100%', '0 0', 'no-repeat']);
     }
+    // A solid or double edge runs through the gridline it crosses (a right edge through the bottom gridline, a bottom
+    // edge through the right one), so that gridline is drawn as a layer with the edge's stripes laid over it.
+    const solid = (e) => e && !Array.isArray(lineDef(e[0])[1]);
+    const stripes = (e, dir) => {
+      const cols = lineDef(e[0])[1] === 'double' ? [e[1], bg, e[1]] : Array(lineDef(e[0])[0]).fill(e[1]);
+      return [`linear-gradient(${dir},${cols.map((c, i) => `${c} ${i}px ${i + 1}px`).join(',')})`, cols.length];
+    };
+    // x is the corner where the right neighbour's bottom edge meets the lower neighbour's right edge, as at a box's
+    // top-left; it falls in this cell, which fills it.
+    const over = [], x = !(edges.b && edges.r) && solid(edges.x) && edges.x;
+    if (x) {
+      const sq = (w, h, pos) => over.push([`linear-gradient(${x[1]},${x[1]})`, `${w}px ${h}px`, pos, 'no-repeat', 'border-box']);
+      if (lineDef(x[0])[1] === 'double') { sq(1, 1, 'right bottom'); sq(3, 1, 'right 0 bottom 2px'); sq(1, 3, 'right 2px bottom 0'); } else sq(lineDef(x[0])[0], lineDef(x[0])[0], 'right bottom');
+    }
+    for (const [side, across, dirs] of [['b', ['r', 'l'], ['to left', 'to right']], ['r', ['b', 't'], ['to top', 'to bottom']]]) {
+      if (edges[side] || !(x || across.some((s) => solid(edges[s])))) continue;
+      across.forEach((s, i) => {
+        if (!solid(edges[s])) return;
+        const [img, n] = stripes(edges[s], dirs[i]);
+        over.push([img, side === 'b' ? `${n}px 1px` : `1px ${n}px`, side === 'b' ? `${s === 'r' ? 'right' : 'left'} bottom` : `right ${s === 'b' ? 'bottom' : 'top'}`, 'no-repeat', 'border-box']);
+      });
+      over.push(['linear-gradient(var(--gl),var(--gl))', side === 'b' ? '100% 1px' : '1px 100%', side === 'b' ? 'left bottom' : 'right top', 'no-repeat', 'border-box']);
+      css.push(`border-${side === 'b' ? 'bottom' : 'right'}-color:transparent`);
+    }
+    layers.unshift(...over);
     if (st.pat && st.pat !== 'solid' && PATTERNS[st.pat]) layers.push([patternImage(st.pat, st.patColor || '#000000'), '8px 8px', '0 0', 'repeat']);
     if (st.grad) layers.push([gradientImage(st.grad), '100% 100%', '0 0', 'no-repeat']);
     if (color || defaultBg) css.push('background-color:' + (color || defaultBg));
     if (layers.length) {
       css.push('background-image:' + layers.map((l) => l[0]).join(','), 'background-size:' + layers.map((l) => l[1]).join(','),
-        'background-position:' + layers.map((l) => l[2]).join(','), 'background-repeat:' + layers.map((l) => l[3]).join(','));
+        'background-position:' + layers.map((l) => l[2]).join(','), 'background-repeat:' + layers.map((l) => l[3]).join(','),
+        'background-origin:' + layers.map((l) => l[4] || 'padding-box').join(','));
     }
     if (shadows.length) css.push('box-shadow:' + shadows.join(','));
     return css;
@@ -396,7 +422,8 @@
     css.push(...content.css);
     const bottom = pickEdge(edgeOf(st, 'b'), edgeAt(r + 1, c, 't'));
     const right = pickEdge(edgeOf(st, 'r'), edgeAt(r, c + 1, 'l'));
-    css.push(...paintCss(st, { b: bottom, r: right, t: r === 0 && edgeOf(st, 't'), l: c === 0 && edgeOf(st, 'l') }));
+    const nextB = pickEdge(edgeAt(r, c + 1, 'b'), edgeAt(r + 1, c + 1, 't')), belowR = pickEdge(edgeAt(r + 1, c, 'r'), edgeAt(r + 1, c + 1, 'l'));
+    css.push(...paintCss(st, { b: bottom, r: right, t: r === 0 && edgeOf(st, 't'), l: c === 0 && edgeOf(st, 'l'), x: nextB && belowR && pickEdge(nextB, belowR) }));
     if (cls.includes(' ov')) css.push('overflow:visible;position:relative;z-index:1');
     let html = content.html || (across && text ? `<span class="ca" style="width:${across - 7}px">${esc(text)}</span>` : null);
     // In a row with a set height the content sits in a box of that height, aligned like the cell and clipped above and below.

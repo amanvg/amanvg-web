@@ -198,6 +198,8 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .grid td .rot-a > span, .merge-cell .rot-a > span { position: absolute; white-space: nowrap; line-height: 1.25; }
 .grid td .rot-a > .ccw, .merge-cell .rot-a > .ccw { bottom: 0; transform-origin: 0 100%; transform: rotate(-45deg); }
 .grid td .rot-a > .cw, .merge-cell .rot-a > .cw { top: 0; transform-origin: 0 0; transform: rotate(45deg); }
+.grid td, .merge-cell { --gl: var(--grid-line); }
+.grid.no-gridlines td { --gl: transparent; }
 .grid.no-gridlines td { border-color: transparent; }
 .no-headings .grid thead, .no-headings .grid tbody th { display: none; }
 .grid tr.frozen td { position: sticky; top: 22px; z-index: 4; background-color: #fff; }
@@ -279,6 +281,7 @@ button, select, input, textarea { font: inherit; color: inherit; }
   .grid thead, .grid tbody th { display: none; }
   .grid:not(.print-grid) td { border-color: transparent; }
   .grid:not(.print-grid) ~ .merge-cell { border-color: transparent; }
+  .grid:not(.print-grid) td, .grid:not(.print-grid) ~ .merge-cell { --gl: transparent; }
 }
 .app-badge svg { width: 15px; height: 15px; }
 
