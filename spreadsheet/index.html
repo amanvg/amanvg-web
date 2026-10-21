@@ -93,8 +93,27 @@
             <button data-cmd="underline" title="Underline (⌘U)" class="txt"><u>U</u></button>
             <button data-cmd="strike" title="Strikethrough" class="txt"><s>ab</s></button>
             <span class="sep"></span>
-            <button data-cmd="borders" data-icon="grid" title="All Borders"></button>
-            <button data-cmd="noBorders" data-icon="square" title="No Border"></button>
+            <div class="dropdown split">
+              <button id="bordersBtn" data-cmd="bordersLast" title="Bottom Border" aria-label="Bottom Border"></button>
+              <button data-menu="bordersMenu" class="drop" title="Borders" aria-label="Borders">▾</button>
+              <div class="menu bd-menu" id="bordersMenu" role="menu">
+                <div class="bd-grid" id="bdGrid"></div>
+                <hr>
+                <button data-cmd="bdDraw" data-icon="drawBorder" role="menuitemcheckbox">Draw Border</button>
+                <button data-cmd="bdDrawGrid" data-icon="drawGrid" role="menuitemcheckbox">Draw Border Grid</button>
+                <button data-cmd="bdErase" data-icon="eraser" role="menuitemcheckbox">Erase Border</button>
+                <div class="sub">
+                  <button class="has-sub" data-icon="bdColor" role="menuitem" aria-haspopup="true">Border Color</button>
+                  <div class="menu submenu pal-menu" id="bdColorMenu" role="menu"></div>
+                </div>
+                <div class="sub">
+                  <button class="has-sub" data-icon="bdStyle" role="menuitem" aria-haspopup="true">Border Style</button>
+                  <div class="menu submenu bd-styles" id="bdStyleMenu" role="menu"></div>
+                </div>
+                <hr>
+                <button data-cmd="moreBorders" data-icon="formatCells" role="menuitem">More Border Styles</button>
+              </div>
+            </div>
             <span class="sep"></span>
             <label class="color-btn" title="Fill Color"><span data-icon="bucket"></span><i id="fillSwatch" style="background:#ffff00"></i><input type="color" id="fillColor" value="#ffff00"></label>
             <button data-cmd="applyFill" class="mini" title="Apply Fill Color">▾</button>
@@ -364,6 +383,7 @@
       <div id="refBoxes"></div>
       <div id="selBox" class="sel-box"><div id="fillHandle" class="fill-handle"></div></div>
       <div id="fillPreview" class="fill-preview"></div>
+      <div id="bdPreview" class="bd-preview"></div>
       <div id="copyMarquee" class="marquee"></div>
       <textarea id="cellEditor" class="cell-editor" spellcheck="false" wrap="off"></textarea>
       <div id="charts"></div>

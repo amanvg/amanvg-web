@@ -105,6 +105,19 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .flip-sub .submenu { left: auto; right: 100%; }
 .sub:hover > .submenu, .sub.open > .submenu { display: block; }
 .pal-menu { width: 236px; padding: 6px; }
+.bd-menu { min-width: 0; width: 200px; }
+.bd-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+.menu .bd-grid button { width: auto; height: 32px; padding: 0; justify-content: center; }
+.menu .bd-grid button:disabled { opacity: .35; cursor: default; background: none; border-color: transparent; }
+.bd-ico { width: 18px; height: 18px; }
+.bd-g { stroke: #9e9e9e; stroke-width: 1; stroke-dasharray: 1 1.5; stroke-linecap: butt; }
+.bd-k { stroke: #222; stroke-linecap: square; }
+.bd-styles { width: 140px; }
+.menu .bd-styles button { padding: 7px 8px; }
+.bd-styles svg { width: 100%; height: 10px; display: block; }
+.bd-preview { position: absolute; border: 1px solid #222; pointer-events: none; z-index: 2; display: none; }
+.grid-wrap.bd-pen .grid td { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M3 21l1-4L16 5l3 3L7 20z' fill='%23fff' stroke='%23000' stroke-linejoin='round'/%3E%3C/svg%3E") 3 21, crosshair; }
+.grid-wrap.bd-eraser .grid td { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M15 3l6 6-10 10H6l-3-3z' fill='%23fff' stroke='%23000' stroke-linejoin='round'/%3E%3Cpath d='M9 9l6 6' stroke='%23000'/%3E%3C/svg%3E") 4 18, crosshair; }
 @media (max-width: 959px) { .submenu { position: static; box-shadow: none; border: 0; padding-left: 12px; } .pal-menu { width: auto; } }
 
 /* ---------- colour palette */

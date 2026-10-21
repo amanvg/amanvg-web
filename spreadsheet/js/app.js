@@ -16,6 +16,7 @@
     sel: { ar: 0, ac: 0, fr: 0, fc: 0 },
     editing: null, rows: 200, cols: 30,
     clip: null, painter: null, drag: null,
+    border: { last: 'bottom', mode: null, style: 'thin', color: '#000000' }, // Borders button: last used, draw mode, line
     showFormulas: false, zoom: 100,
     undo: [], redo: [],
     tabStartCol: null, // Enter after a run of Tabs returns to this column, as in Excel
@@ -440,8 +441,9 @@
       const css = fontCss(st);
       css.push('align-items:' + (st.valign === 'middle' ? 'center' : st.valign && st.valign !== 'bottom' ? 'flex-start' : 'flex-end'));
       css.push(...content.css.filter((x) => !x.startsWith('vertical-align')));
-      const bottom = pickEdge(edgeOf(st, 'b'), edgeAt(m.r2 + 1, m.c1, 't'));
-      const right = pickEdge(edgeOf(st, 'r'), edgeAt(m.r1, m.c2 + 1, 'l'));
+      // A merge's bottom and right edges belong to its last row and column, where the Borders commands put them.
+      const bottom = pickEdge(edgeAt(m.r2, m.c1, 'b'), edgeAt(m.r2 + 1, m.c1, 't'));
+      const right = pickEdge(edgeAt(m.r1, m.c2, 'r'), edgeAt(m.r1, m.c2 + 1, 'l'));
       css.push(...paintCss(st, { b: bottom, r: right, t: m.r1 === 0 && edgeOf(st, 't'), l: m.c1 === 0 && edgeOf(st, 'l') }, '#ffffff'));
       const el = document.createElement('div');
       el.className = 'merge-cell' + (content.cls.includes('wrap') ? ' wrap' : '');
@@ -1377,6 +1379,9 @@
     on('valignTop', st.valign === 'top'); on('valignMiddle', st.valign === 'middle'); on('valignBottom', !st.valign || st.valign === 'bottom');
     on('showFormulas', S.showFormulas); on('protect', view().protected); on('freezeRow', view().freezeRow); on('freezeCol', view().freezeCol);
     on('printGridlines', view().printGridlines); on('formatPainter', S.painter);
+    const bm = S.border.mode;
+    on('bdDraw', bm === 'draw'); on('bdDrawGrid', bm === 'grid'); on('bdErase', bm === 'erase'); on('bordersLast', bm && bm === S.border.last);
+    document.querySelectorAll('#bordersMenu [role="menuitemcheckbox"]').forEach((b) => b.setAttribute('aria-checked', b.classList.contains('on')));
     $('#fmtProtect').classList.remove('on');
     $('#fontFamily').value = st.font || 'Aptos Narrow';
     $('#fontSize').value = String(st.size || 11);
@@ -2036,8 +2041,11 @@
     italic: () => toggleStyle('italic'),
     underline: () => toggleStyle('underline'),
     strike: () => toggleStyle('strike'),
-    borders: () => applyStyle({ border: true }),
-    noBorders: () => applyStyle({ border: undefined }),
+    bordersLast: () => runBorder(S.border.last),
+    bdDraw: () => runBorder('draw'),
+    bdDrawGrid: () => runBorder('grid'),
+    bdErase: () => runBorder('erase'),
+    moreBorders: () => { setBorderMode(null); openFormatCells('border'); },
     applyFill: () => applyStyle({ fill: $('#fillColor').value }),
     applyFontColor: () => applyStyle({ color: $('#fontColor').value }),
     valignTop: () => applyStyle({ valign: 'top' }),
@@ -2487,6 +2495,11 @@
     FC.edgesTouched = new Set();
   }
   const dashAttr = (style) => { const [w, d] = lineDef(style); return `stroke-width="${w}"${Array.isArray(d) ? ` stroke-dasharray="${d.join(' ')}"` : ''}`; };
+  const lineName = (id) => (id === 'none' ? 'None' : id.replace(/([A-Z])/g, ' $1').replace(/^./, (x) => x.toUpperCase()));
+  // A line style as a swatch for the Format Cells list and the Border Style menu.
+  const lineSvg = (id) => `<svg viewBox="0 0 60 10">${id === 'double'
+    ? '<line x1="2" y1="3.5" x2="58" y2="3.5" stroke="#000" stroke-width="1"/><line x1="2" y1="6.5" x2="58" y2="6.5" stroke="#000" stroke-width="1"/>'
+    : `<line x1="2" y1="5" x2="58" y2="5" stroke="#000" ${dashAttr(id)}/>`}</svg>`;
   function svgLine(x1, y1, x2, y2, e) {
     if (!e) return '';
     if (e === 'mixed') return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#b0b0b0" stroke-width="2"/>`;
@@ -2601,7 +2614,7 @@
     // Border
     readEdges();
     FC.lineStyle = 'thin'; FC.lineColor = '#000000';
-    $('#fcLines').innerHTML = ['none', ...LINE_ORDER].map((id) => `<button type="button" data-line="${id}" title="${id === 'none' ? 'None' : id.replace(/([A-Z])/g, ' $1').replace(/^./, (x) => x.toUpperCase())}">${id === 'none' ? 'None' : `<svg viewBox="0 0 60 10"><line x1="2" y1="5" x2="58" y2="5" stroke="#000" ${dashAttr(id)}${id === 'double' ? ' stroke-width="1"' : ''}/>${id === 'double' ? '<line x1="2" y1="8" x2="58" y2="8" stroke="#000" stroke-width="1"/>' : ''}</svg>`}</button>`).join('');
+    $('#fcLines').innerHTML = ['none', ...LINE_ORDER].map((id) => `<button type="button" data-line="${id}" title="${lineName(id)}">${id === 'none' ? 'None' : lineSvg(id)}</button>`).join('');
     renderBorderPane();
     // Fill
     renderFillPane();
@@ -2642,9 +2655,8 @@
     }
     changed();
   }
-  // Writes the dialog's edges to the selection; an edge set to none is cleared on both cells that share it.
-  function applyEdges({ r1, c1, r2, c2 }) {
-    const E = FC.edges, T = FC.edgesTouched;
+  // Writes edges (the dialog's by default) to a range; an edge set to none is cleared on both cells that share it.
+  function applyEdges({ r1, c1, r2, c2 }, E = FC.edges, T = FC.edgesTouched) {
     const R2 = Math.min(r2, S.rows - 1), C2 = Math.min(c2, S.cols - 1);
     const setSide = (r, c, side, e) => {
       if (r < 0 || c < 0) return;
@@ -2671,6 +2683,116 @@
       }
     }
   }
+
+  // ------------------------------------------------------------ Borders button (Home > Font)
+  // Excel's quick borders: [key, name, edges]. 's' is the chosen Border Style (thin until one is picked); thick and
+  // double keep their weight. Every edge takes the chosen Border Color.
+  const BORDER_PRESETS = [
+    ['none', 'No Border', {}],
+    ['bottom', 'Bottom Border', { b: 's' }],
+    ['top', 'Top Border', { t: 's' }],
+    ['left', 'Left Border', { l: 's' }],
+    ['right', 'Right Border', { r: 's' }],
+    ['all', 'All Borders', { t: 's', b: 's', l: 's', r: 's', h: 's', v: 's' }],
+    ['outside', 'Outside Borders', { t: 's', b: 's', l: 's', r: 's' }],
+    ['thickOutside', 'Thick Outside Borders', { t: 'thick', b: 'thick', l: 'thick', r: 'thick' }],
+    ['bottomDouble', 'Bottom Double Border', { b: 'double' }],
+    ['thickBottom', 'Thick Bottom Border', { b: 'thick' }],
+    ['topBottom', 'Top and Bottom Border', { t: 's', b: 's' }],
+    ['topThickBottom', 'Top and Thick Bottom Border', { t: 's', b: 'thick' }],
+    ['topDoubleBottom', 'Top and Double Bottom Border', { t: 's', b: 'double' }],
+    ['inside', 'Inside Borders', { h: 's', v: 's' }],
+    ['insideH', 'Inside Horizontal Border', { h: 's' }],
+    ['insideV', 'Inside Vertical Border', { v: 's' }],
+  ];
+  const BORDER_MODES = { draw: ['Draw Border', 'drawBorder'], grid: ['Draw Border Grid', 'drawGrid'], erase: ['Erase Border', 'eraser'] };
+  const ALL_EDGES = ['t', 'b', 'l', 'r', 'h', 'v', 'du', 'dd'];
+  const bdPreview = $('#bdPreview');
+  // Menu icon: dotted gridlines with the preset's edges drawn over them.
+  function borderIcon(edges) {
+    const at = { t: 'M3 3h14', b: 'M3 17h14', l: 'M3 3v14', r: 'M17 3v14', h: 'M3 10h14', v: 'M10 3v14' };
+    const lines = Object.entries(edges).map(([side, w]) => (w === 'double'
+      ? '<path d="M3 15.5h14M3 18.5h14" class="bd-k" stroke-width="1"/>'
+      : `<path d="${at[side]}" class="bd-k" stroke-width="${w === 'thick' ? 3 : 1.5}"/>`));
+    return `<svg class="ico bd-ico" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h14v14H3zM3 10h14M10 3v14" class="bd-g"/>${lines.join('')}</svg>`;
+  }
+  function renderBorderButton() {
+    const k = S.border.last, mode = BORDER_MODES[k], p = BORDER_PRESETS.find((x) => x[0] === k);
+    const b = $('#bordersBtn'), label = mode ? mode[0] : p[1];
+    b.innerHTML = mode ? Icons.svg(mode[1]) : borderIcon(p[2]);
+    b.title = label;
+    b.setAttribute('aria-label', label);
+  }
+  // Refreshed each time the menu opens: inside borders need more than one cell, as in Excel.
+  function renderBordersMenu() {
+    const { r1, c1, r2, c2 } = selRect();
+    $('#bdGrid').querySelectorAll('[data-cmd^="border_inside"]').forEach((b) => { b.disabled = r1 === r2 && c1 === c2; });
+    const pal = $('#bdColorMenu');
+    pal.innerHTML = paletteHtml(S.border.color === '#000000' ? null : S.border.color, 'Automatic');
+    bindPalette(pal, (hex) => pickBorderLine({ color: hex || '#000000' }));
+    $('#bdStyleMenu').querySelectorAll('[data-bdstyle]').forEach((b) => { const on = b.dataset.bdstyle === S.border.style; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); });
+  }
+  function setBorderMode(mode) {
+    S.border.mode = mode;
+    if (mode) S.painter = null;
+    gridWrap.classList.toggle('bd-pen', mode === 'draw' || mode === 'grid');
+    gridWrap.classList.toggle('bd-eraser', mode === 'erase');
+    updateRibbonState();
+  }
+  // Picking a Border Color or Border Style turns on Draw Border, as in Excel.
+  function pickBorderLine(patch) {
+    Object.assign(S.border, patch);
+    closeMenus();
+    if (S.border.mode !== 'draw' && S.border.mode !== 'grid') { S.border.last = 'draw'; renderBorderButton(); setBorderMode('draw'); }
+    focusGrid();
+  }
+  function runBorder(key) {
+    if (BORDER_MODES[key]) setBorderMode(S.border.mode === key ? null : key);
+    else if (!quickBorder(key)) return;
+    S.border.last = key;
+    renderBorderButton();
+  }
+  function quickBorder(key) {
+    const rect = selRect(), edges = BORDER_PRESETS.find((x) => x[0] === key)[2];
+    if (key.startsWith('inside') && rect.r1 === rect.r2 && rect.c1 === rect.c2) return false;
+    if (guard(rect)) return false;
+    setBorderMode(null);
+    const line = (w) => [w === 's' ? S.border.style : w, S.border.color];
+    const E = key === 'none' ? Object.fromEntries(ALL_EDGES.map((s) => [s, null])) : Object.fromEntries(Object.entries(edges).map(([s, w]) => [s, line(w)]));
+    pushUndo();
+    applyEdges(rect, E, new Set(Object.keys(E)));
+    changed();
+    return true;
+  }
+  // Draw and Erase Border act on the gridline a click lands within 4px of.
+  function edgeNear(e, td) {
+    const b = td.getBoundingClientRect();
+    const d = { t: e.clientY - b.top, b: b.bottom - e.clientY, l: e.clientX - b.left, r: b.right - e.clientX };
+    const side = Object.keys(d).reduce((a, k) => (d[k] < d[a] ? k : a));
+    return d[side] <= 4 ? side : null;
+  }
+  // A drag outlines (Draw Border), grids (Draw Border Grid) or clears (Erase Border) the range; a click on a gridline
+  // draws or erases that one edge.
+  function drawBorders(d) {
+    const mode = S.border.mode, line = mode === 'erase' ? null : [S.border.style, S.border.color];
+    let rect, sides;
+    if (d.moved) {
+      rect = expandToMerges({ r1: Math.min(d.r, d.r2), c1: Math.min(d.c, d.c2), r2: Math.max(d.r, d.r2), c2: Math.max(d.c, d.c2) });
+      sides = mode === 'draw' ? ['t', 'b', 'l', 'r'] : mode === 'grid' ? ['t', 'b', 'l', 'r', 'h', 'v'] : ALL_EDGES;
+    } else if (d.edge) {
+      rect = mergeAt(d.r, d.c) || { r1: d.r, c1: d.c, r2: d.r, c2: d.c };
+      sides = [d.edge];
+    } else return;
+    if (guard(rect)) return;
+    pushUndo();
+    applyEdges(rect, Object.fromEntries(sides.map((s) => [s, line])), new Set(sides));
+    changed();
+  }
+  $('#bdGrid').innerHTML = BORDER_PRESETS.map(([key, name, edges]) => `<button data-cmd="border_${key}" role="menuitem" title="${name}" aria-label="${name}">${borderIcon(edges)}</button>`).join('');
+  for (const [key] of BORDER_PRESETS) CMD['border_' + key] = () => runBorder(key);
+  $('#bdStyleMenu').innerHTML = LINE_ORDER.map((id) => `<button data-bdstyle="${id}" role="menuitemradio" title="${lineName(id)}" aria-label="${lineName(id)}">${lineSvg(id)}</button>`).join('');
+  $('#bdStyleMenu').addEventListener('click', (e) => { const b = e.target.closest('[data-bdstyle]'); if (b) { e.stopPropagation(); pickBorderLine({ style: b.dataset.bdstyle }); } });
+  renderBorderButton();
 
   // -- control events
   fcd.querySelector('.fc-tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-fctab]'); if (b) fcShowTab(b.dataset.fctab); });
@@ -2778,6 +2900,7 @@
       const open = !m.classList.contains('open');
       closeMenus();
       if (open && m.id === 'cellStyles') renderGallery();
+      if (open && m.id === 'bordersMenu') renderBordersMenu();
       if (open && m.id === 'formatMenu') { tabColorMenu.innerHTML = paletteHtml(sheet().tabColor, 'No Color'); bindPalette(tabColorMenu, setTabColor); }
       m.classList.toggle('open', open);
       // The ribbon scrolls sideways, which clips anything below it; pin ribbon menus to the viewport under their button.
@@ -2953,6 +3076,7 @@
     if (!td) return;
     e.preventDefault();
     const { r, c } = cellOf(td);
+    if (S.border.mode) { S.drag = { type: 'border', r, c, r2: r, c2: c, moved: false, edge: edgeNear(e, td) }; focusGrid(); return; }
     if (e.shiftKey) { S.sel.fr = r; S.sel.fc = c; } else S.sel = { ar: r, ac: c, fr: r, fc: c };
     S.tabStartCol = null;
     S.drag = { type: 'select' };
@@ -2987,6 +3111,11 @@
     const { r, c } = cellOf(td);
     if (d.type === 'select') { if (S.sel.fr !== r || S.sel.fc !== c) { S.sel.fr = r; S.sel.fc = c; updateSelection(); } }
     else if (d.type === 'point') pointTo(d.r, d.c, r, c);
+    else if (d.type === 'border') {
+      d.r2 = r; d.c2 = c;
+      d.moved = d.moved || r !== d.r || c !== d.c;
+      if (d.moved) place(bdPreview, boxFor(Math.min(d.r, r), Math.min(d.c, c), Math.max(d.r, r), Math.max(d.c, c)));
+    }
     else if (d.type === 'fill') {
       const s = d.src;
       const down = r - s.r2, up = s.r1 - r, right = c - s.c2, left = s.c1 - c;
@@ -3011,6 +3140,9 @@
     if (d.type === 'fill') {
       fillPreview.style.display = 'none';
       if (d.dir) performFill(d.src, d.dir, d.count);
+    } else if (d.type === 'border') {
+      bdPreview.style.display = 'none';
+      drawBorders(d);
     } else if (d.type === 'colresize' || d.type === 'chart') {
       scheduleSave();
     } else if (d.type === 'select' || d.type === 'cols' || d.type === 'rows') {
@@ -3154,7 +3286,7 @@
       case 'PageUp': e.preventDefault(); move(-Math.floor(gridWrap.clientHeight / 22), 0, e.shiftKey); return;
       case 'F2': e.preventDefault(); startEdit('edit'); return;
       case 'Delete': case 'Backspace': e.preventDefault(); CMD.clearContents(); return;
-      case 'Escape': if (S.clip) { S.clip = null; updateSelection(); } if (S.painter) { S.painter = null; updateRibbonState(); } return;
+      case 'Escape': if (S.clip) { S.clip = null; updateSelection(); } if (S.painter) { S.painter = null; updateRibbonState(); } if (S.border.mode) setBorderMode(null); return;
       default: break;
     }
     if (k === '=' && e.altKey) { e.preventDefault(); autoSum(); return; }
