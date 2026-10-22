@@ -19,6 +19,11 @@ three sentences each, then ask for approval with an Approve / Reject dropdown
    to commit and push. Approve: commit with the standard message, fetch and
    rebase onto `origin/main`, push, report the commit hash. Reject: leave the
    working tree as it is.
+5. **Linear ticket** — every change has a Linear issue. If none covers it,
+   create one in team Amanvg on plan approval (`[Website Change] <what>`,
+   label Feature, assigned to me) and name it in the push question. After the
+   push, comment the commit hash; an issue Claude created moves to Done, one I
+   created moves to In Review.
 
 This applies to every change, however small, including edits to this file.
 A Reject means make no changes and ask what to adjust.
