@@ -71,29 +71,6 @@ A Reject means make no changes and ask what to adjust.
   purple, Measure blue); conflicts are red lines, companions double lines.
   Exports always use the light colours on white with Work Sans and Oswald
   inlined from Google Fonts (PNG at 3×).
-- `/qualitycontrol/`: follows `DESIGN.md` like `/kpitree/` and is built the
-  same way, by clicking, never by typed syntax. Copy, PNG and SVG plus the
-  seven tool chips sit in the masthead, the toolbar sits above the work area,
-  and only the charts get a tally strip (diagrams have no result to tally). Fishbone and Flow Chart are a full-width pan-and-zoom
-  canvas edited like the KPI tree (select a box for + controls, type or
-  double-click to edit, drag onto a box to move it, undo/redo, Fit, Example,
-  Clear) with automatic layout. Pareto, Histogram, Control Chart, Scatter and
-  Check Sheet are an editable grid (title, + Row, × per row, Enter moves down,
-  paste fills cells) left of a live inline-SVG chart. Exports use the light
-  colours on white like `/kpitree/` (plots at 1200×675, diagrams at natural
-  size).
-- `/qualityplanning/`: same shell and editing model as `/qualitycontrol/`
-  (clicking only, automatic layout, Copy/PNG/SVG and tool chips in the
-  masthead, tally strip only where a tool has a result). Affinity, Tree, PDPC,
-  Interrelationship, Matrix and Activity Network are canvases; Prioritization
-  is an editable grid beside a ranked bar chart. Tools without a root box
-  (Affinity, Interrelationship, Matrix, Activity Network, and Flow Chart on
-  `/qualitycontrol/`) carry an editable title band for the problem at the top
-  of the canvas; an empty band is left out of exports. On both pages the
-  canvas fits the window: the scroll wheel zooms at the cursor, a drag pans
-  from anywhere (over lines too; a line is selected by a plain click), and Fit
-  shows the whole diagram. Hovering or selecting an Interrelationship factor
-  fades everything not linked to it.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services and
@@ -211,33 +188,6 @@ A Reject means make no changes and ask what to adjust.
   Duplicate and Delete lists the trees on the Worker, edits autosave there,
   and `kpitree:open` remembers the open tree; a first connect to an empty
   server uploads the browser's saved tree.
-- `/qualitycontrol/` Quality Control: the seven basic quality tools. Fishbone:
-  effect box; a new or cleared one starts on the service 4 Ps (Policies,
-  Procedures, People, Plant); + adds a category (alternating above and below the spine) or a
-  cause. Flow chart: + adds the next step, Decision turns a step into a
-  diamond, its right + adds a No side box that returns to the step above, and
-  Link points its No arrow at any step. Pareto sorts with Other last, with a
-  cumulative line and 80% rule; Histogram uses Sturges bins with optional
-  LSL/Target/USL and Cpk; Control Chart is an individuals chart (mean ± 2.66 ×
-  average moving range, red beyond limits, amber on runs of 8); Scatter has a
-  least-squares line and r; Check Sheet draws tallies with row and column
-  totals and editable columns. Saved in `localStorage` (`qualitycontrol:data`,
-  version 2, per-tool state); no Worker.
-- `/qualityplanning/` Quality Planning: the seven management and planning
-  tools. Affinity: groups with idea cards (drag cards between groups). Tree:
-  goal and means left to right. PDPC: objective, activity, risk and
-  countermeasure top-down, countermeasures marked feasible (○) or not (✕);
-  tally counts covered and open risks. Interrelationship: factors evenly along an oval
-  shaped like the canvas, grown until no boxes touch, then until no arrow crosses
-  a box only while it still fits the canvas at 100%,
-  Link draws cause → effect (one arrow per pair), most outgoing is the key
-  driver and most incoming the key outcome. Matrix: click a cell to cycle
-  positive (+1) / neutral (0) / negative (−1) opinion, with signed net totals
-  per row and column; tally shows the most positive and most negative rows. Prioritization:
-  weighted criteria × option scores, ranked. Activity Network: activities with
-  durations, + adds a successor or a parallel activity, Link sets "follows"
-  (loops refused), critical path method gives ES/EF/LS/LF and slack, critical
-  path in red. Saved in `localStorage` (`qualityplanning:data`, version 1).
 - `/spreadsheet/` Spreadsheet: workbook with formulas, sheets, charts and
   .xlsx/.csv open and save, saved in `localStorage` (`spreadsheet:workbook`).
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
