@@ -226,7 +226,8 @@ A Reject means make no changes and ask what to adjust.
   tally counts covered and open risks. Interrelationship: factors on a circle,
   Link draws cause → effect (one arrow per pair), most outgoing is the key
   driver and most incoming the key outcome. Matrix: click a cell to cycle
-  strong 9 / medium 3 / weak 1, with row and column totals. Prioritization:
+  positive (+1) / neutral (0) / negative (−1) opinion, with signed net totals
+  per row and column; tally shows the most positive and most negative rows. Prioritization:
   weighted criteria × option scores, ranked. Activity Network: activities with
   durations, + adds a successor or a parallel activity, Link sets "follows"
   (loops refused), critical path method gives ES/EF/LS/LF and slack, critical

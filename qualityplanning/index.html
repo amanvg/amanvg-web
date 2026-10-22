@@ -408,12 +408,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 return st;
             }
             if (tool === 'matrix') {
-                const st = { seq: 0, title: 'Customer needs vs. improvements', rows: [], cols: [], cells: {} };
-                const rows = ['Fast delivery', 'Low price', 'Easy returns', 'Accurate orders'].map(label => ({ id: `n${++st.seq}`, label }));
-                const cols = ['Warehouse automation', 'Supplier contracts', 'Returns portal', 'Order scanning'].map(label => ({ id: `n${++st.seq}`, label }));
+                const st = { seq: 0, title: 'Stakeholder view of support options', rows: [], cols: [], cells: {} };
+                const rows = ['Sales', 'Support team', 'Finance', 'Engineering'].map(label => ({ id: `n${++st.seq}`, label }));
+                const cols = ['Self-serve portal', 'Hire two agents', 'Chatbot', 'Outsource support'].map(label => ({ id: `n${++st.seq}`, label }));
                 st.rows = rows; st.cols = cols;
-                [[0, 0, 3], [0, 1, 1], [0, 3, 2], [1, 1, 3], [1, 0, 2], [2, 2, 3], [2, 3, 1], [3, 3, 3], [3, 0, 2]]
-                    .forEach(([r, c, v]) => { st.cells[`${rows[r].id}|${cols[c].id}`] = v; });
+                [['pos', 'pos', 'neg', 'neu'], ['pos', 'pos', 'neu', 'neg'], ['pos', 'neg', 'pos', 'pos'], ['neu', 'neu', 'neg', 'neu']]
+                    .forEach((marks, r) => marks.forEach((v, c) => { st.cells[`${rows[r].id}|${cols[c].id}`] = v; }));
                 return st;
             }
             return { title: 'Support improvement options', crit: [{ name: 'Cost', weight: '0.4' }, { name: 'Impact', weight: '0.35' }, { name: 'Effort', weight: '0.25' }],
@@ -1015,18 +1015,21 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         // ── Matrix diagram ──────────────────────────────────────
 
-        const WEIGHT = { 3: 9, 2: 3, 1: 1 }, CYCLE = { 0: 3, 3: 2, 2: 1, 1: 0 };
-        function symbol(v, x, y, c) {
-            if (v === 3) return `<circle cx="${r1(x)}" cy="${r1(y)}" r="8" fill="none" stroke="${c}" stroke-width="2"/><circle cx="${r1(x)}" cy="${r1(y)}" r="4" fill="${c}"/>`;
-            if (v === 2) return `<circle cx="${r1(x)}" cy="${r1(y)}" r="8" fill="none" stroke="${c}" stroke-width="2"/>`;
-            if (v === 1) return `<polygon points="${r1(x)},${r1(y - 8)} ${r1(x + 8)},${r1(y + 6)} ${r1(x - 8)},${r1(y + 6)}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>`;
+        // Opinion marks: positive counts +1, neutral 0, negative −1 toward the row and column net.
+        const SCORE = { pos: 1, neu: 0, neg: -1 }, CYCLE = { '': 'pos', pos: 'neu', neu: 'neg', neg: '' };
+        const OLD_MARK = { 3: 'pos', 2: 'neu', 1: 'neg' };   // strong / medium / weak from the first version
+        function symbol(v, x, y) {
+            if (v === 'pos') return path(`M${r1(x - 8)} ${r1(y)}H${r1(x + 8)}M${r1(x)} ${r1(y - 8)}V${r1(y + 8)}`, P.series, 3.2);
+            if (v === 'neu') return `<circle cx="${r1(x)}" cy="${r1(y)}" r="7" fill="none" stroke="${P.muted}" stroke-width="2"/>`;
+            if (v === 'neg') return path(`M${r1(x - 8)} ${r1(y)}H${r1(x + 8)}`, P.bad, 3.2);
             return '';
         }
+        const signed = v => v > 0 ? `+${fmt(v)}` : v < 0 ? `−${fmt(-v)}` : '0';
         function matrixTotals(st) {
-            const v = (r, c) => st.cells[`${r.id}|${c.id}`] || 0;
+            const v = (r, c) => st.cells[`${r.id}|${c.id}`] || '';
             return {
-                rows: st.rows.map(r => sum(st.cols.map(c => WEIGHT[v(r, c)] || 0))),
-                cols: st.cols.map(c => sum(st.rows.map(r => WEIGHT[v(r, c)] || 0))),
+                rows: st.rows.map(r => sum(st.cols.map(c => SCORE[v(r, c)] || 0))),
+                cols: st.cols.map(c => sum(st.rows.map(r => SCORE[v(r, c)] || 0))),
                 v,
             };
         }
@@ -1051,10 +1054,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 const xEnd = m.right + m.TW, yEnd = m.bottom + m.TH;
                 out.push(`<rect x="${m.gx}" y="${m.gy}" width="${r1(m.right - m.gx)}" height="${r1(m.bottom - m.gy)}" fill="${P.box}"/>`);
                 rows.forEach(r => cols.forEach(c => {
-                    const key = `${r.id}|${c.id}`, v = st.cells[key] || 0;
+                    const key = `${r.id}|${c.id}`, v = st.cells[key] || '';
                     if (ui) out.push(`<rect x="${r1(c.x)}" y="${r1(r.y)}" width="${c.w}" height="${r1(r.h)}" fill="transparent" data-cell="${key}" role="button" aria-label="${esc(`${r.label} × ${c.label}`)}"/>`);
                     // Symbols ignore the pointer so every click reaches the cell under them.
-                    if (v) out.push(`<g pointer-events="none">${symbol(v, c.cx, r.cy, P.series)}</g>`);
+                    if (v) out.push(`<g pointer-events="none">${symbol(v, c.cx, r.cy)}</g>`);
                 }));
                 // Grid lines, then totals.
                 cols.forEach(c => out.push(ln(c.x, m.y0, c.x, yEnd, P.grid)));
@@ -1063,13 +1066,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 out.push(`<rect x="${m.x0}" y="${m.y0}" width="${r1(xEnd - m.x0)}" height="${r1(yEnd - m.y0)}" fill="none" stroke="${P.line}" stroke-width="1.5"/>`);
                 out.push(t(m.right + m.TW / 2, m.y0 + m.headH / 2 + 4, 'Total', { anchor: 'middle', fill: P.muted }));
                 out.push(t(m.x0 + 12, m.bottom + m.TH / 2 + 5, 'Total', { fill: P.muted }));
-                const topR = Math.max(0, ...tot.rows), topC = Math.max(0, ...tot.cols);
-                rows.forEach((r, i) => out.push(t(m.right + m.TW / 2, r.cy + 5, fmt(tot.rows[i]), { anchor: 'middle', weight: 700, fill: topR && tot.rows[i] === topR ? P.accent : P.text })));
-                cols.forEach((c, j) => out.push(t(c.cx, m.bottom + m.TH / 2 + 5, fmt(tot.cols[j]), { anchor: 'middle', weight: 700, fill: topC && tot.cols[j] === topC ? P.accent : P.text })));
+                const ink = v => v > 0 ? P.series : v < 0 ? P.bad : P.muted;
+                rows.forEach((r, i) => out.push(t(m.right + m.TW / 2, r.cy + 5, signed(tot.rows[i]), { anchor: 'middle', weight: 700, fill: ink(tot.rows[i]) })));
+                cols.forEach((c, j) => out.push(t(c.cx, m.bottom + m.TH / 2 + 5, signed(tot.cols[j]), { anchor: 'middle', weight: 700, fill: ink(tot.cols[j]) })));
                 // Legend
                 const ly = yEnd + 30;
                 let lx = m.x0;
-                [[3, 'Strong 9'], [2, 'Medium 3'], [1, 'Weak 1']].forEach(([v, label]) => { out.push(symbol(v, lx + 9, ly - 4, P.series) + t(lx + 24, ly, label, { fill: P.muted })); lx += 34 + tw(label) + 18; });
+                [['pos', 'Positive'], ['neu', 'Neutral'], ['neg', 'Negative']].forEach(([v, label]) => { out.push(symbol(v, lx + 9, ly - 4) + t(lx + 24, ly, label, { fill: P.muted })); lx += 34 + tw(label) + 18; });
                 m.nodes.forEach(n => {
                     const selected = isSel(ui, n.id), ctls = showCtls(ui, n.id);
                     out.push(ui ? `<g data-node="${n.id}">` : '<g>');
@@ -1084,8 +1087,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             },
             signs(st) {
                 if (!st.rows.length || !st.cols.length) return null;
-                const tot = matrixTotals(st), best = (list, vals) => { const mx = Math.max(...vals); return mx ? list.filter((_, i) => vals[i] === mx).map(x => x.label || '—').join(', ') : '—'; };
-                return [['Top row', best(st.rows, tot.rows)], ['Top column', best(st.cols, tot.cols)], ['Strong links', Object.values(st.cells).filter(v => v === 3).length]];
+                const tot = matrixTotals(st), marks = Object.values(st.cells);
+                const pick = (vals, f, ok) => { const x = f(...vals); return ok(x) ? st.rows.filter((_, i) => vals[i] === x).map(r => r.label || '—').join(', ') : '—'; };
+                return [['Most positive', pick(tot.rows, Math.max, x => x > 0)], ['Most negative', pick(tot.rows, Math.min, x => x < 0)],
+                    ['Positive', marks.filter(v => v === 'pos').length], ['Negative', marks.filter(v => v === 'neg').length]];
             },
             exists: (st, id) => st.rows.some(r => r.id === id) || st.cols.some(c => c.id === id),
             label: (st, id) => (st.rows.find(r => r.id === id) || st.cols.find(c => c.id === id) || {}).label || '',
@@ -1120,7 +1125,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 list.splice(list.findIndex(y => y.id === tId) + (after ? 1 : 0), 0, x);
             },
             after: (m, n, wp) => n.kind === 'col' ? wp.x > n.cx : wp.y > n.cy,
-            cell(key) { commit(st => { const v = CYCLE[st.cells[key] || 0]; if (v) st.cells[key] = v; else delete st.cells[key]; }, { keepView: true }); },
+            cell(key) { commit(st => { const v = CYCLE[st.cells[key] || '']; if (v) st.cells[key] = v; else delete st.cells[key]; }, { keepView: true }); },
         };
 
         // ── Title band ──────────────────────────────────────────
@@ -1280,6 +1285,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             if (saved && saved.version === 1 && saved.tools) {
                 if (toolOf(saved.tool)) st.tool = saved.tool;
                 TOOLS.forEach(tl => { if (saved.tools[tl.id] && typeof saved.tools[tl.id] === 'object') st.tools[tl.id] = saved.tools[tl.id]; });
+                const cells = st.tools.matrix.cells || {};
+                Object.keys(cells).forEach(k => { if (OLD_MARK[cells[k]]) cells[k] = OLD_MARK[cells[k]]; });
             }
             const hash = location.hash.slice(1);
             if (toolOf(hash)) st.tool = hash;
