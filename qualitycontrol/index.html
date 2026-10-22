@@ -155,7 +155,7 @@ main{flex:1;padding:40px var(--margin) 0}
 :root[data-theme="light"] .hint{color:#8f4e00}
 .push{margin-left:auto}
 
-.canvas{position:relative;height:clamp(420px,calc(100vh - 470px),1200px);border:1px solid var(--key);overflow:hidden;outline:none}
+.canvas{position:relative;height:clamp(420px,calc(100vh - 360px),1200px);border:1px solid var(--key);overflow:hidden;outline:none}
 .canvas:focus-visible{box-shadow:0 0 0 2px var(--focus)}
 #board{display:block;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 #board.panning{cursor:grabbing}
@@ -378,7 +378,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 + '501.4 501.8 501.2 501.6 502.1').split(' ').map(v => ['', v]) };
         }
         function blank(tool) {
-            if (tool === 'fishbone') return { seq: 0, effect: '', cats: [] };
+            // A new fishbone starts on the service 4 Ps.
+            if (tool === 'fishbone') return { seq: 4, effect: '', cats: ['Policies', 'Procedures', 'People', 'Plant'].map((label, i) => ({ id: `n${i + 1}`, label, causes: [] })) };
             if (tool === 'flow') return { seq: 0, steps: [] };
             if (tool === 'check') return { title: '', cols: ['1', '2', '3'], rows: [['', '', '', '']] };
             if (tool === 'scatter') return { title: '', x: 'X', y: 'Y', rows: [['', '']] };
@@ -733,24 +734,23 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             let y = MARGIN;
             const cx = MARGIN + 20 + DW / 2, sideX = cx + DW / 2 + SIDE_GAP;
             steps.forEach(s => { s.x = cx - s.w / 2; s.y = y; s.cy = y + s.h / 2; y += s.h + VG; });
-            let lane = 0, sides = 0, loops = 0;
+            let lane = 0, sides = 0;
             const extra = [];
             steps.forEach((s, i) => {
                 if (!s.decision || !s.no) return;
                 if (s.no.side) {
-                    sides++; loops++;
+                    sides++;
                     const lines = s.no.side.label ? wrap(s.no.side.label, SIDE_W - 28) : [''], h = Math.max(44, lines.length * LH + 22);
                     s.side = { id: s.no.side.id, kind: 'side', owner: s.id, label: s.no.side.label, lines, x: sideX, y: s.cy - h / 2, w: SIDE_W, h, cy: s.cy };
                     s.side.back = i > 0 ? steps[i - 1] : null;
                     extra.push(s.side);
                 } else if (s.no.to && ids.has(s.no.to) && s.no.to !== s.id) {
                     s.jump = { to: steps.find(x => x.id === s.no.to), lane: lane++ };
-                    if (st.steps.findIndex(x => x.id === s.no.to) < i) loops++;
                 }
             });
             const laneX0 = (sides ? sideX + SIDE_W : cx + DW / 2) + 36;
             const width = Math.max(cx + DW / 2 + CTL + 12, lane ? laneX0 + (lane - 1) * 20 : 0, sides ? sideX + SIDE_W : 0) + MARGIN + 20;
-            return { nodes: steps.concat(extra), steps, cx, laneX0, loops, width, height: Math.max(y - VG, MARGIN) + MARGIN + CTL / 2 };
+            return { nodes: steps.concat(extra), steps, cx, laneX0, width, height: Math.max(y - VG, MARGIN) + MARGIN + CTL / 2 };
         };
 
         // ── Diagrams: draw ──────────────────────────────────────
@@ -1067,14 +1067,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         let model = null, lastAnnounce = '';
         const T = { x: 0, y: 0, k: 1 };
 
-        function diagramSigns(m) {
-            if (S.tool === 'fishbone') {
-                const st = cur(), causes = st.cats.map(c => c.causes.length);
-                return [['Categories', st.cats.length], ['Causes', sum(causes)], ['Most in one', causes.length ? Math.max(...causes) : 0]];
-            }
-            return [['Steps', m.steps.length], ['Decisions', m.steps.filter(s => s.decision).length], ['Loops', m.loops]];
-        }
-
         function chartSize() {
             const box = $('chart'), avail = Math.max(300, box.clientWidth - 2);
             const W = Math.max(560, avail), H = Math.round(Math.max(380, Math.min(W * 0.62, innerHeight - 500, 760)));
@@ -1109,7 +1101,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 canvas.style.background = P.bg;
                 applyView();
                 has = model.nodes.length > 0;
-                signs = diagramSigns(model);
                 $('start').hidden = has;
                 $('add-a').querySelector('span').textContent = tool.a;
                 $('add-b').querySelector('span').textContent = tool.b;
@@ -1142,6 +1133,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 $('hint').hidden = true;
             }
             const tally = $('tally');
+            // Diagrams carry no result to tally; the strip is for the charts.
+            tally.hidden = diagram;
+            if (!signs) signs = [];
             tally.style.gridTemplateColumns = `repeat(${signs.length},minmax(0,1fr))`;
             tally.innerHTML = signs.map(([k, v]) => `<div class="sign"><span class="sign-head">${esc(k)}</span><output class="num">${esc(v)}</output></div>`).join('');
             ['copy', 'png', 'svg'].forEach(id => { $(id).disabled = !has; });
@@ -1659,6 +1653,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         selectTool(S.tool);
         let lastW = 0;
         new ResizeObserver(() => { if (kind() !== 'grid') return; const w = $('chart').clientWidth; if (w !== lastW) { lastW = w; render(); } }).observe($('chart'));
+        let lastCanvas = '';
+        new ResizeObserver(() => { const r = canvas.getBoundingClientRect(), k = `${Math.round(r.width)}x${Math.round(r.height)}`; if (kind() === 'diagram' && r.width && k !== lastCanvas) { lastCanvas = k; fit(); } }).observe(canvas);
         window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (toolOf(h) && h !== S.tool) selectTool(h); });
         const refit = () => { render(); if (kind() === 'diagram') fit(); };
         document.fonts.ready.then(refit);

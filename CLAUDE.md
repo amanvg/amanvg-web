@@ -73,8 +73,8 @@ A Reject means make no changes and ask what to adjust.
   inlined from Google Fonts (PNG at 3×).
 - `/qualitycontrol/`: follows `DESIGN.md` like `/kpitree/` and is built the
   same way, by clicking, never by typed syntax. Copy, PNG and SVG plus the
-  seven tool chips sit in the masthead, a tally strip and the toolbar sit
-  above the work area. Fishbone and Flow Chart are a full-width pan-and-zoom
+  seven tool chips sit in the masthead, the toolbar sits above the work area,
+  and only the charts get a tally strip (diagrams have no result to tally). Fishbone and Flow Chart are a full-width pan-and-zoom
   canvas edited like the KPI tree (select a box for + controls, type or
   double-click to edit, drag onto a box to move it, undo/redo, Fit, Example,
   Clear) with automatic layout. Pareto, Histogram, Control Chart, Scatter and
@@ -200,7 +200,8 @@ A Reject means make no changes and ask what to adjust.
   and `kpitree:open` remembers the open tree; a first connect to an empty
   server uploads the browser's saved tree.
 - `/qualitycontrol/` Quality Control: the seven basic quality tools. Fishbone:
-  effect box, + adds a category (alternating above and below the spine) or a
+  effect box; a new or cleared one starts on the service 4 Ps (Policies,
+  Procedures, People, Plant); + adds a category (alternating above and below the spine) or a
   cause. Flow chart: + adds the next step, Decision turns a step into a
   diamond, its right + adds a No side box that returns to the step above, and
   Link points its No arrow at any step. Pareto sorts with Other last, with a
