@@ -782,7 +782,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 });
                 // Factors sit evenly along an oval shaped like the canvas, grown only until no two boxes touch,
                 // so a wide screen keeps them near full size.
-                const aspect = Math.min(3, Math.max(1, canvas.clientWidth && canvas.clientHeight ? canvas.clientWidth / canvas.clientHeight : 1.6));
+                // Shape follows the canvas width and the screen-height canvas, not a canvas already grown to fit.
+                const aspect = Math.min(1.8, Math.max(1, canvas.clientWidth ? canvas.clientWidth / Math.max(320, innerHeight - 465) : 1.6));
                 const place = R => {
                     const rx = R * aspect, ry = R, pts = [];
                     for (let k = 0; k <= 720; k++) { const a = -Math.PI / 2 + k * Math.PI / 360; pts.push([rx * Math.cos(a), ry * Math.sin(a)]); }
@@ -1492,10 +1493,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             T.k = k; T.x = cx - wx * k; T.y = cy - wy * k;
             applyView();
         }
+        // Fit to the canvas width; the canvas grows taller (and the page scrolls) so height never forces a smaller zoom.
         function fit() {
-            const r = canvas.getBoundingClientRect();
+            canvas.style.height = '';
+            let r = canvas.getBoundingClientRect();
             if (!model || !model.nodes.length || !r.width) { T.x = 0; T.y = 0; T.k = 1; applyView(); return; }
-            T.k = Math.min(1, Math.max(ZOOM_MIN, Math.min((r.width - 32) / model.width, (r.height - 32) / model.height)));
+            const kw = Math.min(1, Math.max(ZOOM_MIN, (r.width - 32) / model.width)), need = model.height * kw + 32;
+            if (need > r.height) { canvas.style.height = `${Math.ceil(need)}px`; r = canvas.getBoundingClientRect(); }
+            T.k = Math.min(kw, Math.max(ZOOM_MIN, (r.height - 32) / model.height));
             T.x = (r.width - model.width * T.k) / 2;
             T.y = (r.height - model.height * T.k) / 2;
             applyView();

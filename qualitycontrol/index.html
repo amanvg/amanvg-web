@@ -1187,10 +1187,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             T.k = k; T.x = cx - wx * k; T.y = cy - wy * k;
             applyView();
         }
+        // Fit to the canvas width; the canvas grows taller (and the page scrolls) so height never forces a smaller zoom.
         function fit() {
-            const r = canvas.getBoundingClientRect();
+            canvas.style.height = '';
+            let r = canvas.getBoundingClientRect();
             if (!model || !model.nodes.length || !r.width) { T.x = 0; T.y = 0; T.k = 1; applyView(); return; }
-            T.k = Math.min(1, Math.max(ZOOM_MIN, Math.min((r.width - 32) / model.width, (r.height - 32) / model.height)));
+            const kw = Math.min(1, Math.max(ZOOM_MIN, (r.width - 32) / model.width)), need = model.height * kw + 32;
+            if (need > r.height) { canvas.style.height = `${Math.ceil(need)}px`; r = canvas.getBoundingClientRect(); }
+            T.k = Math.min(kw, Math.max(ZOOM_MIN, (r.height - 32) / model.height));
             T.x = (r.width - model.width * T.k) / 2;
             T.y = (r.height - model.height * T.k) / 2;
             applyView();

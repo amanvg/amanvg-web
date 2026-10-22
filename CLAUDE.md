@@ -89,7 +89,10 @@ A Reject means make no changes and ask what to adjust.
   is an editable grid beside a ranked bar chart. Tools without a root box
   (Affinity, Interrelationship, Matrix, Activity Network, and Flow Chart on
   `/qualitycontrol/`) carry an editable title band for the problem at the top
-  of the canvas; an empty band is left out of exports.
+  of the canvas; an empty band is left out of exports. On both pages a
+  diagram canvas grows taller (the page scrolls) so Fit only zooms below 100%
+  when the diagram is wider than the canvas; this is the one exception to key
+  content above the fold.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services and
