@@ -82,6 +82,11 @@ A Reject means make no changes and ask what to adjust.
   paste fills cells) left of a live inline-SVG chart. Exports use the light
   colours on white like `/kpitree/` (plots at 1200×675, diagrams at natural
   size).
+- `/qualityplanning/`: same shell and editing model as `/qualitycontrol/`
+  (clicking only, automatic layout, Copy/PNG/SVG and tool chips in the
+  masthead, tally strip only where a tool has a result). Affinity, Tree, PDPC,
+  Interrelationship, Matrix and Activity Network are canvases; Prioritization
+  is an editable grid beside a ranked bar chart.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services and
@@ -211,6 +216,18 @@ A Reject means make no changes and ask what to adjust.
   least-squares line and r; Check Sheet draws tallies with row and column
   totals and editable columns. Saved in `localStorage` (`qualitycontrol:data`,
   version 2, per-tool state); no Worker.
+- `/qualityplanning/` Quality Planning: the seven management and planning
+  tools. Affinity: groups with idea cards (drag cards between groups). Tree:
+  goal and means left to right. PDPC: objective, activity, risk and
+  countermeasure top-down, countermeasures marked feasible (○) or not (✕);
+  tally counts covered and open risks. Interrelationship: factors on a circle,
+  Link draws cause → effect (one arrow per pair), most outgoing is the key
+  driver and most incoming the key outcome. Matrix: click a cell to cycle
+  strong 9 / medium 3 / weak 1, with row and column totals. Prioritization:
+  weighted criteria × option scores, ranked. Activity Network: activities with
+  durations, + adds a successor or a parallel activity, Link sets "follows"
+  (loops refused), critical path method gives ES/EF/LS/LF and slack, critical
+  path in red. Saved in `localStorage` (`qualityplanning:data`, version 1).
 - `/spreadsheet/` Spreadsheet: workbook with formulas, sheets, charts and
   .xlsx/.csv open and save, saved in `localStorage` (`spreadsheet:workbook`).
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
