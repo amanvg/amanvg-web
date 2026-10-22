@@ -782,8 +782,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 });
                 // Factors sit evenly along an oval shaped like the canvas, grown only until no two boxes touch,
                 // so a wide screen keeps them near full size.
-                // Shape follows the canvas width and the screen-height canvas, not a canvas already grown to fit.
-                const aspect = Math.min(1.8, Math.max(1, canvas.clientWidth ? canvas.clientWidth / Math.max(320, innerHeight - 465) : 1.6));
+                // Shape follows the canvas.
+                const aspect = Math.min(3, Math.max(1, canvas.clientWidth && canvas.clientHeight ? canvas.clientWidth / canvas.clientHeight : 1.6));
                 const place = R => {
                     const rx = R * aspect, ry = R, pts = [];
                     for (let k = 0; k <= 720; k++) { const a = -Math.PI / 2 + k * Math.PI / 360; pts.push([rx * Math.cos(a), ry * Math.sin(a)]); }
@@ -810,10 +810,18 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     }
                     return true;
                 };
-                const clear = () => nodes.every((a_, i) => nodes.every((b_, j) => j <= i || Math.abs(a_.cx - b_.cx) >= W + 36 || Math.abs(a_.cy - b_.cy) >= (a_.h + b_.h) / 2 + 28))
-                    && links.every(([p_, q_]) => nodes.every(v => v === p_ || v === q_ || !hits(p_, q_, v)));
+                const boxesClear = () => nodes.every((a_, i) => nodes.every((b_, j) => j <= i || Math.abs(a_.cx - b_.cx) >= W + 36 || Math.abs(a_.cy - b_.cy) >= (a_.h + b_.h) / 2 + 28));
+                const arrowsClear = () => links.every(([p_, q_]) => nodes.every(v => v === p_ || v === q_ || !hits(p_, q_, v)));
+                // Grow until no boxes touch, then on to clear arrows off boxes only while the oval still fits the canvas at 100%;
+                // a dense diagram lets arrows pass behind boxes (hovering a factor picks out its own).
+                const maxH = Math.max(0, ...nodes.map(v => v.h)), cw = canvas.clientWidth || 1600, ch = canvas.clientHeight || 900;
+                const fitR = Math.min((cw - 32 - 2 * MARGIN - W - CTL - 8) / (2 * aspect), (ch - 32 - top - MARGIN - maxH - CTL / 2) / 2);
                 let R = 60;
-                if (n > 1) { place(R); while (!clear() && R < 1600) { R += 6; place(R); } }
+                if (n > 1) {
+                    place(R);
+                    while (!boxesClear() && R < 1600) { R += 6; place(R); }
+                    while (!arrowsClear() && R + 6 <= fitR) { R += 6; place(R); }
+                }
                 const minX = Math.min(0, ...nodes.map(v => v.cx - v.w / 2)), minY = Math.min(0, ...nodes.map(v => v.cy - v.h / 2));
                 nodes.forEach(v => { v.cx += MARGIN - minX; v.cy += top - minY; v.x = v.cx - v.w / 2; v.y = v.cy - v.h / 2; });
                 const byId = new Map(nodes.map(v => [v.id, v]));
@@ -822,15 +830,20 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             },
             draw(m, ui) {
                 const out = [];
-                m.edges.forEach(e => {
+                // Hovering or selecting a factor fades everything not linked to it; its effects draw in the accent, its causes in ink.
+                const fid = ui && !linkFrom ? [hoverId, sel].find(id => id && m.nodes.some(n => n.id === id)) : null;
+                const near = fid && new Set([fid, ...m.edges.flatMap(e => e.a.id === fid ? [e.b.id] : e.b.id === fid ? [e.a.id] : [])]);
+                const linked = e => fid && (e.a.id === fid || e.b.id === fid);
+                [...m.edges].sort((p, q) => linked(p) - linked(q)).forEach(e => {
                     const dx = e.b.cx - e.a.cx, dy = e.b.cy - e.a.cy, [x1, y1] = clipRect(e.a, dx, dy), [x2, y2] = clipRect(e.b, -dx, -dy);
-                    const id = `e:${e.i}`, selected = isSel(ui, id), c = selected ? P.sel : P.line, d = `M${r1(x1)} ${r1(y1)}L${r1(x2)} ${r1(y2)}`;
-                    out.push(path(d, c, selected ? 3 : 1.75) + arrowTo(x2, y2, Math.atan2(dy, dx), c));
+                    const id = `e:${e.i}`, selected = isSel(ui, id), on = linked(e), d = `M${r1(x1)} ${r1(y1)}L${r1(x2)} ${r1(y2)}`;
+                    const c = selected ? P.sel : on ? (e.a.id === fid ? P.accent : P.text) : P.line;
+                    out.push(`<g${fid && !on && !selected ? ' opacity=".12"' : ''}>${path(d, c, selected || on ? 3 : 1.75)}${arrowTo(x2, y2, Math.atan2(dy, dx), c)}</g>`);
                     if (ui) out.push(`<path d="${d}" stroke="transparent" stroke-width="14" fill="none" data-edge="${id}"/>`);
                 });
                 m.nodes.forEach(n => {
                     const selected = isSel(ui, n.id), ctls = showCtls(ui, n.id);
-                    out.push(ui ? `<g data-node="${n.id}">` : '<g>');
+                    out.push(ui ? `<g data-node="${n.id}"${near && !near.has(n.id) ? ' opacity=".3"' : ''}>` : '<g>');
                     if (ctls) out.push(`<rect x="${r1(n.x)}" y="${r1(n.y)}" width="${r1(n.w)}" height="${r1(n.h + CTL / 2 + 4)}" fill="transparent"/>`);
                     const fill = n.driver ? P.series : P.box, ink = n.driver ? P.bg : P.text;
                     const stroke = selected || linkFrom === n.id ? P.sel : n.outcome ? P.accent : n.driver ? P.series : P.line;
@@ -1493,14 +1506,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             T.k = k; T.x = cx - wx * k; T.y = cy - wy * k;
             applyView();
         }
-        // Fit to the canvas width; the canvas grows taller (and the page scrolls) so height never forces a smaller zoom.
+        // Fit the whole diagram in the canvas, never above 100%; the wheel zooms in from there.
         function fit() {
-            canvas.style.height = '';
-            let r = canvas.getBoundingClientRect();
+            const r = canvas.getBoundingClientRect();
             if (!model || !model.nodes.length || !r.width) { T.x = 0; T.y = 0; T.k = 1; applyView(); return; }
-            const kw = Math.min(1, Math.max(ZOOM_MIN, (r.width - 32) / model.width)), need = model.height * kw + 32;
-            if (need > r.height) { canvas.style.height = `${Math.ceil(need)}px`; r = canvas.getBoundingClientRect(); }
-            T.k = Math.min(kw, Math.max(ZOOM_MIN, (r.height - 32) / model.height));
+            T.k = Math.min(1, Math.max(ZOOM_MIN, Math.min((r.width - 32) / model.width, (r.height - 32) / model.height)));
             T.x = (r.width - model.width * T.k) / 2;
             T.y = (r.height - model.height * T.k) / 2;
             applyView();
@@ -1658,6 +1668,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     gesture.target = ok && ok.id;
                 }
                 if (ok) gesture.after = A().after(model, ok, wp);
+            } else if ((gesture.kind === 'node' || gesture.kind === 'edge') && Math.hypot(dx, dy) > 3) {
+                gesture = { kind: 'pan', start: gesture.start, x: T.x, y: T.y, moved: true };
+                board.classList.add('panning');
             }
         });
         function endPointer(e) {
@@ -1692,8 +1705,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         board.addEventListener('wheel', e => {
             e.preventDefault();
             const p = local(e);
-            if (e.ctrlKey || e.metaKey) zoomAt(p.x, p.y, T.k * Math.exp(-Math.max(-25, Math.min(25, e.deltaY)) * 0.01));
-            else { T.x -= e.deltaX; T.y -= e.deltaY; applyView(); }
+            const dy = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 400 : 1);
+            zoomAt(p.x, p.y, T.k * Math.exp(-Math.max(-100, Math.min(100, dy)) * (e.ctrlKey ? 0.01 : 0.002)));
         }, { passive: false });
 
         // ── Keyboard ────────────────────────────────────────────

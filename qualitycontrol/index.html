@@ -1187,14 +1187,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             T.k = k; T.x = cx - wx * k; T.y = cy - wy * k;
             applyView();
         }
-        // Fit to the canvas width; the canvas grows taller (and the page scrolls) so height never forces a smaller zoom.
+        // Fit the whole diagram in the canvas, never above 100%; the wheel zooms in from there.
         function fit() {
-            canvas.style.height = '';
-            let r = canvas.getBoundingClientRect();
+            const r = canvas.getBoundingClientRect();
             if (!model || !model.nodes.length || !r.width) { T.x = 0; T.y = 0; T.k = 1; applyView(); return; }
-            const kw = Math.min(1, Math.max(ZOOM_MIN, (r.width - 32) / model.width)), need = model.height * kw + 32;
-            if (need > r.height) { canvas.style.height = `${Math.ceil(need)}px`; r = canvas.getBoundingClientRect(); }
-            T.k = Math.min(kw, Math.max(ZOOM_MIN, (r.height - 32) / model.height));
+            T.k = Math.min(1, Math.max(ZOOM_MIN, Math.min((r.width - 32) / model.width, (r.height - 32) / model.height)));
             T.x = (r.width - model.width * T.k) / 2;
             T.y = (r.height - model.height * T.k) / 2;
             applyView();
@@ -1368,6 +1365,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     gesture.target = ok && ok.id;
                 }
                 if (ok) gesture.after = S.tool === 'fishbone' && fishFind(cur(), ok.id) && !fishFind(cur(), ok.id).cause ? wp.x < ok.x + ok.w / 2 : wp.y > ok.y + ok.h / 2;
+            } else if ((gesture.kind === 'node' || gesture.kind === 'edge') && Math.hypot(dx, dy) > 3) {
+                gesture = { kind: 'pan', start: gesture.start, x: T.x, y: T.y, moved: true };
+                board.classList.add('panning');
             }
         });
         function endPointer(e) {
@@ -1392,8 +1392,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         board.addEventListener('wheel', e => {
             e.preventDefault();
             const p = local(e);
-            if (e.ctrlKey || e.metaKey) zoomAt(p.x, p.y, T.k * Math.exp(-Math.max(-25, Math.min(25, e.deltaY)) * 0.01));
-            else { T.x -= e.deltaX; T.y -= e.deltaY; applyView(); }
+            const dy = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 400 : 1);
+            zoomAt(p.x, p.y, T.k * Math.exp(-Math.max(-100, Math.min(100, dy)) * (e.ctrlKey ? 0.01 : 0.002)));
         }, { passive: false });
 
         // ── Keyboard ────────────────────────────────────────────

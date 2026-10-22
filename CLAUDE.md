@@ -89,10 +89,11 @@ A Reject means make no changes and ask what to adjust.
   is an editable grid beside a ranked bar chart. Tools without a root box
   (Affinity, Interrelationship, Matrix, Activity Network, and Flow Chart on
   `/qualitycontrol/`) carry an editable title band for the problem at the top
-  of the canvas; an empty band is left out of exports. On both pages a
-  diagram canvas grows taller (the page scrolls) so Fit only zooms below 100%
-  when the diagram is wider than the canvas; this is the one exception to key
-  content above the fold.
+  of the canvas; an empty band is left out of exports. On both pages the
+  canvas fits the window: the scroll wheel zooms at the cursor, a drag pans
+  from anywhere (over lines too; a line is selected by a plain click), and Fit
+  shows the whole diagram. Hovering or selecting an Interrelationship factor
+  fades everything not linked to it.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services and
@@ -227,8 +228,8 @@ A Reject means make no changes and ask what to adjust.
   goal and means left to right. PDPC: objective, activity, risk and
   countermeasure top-down, countermeasures marked feasible (○) or not (✕);
   tally counts covered and open risks. Interrelationship: factors evenly along an oval
-  shaped like the canvas, grown only until no boxes touch and no arrow crosses
-  a box,
+  shaped like the canvas, grown until no boxes touch, then until no arrow crosses
+  a box only while it still fits the canvas at 100%,
   Link draws cause → effect (one arrow per pair), most outgoing is the key
   driver and most incoming the key outcome. Matrix: click a cell to cycle
   positive (+1) / neutral (0) / negative (−1) opinion, with signed net totals
