@@ -81,7 +81,8 @@ A Reject means make no changes and ask what to adjust.
   Delete, labelled shape chips (Start/End, Step, Decision, Input/Output; 2×2
   on phones), undo/redo, zoom, Fit, Example, Clear above the canvas).
   No free placement: a layered layout always runs top to bottom (a shape
-  centred over its branches, right-angle arrows, loop-backs up the right
+  centred over its branches, a join centred under what feeds it with one
+  shared arrow in, right-angle arrows, loop-backs up the right
   side). Zoom and Fit never go below 80% so labels stay legible; a chart too
   big for that opens at its top. Select a shape for + controls (below: next
   step, inserted when steps follow; right: step beside), and the canvas glides

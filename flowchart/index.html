@@ -756,6 +756,26 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 const x = down[0].x, L = row[i - 1], Rt = row[i + 1];
                 if ((!L || x - L.x >= sep(L, item)) && (!Rt || Rt.x - x >= sep(item, Rt))) item.x = x;
             });
+            // Last, centre a shape where paths join under the shapes that feed it; what hangs below moves with it.
+            const feeds = new Map(nodes.map(n => [n, new Set()]));
+            E.forEach(e => { if (!e.back && e.from !== e.to) feeds.get(N.get(e.to)).add(N.get(e.from)); });
+            const shift = new Map();
+            for (let r = 1; r < R; r++) {
+                const row = rows[r], was = row.map(it => it.x);
+                row.forEach((item, i) => {
+                    if (item.anchor || item.kind === 'b') return;
+                    const src = item.kind === 'n' ? [...feeds.get(item)] : [];
+                    const ups = item.nb.filter(([b]) => b.r === r - 1).map(([b]) => b);
+                    let x;
+                    if (src.length > 1) { const xs = src.map(n => n.x); x = (Math.min(...xs) + Math.max(...xs)) / 2; }
+                    else if (ups.length === 1 && shift.get(ups[0])) x = item.x + shift.get(ups[0]);
+                    else return;
+                    item.x = x;
+                    for (let j = i + 1; j < row.length; j++) row[j].x = Math.max(row[j].x, row[j - 1].x + sep(row[j - 1], row[j]));
+                    for (let j = i - 1; j >= 0; j--) row[j].x = Math.min(row[j].x, row[j + 1].x - sep(row[j], row[j + 1]));
+                });
+                row.forEach((it, i) => { if (it.x !== was[i]) shift.set(it, it.x - was[i]); });
+            }
             const all = rows.flat();
             const minX = Math.min(...all.map(it => it.x - it.w / 2));
             all.forEach(it => { it.x += MARGIN - minX; });
@@ -767,7 +787,13 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 e.hops = [];
                 if (!e.back) {
                     const seq = [u, ...e.chain, v];
-                    for (let i = 1; i < seq.length; i++) { const h = { a: seq[i - 1], b: seq[i], key: seq[i - 1] }; e.hops.push(h); hops[h.a.r].push(h); }
+                    // Arrows joining a shape share its run in, unless their source fans out.
+                    const join = fin(v).length > 1;
+                    for (let i = 1; i < seq.length; i++) {
+                        const a = seq[i - 1], b = seq[i], into = join && b === v && (a.kind !== 'n' || fout(a).length === 1);
+                        const h = { a, b, key: into ? v : a };
+                        e.hops.push(h); hops[h.a.r].push(h);
+                    }
                 } else {
                     for (let i = 1; i < e.chain.length; i++) { const h = { a: e.chain[i], b: e.chain[i - 1] }; h.key = h; e.hops.push(h); hops[h.a.r].push(h); }
                 }
