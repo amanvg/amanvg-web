@@ -78,11 +78,14 @@ A Reject means make no changes and ask what to adjust.
   inlined from Google Fonts (PNG at 3×).
 - `/flowchart/`: follows `DESIGN.md` like `/kpitree/` (Copy, PNG, SVG, JSON,
   Import in the masthead; toolbar of Next, Beside, Connect,
-  Delete, shape chips, undo/redo, zoom, Fit, Example, Clear above the canvas).
-  No free placement: a layered layout always runs top to bottom (main path
-  straight, branches beside it, right-angle arrows, loop-backs up the right
-  side). Select a shape for + controls (below: next step, inserted when steps
-  follow; right: step beside); drag a + onto a shape to connect, a shape onto
+  Delete, labelled shape chips (Start/End, Step, Decision, Input/Output; 2×2
+  on phones), undo/redo, zoom, Fit, Example, Clear above the canvas).
+  No free placement: a layered layout always runs top to bottom (a shape
+  centred over its branches, right-angle arrows, loop-backs up the right
+  side). Zoom and Fit never go below 80% so labels stay legible; a chart too
+  big for that opens at its top. Select a shape for + controls (below: next
+  step, inserted when steps follow; right: step beside), and the canvas glides
+  the new shape to its centre; drag a + onto a shape to connect, a shape onto
   another to move it before or after. Deleting a step joins its neighbours. A
   new step ending in "?" becomes a Decision; its branches take Yes, then No.
   Start/End is a stadium (diagram notation, not a UI pill), Decision ochre.

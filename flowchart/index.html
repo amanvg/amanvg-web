@@ -182,6 +182,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .toolbar{gap:8px 10px}
   .act{padding:6px 10px}
   .act.shape{padding:6px 8px}
+  #shapes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  #shapes .act:nth-child(odd){margin-left:0}
+  #shapes .act:nth-child(n+3){margin-top:-2px}
   .tgroup.end{margin-left:0}
   #add-next svg,#add-beside svg,#link svg,#delete svg{display:none}
   .canvas{height:clamp(420px,70vh,700px)}
@@ -255,10 +258,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                         <button class="act" type="button" id="delete" aria-keyshortcuts="Delete"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>Delete</button>
                     </div>
                     <div class="tgroup" role="group" aria-label="Shape" id="shapes">
-                        <button class="act shape" type="button" data-type="terminal" aria-pressed="false" aria-label="Start/End" title="Start/End"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="5"/></svg></button>
-                        <button class="act shape" type="button" data-type="process" aria-pressed="false" aria-label="Process" title="Process"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12"/></svg></button>
-                        <button class="act shape" type="button" data-type="decision" aria-pressed="false" aria-label="Decision" title="Decision"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 9-10 9-10-9z"/></svg></button>
-                        <button class="act shape" type="button" data-type="io" aria-pressed="false" aria-label="Input/Output" title="Input/Output"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h15l-5 12H2z"/></svg></button>
+                        <button class="act shape" type="button" data-type="terminal" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="5"/></svg>Start/End</button>
+                        <button class="act shape" type="button" data-type="process" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12"/></svg>Step</button>
+                        <button class="act shape" type="button" data-type="decision" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 9-10 9-10-9z"/></svg>Decision</button>
+                        <button class="act shape" type="button" data-type="io" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h15l-5 12H2z"/></svg>Input/Output</button>
                     </div>
                     <div class="tgroup">
                         <button class="act" type="button" id="undo" aria-label="Undo" aria-keyshortcuts="Control+Z Meta+Z"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
@@ -311,7 +314,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         const FS = 15, LH = 19, LFS = 12, SKEW = 16, GAPX = 44, GAPY = 52, CH = 10, LANE = 24, MARGIN = 32, CTL = 28;
         const TEXT_FONT = "'Work Sans', Arial, sans-serif";
         const PNG_SCALE = 3;
-        const ZOOM_MIN = 0.2, ZOOM_MAX = 2.5;
+        const ZOOM_MIN = 0.8, ZOOM_MAX = 2.5;  // 0.8 keeps 15px labels at 12px or more
 
         const $ = id => document.getElementById(id);
         const canvas = $('canvas'), board = $('board'), world = $('world'), editor = $('editor');
@@ -373,12 +376,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         // Each edit keeps the anchor shape where it was on screen, so the chart grows around it.
 
         function screenOf(id) {
+            stopPan();
             const n = id && view && view.N.get(id);
             return n && n.x != null ? { id, x: T.x + n.x * T.k, y: T.y + n.cy * T.k } : null;
         }
         function hold(pin) {
             const n = pin && view.N.get(pin.id);
             if (!n) return;
+            stopPan();
             T.x += pin.x - (T.x + n.x * T.k);
             T.y += pin.y - (T.y + n.cy * T.k);
             applyView();
@@ -452,6 +457,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             let nid;
             commit(() => { nid = newNode('process'); attachAfter(id, nid); }, id);
             startEdit({ kind: 'node', id: nid }, true, id);
+            centre(nid);
         }
         function addBeside(id) {
             if (!S.nodes[id]) return;
@@ -464,6 +470,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 S.edges.splice(i + 1, 0, newEdge(pe.from, nid, branchLabel(pe.from)));
             }, id);
             startEdit({ kind: 'node', id: nid }, true, id);
+            centre(nid);
         }
         function addRoot() {
             let id;
@@ -732,10 +739,20 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 item.x = i ? Math.max(best[0].x, row[i - 1].x + sep(row[i - 1], item)) : best[0].x;
                 for (let j = i + 1; j < row.length; j++) row[j].x = Math.max(row[j].x, row[j - 1].x + sep(row[j - 1], row[j]));
             }));
-            // Then lift a shape over its first arrow down, and loop-back lanes over their lower end, when there is room.
+            // Then centre a shape over its arrows down, pushing its row neighbours aside,
+            // and lift loop-back lanes over their lower end when there is room.
             for (let r = R - 2; r >= 0; r--) rows[r].forEach((item, i, row) => {
+                if (item.anchor) return;
+                if (item.kind === 'n') {
+                    const xs = item.nb.filter(([b]) => b.r === r + 1).map(([b]) => b.x);
+                    if (!xs.length) return;
+                    item.x = (Math.min(...xs) + Math.max(...xs)) / 2;
+                    for (let j = i + 1; j < row.length; j++) row[j].x = Math.max(row[j].x, row[j - 1].x + sep(row[j - 1], row[j]));
+                    for (let j = i - 1; j >= 0; j--) row[j].x = Math.min(row[j].x, row[j + 1].x - sep(row[j], row[j + 1]));
+                    return;
+                }
                 const down = item.nb.find(([b, w]) => b.r === r + 1 && (w >= 12 || item.kind === 'b'));
-                if (item.anchor || !down) return;
+                if (!down) return;
                 const x = down[0].x, L = row[i - 1], Rt = row[i + 1];
                 if ((!L || x - L.x >= sep(L, item)) && (!Rt || Rt.x - x >= sep(item, Rt))) item.x = x;
             });
@@ -966,6 +983,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             if (editing) placeEditor();
         }
         function zoomAt(cx, cy, k) {
+            stopPan();
             k = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, k));
             const wx = (cx - T.x) / T.k, wy = (cy - T.y) / T.k;
             T.k = k; T.x = cx - wx * k; T.y = cy - wy * k;
@@ -973,11 +991,41 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
         function fit() {
             const r = canvas.getBoundingClientRect(), s = model().size;
+            stopPan();
             if (!s.width) { T.x = 0; T.y = 0; T.k = 1; applyView(); return; }
             T.k = Math.min(1, Math.max(ZOOM_MIN, Math.min((r.width - 32) / s.width, (r.height - 32) / s.height)));
-            T.x = (r.width - s.width * T.k) / 2;
-            T.y = (r.height - s.height * T.k) / 2;
+            // Too big at the legible floor: show the top, centred on the first shape.
+            const top = view.nodes.reduce((a, b) => b.cy < a.cy || (b.cy === a.cy && b.x < a.x) ? b : a);
+            T.x = s.width * T.k <= r.width - 32 ? (r.width - s.width * T.k) / 2 : r.width / 2 - top.x * T.k;
+            T.y = s.height * T.k <= r.height - 32 ? (r.height - s.height * T.k) / 2 : 0;
             applyView();
+        }
+        // Glide a new shape to the middle of the canvas, so the next + is never off screen.
+        // Anything else that moves the view first lands the glide at its end.
+        let panFrame = 0, panTo = null;
+        function stopPan() {
+            if (!panFrame) return;
+            cancelAnimationFrame(panFrame);
+            panFrame = 0;
+            Object.assign(T, panTo);
+            applyView();
+        }
+        function centre(id) {
+            const n = view && view.N.get(id);
+            if (!n || n.x == null) return;
+            stopPan();
+            const r = canvas.getBoundingClientRect();
+            const from = { x: T.x, y: T.y }, to = panTo = { x: r.width / 2 - n.x * T.k, y: r.height / 2 - n.cy * T.k };
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) { Object.assign(T, to); applyView(); return; }
+            const t0 = performance.now(), ms = 220;
+            const step = now => {
+                const t = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - t, 3);
+                T.x = from.x + (to.x - from.x) * e;
+                T.y = from.y + (to.y - from.y) * e;
+                applyView();
+                panFrame = t < 1 ? requestAnimationFrame(step) : 0;
+            };
+            panFrame = requestAnimationFrame(step);
         }
         // Keep a shape and its + controls in view after it is added or selected by keyboard.
         function reveal(id) {
@@ -1124,6 +1172,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         board.addEventListener('pointerdown', e => {
             if (e.button !== 0 && e.pointerType === 'mouse') return;
+            stopPan();
             if (editing) finishEdit(true);
             canvas.focus({ preventScroll: true });
             pointers.set(e.pointerId, local(e));
@@ -1230,6 +1279,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         board.addEventListener('pointercancel', endPointer);
         board.addEventListener('wheel', e => {
             e.preventDefault();
+            stopPan();
             const p = local(e);
             if (e.ctrlKey || e.metaKey) zoomAt(p.x, p.y, T.k * Math.exp(-Math.max(-25, Math.min(25, e.deltaY)) * 0.01));
             else { T.x -= e.deltaX; T.y -= e.deltaY; applyView(); }
