@@ -76,6 +76,16 @@ A Reject means make no changes and ask what to adjust.
   purple, Measure blue); conflicts are red lines, companions double lines.
   Exports always use the light colours on white with Work Sans and Oswald
   inlined from Google Fonts (PNG at 3×).
+- `/flowchart/`: follows `DESIGN.md` like `/kpitree/` (Copy, PNG, SVG, JSON,
+  Import in the masthead; shape tally strip; toolbar of Next, Beside, Connect,
+  Delete, shape chips, undo/redo, zoom, Fit, Example, Clear above the canvas).
+  No free placement: a layered layout always runs top to bottom (main path
+  straight, branches beside it, right-angle arrows, loop-backs up the right
+  side). Select a shape for + controls (below: next step, inserted when steps
+  follow; right: step beside); drag a + onto a shape to connect, a shape onto
+  another to move it before or after. Deleting a step joins its neighbours. A
+  new step ending in "?" becomes a Decision; its branches take Yes, then No.
+  Start/End is a stadium (diagram notation, not a UI pill), Decision ochre.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services and
@@ -184,6 +194,9 @@ A Reject means make no changes and ask what to adjust.
   Frontier, due status from odometer and date against Nissan's schedule, cost
   and MPG ledgers; fill-ups and services are logged from the page once a device
   is Connected.
+- `/flowchart/` Flowchart: flowchart built by clicking, laid out
+  automatically, saved in `localStorage` (`flowchart:chart`, version 1:
+  nodes by id, ordered edges with labels).
 - `/kpitree/` KPI Tree: Bernie Smith-style KPI tree built by clicking (+ adds
   the next level or a sibling; Link connects a shared box or draws a conflict
   or companion line). Not connected it keeps one tree in `localStorage`
