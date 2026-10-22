@@ -71,11 +71,15 @@ A Reject means make no changes and ask what to adjust.
   purple, Measure blue); conflicts are red lines, companions double lines.
   Exports always use the light colours on white with Work Sans and Oswald
   inlined from Google Fonts (PNG at 3×).
-- `/qualitycontrol/`: follows `DESIGN.md` like `/commute/`; Copy, PNG and SVG
-  plus the seven tool chips (Flow Chart, Check Sheet, Pareto, Fishbone,
-  Scatter, Histogram, Control Chart) sit in the masthead, title and typed data
-  sit left, a tally strip and the auto-laid-out inline-SVG chart sit right and
-  update live. Nothing is dragged or placed by hand. Exports use the light
+- `/qualitycontrol/`: follows `DESIGN.md` like `/kpitree/` and is built the
+  same way, by clicking, never by typed syntax. Copy, PNG and SVG plus the
+  seven tool chips sit in the masthead, a tally strip and the toolbar sit
+  above the work area. Fishbone and Flow Chart are a full-width pan-and-zoom
+  canvas edited like the KPI tree (select a box for + controls, type or
+  double-click to edit, drag onto a box to move it, undo/redo, Fit, Example,
+  Clear) with automatic layout. Pareto, Histogram, Control Chart, Scatter and
+  Check Sheet are an editable grid (title, + Row, × per row, Enter moves down,
+  paste fills cells) left of a live inline-SVG chart. Exports use the light
   colours on white like `/kpitree/` (plots at 1200×675, diagrams at natural
   size).
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
@@ -195,17 +199,17 @@ A Reject means make no changes and ask what to adjust.
   Duplicate and Delete lists the trees on the Worker, edits autosave there,
   and `kpitree:open` remembers the open tree; a first connect to an empty
   server uploads the browser's saved tree.
-- `/qualitycontrol/` Quality Control: the seven basic quality tools drawn
-  from typed text. Flow chart: one step per line, `?` makes a decision and
-  `no: <step>` loops to a step (or adds a side box that returns). Check sheet:
-  a column header line then `Row: n, n, ...` tallies. Pareto: `Label: count`,
-  sorted with Other last, cumulative line and 80% rule. Fishbone: categories
-  with indented causes, alternating above and below the spine. Scatter: an
-  optional `X, Y` name line then pairs, least-squares line and r. Histogram:
-  values with optional `LSL`/`USL`/`Target` lines, Sturges bins, Cpk.
-  Control chart: individuals chart, limits at mean ± 2.66 × average moving
-  range, red beyond limits, amber on runs of 8. Saved in `localStorage`
-  (`qualitycontrol:data`, version 1); no Worker.
+- `/qualitycontrol/` Quality Control: the seven basic quality tools. Fishbone:
+  effect box, + adds a category (alternating above and below the spine) or a
+  cause. Flow chart: + adds the next step, Decision turns a step into a
+  diamond, its right + adds a No side box that returns to the step above, and
+  Link points its No arrow at any step. Pareto sorts with Other last, with a
+  cumulative line and 80% rule; Histogram uses Sturges bins with optional
+  LSL/Target/USL and Cpk; Control Chart is an individuals chart (mean ± 2.66 ×
+  average moving range, red beyond limits, amber on runs of 8); Scatter has a
+  least-squares line and r; Check Sheet draws tallies with row and column
+  totals and editable columns. Saved in `localStorage` (`qualitycontrol:data`,
+  version 2, per-tool state); no Worker.
 - `/spreadsheet/` Spreadsheet: workbook with formulas, sheets, charts and
   .xlsx/.csv open and save, saved in `localStorage` (`spreadsheet:workbook`).
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:

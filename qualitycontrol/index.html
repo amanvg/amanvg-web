@@ -123,29 +123,65 @@ main{flex:1;padding:40px var(--margin) 0}
 .exports button:disabled{opacity:.5;cursor:default}
 @media(hover:hover){.exports button:hover:not(:disabled):not(.done),.chips button:hover:not([aria-pressed="true"]){background:rgba(246,239,225,.14)}}
 
-.body{display:grid;grid-template-columns:minmax(320px,3fr) minmax(0,8fr);gap:2px;background:var(--head-line)}
-.panel{background:var(--card);min-width:0;padding:24px 28px 28px}
-.inputs{display:flex;flex-direction:column;gap:16px}
+.body{display:flex;flex-direction:column;gap:16px;padding:20px 28px 28px}
 .field{display:flex;flex-direction:column;gap:6px;min-width:0}
-.field>label{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;color:var(--muted)}
-input[type=text],textarea{width:100%;min-width:0;background:var(--well-bg);color:var(--text);border:1.5px solid var(--key);border-radius:0;padding:8px 12px;font-family:var(--body);font-size:18px;line-height:26px;caret-color:var(--accent)}
-input[type=text]{min-height:44px}
-textarea{resize:vertical;height:clamp(300px,calc(100vh - 470px),720px);font-family:var(--label);font-weight:600;font-size:14px;line-height:22px;tab-size:4;white-space:pre;overflow-wrap:normal}
-input:focus,textarea:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 1px var(--focus)}
-.tgroup{display:flex}
-.tgroup .act+.act{margin-left:-2px}
-.act{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;padding:6px 14px;border:2px solid var(--act-line);background:transparent;color:var(--act-fg);transition:background .15s,border-color .15s}
-@media(hover:hover){
-.act:hover{background:var(--act-hover)}
-:root[data-theme="dark"] .act:hover{border-color:var(--accent)}
-}
+.field>label,.section-label{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;color:var(--muted)}
+.field input[type=text]{width:100%;min-width:0;min-height:44px;background:var(--well-bg);color:var(--text);border:1.5px solid var(--key);border-radius:0;padding:8px 12px;font-family:var(--body);font-size:18px;line-height:26px;caret-color:var(--accent)}
+.field input[type=text]:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 1px var(--focus)}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 
-.results{display:flex;flex-direction:column;gap:20px}
 .signs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;overflow:hidden;border-bottom:1px solid var(--key)}
 .sign{min-width:0;box-shadow:-1px 0 0 var(--key),0 -1px 0 var(--key)}
 .sign-head{display:block;padding:10px 16px 0;font-family:var(--display);font-weight:700;font-size:16px;line-height:22px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .num{display:block;padding:2px 16px 10px;font-family:var(--display);font-weight:700;font-size:36px;line-height:44px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chart{border:1px solid var(--key);overflow-x:auto;display:flex;justify-content:safe center;align-items:flex-start}
+
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+.tgroup{display:flex}
+.tgroup .act+.act{margin-left:-2px}
+.tgroup .act:hover,.tgroup .act:focus-visible{position:relative;z-index:1}
+.act{font-family:var(--label);font-weight:700;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;min-width:44px;padding:6px 14px;border:2px solid var(--act-line);background:transparent;color:var(--act-fg);transition:background .15s,border-color .15s}
+.act svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.act:disabled{opacity:.4;cursor:default}
+.act[aria-pressed="true"]{background:var(--sel-bg);color:var(--sel-fg);border-color:var(--sel-bg);position:relative}
+.act.pri{background:var(--head-bg);color:var(--head-text);border-color:var(--head-line)}
+:root[data-theme="dark"] .act.pri{background:var(--accent);color:var(--sel-fg);border-color:#060a08}
+@media(hover:hover){
+.act:not(.pri):hover:not(:disabled):not([aria-pressed="true"]){background:var(--act-hover)}
+:root[data-theme="dark"] .act:hover:not(:disabled){border-color:var(--accent)}
+.act.pri:hover{filter:brightness(1.12)}
+}
+.zoom{min-width:52px;text-align:center;font-family:var(--label);font-weight:600;font-size:13px;line-height:44px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hint{font-family:var(--label);font-weight:600;font-size:14px;line-height:20px;color:var(--accent)}
+:root[data-theme="light"] .hint{color:#8f4e00}
+.push{margin-left:auto}
+
+.canvas{position:relative;height:clamp(420px,calc(100vh - 470px),1200px);border:1px solid var(--key);overflow:hidden;outline:none}
+.canvas:focus-visible{box-shadow:0 0 0 2px var(--focus)}
+#board{display:block;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+#board.panning{cursor:grabbing}
+#board.linking{cursor:crosshair}
+.canvas [data-node],.canvas [data-ctl]{cursor:pointer}
+.start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.editor{position:absolute;z-index:5;resize:none;overflow:hidden;border:2px solid var(--accent);border-radius:0;outline:none;font-family:'Work Sans',system-ui,sans-serif;font-weight:600;line-height:1.333;padding:0 6px}
+
+.work{display:grid;grid-template-columns:minmax(300px,3fr) minmax(0,8fr);gap:24px;align-items:start}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.gridwrap{border:1px solid var(--key);background:var(--well-bg);max-height:clamp(260px,calc(100vh - 590px),700px);overflow:auto}
+.side:has(.trio) .gridwrap{max-height:clamp(200px,calc(100vh - 670px),620px)}
+.grid{width:100%;border-collapse:collapse;font-family:var(--label);font-weight:600;font-size:14px;line-height:20px}
+.grid th{position:sticky;top:0;z-index:1;background:var(--card);color:var(--muted);text-align:left;font-weight:600;font-size:13px;padding:0;border-bottom:1.5px solid var(--key);white-space:nowrap}
+.grid th>span{display:block;padding:10px}
+.grid td{padding:0;border-bottom:1px solid var(--divider)}
+.grid td+td,.grid th+th{border-left:1px solid var(--divider)}
+.grid input{display:block;width:100%;min-width:56px;height:40px;border:0;border-radius:0;background:transparent;color:var(--text);font:inherit;padding:0 10px;font-variant-numeric:tabular-nums}
+.grid th input{color:var(--muted)}
+.grid input.n{text-align:right}
+.grid input:focus{outline:2px solid var(--focus);outline-offset:-2px}
+.grid .x{width:40px}
+.grid .x button{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.grid .x svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+@media(hover:hover){.grid .x button:hover{color:var(--text);background:var(--card)}}
+.chart{border:1px solid var(--key);overflow-x:auto;display:flex;justify-content:safe center;align-items:flex-start;min-width:0}
 .chart:empty{min-height:360px}
 .chart svg{display:block;flex:none;max-width:100%;height:auto}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -157,8 +193,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 @media(hover:hover){.sources a:hover{text-decoration-color:currentColor}}
 
 @media(max-width:960px){
-  .body{grid-template-columns:1fr}
-  textarea{height:300px}
+  .work{grid-template-columns:1fr}
+  .gridwrap{max-height:360px}
 }
 @media(max-width:700px){
   :root{--margin:16px}
@@ -169,10 +205,16 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .masthead{padding:12px 16px}
   .masthead h1{font-size:28px;line-height:36px}
   .exports button,.chips button{padding:8px 11px}
-  .panel{padding:16px}
-  .signs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .body{padding:16px}
+  .signs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
   .sign-head{padding:8px 12px 0;font-size:14px}
   .num{padding:0 12px 8px;font-size:28px;line-height:36px}
+  .toolbar{gap:8px 10px}
+  .act{padding:6px 10px}
+  .act.ico svg{display:none}
+  .tgroup{flex-wrap:wrap;row-gap:0}
+  .tgroup .act{margin-top:-2px}
+  .canvas{height:clamp(420px,70vh,700px)}
   .chart:empty{min-height:240px}
   body{margin:6px;min-height:calc(100vh - 12px)}
 }
@@ -233,26 +275,46 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <div class="chips" id="chips" role="group" aria-label="Tool"></div>
             </div>
             <div class="body" id="inputs">
-                <div class="panel inputs">
-                    <div class="field">
-                        <label for="title" id="title-label">Title</label>
-                        <input type="text" id="title" maxlength="120" autocomplete="off">
+                <div class="signs" id="tally"></div>
+                <div class="toolbar" role="toolbar" aria-label="Edit">
+                    <div class="tgroup" data-for="diagram">
+                        <button class="act ico" type="button" id="add-a"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span></span></button>
+                        <button class="act ico" type="button" id="add-b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span></span></button>
+                        <button class="act" type="button" id="decision" aria-pressed="false" data-only="flow">Decision</button>
+                        <button class="act ico" type="button" id="link" aria-pressed="false" data-only="flow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Link</button>
+                        <button class="act ico" type="button" id="delete" aria-keyshortcuts="Delete"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>Delete</button>
                     </div>
-                    <div class="field">
-                        <label for="data" id="data-label">Data</label>
-                        <textarea id="data" spellcheck="false" autocomplete="off"></textarea>
+                    <div class="tgroup" data-for="grid">
+                        <button class="act ico" type="button" id="add-row"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Row</button>
+                        <button class="act ico" type="button" id="add-col" data-only="check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Column</button>
                     </div>
                     <div class="tgroup">
+                        <button class="act" type="button" id="undo" aria-label="Undo" aria-keyshortcuts="Control+Z Meta+Z"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+                        <button class="act" type="button" id="redo" aria-label="Redo" aria-keyshortcuts="Control+Shift+Z Meta+Shift+Z"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
+                    </div>
+                    <div class="tgroup" data-for="diagram">
+                        <button class="act" type="button" id="zoom-out" aria-label="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+                        <button class="act" type="button" id="fit">Fit</button>
+                        <button class="act" type="button" id="zoom-in" aria-label="Zoom in"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+                    </div>
+                    <span class="zoom" id="zoom" aria-live="polite" data-for="diagram"></span>
+                    <span class="hint" id="hint" hidden>Pick a step</span>
+                    <div class="tgroup push">
                         <button class="act" type="button" id="example">Example</button>
                         <button class="act" type="button" id="clear">Clear</button>
                     </div>
                 </div>
-                <div class="panel results">
-                    <div class="signs" id="tally"></div>
+                <div class="canvas" id="canvas" tabindex="0" aria-label="Diagram canvas" aria-describedby="status">
+                    <svg id="board" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg>
+                    <div class="start" id="start" hidden><button class="act pri" type="button" id="add-first"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Step</button></div>
+                    <textarea class="editor" id="editor" rows="1" spellcheck="true" aria-label="Box label" hidden></textarea>
+                </div>
+                <div class="work" id="work">
+                    <div class="side" id="side"></div>
                     <div class="chart" id="chart" role="img" aria-label="Chart"></div>
                 </div>
+                <div class="sr" id="status" role="status"></div>
             </div>
-            <div class="sr" id="status" role="status"></div>
         </div>
     </main>
     <footer>
@@ -269,65 +331,74 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         const STORE_KEY = 'qualitycontrol:data';
         const TOOLS = [
-            { id: 'flow',      chip: 'Flow Chart',   title: 'Title',  data: 'Steps' },
-            { id: 'check',     chip: 'Check Sheet',  title: 'Title',  data: 'Tallies' },
-            { id: 'pareto',    chip: 'Pareto',       title: 'Title',  data: 'Counts' },
-            { id: 'fishbone',  chip: 'Fishbone',     title: 'Effect', data: 'Causes' },
-            { id: 'scatter',   chip: 'Scatter',      title: 'Title',  data: 'Pairs' },
-            { id: 'histogram', chip: 'Histogram',    title: 'Title',  data: 'Values' },
-            { id: 'control',   chip: 'Control Chart', title: 'Title', data: 'Values' },
+            { id: 'flow',      chip: 'Flow Chart',    kind: 'diagram', a: 'Step',     b: 'No branch' },
+            { id: 'check',     chip: 'Check Sheet',   kind: 'grid' },
+            { id: 'pareto',    chip: 'Pareto',        kind: 'grid' },
+            { id: 'fishbone',  chip: 'Fishbone',      kind: 'diagram', a: 'Category', b: 'Cause' },
+            { id: 'scatter',   chip: 'Scatter',       kind: 'grid' },
+            { id: 'histogram', chip: 'Histogram',     kind: 'grid' },
+            { id: 'control',   chip: 'Control Chart', kind: 'grid' },
         ];
-        const EXAMPLES = {
-            flow: { title: 'Order fulfilment', text: [
-                'Start', 'Receive order', 'Check stock', 'In stock? no: Order parts', 'Pick items',
-                'Inspect items', 'Pass inspection? no: Pick items', 'Pack and ship', 'End',
-            ].join('\n') },
-            check: { title: 'Paint defects by day', text: [
-                'Mon, Tue, Wed, Thu, Fri', 'Scratch: 4, 2, 6, 3, 5', 'Dent: 1, 0, 2, 1, 0',
-                'Misaligned label: 7, 9, 5, 8, 6', 'Missing screw: 2, 3, 1, 0, 2', 'Wrong colour: 0, 1, 0, 2, 1',
-            ].join('\n') },
-            pareto: { title: 'Customer complaints', text: [
-                'Late delivery: 48', 'Damaged packaging: 31', 'Wrong item: 19', 'Missing parts: 12',
-                'Billing error: 7', 'Rude service: 4', 'Other: 3',
-            ].join('\n') },
-            fishbone: { title: 'Late deliveries', text: [
-                'People', '    Untrained drivers', '    Short staffed on weekends',
-                'Methods', '    No route planning', '    Manual dispatch',
-                'Machines', '    Old trucks break down', '    Scanner outages',
-                'Materials', '    Packaging shortages',
-                'Measurement', '    No on-time tracking',
-                'Environment', '    Winter weather', '    Downtown traffic',
-            ].join('\n') },
-            scatter: { title: 'Oven temperature vs defects', text: [
-                'Temperature (°F), Defects',
-                '350, 4', '355, 5', '360, 5', '365, 7', '370, 6', '375, 8', '380, 9', '385, 9', '390, 11', '395, 10',
-                '400, 12', '405, 14', '410, 13', '415, 15', '420, 17', '425, 16', '430, 19', '435, 18', '440, 21', '445, 22',
-            ].join('\n') },
-            histogram: { title: 'Shaft diameter (mm)', text: [
-                'LSL 9.9', 'USL 10.1',
-                '10.02 9.98 10.01 9.97 10.04 10.00 9.99 10.03 9.95 10.06',
-                '10.01 9.98 10.02 10.00 9.96 10.05 10.01 9.99 10.03 9.98',
-                '10.00 10.02 9.94 10.07 10.01 9.99 10.00 10.03 9.97 10.02',
-                '10.04 9.98 10.01 10.00 9.96 10.02 9.99 10.08 10.01 9.97',
-                '10.00 10.03 9.98 10.01 9.93 10.02 10.00 9.99 10.05 10.01',
-            ].join('\n') },
-            control: { title: 'Fill weight (g)', text: [
-                '500.2', '499.1', '501.3', '500.6', '498.9', '500.0', '501.1', '499.6', '500.4', '499.8',
-                '502.0', '500.3', '499.5', '500.9', '506.8', '500.1', '499.4', '500.7', '501.0', '500.5',
-                '501.4', '501.8', '501.2', '501.6', '502.1',
-            ].join('\n') },
-        };
+        const toolOf = id => TOOLS.find(t => t.id === id);
+
+        function example(tool) {
+            if (tool === 'fishbone') {
+                const st = { seq: 0, effect: 'Late deliveries', cats: [] };
+                [['People', 'Untrained drivers', 'Short staffed on weekends'], ['Methods', 'No route planning', 'Manual dispatch'],
+                 ['Machines', 'Old trucks break down', 'Scanner outages'], ['Materials', 'Packaging shortages'],
+                 ['Measurement', 'No on-time tracking'], ['Environment', 'Winter weather', 'Downtown traffic']]
+                    .forEach(([label, ...causes]) => st.cats.push({ id: `n${++st.seq}`, label, causes: causes.map(c => ({ id: `n${++st.seq}`, label: c })) }));
+                return st;
+            }
+            if (tool === 'flow') {
+                const st = { seq: 0, steps: [] };
+                const add = (label, decision = false) => { const s = { id: `n${++st.seq}`, label, decision, no: null }; st.steps.push(s); return s; };
+                add('Start'); add('Receive order'); add('Check stock');
+                add('In stock?', true).no = { side: { id: `n${++st.seq}`, label: 'Order parts' } };
+                const pick = add('Pick items'); add('Inspect items');
+                add('Pass inspection?', true).no = { to: pick.id };
+                add('Pack and ship'); add('End');
+                return st;
+            }
+            if (tool === 'check') return { title: 'Paint defects by day', cols: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], rows: [
+                ['Scratch', '4', '2', '6', '3', '5'], ['Dent', '1', '0', '2', '1', '0'], ['Misaligned label', '7', '9', '5', '8', '6'],
+                ['Missing screw', '2', '3', '1', '0', '2'], ['Wrong colour', '0', '1', '0', '2', '1']] };
+            if (tool === 'pareto') return { title: 'Customer complaints', rows: [
+                ['Late delivery', '48'], ['Damaged packaging', '31'], ['Wrong item', '19'], ['Missing parts', '12'],
+                ['Billing error', '7'], ['Rude service', '4'], ['Other', '3']] };
+            if (tool === 'scatter') return { title: 'Oven temperature vs defects', x: 'Temperature (°F)', y: 'Defects',
+                rows: [[350, 4], [355, 5], [360, 5], [365, 7], [370, 6], [375, 8], [380, 9], [385, 9], [390, 11], [395, 10],
+                       [400, 12], [405, 14], [410, 13], [415, 15], [420, 17], [425, 16], [430, 19], [435, 18], [440, 21], [445, 22]].map(r => r.map(String)) };
+            if (tool === 'histogram') return { title: 'Shaft diameter (mm)', lsl: '9.9', usl: '10.1', target: '', rows: (
+                '10.02 9.98 10.01 9.97 10.04 10.00 9.99 10.03 9.95 10.06 10.01 9.98 10.02 10.00 9.96 10.05 10.01 9.99 10.03 9.98 '
+                + '10.00 10.02 9.94 10.07 10.01 9.99 10.00 10.03 9.97 10.02 10.04 9.98 10.01 10.00 9.96 10.02 9.99 10.08 10.01 9.97 '
+                + '10.00 10.03 9.98 10.01 9.93 10.02 10.00 9.99 10.05 10.01').split(' ').map(v => [v]) };
+            return { title: 'Fill weight (g)', rows: (
+                '500.2 499.1 501.3 500.6 498.9 500.0 501.1 499.6 500.4 499.8 502.0 500.3 499.5 500.9 506.8 500.1 499.4 500.7 501.0 500.5 '
+                + '501.4 501.8 501.2 501.6 502.1').split(' ').map(v => ['', v]) };
+        }
+        function blank(tool) {
+            if (tool === 'fishbone') return { seq: 0, effect: '', cats: [] };
+            if (tool === 'flow') return { seq: 0, steps: [] };
+            if (tool === 'check') return { title: '', cols: ['1', '2', '3'], rows: [['', '', '', '']] };
+            if (tool === 'scatter') return { title: '', x: 'X', y: 'Y', rows: [['', '']] };
+            if (tool === 'histogram') return { title: '', lsl: '', usl: '', target: '', rows: [['']] };
+            return { title: '', rows: [['', '']] };
+        }
+
         const PALETTES = {
-            light:  { bg: '#ede3ce', box: '#f6efe1', text: '#181c16', muted: '#4d5843', line: '#4d5843', grid: 'rgba(77,88,67,.22)', series: '#24422e', faint: 'rgba(36,66,46,.32)', accent: '#c06a12', bad: '#a63a24' },
-            dark:   { bg: '#1a271f', box: '#0a0f0c', text: '#f4ede2', muted: '#96a498', line: '#96a498', grid: '#2c3d32', series: '#7fbf95', faint: 'rgba(127,191,149,.32)', accent: '#e5933a', bad: '#ff8168' },
-            export: { bg: '#ffffff', box: '#ffffff', text: '#181c16', muted: '#4d5843', line: '#4d5843', grid: 'rgba(77,88,67,.22)', series: '#24422e', faint: 'rgba(36,66,46,.32)', accent: '#c06a12', bad: '#a63a24' },
+            light:  { bg: '#ede3ce', box: '#f6efe1', text: '#181c16', muted: '#4d5843', line: '#4d5843', grid: 'rgba(77,88,67,.22)', series: '#24422e', faint: 'rgba(36,66,46,.32)', accent: '#c06a12', bad: '#a63a24', sel: '#d9822b', selInk: '#181c16' },
+            dark:   { bg: '#1a271f', box: '#0a0f0c', text: '#f4ede2', muted: '#96a498', line: '#96a498', grid: '#2c3d32', series: '#7fbf95', faint: 'rgba(127,191,149,.32)', accent: '#e5933a', bad: '#ff8168', sel: '#e5933a', selInk: '#0e1511' },
+            export: { bg: '#ffffff', box: '#ffffff', text: '#181c16', muted: '#4d5843', line: '#4d5843', grid: 'rgba(77,88,67,.22)', series: '#24422e', faint: 'rgba(36,66,46,.32)', accent: '#c06a12', bad: '#a63a24', sel: '#d9822b', selInk: '#181c16' },
         };
         const TEXT = "'Work Sans', Arial, sans-serif";
         const HEAD = "'Oswald', 'Arial Narrow', Arial, sans-serif";
-        const FS = 13, LH = 18, MARGIN = 24, TITLE_H = 48;
+        const FS = 13, LH = 18, MARGIN = 24, TITLE_H = 48, CTL = 28;
         const EXPORT_W = 1200, EXPORT_H = 675, PNG_SCALE = 3;
+        const ZOOM_MIN = 0.2, ZOOM_MAX = 2.5;
 
         const $ = id => document.getElementById(id);
+        const canvas = $('canvas'), board = $('board'), world = $('world'), editor = $('editor'), side = $('side');
         let P = PALETTES.light;
 
         // ── Helpers ─────────────────────────────────────────────
@@ -336,7 +407,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         const r1 = v => Math.round(v * 10) / 10;
         const sum = a => a.reduce((s, v) => s + v, 0);
         const fmt = (v, d = 2) => Number.isFinite(v) ? Number(v.toFixed(d)).toLocaleString('en-US', { maximumFractionDigits: d }) : '—';
-        const num = s => { const v = Number(String(s).trim()); return String(s).trim() !== '' && Number.isFinite(v) ? v : null; };
+        const num = s => { const t = String(s == null ? '' : s).trim().replace(/,/g, ''); const v = Number(t); return t !== '' && Number.isFinite(v) ? v : null; };
 
         const mctx = document.createElement('canvas').getContext('2d');
         function tw(s, size = FS, font = TEXT, weight = 600) {
@@ -383,31 +454,25 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag;
         }
         const decimals = step => Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
-        const lines = text => text.split('\n').map(l => l.trim()).filter(Boolean);
-        // "Label: 12", "Label, 12" or "Label<tab>12" → { label, value }
-        function labelled(line) {
-            const m = line.match(/^(.*?)\s*[:,\t]\s*(-?\d[\d.]*|-?\.\d+)\s*$/);
-            return m && m[1] && num(m[1]) === null ? { label: m[1], value: Number(m[2]) } : null;
-        }
-        const numbers = line => line.split(/[\s,;]+/).map(num).filter(v => v !== null);
         function stats(xs) {
             const n = xs.length, mean = sum(xs) / n;
             const sd = n > 1 ? Math.sqrt(sum(xs.map(v => (v - mean) ** 2)) / (n - 1)) : 0;
             return { n, mean, sd, min: Math.min(...xs), max: Math.max(...xs) };
         }
-        // Y gridlines with labels on the left; returns { svg, width } so callers can size the margin first.
         function yLabelWidth(ticks, d) { return Math.max(...ticks.map(v => tw(fmt(v, d), 12))); }
         function yGrid(ticks, d, ys, x0, x1) {
             return ticks.map(v => ln(x0, ys(v), x1, ys(v), P.grid) + t(x0 - 8, ys(v) + 4, fmt(v, d), { size: 12, fill: P.muted, anchor: 'end' })).join('');
         }
+        const plusIcon = (x, y) => `<path d="M${r1(x + CTL / 2)} ${r1(y + 8)}v${CTL - 16}M${r1(x + 8)} ${r1(y + CTL / 2)}h${CTL - 16}" stroke="${P.selInk}" stroke-width="2.5" stroke-linecap="square"/>`;
+        const ctlBtn = (kind, id, x, y, label) => `<g data-ctl="${kind}" data-for="${id}" role="button" aria-label="${esc(label)}"><rect x="${r1(x)}" y="${r1(y)}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(x, y)}</g>`;
 
-        // ── Charts ──────────────────────────────────────────────
+        // ── Charts (grid tools) ─────────────────────────────────
         // Each returns { w, h, svg, signs } or null when there is nothing to draw.
 
         const CHARTS = {};
 
-        CHARTS.pareto = (text, W, H) => {
-            const rows = lines(text).map(labelled).filter(r => r && r.value > 0);
+        CHARTS.pareto = (st, W, H) => {
+            const rows = st.rows.map(r => ({ label: String(r[0] || '').trim(), value: num(r[1]) })).filter(r => r.label && r.value > 0);
             if (!rows.length) return null;
             const other = r => /^other$/i.test(r.label) ? 1 : 0;
             rows.sort((a, b) => other(a) - other(b) || b.value - a.value);
@@ -445,20 +510,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             ] };
         };
 
-        CHARTS.histogram = (text, W, H) => {
-            const spec = {}, xs = [];
-            lines(text).forEach(l => {
-                const m = l.match(/^(LSL|USL|Target)\s*[:=]?\s*(-?\d[\d.]*|-?\.\d+)$/i);
-                if (m) spec[m[1].toUpperCase()] = Number(m[2]); else xs.push(...numbers(l));
-            });
+        CHARTS.histogram = (st, W, H) => {
+            const xs = st.rows.map(r => num(r[0])).filter(v => v !== null);
             if (xs.length < 2) return null;
-            const st = stats(xs);
-            const step = niceStep(Math.max(st.max - st.min, 1e-9) / (Math.ceil(Math.log2(st.n)) + 1));
-            const start = Math.floor(st.min / step + 1e-9) * step;
-            const k = Math.max(1, Math.floor((st.max - start) / step + 1e-9) + 1);
+            const spec = { LSL: num(st.lsl), USL: num(st.usl), TARGET: num(st.target) };
+            const s0 = stats(xs);
+            const step = niceStep(Math.max(s0.max - s0.min, 1e-9) / (Math.ceil(Math.log2(s0.n)) + 1));
+            const start = Math.floor(s0.min / step + 1e-9) * step;
+            const k = Math.max(1, Math.floor((s0.max - start) / step + 1e-9) + 1);
             const bins = Array(k).fill(0);
             xs.forEach(v => { bins[Math.min(k - 1, Math.floor((v - start) / step + 1e-9))]++; });
-            const marks = [['LSL', spec.LSL, P.bad], ['Target', spec.TARGET, P.muted], ['USL', spec.USL, P.bad], ['Mean', st.mean, P.accent]].filter(m => Number.isFinite(m[1]));
+            const marks = [['LSL', spec.LSL, P.bad], ['Target', spec.TARGET, P.muted], ['USL', spec.USL, P.bad], ['Mean', s0.mean, P.accent]].filter(m => m[1] !== null && Number.isFinite(m[1]));
             const lo = Math.min(start, ...marks.map(m => m[1] - step / 2)), hi = Math.max(start + k * step, ...marks.map(m => m[1] + step / 2));
             const y = nice(0, Math.max(...bins) * 1.12, Math.min(5, Math.max(...bins))), dx = decimals(step);
             const ml = yLabelWidth(y.ticks, 0) + 18, mr = 24, mt = 30, mb = 40, plotW = W - ml - mr, plotH = H - mt - mb, base = mt + plotH;
@@ -466,8 +528,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             let s = yGrid(y.ticks, 0, ys, ml, ml + plotW);
             bins.forEach((c, i) => {
                 const x0 = xs_(start + i * step), x1 = xs_(start + (i + 1) * step);
-                if (c) s += `<rect x="${r1(x0)}" y="${r1(ys(c))}" width="${r1(x1 - x0)}" height="${r1(base - ys(c))}" fill="${P.series}" stroke="${P.bg}" stroke-width="1"/>`;
-                if (c) s += t((x0 + x1) / 2, ys(c) - 6, c, { size: 12, anchor: 'middle' });
+                if (!c) return;
+                s += `<rect x="${r1(x0)}" y="${r1(ys(c))}" width="${r1(x1 - x0)}" height="${r1(base - ys(c))}" fill="${P.series}" stroke="${P.bg}" stroke-width="1"/>`;
+                s += t((x0 + x1) / 2, ys(c) - 6, c, { size: 12, anchor: 'middle' });
             });
             const every = Math.max(1, Math.ceil((k + 1) * (tw(fmt(start, dx), 12) + 14) / plotW));
             for (let i = 0; i <= k; i += every) s += ln(xs_(start + i * step), base, xs_(start + i * step), base + 5, P.line) + t(xs_(start + i * step), base + 20, fmt(start + i * step, dx), { size: 12, anchor: 'middle', fill: P.muted });
@@ -480,36 +543,31 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             });
             s += ln(ml, base, ml + plotW, base, P.line, 1.5) + ln(ml, mt, ml, base, P.line);
             let cpk = null;
-            if (st.sd > 0 && (Number.isFinite(spec.LSL) || Number.isFinite(spec.USL))) {
-                cpk = Math.min(Number.isFinite(spec.USL) ? (spec.USL - st.mean) / (3 * st.sd) : Infinity, Number.isFinite(spec.LSL) ? (st.mean - spec.LSL) / (3 * st.sd) : Infinity);
+            if (s0.sd > 0 && (spec.LSL !== null || spec.USL !== null)) {
+                cpk = Math.min(spec.USL !== null ? (spec.USL - s0.mean) / (3 * s0.sd) : Infinity, spec.LSL !== null ? (s0.mean - spec.LSL) / (3 * s0.sd) : Infinity);
             }
             return { w: W, h: H, svg: s, signs: [
-                ['Values', st.n], ['Mean', fmt(st.mean, dx + 2)], ['Std dev', fmt(st.sd, dx + 2)], cpk === null ? ['Bins', k] : ['Cpk', fmt(cpk)],
+                ['Values', s0.n], ['Mean', fmt(s0.mean, dx + 2)], ['Std dev', fmt(s0.sd, dx + 2)], cpk === null ? ['Bins', k] : ['Cpk', fmt(cpk)],
             ] };
         };
 
-        CHARTS.control = (text, W, H) => {
-            const pts = [];
-            lines(text).forEach(l => {
-                const lab = labelled(l);
-                if (lab) pts.push(lab); else numbers(l).forEach(v => pts.push({ label: null, value: v }));
-            });
+        CHARTS.control = (st, W, H) => {
+            const pts = st.rows.map(r => ({ label: String(r[0] || '').trim(), value: num(r[1]) })).filter(p => p.value !== null);
             if (pts.length < 2) return null;
             pts.forEach((p, i) => { if (!p.label) p.label = String(i + 1); });
-            const xs = pts.map(p => p.value), n = xs.length, st = stats(xs);
+            const xs = pts.map(p => p.value), n = xs.length, s0 = stats(xs);
             const mr = sum(xs.slice(1).map((v, i) => Math.abs(v - xs[i]))) / (n - 1);
-            const ucl = st.mean + 2.66 * mr, lcl = st.mean - 2.66 * mr;
+            const ucl = s0.mean + 2.66 * mr, lcl = s0.mean - 2.66 * mr;
             // Western Electric rule 4: eight in a row on one side of the centre line.
             const run = Array(n).fill(false);
             for (let i = 0, j; i < n; i = j) {
-                const side = Math.sign(xs[i] - st.mean);
-                for (j = i + 1; j < n && Math.sign(xs[j] - st.mean) === side && side; j++);
-                if (side && j - i >= 8) for (let q = i; q < j; q++) run[q] = true;
+                const sd = Math.sign(xs[i] - s0.mean);
+                for (j = i + 1; j < n && Math.sign(xs[j] - s0.mean) === sd && sd; j++);
+                if (sd && j - i >= 8) for (let q = i; q < j; q++) run[q] = true;
             }
             const out = xs.map(v => v > ucl + 1e-9 || v < lcl - 1e-9);
-            const y = nice(Math.min(st.min, lcl), Math.max(st.max, ucl)), d = decimals(y.step);
-            const dd = Math.max(1, d + 1);
-            const right = [['UCL', ucl, P.bad], ['CL', st.mean, P.series], ['LCL', lcl, P.bad]];
+            const y = nice(Math.min(s0.min, lcl), Math.max(s0.max, ucl)), d = decimals(y.step), dd = Math.max(1, d + 1);
+            const right = [['UCL', ucl, P.bad], ['CL', s0.mean, P.series], ['LCL', lcl, P.bad]];
             const ml = yLabelWidth(y.ticks, d) + 18, mr_ = Math.max(...right.map(m => tw(`${m[0]} ${fmt(m[1], dd)}`, 12))) + 16;
             const mt = 16, mb = 40, plotW = W - ml - mr_, plotH = H - mt - mb, base = mt + plotH;
             const slot = plotW / n, xc = i => ml + slot * (i + 0.5), ys = v => base - (v - y.lo) / (y.hi - y.lo) * plotH;
@@ -519,21 +577,19 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             pts.forEach((p, i) => {
                 const c = out[i] ? P.bad : run[i] ? P.accent : P.series;
                 s += `<circle cx="${r1(xc(i))}" cy="${r1(ys(p.value))}" r="${out[i] ? 5.5 : 4}" fill="${c}" stroke="${P.bg}" stroke-width="1.5"/>`;
-                if (out[i]) s += t(xc(i), ys(p.value) + (p.value > st.mean ? -11 : 21), fmt(p.value, dd), { size: 12, anchor: 'middle', fill: P.bad });
+                if (out[i]) s += t(xc(i), ys(p.value) + (p.value > s0.mean ? -11 : 21), fmt(p.value, dd), { size: 12, anchor: 'middle', fill: P.bad });
             });
             const lw = Math.max(...pts.map(p => tw(p.label, 12))) + 12, every = Math.max(1, Math.ceil(lw / slot));
             pts.forEach((p, i) => { if (i % every === 0) s += ln(xc(i), base, xc(i), base + 5, P.line) + t(xc(i), base + 20, p.label, { size: 12, anchor: 'middle', fill: P.muted }); });
             s += ln(ml, base, ml + plotW, base, P.line, 1.5) + ln(ml, mt, ml, base, P.line);
             return { w: W, h: H, svg: s, signs: [
-                ['Points', n], ['Mean', fmt(st.mean, dd)], ['UCL', fmt(ucl, dd)], ['LCL', fmt(lcl, dd)], ['Out', out.filter(Boolean).length],
+                ['Points', n], ['Mean', fmt(s0.mean, dd)], ['UCL', fmt(ucl, dd)], ['LCL', fmt(lcl, dd)], ['Out', out.filter(Boolean).length],
             ] };
         };
 
-        CHARTS.scatter = (text, W, H) => {
-            const ls = lines(text);
-            let xName = '', yName = '';
-            if (ls.length && numbers(ls[0]).length < 2) { [xName, yName = ''] = ls.shift().split(/\s*[,\t]\s*/); }
-            const pts = ls.map(numbers).filter(v => v.length >= 2).map(v => [v[0], v[1]]);
+        CHARTS.scatter = (st, W, H) => {
+            const xName = String(st.x || '').trim(), yName = String(st.y || '').trim();
+            const pts = st.rows.map(r => [num(r[0]), num(r[1])]).filter(p => p[0] !== null && p[1] !== null);
             if (pts.length < 2) return null;
             const X = stats(pts.map(p => p[0])), Y = stats(pts.map(p => p[1]));
             const sxy = sum(pts.map(p => (p[0] - X.mean) * (p[1] - Y.mean)));
@@ -555,24 +611,15 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             s += ln(ml, base, ml + plotW, base, P.line, 1.5) + ln(ml, mt, ml, base, P.line, 1.5);
             if (xName) s += t(ml + plotW / 2, H - 8, xName, { anchor: 'middle', fill: P.muted });
             if (yName) s += t(14, mt + plotH / 2, yName, { anchor: 'middle', fill: P.muted, extra: ` transform="rotate(-90 14 ${r1(mt + plotH / 2)})"` });
-            return { w: W, h: H, svg: s, signs: [
-                ['Points', pts.length], ['r', fmt(r)], ['R²', fmt(r * r)], ['Slope', fmt(slope, 3)],
-            ] };
+            return { w: W, h: H, svg: s, signs: [['Points', pts.length], ['r', fmt(r)], ['R²', fmt(r * r)], ['Slope', fmt(slope, 3)]] };
         };
 
-        CHARTS.check = (text) => {
-            const ls = lines(text);
-            let cols = null;
-            if (ls.length && !ls[0].includes(':')) cols = ls.shift().split(/\s*[,\t]\s*/).filter(Boolean);
-            const rows = ls.map(l => {
-                const i = l.indexOf(':');
-                return i < 0 ? null : { label: l.slice(0, i).trim(), counts: l.slice(i + 1).split(/[\s,;]+/).filter(Boolean).map(v => Math.max(0, Math.round(num(v) || 0))) };
-            }).filter(r => r && r.label);
-            if (!rows.length) return null;
-            const nc = Math.max(cols ? cols.length : 0, ...rows.map(r => r.counts.length));
-            if (!nc) return null;
-            cols = Array.from({ length: nc }, (_, i) => (cols && cols[i]) || String(i + 1));
-            rows.forEach(r => { while (r.counts.length < nc) r.counts.push(0); r.total = sum(r.counts); });
+        CHARTS.check = (st) => {
+            const nc = st.cols.length;
+            const rows = st.rows.map(r => ({ label: String(r[0] || '').trim(), counts: st.cols.map((_, j) => Math.max(0, Math.round(num(r[j + 1]) || 0))) })).filter(r => r.label);
+            if (!rows.length || !nc) return null;
+            const cols = st.cols.map((c, j) => String(c || '').trim() || String(j + 1));
+            rows.forEach(r => { r.total = sum(r.counts); });
             const colTotals = cols.map((_, j) => sum(rows.map(r => r.counts[j]))), total = sum(colTotals);
             const PER = 3, GW = 28, PAD = 12;
             const groups = c => Math.ceil(c / 5);
@@ -602,10 +649,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 s += ln(x0, y, xEnd, y, P.line);
                 const ty = y + rowH[i] / 2 - (labLines[i].length - 1) * LH / 2 + 4;
                 labLines[i].forEach((l, q) => { s += t(x0 + PAD, ty + q * LH, l); });
-                r.counts.forEach((c, j) => {
-                    const lines_ = Math.ceil(groups(c) / PER);
-                    s += tally(xs[j] + PAD + 3, y + rowH[i] / 2 - (lines_ * 24 - 8) / 2, c);
-                });
+                r.counts.forEach((c, j) => { s += tally(xs[j] + PAD + 3, y + rowH[i] / 2 - (Math.ceil(groups(c) / PER) * 24 - 8) / 2, c); });
                 s += t(xEnd - totW / 2, y + rowH[i] / 2 + 5, fmt(r.total), { anchor: 'middle', weight: 700 });
                 y += rowH[i];
             });
@@ -614,169 +658,435 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             colTotals.forEach((c, j) => { s += t(xs[j] + colW[j] / 2, y + 25, fmt(c), { anchor: 'middle', weight: 700 }); });
             s += t(xEnd - totW / 2, y + 25, fmt(total), { anchor: 'middle', weight: 700 });
             xs.concat([xEnd]).forEach((x, j) => { s += ln(x, MARGIN, x, H - MARGIN, j === 0 || j === xs.length - 1 ? P.line : P.grid); });
-            s += ln(x0, MARGIN, x0, H - MARGIN, P.line) + `<rect x="${x0}" y="${MARGIN}" width="${r1(xEnd - x0)}" height="${H - MARGIN * 2}" fill="none" stroke="${P.line}" stroke-width="1.5"/>`;
+            s += `<rect x="${x0}" y="${MARGIN}" width="${r1(xEnd - x0)}" height="${H - MARGIN * 2}" fill="none" stroke="${P.line}" stroke-width="1.5"/>`;
             const peak = Math.max(...rows.flatMap(r => r.counts));
             return { w: W, h: H, svg: s, natural: true, signs: [['Total', fmt(total)], ['Rows', rows.length], ['Columns', nc], ['Peak cell', peak]] };
         };
 
-        CHARTS.fishbone = (text, W_, H_, effect) => {
-            const cats = [];
-            text.split('\n').forEach(raw => {
-                const label = raw.trim();
-                if (!label) return;
-                if (!/^\s/.test(raw) || !cats.length) cats.push({ label, causes: [] });
-                else cats[cats.length - 1].causes.push(label);
+        // ── Diagrams: layout ────────────────────────────────────
+        // A model is { nodes: [{ id, kind, x, y, w, h, ... }], width, height } with the geometry the drawing and editor share.
+
+        const MODELS = {};
+
+        MODELS.fishbone = st => {
+            const SLOPE = 0.5, CAUSE_W = 170, LAB_H = 34, GAP = 40, MINW = 72;
+            const cats = st.cats.map((c, i) => {
+                const causes = c.causes.map(x => {
+                    const lines = x.label ? wrap(x.label, CAUSE_W) : [''];
+                    return { id: x.id, label: x.label, lines, w: Math.max(MINW, ...lines.map(l => tw(l))) };
+                });
+                return { id: c.id, label: c.label, causes, side: i % 2 === 0 ? -1 : 1,
+                    labW: Math.max(tw((c.label || 'Category').toUpperCase(), 14, HEAD, 700) + 24, 110), rowH: causes.map(x => x.lines.length * LH + 16) };
             });
-            if (!cats.length) return null;
-            const SLOPE = 0.5, CAUSE_W = 170, LAB_H = 34, GAP = 40;
-            const top = cats.filter((_, i) => i % 2 === 0), bot = cats.filter((_, i) => i % 2 === 1);
-            cats.forEach(c => {
-                c.lines = c.causes.map(x => wrap(x, CAUSE_W));
-                c.rowH = c.lines.map(l => l.length * LH + 16);
-                c.labW = Math.max(tw(c.label, 14, HEAD, 700) + 24, 90);
-                c.need = LAB_H + 14 + sum(c.rowH) + 18;
-            });
-            const effLines = wrap(effect || 'Effect', 160, 15);
+            cats.forEach(c => { c.need = LAB_H + 14 + sum(c.rowH) + 18 + CTL / 2; });
+            const effLines = st.effect ? wrap(st.effect, 160, 15) : [''];
             const headW = 190, headH = Math.max(64, effLines.length * 20 + 26);
-            const hb = side => Math.max(headH / 2 + 30, ...side.map(c => c.need));
-            const hTop = hb(top), hBot = bot.length ? hb(bot) : headH / 2 + 10;
-            // Distance from the spine to each cause, stacked from the label towards the spine.
-            cats.forEach((c, i) => {
-                const hgt = i % 2 === 0 ? hTop : hBot;
-                let d = hgt - LAB_H - 14;
-                c.hgt = hgt;
+            const top = cats.filter(c => c.side < 0), bot = cats.filter(c => c.side > 0);
+            const hTop = Math.max(headH / 2 + 30, ...top.map(c => c.need)), hBot = Math.max(headH / 2 + 30, ...bot.map(c => c.need));
+            cats.forEach(c => {
+                c.hgt = c.side < 0 ? hTop : hBot;
+                let d = c.hgt - LAB_H - 14;
                 // Text sits above its line: on the top side that is away from the spine, below it towards it.
-                c.d = c.rowH.map(h => (d -= h, i % 2 === 0 ? d + 4 : d + h - 4));
-                const reach = Math.max(c.hgt * SLOPE + c.labW / 2, ...c.lines.map((l, q) => c.d[q] * SLOPE + Math.max(...l.map(x => tw(x))) + 22 + (i % 2 === 0 ? (l.length * LH) * SLOPE : 0)));
-                c.left = reach;
+                c.d = c.rowH.map(h => (d -= h, c.side < 0 ? d + 4 : d + h - 4));
+                c.left = Math.max(c.hgt * SLOPE + c.labW / 2 + 8, ...c.causes.map((x, q) => c.d[q] * SLOPE + x.w + 22 + (c.side < 0 ? x.lines.length * LH * SLOPE : 0)));
                 c.over = Math.max(0, c.labW / 2 - c.hgt * SLOPE);
             });
             // Bones in pairs (top, bottom) from the head leftwards.
-            const ncol = Math.ceil(cats.length / 2);
             let x = 0;
             const attach = [];
-            for (let col = 0; col < ncol; col++) {
+            for (let col = 0; col < Math.ceil(cats.length / 2); col++) {
                 const pair = [cats[col * 2], cats[col * 2 + 1]].filter(Boolean);
-                x -= (col === 0 ? 40 : GAP) + Math.max(...pair.map(c => c.over));
+                x -= (col === 0 ? 48 : GAP) + Math.max(...pair.map(c => c.over));
                 attach.push(x);
                 x -= Math.max(...pair.map(c => c.left));
             }
+            if (!cats.length) x = -80;
             const shift = MARGIN + 20 - x, spineY = MARGIN + hTop;
-            const headX = shift, W = headX + headW + MARGIN, H = spineY + hBot + MARGIN;
-            let s = ln(MARGIN, spineY, headX, spineY, P.line, 3) + head(headX, spineY, 'right', P.line);
-            s += `<rect x="${r1(headX)}" y="${r1(spineY - headH / 2)}" width="${headW}" height="${r1(headH)}" fill="${P.series}"/>`;
-            effLines.forEach((l, q) => { s += t(headX + headW / 2, spineY - (effLines.length - 1) * 10 + q * 20 + 5, l, { size: 15, anchor: 'middle', fill: P.bg }); });
+            const nodes = [{ id: 'effect', kind: 'effect', x: shift, y: spineY - headH / 2, w: headW, h: headH, lines: effLines, label: st.effect }];
+            const bones = [];
             cats.forEach((c, i) => {
-                const sgn = i % 2 === 0 ? -1 : 1, ax = shift + attach[Math.floor(i / 2)], tx = ax - c.hgt * SLOPE, ty = spineY + sgn * c.hgt;
-                s += ln(ax, spineY, tx, sgn < 0 ? ty + LAB_H : ty - LAB_H, P.line, 2);
-                s += `<rect x="${r1(tx - c.labW / 2)}" y="${r1(sgn < 0 ? ty : ty - LAB_H)}" width="${r1(c.labW)}" height="${LAB_H}" fill="${P.box}" stroke="${P.line}" stroke-width="1.5"/>`;
-                s += t(tx, (sgn < 0 ? ty : ty - LAB_H) + 23, c.label.toUpperCase(), { size: 14, font: HEAD, weight: 700, anchor: 'middle', extra: ' letter-spacing=".04em"' });
-                c.lines.forEach((l, q) => {
-                    const cy = spineY + sgn * c.d[q], bx = ax - c.d[q] * SLOPE;
+                const ax = shift + attach[Math.floor(i / 2)], tx = ax - c.hgt * SLOPE, ty = spineY + c.side * c.hgt;
+                const boxY = c.side < 0 ? ty : ty - LAB_H;
+                bones.push([ax, spineY, tx, c.side < 0 ? ty + LAB_H : ty - LAB_H]);
+                nodes.push({ id: c.id, kind: 'cat', x: tx - c.labW / 2, y: boxY, w: c.labW, h: LAB_H, side: c.side, label: c.label });
+                c.causes.forEach((z, q) => {
+                    const cy = spineY + c.side * c.d[q], bx = ax - c.d[q] * SLOPE, n = z.lines.length;
                     // Upper lines on the top side step left so they clear the slanted bone.
-                    const ends = l.map((z, k) => bx - 18 - (sgn < 0 ? ((l.length - 1 - k) * LH + 14) * SLOPE : 0));
-                    s += ln(Math.min(...l.map((z, k) => ends[k] - tw(z))), cy, bx, cy, P.muted, 1.25) + head(bx, cy, 'right', P.muted);
-                    l.forEach((z, k) => { s += t(ends[k], cy - 5 - (l.length - 1 - k) * LH, z, { anchor: 'end' }); });
+                    const ends = z.lines.map((_, k) => bx - 18 - (c.side < 0 ? ((n - 1 - k) * LH + 14) * SLOPE : 0));
+                    const x0 = Math.min(...z.lines.map((l, k) => ends[k] - Math.max(tw(l), n === 1 ? MINW : 0)));
+                    const yTop = cy - 5 - (n - 1) * LH - 14;
+                    nodes.push({ id: z.id, kind: 'cause', cat: c.id, side: c.side, x: x0, y: yTop, w: bx - x0, h: cy + 4 - yTop, cy, bx, ends, lines: z.lines, label: z.label });
                 });
             });
-            return { w: W, h: H, svg: s, natural: true, noTitle: true, signs: [
-                ['Categories', cats.length], ['Causes', sum(cats.map(c => c.causes.length))], ['Most in one', Math.max(...cats.map(c => c.causes.length))],
-            ] };
+            return { nodes, bones, spineY, headX: shift, width: shift + headW + MARGIN, height: spineY + hBot + MARGIN };
         };
 
-        CHARTS.flow = (text) => {
-            const steps = lines(text).map(l => {
-                const m = l.match(/^(.*\?)\s*(?:no\s*:\s*(.+))?$/i);
-                return m ? { label: m[1], decision: true, no: m[2] ? m[2].trim() : null } : { label: l };
+        MODELS.flow = st => {
+            const BW = 220, DW = 260, VG = 48, SIDE_W = 180, SIDE_GAP = 64;
+            const ids = new Set(st.steps.map(s => s.id));
+            const steps = st.steps.map((s, i) => {
+                const decision = !!s.decision, term = !decision && (i === 0 || i === st.steps.length - 1);
+                const lines = s.label ? wrap(s.label, decision ? 140 : BW - 28) : [''];
+                return { id: s.id, kind: 'step', label: s.label, decision, term, lines, w: decision ? DW : BW,
+                    h: decision ? Math.max(88, lines.length * LH + 58) : Math.max(44, lines.length * LH + 22), no: s.no };
             });
-            if (!steps.length) return null;
-            const BW = 220, DW = 260, VG = 40, SIDE_W = 180, SIDE_GAP = 56;
-            steps.forEach((st, i) => {
-                st.term = !st.decision && (i === 0 || i === steps.length - 1);
-                st.lines = wrap(st.label, st.decision ? 140 : BW - 28);
-                st.w = st.decision ? DW : BW;
-                st.h = st.decision ? Math.max(88, st.lines.length * LH + 58) : Math.max(44, st.lines.length * LH + 22);
-            });
-            const find = label => steps.findIndex(x => x.label.replace(/\?$/, '').toLowerCase() === label.replace(/\?$/, '').toLowerCase());
             let y = MARGIN;
-            steps.forEach(st => { st.y = y; st.cy = y + st.h / 2; y += st.h + VG; });
-            const cx = MARGIN + 20 + DW / 2;
-            const sideX = cx + DW / 2 + SIDE_GAP;
-            let sides = 0, lane = 0, loops = 0;
-            steps.forEach((st, i) => {
-                if (!st.no) return;
-                st.target = find(st.no);
-                if (st.target === i) st.target = -1;
-                if (st.target < 0) { sides++; loops++; st.side = { lines: wrap(st.no, SIDE_W - 28) }; st.side.h = Math.max(44, st.side.lines.length * LH + 22); }
-                else { st.lane = lane++; if (st.target < i) loops++; }
-            });
-            const laneX0 = (sides ? sideX + SIDE_W : cx + DW / 2) + 32;
-            const W = (lane ? laneX0 + (lane - 1) * 20 : sides ? sideX + SIDE_W : cx + DW / 2) + MARGIN + 20, H = y - VG + MARGIN;
-            const box = (x, yy, w, h, lns, term) => `<rect x="${r1(x - w / 2)}" y="${r1(yy)}" width="${w}" height="${r1(h)}"${term ? ` rx="${r1(h / 2)}"` : ''} fill="${term ? P.series : P.box}" stroke="${term ? P.series : P.line}" stroke-width="1.5"/>`
-                + lns.map((l, q) => t(x, yy + h / 2 - (lns.length - 1) * LH / 2 + q * LH + 5, l, { anchor: 'middle', fill: term ? P.bg : P.text })).join('');
-            let s = '';
-            steps.forEach((st, i) => {
-                if (st.decision) {
-                    s += `<polygon points="${r1(cx)},${r1(st.y)} ${r1(cx + DW / 2)},${r1(st.cy)} ${r1(cx)},${r1(st.y + st.h)} ${r1(cx - DW / 2)},${r1(st.cy)}" fill="${P.box}" stroke="${P.accent}" stroke-width="2"/>`;
-                    st.lines.forEach((l, q) => { s += t(cx, st.cy - (st.lines.length - 1) * LH / 2 + q * LH + 5, l, { anchor: 'middle' }); });
-                } else s += box(cx, st.y, st.w, st.h, st.lines, st.term);
-                if (i < steps.length - 1) {
-                    s += ln(cx, st.y + st.h, cx, st.y + st.h + VG - 1, P.line, 1.5) + head(cx, st.y + st.h + VG, 'down', P.line);
-                    if (st.decision) s += t(cx + 8, st.y + st.h + 16, 'Yes', { size: 12, fill: P.muted });
+            const cx = MARGIN + 20 + DW / 2, sideX = cx + DW / 2 + SIDE_GAP;
+            steps.forEach(s => { s.x = cx - s.w / 2; s.y = y; s.cy = y + s.h / 2; y += s.h + VG; });
+            let lane = 0, sides = 0, loops = 0;
+            const extra = [];
+            steps.forEach((s, i) => {
+                if (!s.decision || !s.no) return;
+                if (s.no.side) {
+                    sides++; loops++;
+                    const lines = s.no.side.label ? wrap(s.no.side.label, SIDE_W - 28) : [''], h = Math.max(44, lines.length * LH + 22);
+                    s.side = { id: s.no.side.id, kind: 'side', owner: s.id, label: s.no.side.label, lines, x: sideX, y: s.cy - h / 2, w: SIDE_W, h, cy: s.cy };
+                    s.side.back = i > 0 ? steps[i - 1] : null;
+                    extra.push(s.side);
+                } else if (s.no.to && ids.has(s.no.to) && s.no.to !== s.id) {
+                    s.jump = { to: steps.find(x => x.id === s.no.to), lane: lane++ };
+                    if (st.steps.findIndex(x => x.id === s.no.to) < i) loops++;
                 }
-                if (!st.no) return;
-                const rx = cx + DW / 2;
-                s += t(rx + 8, st.cy - 8, 'No', { size: 12, fill: P.muted });
-                if (st.side) {
-                    s += ln(rx, st.cy, sideX - 1, st.cy, P.line, 1.5) + head(sideX, st.cy, 'right', P.line);
-                    s += box(sideX + SIDE_W / 2, st.cy - st.side.h / 2, SIDE_W, st.side.h, st.side.lines, false);
-                    if (i > 0) {
-                        const prev = steps[i - 1], px = cx + prev.w / 2;
-                        s += pl([[sideX + SIDE_W / 2, st.cy - st.side.h / 2], [sideX + SIDE_W / 2, prev.cy], [px + 1, prev.cy]], P.line, 1.5) + head(px, prev.cy, 'left', P.line);
+            });
+            const laneX0 = (sides ? sideX + SIDE_W : cx + DW / 2) + 36;
+            const width = Math.max(cx + DW / 2 + CTL + 12, lane ? laneX0 + (lane - 1) * 20 : 0, sides ? sideX + SIDE_W : 0) + MARGIN + 20;
+            return { nodes: steps.concat(extra), steps, cx, laneX0, loops, width, height: Math.max(y - VG, MARGIN) + MARGIN + CTL / 2 };
+        };
+
+        // ── Diagrams: draw ──────────────────────────────────────
+
+        let sel = null;        // node id
+        let hoverId = null;    // node under a mouse pointer, which shows its + controls
+        let linkFrom = null;   // decision id while picking its No target
+        let editing = null;    // { id, isNew, prev }
+
+        const showCtls = (ui, id) => ui && !linkFrom && !editing && (sel === id || hoverId === id);
+        const ph = (ui, label, word) => label || (ui ? word : '');
+
+        function drawFishbone(m, ui) {
+            const out = [];
+            out.push(ln(MARGIN, m.spineY, m.headX - 1, m.spineY, P.line, 3) + head(m.headX, m.spineY, 'right', P.line));
+            m.bones.forEach(b => out.push(ln(b[0], b[1], b[2], b[3], P.line, 2)));
+            m.nodes.forEach(n => {
+                const selected = ui && sel === n.id, ctls = showCtls(ui, n.id);
+                out.push(ui ? `<g data-node="${n.id}">` : '<g>');
+                if (n.kind === 'effect') {
+                    if (ctls) out.push(`<rect x="${r1(n.x - CTL - 8)}" y="${r1(n.y)}" width="${r1(n.w + CTL + 8)}" height="${r1(n.h)}" fill="transparent"/>`);
+                    out.push(`<rect class="box" x="${r1(n.x)}" y="${r1(n.y)}" width="${n.w}" height="${r1(n.h)}" fill="${P.series}"${selected ? ` stroke="${P.sel}" stroke-width="3"` : ''}/>`);
+                    const words = n.label ? n.lines : [ph(ui, '', 'Effect')];
+                    words.forEach((l, q) => out.push(t(n.x + n.w / 2, n.y + n.h / 2 - (words.length - 1) * 10 + q * 20 + 5, l, { size: 15, anchor: 'middle', fill: P.bg, extra: n.label ? '' : ' opacity=".6"' })));
+                    if (ctls) out.push(ctlBtn('cat-end', n.id, n.x - CTL - 6, n.y + n.h / 2 + 8, 'Add Category'));
+                } else if (n.kind === 'cat') {
+                    if (ctls) out.push(`<rect x="${r1(n.x - CTL - 6)}" y="${r1(n.y)}" width="${r1(n.w + CTL * 2 + 12)}" height="${n.h}" fill="transparent"/>`);
+                    out.push(`<rect class="box" x="${r1(n.x)}" y="${r1(n.y)}" width="${r1(n.w)}" height="${n.h}" fill="${P.box}" stroke="${selected ? P.sel : P.line}" stroke-width="${selected ? 3 : 1.5}"/>`);
+                    out.push(t(n.x + n.w / 2, n.y + 23, (n.label || (ui ? 'Category' : '')).toUpperCase(), { size: 14, font: HEAD, weight: 700, anchor: 'middle', extra: ` letter-spacing=".04em"${n.label ? '' : ' opacity=".45"'}` }));
+                    if (ctls) {
+                        out.push(ctlBtn('cause', n.id, n.x + n.w + 6, n.y + n.h / 2 - CTL / 2, 'Add Cause'));
+                        out.push(ctlBtn('cat', n.id, n.x - CTL - 6, n.y + n.h / 2 - CTL / 2, 'Add Category'));
                     }
                 } else {
-                    const tg = steps[st.target], lx = laneX0 + st.lane * 20, ex = cx + tg.w / 2;
-                    s += pl([[rx, st.cy], [lx, st.cy], [lx, tg.cy], [ex + 1, tg.cy]], P.line, 1.5) + head(ex, tg.cy, 'left', P.line);
+                    out.push(`<rect x="${r1(n.x - 4)}" y="${r1(n.y - 2)}" width="${r1(n.w + 4)}" height="${r1(n.h + 2 + (ctls && n.side < 0 ? CTL / 2 : 0))}" fill="${selected ? P.sel : 'transparent'}"${selected ? ' fill-opacity=".22"' : ''}/>`);
+                    if (ctls && n.side > 0) out.push(`<rect x="${r1(n.x)}" y="${r1(n.y - CTL / 2)}" width="${r1(n.w)}" height="${CTL / 2}" fill="transparent"/>`);
+                    out.push(ln(n.x, n.cy, n.bx - 1, n.cy, selected ? P.sel : P.muted, selected ? 2 : 1.25) + head(n.bx, n.cy, 'right', selected ? P.sel : P.muted));
+                    const words = n.label ? n.lines : [ui ? 'Cause' : ''];
+                    words.forEach((z, k) => out.push(t(n.ends[k], n.cy - 5 - (words.length - 1 - k) * LH, z, { anchor: 'end', extra: n.label ? '' : ' opacity=".45"' })));
+                    if (ctls) out.push(ctlBtn('cause-after', n.id, n.x + n.w / 2 - CTL / 2, n.side < 0 ? n.cy + 6 : n.y - CTL - 2, 'Add Cause'));
+                }
+                out.push('</g>');
+            });
+            return out.join('');
+        }
+
+        function drawFlow(m, ui) {
+            const out = [], cx = m.cx;
+            const textIn = (n, fill) => {
+                const words = n.label ? n.lines : [ui ? (n.kind === 'side' ? 'Step' : n.decision ? 'Decision' : 'Step') : ''];
+                return words.map((l, q) => t(n.x + n.w / 2, n.y + n.h / 2 - (words.length - 1) * LH / 2 + q * LH + 5, l, { anchor: 'middle', fill, extra: n.label ? '' : ' opacity=".5"' })).join('');
+            };
+            const box = (n, selected) => {
+                const term = n.term;
+                return `<rect class="box" x="${r1(n.x)}" y="${r1(n.y)}" width="${n.w}" height="${r1(n.h)}"${term ? ` rx="${r1(n.h / 2)}"` : ''} fill="${term ? P.series : P.box}" stroke="${selected ? P.sel : term ? P.series : P.line}" stroke-width="${selected ? 3 : 1.5}"${ui && linkFrom === n.id ? ' stroke-dasharray="6 4"' : ''}/>` + textIn(n, term ? P.bg : P.text);
+            };
+            m.steps.forEach((s, i) => {
+                if (i < m.steps.length - 1) {
+                    out.push(ln(cx, s.y + s.h, cx, s.y + s.h + 47, P.line, 1.5) + head(cx, s.y + s.h + 48, 'down', P.line));
+                    if (s.decision) out.push(t(cx - 8, s.y + s.h + 20, 'Yes', { size: 12, fill: P.muted, anchor: 'end' }));
+                }
+                const rx = cx + s.w / 2;
+                if (s.side) {
+                    out.push(t(rx + 8, s.cy - 8, 'No', { size: 12, fill: P.muted }));
+                    out.push(ln(rx, s.cy, s.side.x - 1, s.cy, P.line, 1.5) + head(s.side.x, s.cy, 'right', P.line));
+                    if (s.side.back) {
+                        const b = s.side.back, px = cx + b.w / 2, sx = s.side.x + s.side.w / 2;
+                        out.push(pl([[sx, s.side.y], [sx, b.cy], [px + 1, b.cy]], P.line, 1.5) + head(px, b.cy, 'left', P.line));
+                    }
+                } else if (s.jump) {
+                    const tg = s.jump.to, lx = m.laneX0 + s.jump.lane * 20, ex = cx + tg.w / 2;
+                    out.push(t(rx + 8, s.cy - 8, 'No', { size: 12, fill: P.muted }));
+                    out.push(pl([[rx, s.cy], [lx, s.cy], [lx, tg.cy], [ex + 1, tg.cy]], P.line, 1.5) + head(ex, tg.cy, 'left', P.line));
                 }
             });
-            return { w: W, h: H, svg: s, natural: true, signs: [
-                ['Steps', steps.length], ['Decisions', steps.filter(x => x.decision).length], ['Loops', loops],
-            ] };
-        };
+            m.nodes.forEach(n => {
+                const selected = ui && sel === n.id, ctls = showCtls(ui, n.id);
+                out.push(ui ? `<g data-node="${n.id}">` : '<g>');
+                if (ctls) out.push(`<rect x="${r1(n.x)}" y="${r1(n.y)}" width="${r1(n.w + (n.decision && !n.no ? CTL + 8 : 0))}" height="${r1(n.h + CTL / 2)}" fill="transparent"/>`);
+                if (n.kind === 'step' && n.decision) {
+                    out.push(`<polygon class="box" points="${r1(cx)},${r1(n.y)} ${r1(cx + n.w / 2)},${r1(n.cy)} ${r1(cx)},${r1(n.y + n.h)} ${r1(cx - n.w / 2)},${r1(n.cy)}" fill="${P.box}" stroke="${selected ? P.sel : P.accent}" stroke-width="${selected ? 3.5 : 2}"${ui && linkFrom === n.id ? ' stroke-dasharray="6 4"' : ''}/>` + textIn(n, P.text));
+                } else out.push(box(n, selected));
+                if (ctls && n.kind === 'step') {
+                    out.push(ctlBtn('step-after', n.id, cx - CTL / 2, n.y + n.h - CTL / 2, 'Add Step'));
+                    if (n.decision && !n.no) out.push(ctlBtn('side', n.id, n.x + n.w + 6, n.cy - CTL / 2, 'Add No branch'));
+                }
+                out.push('</g>');
+            });
+            return out.join('');
+        }
+
+        const DRAW = { fishbone: drawFishbone, flow: drawFlow };
 
         // ── State ───────────────────────────────────────────────
 
         function load() {
             let saved = null;
             try { saved = JSON.parse(localStorage.getItem(STORE_KEY)); } catch (e) {}
-            const st = { version: 1, tool: 'pareto', tools: {} };
-            TOOLS.forEach(tl => { st.tools[tl.id] = { ...EXAMPLES[tl.id] }; });
-            if (saved && saved.version === 1) {
-                if (TOOLS.some(tl => tl.id === saved.tool)) st.tool = saved.tool;
-                TOOLS.forEach(tl => {
-                    const v = saved.tools && saved.tools[tl.id];
-                    if (v && typeof v.text === 'string') st.tools[tl.id] = { title: String(v.title || ''), text: v.text };
-                });
+            const st = { version: 2, tool: 'fishbone', tools: {} };
+            TOOLS.forEach(tl => { st.tools[tl.id] = example(tl.id); });
+            if (saved && saved.version === 2 && saved.tools) {
+                if (toolOf(saved.tool)) st.tool = saved.tool;
+                TOOLS.forEach(tl => { if (saved.tools[tl.id] && typeof saved.tools[tl.id] === 'object') st.tools[tl.id] = saved.tools[tl.id]; });
             }
             const hash = location.hash.slice(1);
-            if (TOOLS.some(tl => tl.id === hash)) st.tool = hash;
+            if (toolOf(hash)) st.tool = hash;
             return st;
         }
         let S = load();
+        const cur = () => S.tools[S.tool];
+        const kind = () => toolOf(S.tool).kind;
         let saveTimer = null;
         function save() {
             clearTimeout(saveTimer);
             saveTimer = setTimeout(() => { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) {} }, 250);
         }
 
+        // ── Edits (undoable, per tool) ──────────────────────────
+
+        const stacks = {};
+        const stack = () => stacks[S.tool] || (stacks[S.tool] = { undo: [], redo: [] });
+        const snap = () => JSON.stringify(cur());
+        function pushUndo(s) {
+            const k = stack();
+            k.undo.push(s);
+            if (k.undo.length > 200) k.undo.shift();
+            k.redo.length = 0;
+        }
+        function commit(fn, opts = {}) {
+            pushUndo(snap());
+            fn(cur());
+            if (opts.grid) buildGrid();
+            render();
+            if (kind() === 'diagram' && !opts.keepView) fit();
+        }
+        function restore(from, to) {
+            const k = stack();
+            if (!k[from].length) return;
+            k[to].push(snap());
+            S.tools[S.tool] = JSON.parse(k[from].pop());
+            fixSelection();
+            if (kind() === 'grid') buildGrid();
+            render();
+            if (kind() === 'diagram') fit();
+        }
+        const undo = () => restore('undo', 'redo'), redo = () => restore('redo', 'undo');
+
+        const newId = st => `n${++st.seq}`;
+        function fishFind(st, id) {
+            for (const c of st.cats) {
+                if (c.id === id) return { cat: c };
+                const i = c.causes.findIndex(x => x.id === id);
+                if (i >= 0) return { cat: c, cause: c.causes[i], i };
+            }
+            return null;
+        }
+        const stepIdx = (st, id) => st.steps.findIndex(s => s.id === id);
+        const sideOwner = (st, id) => st.steps.find(s => s.no && s.no.side && s.no.side.id === id);
+        function exists(id) {
+            const st = cur();
+            if (S.tool === 'fishbone') return id === 'effect' || !!fishFind(st, id);
+            if (S.tool === 'flow') return stepIdx(st, id) >= 0 || !!sideOwner(st, id);
+            return false;
+        }
+        function labelOf(st, id) {
+            if (S.tool === 'fishbone') { if (id === 'effect') return st.effect; const f = fishFind(st, id); return f ? (f.cause || f.cat).label : ''; }
+            const i = stepIdx(st, id);
+            if (i >= 0) return st.steps[i].label;
+            const o = sideOwner(st, id);
+            return o ? o.no.side.label : '';
+        }
+        function setLabel(st, id, v) {
+            if (S.tool === 'fishbone') { if (id === 'effect') st.effect = v; else { const f = fishFind(st, id); if (f) (f.cause || f.cat).label = v; } return; }
+            const i = stepIdx(st, id);
+            if (i >= 0) { st.steps[i].label = v; return; }
+            const o = sideOwner(st, id);
+            if (o) o.no.side.label = v;
+        }
+        function fixSelection() {
+            if (sel && !exists(sel)) sel = null;
+            if (linkFrom && !exists(linkFrom)) linkFrom = null;
+        }
+
+        function addCategory(afterId) {
+            let id;
+            const prev = sel;
+            commit(st => {
+                id = newId(st);
+                const f = afterId && afterId !== 'effect' ? fishFind(st, afterId) : null;
+                st.cats.splice(f ? st.cats.indexOf(f.cat) + 1 : st.cats.length, 0, { id, label: '', causes: [] });
+            });
+            startEdit(id, true, prev);
+        }
+        function addCause(refId) {
+            if (!fishFind(cur(), refId)) return;
+            let id;
+            commit(st => {
+                const f = fishFind(st, refId);
+                id = newId(st);
+                if (f.cause) f.cat.causes.splice(f.i + 1, 0, { id, label: '' }); else f.cat.causes.push({ id, label: '' });
+            });
+            startEdit(id, true, refId);
+        }
+        function addStep(afterId) {
+            let id;
+            const prev = sel;
+            commit(st => {
+                id = newId(st);
+                let i = st.steps.length;
+                if (afterId) {
+                    let j = stepIdx(st, afterId);
+                    if (j < 0) { const o = sideOwner(st, afterId); j = o ? st.steps.indexOf(o) : -1; }
+                    if (j >= 0) i = j + 1;
+                }
+                st.steps.splice(i, 0, { id, label: '', decision: false, no: null });
+            });
+            startEdit(id, true, prev);
+        }
+        function addSide(decId) {
+            const s = cur().steps[stepIdx(cur(), decId)];
+            if (!s || !s.decision || (s.no && s.no.side)) return;
+            let id;
+            commit(st => { id = newId(st); st.steps[stepIdx(st, decId)].no = { side: { id, label: '' } }; });
+            startEdit(id, true, decId);
+        }
+        function toggleDecision(id) {
+            if (stepIdx(cur(), id) < 0) return;
+            commit(st => { const s = st.steps[stepIdx(st, id)]; s.decision = !s.decision; if (!s.decision) s.no = null; }, { keepView: true });
+        }
+        function removeNode(id) {
+            const st = cur();
+            let next = null;
+            if (S.tool === 'fishbone') {
+                if (id === 'effect') return;
+                const f = fishFind(st, id);
+                if (!f) return;
+                if (f.cause) { const sib = f.cat.causes[f.i - 1] || f.cat.causes[f.i + 1]; next = sib ? sib.id : f.cat.id; }
+                else { const i = st.cats.indexOf(f.cat); next = (st.cats[i - 1] || st.cats[i + 1] || { id: 'effect' }).id; }
+                commit(s => {
+                    const g = fishFind(s, id);
+                    if (g.cause) g.cat.causes.splice(g.i, 1); else s.cats.splice(s.cats.indexOf(g.cat), 1);
+                });
+            } else {
+                const o = sideOwner(st, id);
+                if (o) { next = o.id; commit(s => { sideOwner(s, id).no = null; }); }
+                else {
+                    const i = stepIdx(st, id);
+                    if (i < 0) return;
+                    next = (st.steps[i - 1] || st.steps[i + 1] || {}).id || null;
+                    commit(s => {
+                        s.steps.splice(stepIdx(s, id), 1);
+                        s.steps.forEach(x => { if (x.no && x.no.to === id) x.no = null; });
+                    });
+                }
+            }
+            sel = next && exists(next) ? next : null;
+            render();
+        }
+
+        // Drop D on T. Fishbone: a cause onto a cause goes beside it, onto a category goes under it; categories reorder. Flow: steps reorder.
+        function canDrop(d, tId) {
+            const st = cur();
+            if (!tId || d === tId) return false;
+            if (S.tool === 'fishbone') {
+                const D = fishFind(st, d), T_ = fishFind(st, tId);
+                if (!D || !T_) return false;
+                return D.cause ? true : !T_.cause;
+            }
+            return stepIdx(st, d) >= 0 && stepIdx(st, tId) >= 0;
+        }
+        function move(d, tId, after) {
+            if (!canDrop(d, tId)) return false;
+            commit(st => {
+                if (S.tool === 'fishbone') {
+                    const D = fishFind(st, d);
+                    if (D.cause) {
+                        D.cat.causes.splice(D.i, 1);
+                        const T_ = fishFind(st, tId);
+                        if (T_.cause) T_.cat.causes.splice(T_.i + (after ? 1 : 0), 0, D.cause);
+                        else T_.cat.causes.push(D.cause);
+                    } else {
+                        st.cats.splice(st.cats.indexOf(D.cat), 1);
+                        const j = st.cats.indexOf(fishFind(st, tId).cat);
+                        st.cats.splice(j + (after ? 1 : 0), 0, D.cat);
+                    }
+                } else {
+                    const [s] = st.steps.splice(stepIdx(st, d), 1);
+                    const j = stepIdx(st, tId);
+                    st.steps.splice(j + (after ? 1 : 0), 0, s);
+                }
+            });
+            return true;
+        }
+
+        function startLink() {
+            if (linkFrom) { linkFrom = null; render(); return; }
+            const i = sel ? stepIdx(cur(), sel) : -1;
+            if (i < 0 || !cur().steps[i].decision) return;
+            linkFrom = sel;
+            render();
+            canvas.focus({ preventScroll: true });
+        }
+        function pickTarget(id) {
+            const from = linkFrom;
+            linkFrom = null;
+            if (!from || id === from || stepIdx(cur(), id) < 0) { render(); return; }
+            sel = from;
+            commit(st => { st.steps[stepIdx(st, from)].no = { to: id }; });
+        }
+
         // ── Render ──────────────────────────────────────────────
 
-        function build(pal, W, H) {
+        const palette = () => PALETTES[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'];
+        let model = null, lastAnnounce = '';
+        const T = { x: 0, y: 0, k: 1 };
+
+        function diagramSigns(m) {
+            if (S.tool === 'fishbone') {
+                const st = cur(), causes = st.cats.map(c => c.causes.length);
+                return [['Categories', st.cats.length], ['Causes', sum(causes)], ['Most in one', causes.length ? Math.max(...causes) : 0]];
+            }
+            return [['Steps', m.steps.length], ['Decisions', m.steps.filter(s => s.decision).length], ['Loops', m.loops]];
+        }
+
+        function chartSize() {
+            const box = $('chart'), avail = Math.max(300, box.clientWidth - 2);
+            const W = Math.max(560, avail), H = Math.round(Math.max(380, Math.min(W * 0.62, innerHeight - 500, 760)));
+            return { avail, W, H };
+        }
+        // The chart with its title band, for screen and export.
+        function buildChart(pal, W, H) {
             P = pal;
-            const cur = S.tools[S.tool], title = cur.title.trim();
-            const out = CHARTS[S.tool](cur.text, W, H - (title ? TITLE_H : 0), title);
+            const st = cur(), title = String(st.title || '').trim();
+            const out = CHARTS[S.tool](st, W, H - (title ? TITLE_H : 0));
             if (!out) return null;
-            const th = title && !out.noTitle ? TITLE_H : 0;
+            const th = title ? TITLE_H : 0;
             const tl = th ? wrap(title.toUpperCase(), out.w - MARGIN * 2, 22)[0] : '';
             const inner = (th ? `<text x="${MARGIN}" y="34" font-family="${HEAD}" font-size="22" font-weight="700" letter-spacing=".04em" fill="${P.text}">${esc(tl)}</text>` : '')
                 + `<g transform="translate(0,${th})">${out.svg}</g>`;
@@ -784,51 +1094,438 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
 
         function render() {
-            const tool = TOOLS.find(tl => tl.id === S.tool);
-            document.querySelectorAll('#chips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tool === S.tool));
-            $('title-label').textContent = tool.title;
-            $('data-label').textContent = tool.data;
-            const box = $('chart'), avail = Math.max(320, box.clientWidth - 2);
-            const W = Math.max(560, avail), H = Math.round(Math.max(380, Math.min(W * 0.62, innerHeight - 420, 760)));
-            const out = build(PALETTES[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'], W, H);
-            box.innerHTML = out ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${r1(out.w)} ${r1(out.h)}" width="${r1(out.natural ? Math.min(out.w, Math.max(avail, out.w * 0.6)) : out.w)}" style="background:${P.bg}${out.natural ? ';max-width:none' : ''}"><rect width="100%" height="100%" fill="${P.bg}"/>${out.inner}</svg>` : '';
-            box.setAttribute('aria-label', `${tool.chip}${out ? '' : ', empty'}`);
-            const signs = out ? out.signs : [['—', '—']];
+            fixSelection();
+            const tool = toolOf(S.tool), diagram = tool.kind === 'diagram';
+            document.querySelectorAll('#chips button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === S.tool)));
+            canvas.hidden = !diagram;
+            $('work').hidden = diagram;
+            document.querySelectorAll('[data-for]').forEach(el => { el.hidden = el.dataset.for !== tool.kind; });
+            document.querySelectorAll('[data-only]').forEach(el => { el.hidden = el.dataset.only !== S.tool; });
+            let signs, has;
+            if (diagram) {
+                P = palette();
+                model = MODELS[S.tool](cur());
+                world.innerHTML = DRAW[S.tool](model, true);
+                canvas.style.background = P.bg;
+                applyView();
+                has = model.nodes.length > 0;
+                signs = diagramSigns(model);
+                $('start').hidden = has;
+                $('add-a').querySelector('span').textContent = tool.a;
+                $('add-b').querySelector('span').textContent = tool.b;
+                const st = cur(), sn = sel ? (S.tool === 'flow' ? st.steps[stepIdx(st, sel)] : null) : null;
+                if (S.tool === 'fishbone') {
+                    $('add-a').disabled = false;
+                    $('add-b').disabled = !sel || sel === 'effect';
+                    $('delete').disabled = !sel || sel === 'effect';
+                } else {
+                    $('add-a').disabled = false;
+                    $('add-b').disabled = !(sn && sn.decision && !(sn.no && sn.no.side));
+                    $('decision').disabled = !sn;
+                    $('decision').setAttribute('aria-pressed', String(!!(sn && sn.decision)));
+                    $('link').disabled = !(sn && sn.decision) && !linkFrom;
+                    $('link').setAttribute('aria-pressed', String(!!linkFrom));
+                    $('delete').disabled = !sel;
+                }
+                ['fit', 'zoom-in', 'zoom-out'].forEach(id => { $(id).disabled = !has; });
+                $('hint').hidden = !linkFrom;
+                board.classList.toggle('linking', !!linkFrom);
+                const say = sel ? labelOf(st, sel) || 'Empty box' : '';
+                if (say !== lastAnnounce) { $('status').textContent = say; lastAnnounce = say; }
+            } else {
+                const { avail, W, H } = chartSize();
+                const out = buildChart(palette(), W, H), box = $('chart');
+                box.innerHTML = out ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${r1(out.w)} ${r1(out.h)}" width="${r1(out.natural ? Math.min(out.w, Math.max(avail, out.w * 0.6)) : out.w)}" style="background:${P.bg}${out.natural ? ';max-width:none' : ''}"><rect width="100%" height="100%" fill="${P.bg}"/>${out.inner}</svg>` : '';
+                box.setAttribute('aria-label', `${tool.chip}${out ? '' : ', empty'}`);
+                has = !!out;
+                signs = out ? out.signs : [['—', '—']];
+                $('hint').hidden = true;
+            }
             const tally = $('tally');
             tally.style.gridTemplateColumns = `repeat(${signs.length},minmax(0,1fr))`;
-            tally.innerHTML = signs.map(([k, v]) => `<div class="sign"><span class="sign-head">${esc(k)}</span><span class="num">${esc(v)}</span></div>`).join('');
-            ['copy', 'png', 'svg'].forEach(id => { $(id).disabled = !out; });
+            tally.innerHTML = signs.map(([k, v]) => `<div class="sign"><span class="sign-head">${esc(k)}</span><output class="num">${esc(v)}</output></div>`).join('');
+            ['copy', 'png', 'svg'].forEach(id => { $(id).disabled = !has; });
+            $('undo').disabled = !stack().undo.length;
+            $('redo').disabled = !stack().redo.length;
+            save();
         }
 
         function selectTool(id) {
+            if (editing) finishEdit(true);
             S.tool = id;
+            sel = null; linkFrom = null; hoverId = null;
             history.replaceState(null, '', `#${id}`);
-            $('title').value = S.tools[id].title;
-            $('data').value = S.tools[id].text;
-            save();
+            if (kind() === 'grid') buildGrid();
+            render();
+            if (kind() === 'diagram') fit();
+        }
+
+        // ── View: pan and zoom ──────────────────────────────────
+
+        function applyView() {
+            world.setAttribute('transform', `translate(${r1(T.x)} ${r1(T.y)}) scale(${T.k})`);
+            $('zoom').textContent = model && model.nodes.length ? `${Math.round(T.k * 100)}%` : '';
+            if (editing) placeEditor();
+        }
+        function zoomAt(cx, cy, k) {
+            k = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, k));
+            const wx = (cx - T.x) / T.k, wy = (cy - T.y) / T.k;
+            T.k = k; T.x = cx - wx * k; T.y = cy - wy * k;
+            applyView();
+        }
+        function fit() {
+            const r = canvas.getBoundingClientRect();
+            if (!model || !model.nodes.length || !r.width) { T.x = 0; T.y = 0; T.k = 1; applyView(); return; }
+            T.k = Math.min(1, Math.max(ZOOM_MIN, Math.min((r.width - 32) / model.width, (r.height - 32) / model.height)));
+            T.x = (r.width - model.width * T.k) / 2;
+            T.y = (r.height - model.height * T.k) / 2;
+            applyView();
+        }
+        const nodeOf = id => model && model.nodes.find(n => n.id === id);
+        function reveal(id) {
+            const n = nodeOf(id);
+            if (!n) return;
+            const r = canvas.getBoundingClientRect(), pad = 24;
+            const x0 = T.x + n.x * T.k, x1 = T.x + (n.x + n.w + CTL + 8) * T.k, y0 = T.y + n.y * T.k, y1 = T.y + (n.y + n.h + CTL) * T.k;
+            if (x0 < pad) T.x += pad - x0; else if (x1 > r.width - pad) T.x -= x1 - (r.width - pad);
+            if (y0 < pad) T.y += pad - y0; else if (y1 > r.height - pad) T.y -= y1 - (r.height - pad);
+            applyView();
+        }
+        const local = e => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+        const toWorld = p => ({ x: (p.x - T.x) / T.k, y: (p.y - T.y) / T.k });
+        const nodeAt = (wp, skip) => model && model.nodes.find(n => n.id !== skip && wp.x >= n.x && wp.x <= n.x + n.w && wp.y >= n.y && wp.y <= n.y + n.h) || null;
+
+        // ── Label editor ────────────────────────────────────────
+
+        const WORDS = { effect: 'Effect', cat: 'Category', cause: 'Cause', step: 'Step', side: 'Step' };
+        function startEdit(id, isNew, prev, initial) {
+            if (!exists(id)) return;
+            sel = id;
+            editing = { id, isNew, prev };
+            render();
+            reveal(id);
+            const pal = palette(), n = nodeOf(id);
+            editor.style.background = n && n.kind === 'effect' ? pal.series : pal.box;
+            editor.style.color = n && n.kind === 'effect' ? pal.bg : pal.text;
+            editor.style.textAlign = n && n.kind === 'cause' ? 'right' : 'center';
+            editor.style.textTransform = n && n.kind === 'cat' ? 'uppercase' : 'none';
+            editor.value = initial != null ? initial : labelOf(cur(), id);
+            editor.placeholder = n && n.decision ? 'Decision' : WORDS[n ? n.kind : 'step'];
+            editor.hidden = false;
+            placeEditor();
+            editor.focus({ preventScroll: true });
+            if (initial != null) editor.setSelectionRange(editor.value.length, editor.value.length);
+            else editor.select();
+        }
+        function placeEditor() {
+            const n = editing && nodeOf(editing.id);
+            if (!n) return;
+            const k = T.k, w = Math.max(n.w, n.kind === 'cause' ? 200 : n.w), h = Math.max(n.h, 34);
+            const x = n.kind === 'cause' ? n.x + n.w - w : n.x;
+            Object.assign(editor.style, {
+                left: `${T.x + x * k}px`, top: `${T.y + n.y * k}px`, width: `${w * k}px`, height: `${h * k}px`,
+                fontSize: `${(n.kind === 'effect' ? 15 : n.kind === 'cat' ? 14 : FS) * k}px`, paddingTop: `${Math.max(0, h * k / 2 - LH * k * 0.75)}px`,
+            });
+        }
+        function finishEdit(keep) {
+            if (!editing) return;
+            const { id, isNew, prev } = editing;
+            editing = null;
+            editor.hidden = true;
+            const val = editor.value.replace(/\s+/g, ' ').trim();
+            if (!exists(id)) { render(); return; }
+            // An empty new box is dropped; the effect is never dropped.
+            if (!keep || (!val && id !== 'effect')) {
+                if (isNew) { S.tools[S.tool] = JSON.parse(stack().undo.pop()); sel = prev && exists(prev) ? prev : null; render(); fit(); }
+                else render();
+                canvas.focus({ preventScroll: true });
+                return;
+            }
+            if (isNew) { setLabel(cur(), id, val); render(); fit(); }
+            else if (val !== labelOf(cur(), id)) commit(st => setLabel(st, id, val));
+            else render();
+            canvas.focus({ preventScroll: true });
+        }
+        // Enter on a box adds the next one like it; Tab adds the one beneath it.
+        function addNext(id) {
+            if (S.tool === 'fishbone') {
+                if (id === 'effect') return addCategory(null);
+                const f = fishFind(cur(), id);
+                if (f) f.cause ? addCause(id) : addCategory(id);
+            } else if (!sideOwner(cur(), id)) addStep(id);
+        }
+        function addInner(id) {
+            if (S.tool === 'fishbone') {
+                if (id === 'effect') return addCategory(null);
+                const f = fishFind(cur(), id);
+                if (f) addCause(f.cat.id);
+            } else {
+                const s = cur().steps[stepIdx(cur(), id)];
+                // Only a decision has a box beneath it; elsewhere Tab adds the next step.
+                if (s && s.decision && !s.no) addSide(id); else addNext(id);
+            }
+        }
+        editor.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                finishEdit(true);
+            }
+            else if (e.key === 'Escape') { e.preventDefault(); finishEdit(false); }
+            else if (e.key === 'Tab') {
+                e.preventDefault();
+                const id = editing.id;
+                finishEdit(true);
+                if (exists(id)) e.shiftKey ? addNext(id) : addInner(id);
+            }
+        });
+        editor.addEventListener('blur', () => finishEdit(true));
+        editor.addEventListener('input', () => { editor.value = editor.value.replace(/\n/g, ' '); });
+
+        // ── Pointer: select, drag to move, pan, pinch ───────────
+
+        const pointers = new Map();
+        let gesture = null;
+        function runCtl(kind_, id) {
+            hoverId = null;
+            if (kind_ === 'cat-end') addCategory(null);
+            else if (kind_ === 'cat') addCategory(id);
+            else if (kind_ === 'cause') addCause(id);
+            else if (kind_ === 'cause-after') addCause(id);
+            else if (kind_ === 'step-after') addStep(id);
+            else if (kind_ === 'side') addSide(id);
+        }
+        function setHover(id) {
+            if (linkFrom || editing || id === hoverId) return;
+            hoverId = id;
             render();
         }
+        board.addEventListener('pointerdown', e => {
+            if (e.button !== 0 && e.pointerType === 'mouse') return;
+            if (editing) finishEdit(true);
+            canvas.focus({ preventScroll: true });
+            pointers.set(e.pointerId, local(e));
+            board.setPointerCapture(e.pointerId);
+            if (pointers.size === 2) {
+                const [p, q] = [...pointers.values()];
+                gesture = { kind: 'pinch', d: Math.hypot(p.x - q.x, p.y - q.y), k: T.k };
+                return;
+            }
+            const start = local(e);
+            const ctl = e.target.closest('[data-ctl]');
+            if (ctl) { gesture = { kind: 'ctl', ctl: ctl.dataset.ctl, id: ctl.dataset.for, start }; return; }
+            const g = e.target.closest('[data-node]');
+            if (g) { gesture = { kind: 'node', id: g.dataset.node, start, moved: false, el: g }; return; }
+            gesture = { kind: 'pan', start, x: T.x, y: T.y, moved: false };
+        });
+        board.addEventListener('pointermove', e => {
+            if (!pointers.has(e.pointerId)) {
+                if (e.pointerType === 'mouse' && !gesture) { const g = e.target.closest('[data-node]'); setHover(g ? g.dataset.node : null); }
+                return;
+            }
+            const p = local(e);
+            pointers.set(e.pointerId, p);
+            if (!gesture) return;
+            if (gesture.kind === 'pinch' && pointers.size === 2) {
+                const [a, b] = [...pointers.values()];
+                zoomAt((a.x + b.x) / 2, (a.y + b.y) / 2, gesture.k * Math.hypot(a.x - b.x, a.y - b.y) / gesture.d);
+                return;
+            }
+            const dx = p.x - gesture.start.x, dy = p.y - gesture.start.y;
+            if (gesture.kind === 'pan') {
+                if (Math.hypot(dx, dy) > 3) { gesture.moved = true; board.classList.add('panning'); }
+                T.x = gesture.x + dx; T.y = gesture.y + dy;
+                applyView();
+            } else if (gesture.kind === 'node' && !linkFrom && gesture.id !== 'effect' && !(S.tool === 'flow' && sideOwner(cur(), gesture.id))) {
+                if (!gesture.moved && Math.hypot(dx, dy) < 6) return;
+                gesture.moved = true;
+                gesture.el.setAttribute('transform', `translate(${dx / T.k} ${dy / T.k})`);
+                gesture.el.setAttribute('opacity', '.85');
+                world.appendChild(gesture.el);
+                const wp = toWorld(p), tn = nodeAt(wp, gesture.id), ok = tn && canDrop(gesture.id, tn.id) ? tn : null;
+                if (gesture.target !== (ok && ok.id)) {
+                    world.querySelectorAll('[data-drop]').forEach(r => { r.removeAttribute('data-drop'); r.setAttribute('stroke-width', r.dataset.sw); r.setAttribute('stroke', r.dataset.sc); });
+                    const r = ok && world.querySelector(`[data-node="${ok.id}"] .box`);
+                    if (r) { r.dataset.sw = r.getAttribute('stroke-width') || '0'; r.dataset.sc = r.getAttribute('stroke') || 'none'; r.setAttribute('data-drop', ''); r.setAttribute('stroke', palette().sel); r.setAttribute('stroke-width', '3'); }
+                    gesture.target = ok && ok.id;
+                }
+                if (ok) gesture.after = S.tool === 'fishbone' && fishFind(cur(), ok.id) && !fishFind(cur(), ok.id).cause ? wp.x < ok.x + ok.w / 2 : wp.y > ok.y + ok.h / 2;
+            }
+        });
+        function endPointer(e) {
+            if (!pointers.has(e.pointerId)) return;
+            pointers.delete(e.pointerId);
+            const g = gesture;
+            if (pointers.size) { if (g && g.kind === 'pinch') gesture = null; return; }
+            gesture = null;
+            board.classList.remove('panning');
+            if (!g || e.type === 'pointercancel') { render(); return; }
+            if (g.kind === 'ctl') { if (exists(g.id)) runCtl(g.ctl, g.id); }
+            else if (g.kind === 'node') {
+                if (g.moved) { sel = g.id; if (!(g.target && move(g.id, g.target, g.after))) render(); }
+                else if (linkFrom) pickTarget(g.id);
+                else { sel = g.id; render(); }
+            } else if (g.kind === 'pan' && !g.moved) { sel = null; linkFrom = null; render(); }
+        }
+        board.addEventListener('pointerup', endPointer);
+        board.addEventListener('pointercancel', endPointer);
+        board.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !pointers.size) setHover(null); });
+        board.addEventListener('dblclick', e => { const g = e.target.closest('[data-node]'); if (g && !linkFrom) startEdit(g.dataset.node, false); });
+        board.addEventListener('wheel', e => {
+            e.preventDefault();
+            const p = local(e);
+            if (e.ctrlKey || e.metaKey) zoomAt(p.x, p.y, T.k * Math.exp(-Math.max(-25, Math.min(25, e.deltaY)) * 0.01));
+            else { T.x -= e.deltaX; T.y -= e.deltaY; applyView(); }
+        }, { passive: false });
+
+        // ── Keyboard ────────────────────────────────────────────
+
+        function selectNode(id) { if (id && exists(id)) { sel = id; render(); reveal(id); } }
+        canvas.addEventListener('keydown', e => {
+            if (e.target !== canvas) return;
+            const mod = e.ctrlKey || e.metaKey;
+            if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+            if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
+            if (e.key === 'Escape') { if (linkFrom) linkFrom = null; else sel = null; render(); return; }
+            const order = model ? model.nodes.map(n => n.id) : [];
+            if (!sel) {
+                if ((e.key.startsWith('Arrow') || e.key === 'Enter') && order.length) { e.preventDefault(); selectNode(order[0]); }
+                else if (e.key === 'Enter' && S.tool === 'flow') { e.preventDefault(); addStep(null); }
+                return;
+            }
+            if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); removeNode(sel); return; }
+            if (e.key === 'Enter') { e.preventDefault(); linkFrom ? pickTarget(sel) : addNext(sel); }
+            else if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); addInner(sel); }
+            else if (e.key === 'F2') { e.preventDefault(); startEdit(sel, false); }
+            else if (e.key.startsWith('Arrow')) {
+                e.preventDefault();
+                const i = order.indexOf(sel), d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : -1;
+                selectNode(order[i + d]);
+            }
+            else if (e.key.length === 1 && !mod && !e.altKey && !linkFrom) { e.preventDefault(); startEdit(sel, false, null, e.key); }
+        });
+
+        // ── Grid (chart tools) ──────────────────────────────────
+
+        const X_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+        // Column heads per tool: a fixed label or an editable { key } / { col } input; num marks numeric columns.
+        function gridSpec(st) {
+            if (S.tool === 'pareto') return { heads: ['Category', 'Count'], num: [false, true] };
+            if (S.tool === 'control') return { heads: ['Label', 'Value'], num: [false, true] };
+            if (S.tool === 'histogram') return { heads: ['Value'], num: [true] };
+            if (S.tool === 'scatter') return { heads: [{ key: 'x', label: 'X name' }, { key: 'y', label: 'Y name' }], num: [true, true] };
+            return { heads: ['Item', ...st.cols.map((_, j) => ({ col: j, label: `Column ${j + 1} name` }))], num: [false, ...st.cols.map(() => true)] };
+        }
+        function buildGrid() {
+            const st = cur(), spec = gridSpec(st);
+            const head = spec.heads.map(h => {
+                if (typeof h === 'string') return `<th scope="col"><span>${esc(h)}</span></th>`;
+                if (h.key) return `<th scope="col"><input type="text" data-head="${h.key}" value="${esc(st[h.key] || '')}" aria-label="${esc(h.label)}" autocomplete="off"></th>`;
+                return `<th scope="col"><div style="display:flex"><input type="text" data-col="${h.col}" value="${esc(st.cols[h.col])}" aria-label="${esc(h.label)}" autocomplete="off"><button type="button" class="act" style="min-height:40px;min-width:32px;padding:0;border:0" data-delcol="${h.col}" aria-label="Delete column ${esc(st.cols[h.col])}">${X_ICON}</button></div></th>`;
+            }).join('');
+            const body = st.rows.map((row, r) => `<tr>${spec.num.map((n, c) =>
+                `<td><input type="text" ${n ? 'class="n" inputmode="decimal" ' : ''}data-r="${r}" data-c="${c}" value="${esc(row[c] == null ? '' : row[c])}" aria-label="Row ${r + 1} ${esc(typeof spec.heads[c] === 'string' ? spec.heads[c] : (spec.heads[c].key ? st[spec.heads[c].key] : st.cols[spec.heads[c].col]) || '')}" autocomplete="off"></td>`).join('')}`
+                + `<td class="x"><button type="button" data-del="${r}" aria-label="Delete row ${r + 1}">${X_ICON}</button></td></tr>`).join('');
+            const specs = S.tool === 'histogram' ? `<div class="trio">${[['lsl', 'LSL'], ['target', 'Target'], ['usl', 'USL']].map(([k, l]) =>
+                `<div class="field"><label for="spec-${k}">${l}</label><input type="text" id="spec-${k}" data-head="${k}" inputmode="decimal" value="${esc(st[k] || '')}" autocomplete="off"></div>`).join('')}</div>` : '';
+            side.innerHTML = `<div class="field"><label for="title">Title</label><input type="text" id="title" data-head="title" maxlength="120" value="${esc(st.title || '')}" autocomplete="off"></div>`
+                + specs + `<div class="gridwrap"><table class="grid"><thead><tr>${head}<th class="x"><span class="sr">Delete</span></th></tr></thead><tbody>${body}</tbody></table></div>`;
+        }
+        const width = () => gridSpec(cur()).num.length;
+        let pending = null;   // snapshot taken when a field gains focus, pushed on its first change
+        side.addEventListener('focusin', e => { if (e.target.matches('input')) pending = snap(); });
+        side.addEventListener('input', e => {
+            const el = e.target, st = cur();
+            if (pending) { pushUndo(pending); pending = null; }
+            if (el.dataset.head) st[el.dataset.head] = el.value;
+            else if (el.dataset.col != null) st.cols[+el.dataset.col] = el.value;
+            else if (el.dataset.r != null) st.rows[+el.dataset.r][+el.dataset.c] = el.value;
+            render();
+        });
+        function focusCell(r, c) { const el = side.querySelector(`[data-r="${r}"][data-c="${c}"]`); if (el) { el.focus(); el.select(); } }
+        function addRow(at) {
+            commit(st => { st.rows.splice(at == null ? st.rows.length : at, 0, Array(width()).fill('')); }, { grid: true });
+            focusCell(at == null ? cur().rows.length - 1 : at, 0);
+        }
+        side.addEventListener('keydown', e => {
+            const el = e.target;
+            if (el.dataset.r == null) return;
+            const r = +el.dataset.r, c = +el.dataset.c;
+            if (e.key === 'Enter') { e.preventDefault(); if (r + 1 < cur().rows.length) focusCell(r + 1, c); else { addRow(); focusCell(r + 1, c); } }
+            else if (e.key === 'ArrowDown' && r + 1 < cur().rows.length) { e.preventDefault(); focusCell(r + 1, c); }
+            else if (e.key === 'ArrowUp' && r > 0) { e.preventDefault(); focusCell(r - 1, c); }
+        });
+        // Pasting several lines or tab-separated cells fills the grid from that cell, adding rows as needed.
+        side.addEventListener('paste', e => {
+            const el = e.target;
+            if (el.dataset.r == null) return;
+            const text = (e.clipboardData || window.clipboardData).getData('text');
+            if (!/[\n\t]/.test(text.trim())) return;
+            e.preventDefault();
+            const r0 = +el.dataset.r, c0 = +el.dataset.c, n = width();
+            const lines = text.replace(/\r/g, '').replace(/\n+$/, '').split('\n').map(l => l.split('\t'));
+            commit(st => {
+                lines.forEach((cells, i) => {
+                    const r = r0 + i;
+                    while (st.rows.length <= r) st.rows.push(Array(n).fill(''));
+                    cells.forEach((v, j) => { if (c0 + j < n) st.rows[r][c0 + j] = v.trim(); });
+                });
+            }, { grid: true });
+            focusCell(r0, c0);
+        });
+        side.addEventListener('click', e => {
+            const del = e.target.closest('[data-del]'), delcol = e.target.closest('[data-delcol]');
+            if (del) {
+                const r = +del.dataset.del;
+                commit(st => { st.rows.splice(r, 1); if (!st.rows.length) st.rows.push(Array(width()).fill('')); }, { grid: true });
+                focusCell(Math.min(r, cur().rows.length - 1), 0);
+            } else if (delcol) {
+                const j = +delcol.dataset.delcol;
+                if (cur().cols.length < 2) return;
+                commit(st => { st.cols.splice(j, 1); st.rows.forEach(row => row.splice(j + 1, 1)); }, { grid: true });
+            }
+        });
+
+        // ── Toolbar ─────────────────────────────────────────────
 
         $('chips').innerHTML = TOOLS.map(tl => `<button type="button" data-tool="${tl.id}" aria-pressed="false">${esc(tl.chip)}</button>`).join('');
         $('chips').addEventListener('click', e => { const b = e.target.closest('button'); if (b) selectTool(b.dataset.tool); });
-        $('title').addEventListener('input', () => { S.tools[S.tool].title = $('title').value; save(); render(); });
-        $('data').addEventListener('input', () => { S.tools[S.tool].text = $('data').value; save(); render(); });
-        $('data').addEventListener('keydown', e => {
-            if (e.key !== 'Tab' || S.tool !== 'fishbone') return;
-            const ta = $('data'), a = ta.selectionStart, ls = ta.value.lastIndexOf('\n', a - 1) + 1;
-            if (e.shiftKey) {
-                if (!ta.value.startsWith('    ', ls)) return;
-                e.preventDefault();
-                ta.setRangeText('', ls, ls + 4, 'preserve');
-            } else {
-                e.preventDefault();
-                ta.setRangeText('    ', ls, ls, 'preserve');
-                ta.setSelectionRange(a + 4, a + 4);
-            }
-            ta.dispatchEvent(new Event('input'));
+        $('add-a').addEventListener('click', () => S.tool === 'fishbone' ? addCategory(sel) : addStep(sel));
+        $('add-b').addEventListener('click', () => {
+            if (!sel) return;
+            if (S.tool === 'fishbone') { const f = fishFind(cur(), sel); if (f) addCause(f.cause ? sel : f.cat.id); }
+            else addSide(sel);
         });
-        $('example').addEventListener('click', () => { S.tools[S.tool] = { ...EXAMPLES[S.tool] }; selectTool(S.tool); });
-        $('clear').addEventListener('click', () => { S.tools[S.tool] = { title: '', text: '' }; selectTool(S.tool); $('data').focus(); });
+        $('add-first').addEventListener('click', () => addStep(null));
+        $('decision').addEventListener('click', () => sel && toggleDecision(sel));
+        $('link').addEventListener('click', startLink);
+        $('delete').addEventListener('click', () => { if (sel) removeNode(sel); canvas.focus({ preventScroll: true }); });
+        $('add-row').addEventListener('click', () => addRow());
+        $('add-col').addEventListener('click', () => {
+            commit(st => { st.cols.push(String(st.cols.length + 1)); st.rows.forEach(row => { while (row.length < st.cols.length) row.push(''); }); }, { grid: true });
+            const h = side.querySelector(`[data-col="${cur().cols.length - 1}"]`);
+            if (h) { h.focus(); h.select(); }
+        });
+        $('undo').addEventListener('click', undo);
+        $('redo').addEventListener('click', redo);
+        $('fit').addEventListener('click', fit);
+        const zoomCenter = f => { const r = canvas.getBoundingClientRect(); zoomAt(r.width / 2, r.height / 2, T.k * f); };
+        $('zoom-in').addEventListener('click', () => zoomCenter(1.25));
+        $('zoom-out').addEventListener('click', () => zoomCenter(0.8));
+        $('example').addEventListener('click', () => { sel = null; linkFrom = null; commit(() => { S.tools[S.tool] = example(S.tool); }, { grid: kind() === 'grid' }); });
+        $('clear').addEventListener('click', () => {
+            sel = null; linkFrom = null;
+            commit(() => { S.tools[S.tool] = blank(S.tool); }, { grid: kind() === 'grid' });
+            if (S.tool === 'fishbone') startEdit('effect', false);
+        });
+        document.addEventListener('keydown', e => {
+            if (kind() !== 'grid' || !(e.ctrlKey || e.metaKey)) return;
+            const k = e.key.toLowerCase();
+            if (k !== 'z' && k !== 'y') return;
+            if (e.target.matches && e.target.matches('#side input') && !pending && !stack().undo.length) return;
+            e.preventDefault();
+            pending = null;
+            k === 'y' || e.shiftKey ? redo() : undo();
+        });
 
         // ── Export ──────────────────────────────────────────────
 
@@ -853,27 +1550,37 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return fontCssPromise;
         }
 
+        function exportDrawing() {
+            const pal = PALETTES.export;
+            let d;
+            if (kind() === 'diagram') {
+                P = pal;
+                const m = MODELS[S.tool](cur());
+                d = { w: m.width, h: m.height - (S.tool === 'flow' ? CTL / 2 : 0), inner: DRAW[S.tool](m, false) };
+            } else d = buildChart(pal, EXPORT_W, EXPORT_H);
+            P = palette();
+            return d;
+        }
         async function exportSvg() {
             const css = await fontCss();
-            const pal = PALETTES.export, d = build(pal, EXPORT_W, EXPORT_H);
-            render();
-            const tool = TOOLS.find(tl => tl.id === S.tool);
-            const title = esc(S.tools[S.tool].title.trim() || tool.chip);
-            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.ceil(d.w)}" height="${Math.ceil(d.h)}" viewBox="0 0 ${Math.ceil(d.w)} ${Math.ceil(d.h)}" role="img"><title>${title}</title>`
+            const d = exportDrawing(), pal = PALETTES.export;
+            const st = cur(), name = st.title || st.effect || toolOf(S.tool).chip;
+            const w = Math.ceil(d.w), h = Math.ceil(d.h);
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img"><title>${esc(name)}</title>`
                 + (css ? `<style>${css}</style>` : '') + `<rect width="100%" height="100%" fill="${pal.bg}"/>${d.inner}</svg>`;
-            return { svg, width: Math.ceil(d.w), height: Math.ceil(d.h) };
+            return { svg, width: w, height: h };
         }
 
         async function pngBlob() {
-            const { svg, width, height } = await exportSvg();
+            const { svg, width: w, height: h } = await exportSvg();
             const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
             try {
                 const img = new Image();
                 img.src = url;
                 await img.decode();
                 const c = document.createElement('canvas');
-                c.width = width * PNG_SCALE;
-                c.height = height * PNG_SCALE;
+                c.width = w * PNG_SCALE;
+                c.height = h * PNG_SCALE;
                 const ctx = c.getContext('2d');
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, c.width, c.height);
@@ -885,7 +1592,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
 
         function fileBase() {
-            const s = S.tools[S.tool].title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+            const st = cur(), s = String(st.title || st.effect || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
             return s ? `${s}-${S.tool}` : S.tool;
         }
 
@@ -951,9 +1658,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         selectTool(S.tool);
         let lastW = 0;
-        new ResizeObserver(() => { const w = $('chart').clientWidth; if (w !== lastW) { lastW = w; render(); } }).observe($('chart'));
-        window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (TOOLS.some(tl => tl.id === h) && h !== S.tool) selectTool(h); });
-        document.fonts.ready.then(render);
+        new ResizeObserver(() => { if (kind() !== 'grid') return; const w = $('chart').clientWidth; if (w !== lastW) { lastW = w; render(); } }).observe($('chart'));
+        window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (toolOf(h) && h !== S.tool) selectTool(h); });
+        const refit = () => { render(); if (kind() === 'diagram') fit(); };
+        document.fonts.ready.then(refit);
     </script>
 <script>
 (function () {
