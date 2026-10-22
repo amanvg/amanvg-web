@@ -86,7 +86,10 @@ A Reject means make no changes and ask what to adjust.
   (clicking only, automatic layout, Copy/PNG/SVG and tool chips in the
   masthead, tally strip only where a tool has a result). Affinity, Tree, PDPC,
   Interrelationship, Matrix and Activity Network are canvases; Prioritization
-  is an editable grid beside a ranked bar chart.
+  is an editable grid beside a ranked bar chart. Tools without a root box
+  (Affinity, Interrelationship, Matrix, Activity Network, and Flow Chart on
+  `/qualitycontrol/`) carry an editable title band for the problem at the top
+  of the canvas; an empty band is left out of exports.
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services and

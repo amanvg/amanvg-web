@@ -352,7 +352,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 return st;
             }
             if (tool === 'flow') {
-                const st = { seq: 0, steps: [] };
+                const st = { seq: 0, title: 'Order fulfilment', steps: [] };
                 const add = (label, decision = false) => { const s = { id: `n${++st.seq}`, label, decision, no: null }; st.steps.push(s); return s; };
                 add('Start'); add('Receive order'); add('Check stock');
                 add('In stock?', true).no = { side: { id: `n${++st.seq}`, label: 'Order parts' } };
@@ -381,7 +381,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         function blank(tool) {
             // A new fishbone starts on the service 4 Ps.
             if (tool === 'fishbone') return { seq: 4, effect: '', cats: ['Policies', 'Procedures', 'People', 'Plant'].map((label, i) => ({ id: `n${i + 1}`, label, causes: [] })) };
-            if (tool === 'flow') return { seq: 0, steps: [] };
+            if (tool === 'flow') return { seq: 0, title: '', steps: [] };
             if (tool === 'check') return { title: '', cols: ['1', '2', '3'], rows: [['', '', '', '']] };
             if (tool === 'scatter') return { title: '', x: 'X', y: 'Y', rows: [['', '']] };
             if (tool === 'histogram') return { title: '', lsl: '', usl: '', target: '', rows: [['']] };
@@ -751,7 +751,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             });
             const laneX0 = (sides ? sideX + SIDE_W : cx + DW / 2) + 36;
             const width = Math.max(cx + DW / 2 + CTL + 12, lane ? laneX0 + (lane - 1) * 20 : 0, sides ? sideX + SIDE_W : 0) + MARGIN + 20;
-            return { nodes: steps.concat(extra), steps, cx, laneX0, width, height: Math.max(y - VG, MARGIN) + MARGIN + CTL / 2 };
+            // Title band above the chart, as wide as the drawing; everything below shifts down by its height.
+            const tw_ = Math.max(320, width - MARGIN * 2 - CTL - 8);
+            const tLines = st.title ? wrap(st.title.toUpperCase(), tw_ - 16, 22, HEAD, 700) : [''];
+            const tH = Math.max(42, tLines.length * 28 + 14), band = tH + 26;
+            const nodes = steps.concat(extra);
+            nodes.forEach(n => { n.y += band; n.cy += band; });
+            const titleNode = { id: 'title', kind: 'title', label: st.title || '', lines: tLines, x: MARGIN + 8, y: MARGIN, w: tw_ - 16, h: tH };
+            return { nodes, steps, cx, laneX0, titleNode, band, width: Math.max(width, tw_ + MARGIN * 2 + CTL + 8), height: Math.max(y - VG, MARGIN) + MARGIN + CTL / 2 + band };
         };
 
         // ── Diagrams: draw ──────────────────────────────────────
@@ -798,8 +805,17 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return out.join('');
         }
 
+        function drawTitleBand(n, ui) {
+            if (!ui && !n.label) return '';
+            const selected = ui && sel === 'title', words = n.label ? n.lines : ['TITLE'];
+            return (ui ? '<g data-node="title">' : '<g>')
+                + `<rect class="box" x="${r1(n.x - 8)}" y="${r1(n.y)}" width="${r1(n.w + 16)}" height="${r1(n.h)}" fill="${selected ? P.box : 'transparent'}"${selected ? ` stroke="${P.sel}" stroke-width="3"` : ''}/>`
+                + words.map((l, q) => t(n.x, n.y + 31 + q * 28, l, { size: 22, font: HEAD, weight: 700, extra: ` letter-spacing=".04em"${n.label ? '' : ' opacity=".45"'}` })).join('')
+                + ln(n.x - 8, n.y + n.h + 8, n.x + n.w + 8, n.y + n.h + 8, P.line, 2) + '</g>';
+        }
+
         function drawFlow(m, ui) {
-            const out = [], cx = m.cx;
+            const out = [drawTitleBand(m.titleNode, ui)], cx = m.cx;
             const textIn = (n, fill) => {
                 const words = n.label ? n.lines : [ui ? (n.kind === 'side' ? 'Step' : n.decision ? 'Decision' : 'Step') : ''];
                 return words.map((l, q) => t(n.x + n.w / 2, n.y + n.h / 2 - (words.length - 1) * LH / 2 + q * LH + 5, l, { anchor: 'middle', fill, extra: n.label ? '' : ' opacity=".5"' })).join('');
@@ -913,11 +929,12 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         function exists(id) {
             const st = cur();
             if (S.tool === 'fishbone') return id === 'effect' || !!fishFind(st, id);
-            if (S.tool === 'flow') return stepIdx(st, id) >= 0 || !!sideOwner(st, id);
+            if (S.tool === 'flow') return id === 'title' || stepIdx(st, id) >= 0 || !!sideOwner(st, id);
             return false;
         }
         function labelOf(st, id) {
             if (S.tool === 'fishbone') { if (id === 'effect') return st.effect; const f = fishFind(st, id); return f ? (f.cause || f.cat).label : ''; }
+            if (id === 'title') return st.title || '';
             const i = stepIdx(st, id);
             if (i >= 0) return st.steps[i].label;
             const o = sideOwner(st, id);
@@ -925,6 +942,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
         function setLabel(st, id, v) {
             if (S.tool === 'fishbone') { if (id === 'effect') st.effect = v; else { const f = fishFind(st, id); if (f) (f.cause || f.cat).label = v; } return; }
+            if (id === 'title') { st.title = v; return; }
             const i = stepIdx(st, id);
             if (i >= 0) { st.steps[i].label = v; return; }
             const o = sideOwner(st, id);
@@ -982,6 +1000,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             commit(st => { const s = st.steps[stepIdx(st, id)]; s.decision = !s.decision; if (!s.decision) s.no = null; }, { keepView: true });
         }
         function removeNode(id) {
+            if (id === 'title') return;
             const st = cur();
             let next = null;
             if (S.tool === 'fishbone') {
@@ -1014,7 +1033,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         // Drop D on T. Fishbone: a cause onto a cause goes beside it, onto a category goes under it; categories reorder. Flow: steps reorder.
         function canDrop(d, tId) {
             const st = cur();
-            if (!tId || d === tId) return false;
+            if (!tId || d === tId || d === 'title' || tId === 'title') return false;
             if (S.tool === 'fishbone') {
                 const D = fishFind(st, d), T_ = fishFind(st, tId);
                 if (!D || !T_) return false;
@@ -1117,7 +1136,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     $('decision').setAttribute('aria-pressed', String(!!(sn && sn.decision)));
                     $('link').disabled = !(sn && sn.decision) && !linkFrom;
                     $('link').setAttribute('aria-pressed', String(!!linkFrom));
-                    $('delete').disabled = !sel;
+                    $('delete').disabled = !sel || sel === 'title';
                 }
                 ['fit', 'zoom-in', 'zoom-out'].forEach(id => { $(id).disabled = !has; });
                 $('hint').hidden = !linkFrom;
@@ -1176,7 +1195,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             T.y = (r.height - model.height * T.k) / 2;
             applyView();
         }
-        const nodeOf = id => model && model.nodes.find(n => n.id === id);
+        const allNodes = () => model ? (model.titleNode ? [model.titleNode] : []).concat(model.nodes) : [];
+        const nodeOf = id => allNodes().find(n => n.id === id);
         function reveal(id) {
             const n = nodeOf(id);
             if (!n) return;
@@ -1188,11 +1208,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
         const local = e => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
         const toWorld = p => ({ x: (p.x - T.x) / T.k, y: (p.y - T.y) / T.k });
-        const nodeAt = (wp, skip) => model && model.nodes.find(n => n.id !== skip && wp.x >= n.x && wp.x <= n.x + n.w && wp.y >= n.y && wp.y <= n.y + n.h) || null;
+        const nodeAt = (wp, skip) => allNodes().find(n => n.id !== skip && wp.x >= n.x && wp.x <= n.x + n.w && wp.y >= n.y && wp.y <= n.y + n.h) || null;
 
         // ── Label editor ────────────────────────────────────────
 
-        const WORDS = { effect: 'Effect', cat: 'Category', cause: 'Cause', step: 'Step', side: 'Step' };
+        const WORDS = { title: 'Title', effect: 'Effect', cat: 'Category', cause: 'Cause', step: 'Step', side: 'Step' };
         function startEdit(id, isNew, prev, initial) {
             if (!exists(id)) return;
             sel = id;
@@ -1202,8 +1222,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const pal = palette(), n = nodeOf(id);
             editor.style.background = n && n.kind === 'effect' ? pal.series : pal.box;
             editor.style.color = n && n.kind === 'effect' ? pal.bg : pal.text;
-            editor.style.textAlign = n && n.kind === 'cause' ? 'right' : 'center';
-            editor.style.textTransform = n && n.kind === 'cat' ? 'uppercase' : 'none';
+            editor.style.textAlign = n && n.kind === 'cause' ? 'right' : n && n.kind === 'title' ? 'left' : 'center';
+            editor.style.textTransform = n && (n.kind === 'cat' || n.kind === 'title') ? 'uppercase' : 'none';
             editor.value = initial != null ? initial : labelOf(cur(), id);
             editor.placeholder = n && n.decision ? 'Decision' : WORDS[n ? n.kind : 'step'];
             editor.hidden = false;
@@ -1219,7 +1239,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const x = n.kind === 'cause' ? n.x + n.w - w : n.x;
             Object.assign(editor.style, {
                 left: `${T.x + x * k}px`, top: `${T.y + n.y * k}px`, width: `${w * k}px`, height: `${h * k}px`,
-                fontSize: `${(n.kind === 'effect' ? 15 : n.kind === 'cat' ? 14 : FS) * k}px`, paddingTop: `${Math.max(0, h * k / 2 - LH * k * 0.75)}px`,
+                fontSize: `${(n.kind === 'title' ? 22 : n.kind === 'effect' ? 15 : n.kind === 'cat' ? 14 : FS) * k}px`, paddingTop: `${Math.max(0, h * k / 2 - LH * k * 0.75)}px`,
             });
         }
         function finishEdit(keep) {
@@ -1230,7 +1250,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const val = editor.value.replace(/\s+/g, ' ').trim();
             if (!exists(id)) { render(); return; }
             // An empty new box is dropped; the effect is never dropped.
-            if (!keep || (!val && id !== 'effect')) {
+            if (!keep || (!val && id !== 'effect' && id !== 'title')) {
                 if (isNew) { S.tools[S.tool] = JSON.parse(stack().undo.pop()); sel = prev && exists(prev) ? prev : null; render(); fit(); }
                 else render();
                 canvas.focus({ preventScroll: true });
@@ -1330,7 +1350,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 if (Math.hypot(dx, dy) > 3) { gesture.moved = true; board.classList.add('panning'); }
                 T.x = gesture.x + dx; T.y = gesture.y + dy;
                 applyView();
-            } else if (gesture.kind === 'node' && !linkFrom && gesture.id !== 'effect' && !(S.tool === 'flow' && sideOwner(cur(), gesture.id))) {
+            } else if (gesture.kind === 'node' && !linkFrom && gesture.id !== 'effect' && gesture.id !== 'title' && !(S.tool === 'flow' && sideOwner(cur(), gesture.id))) {
                 if (!gesture.moved && Math.hypot(dx, dy) < 6) return;
                 gesture.moved = true;
                 gesture.el.setAttribute('transform', `translate(${dx / T.k} ${dy / T.k})`);
@@ -1381,7 +1401,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
             if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
             if (e.key === 'Escape') { if (linkFrom) linkFrom = null; else sel = null; render(); return; }
-            const order = model ? model.nodes.map(n => n.id) : [];
+            const order = allNodes().map(n => n.id);
             if (!sel) {
                 if ((e.key.startsWith('Arrow') || e.key === 'Enter') && order.length) { e.preventDefault(); selectNode(order[0]); }
                 else if (e.key === 'Enter' && S.tool === 'flow') { e.preventDefault(); addStep(null); }
@@ -1511,6 +1531,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             sel = null; linkFrom = null;
             commit(() => { S.tools[S.tool] = blank(S.tool); }, { grid: kind() === 'grid' });
             if (S.tool === 'fishbone') startEdit('effect', false);
+            else if (S.tool === 'flow') startEdit('title', false);
         });
         document.addEventListener('keydown', e => {
             if (kind() !== 'grid' || !(e.ctrlKey || e.metaKey)) return;
@@ -1550,8 +1571,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             let d;
             if (kind() === 'diagram') {
                 P = pal;
-                const m = MODELS[S.tool](cur());
-                d = { w: m.width, h: m.height - (S.tool === 'flow' ? CTL / 2 : 0), inner: DRAW[S.tool](m, false) };
+                const m = MODELS[S.tool](cur()), cut = m.titleNode && !m.titleNode.label ? m.band : 0;
+                d = { w: m.width - (S.tool === 'flow' ? CTL + 8 : 0), h: m.height - (S.tool === 'flow' ? CTL / 2 : 0) - cut, inner: `<g transform="translate(0,${-cut})">${DRAW[S.tool](m, false)}</g>` };
             } else d = buildChart(pal, EXPORT_W, EXPORT_H);
             P = palette();
             return d;

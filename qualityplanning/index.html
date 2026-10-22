@@ -379,7 +379,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 return st;
             }
             if (tool === 'affinity') {
-                const st = { seq: 0, groups: [] };
+                const st = { seq: 0, title: 'Why customers leave', groups: [] };
                 [['Onboarding', 'Setup is confusing', 'No welcome email', 'Too many steps to start'],
                  ['Support', 'Long wait times', 'Hard to reach a person'],
                  ['Pricing', 'Plans are unclear', 'Surprise fees on the invoice'],
@@ -389,7 +389,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             }
             if (tool === 'relations') {
                 const names = ['High turnover', 'Long hiring times', 'Overtime', 'Low staff morale', 'Missed deadlines', 'Customer complaints'];
-                const st = { seq: 0, items: names.map(label => ({ id: '', label })), links: [] };
+                const st = { seq: 0, title: 'Why are deadlines slipping?', items: names.map(label => ({ id: '', label })), links: [] };
                 st.items.forEach(it => { it.id = `n${++st.seq}`; });
                 const id = name => st.items[names.indexOf(name)].id;
                 [['High turnover', 'Long hiring times'], ['High turnover', 'Overtime'], ['High turnover', 'Missed deadlines'],
@@ -399,7 +399,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 return st;
             }
             if (tool === 'network') {
-                const st = { seq: 0, acts: [] };
+                const st = { seq: 0, title: 'New system rollout', acts: [] };
                 const add = (label, dur, ...deps) => { const a = { id: `n${++st.seq}`, label, dur: String(dur), deps: deps.map(d => d.id) }; st.acts.push(a); return a; };
                 const A = add('Gather requirements', 3), B = add('Design', 5, A), C = add('Order hardware', 7, A);
                 const D = add('Build software', 10, B), E = add('Install hardware', 4, C), G = add('Train users', 2, B);
@@ -408,7 +408,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 return st;
             }
             if (tool === 'matrix') {
-                const st = { seq: 0, rows: [], cols: [], cells: {} };
+                const st = { seq: 0, title: 'Customer needs vs. improvements', rows: [], cols: [], cells: {} };
                 const rows = ['Fast delivery', 'Low price', 'Easy returns', 'Accurate orders'].map(label => ({ id: `n${++st.seq}`, label }));
                 const cols = ['Warehouse automation', 'Supplier contracts', 'Returns portal', 'Order scanning'].map(label => ({ id: `n${++st.seq}`, label }));
                 st.rows = rows; st.cols = cols;
@@ -423,10 +423,10 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         function blank(tool) {
             if (tool === 'tree') return { seq: 1, root: { id: 'n1', label: '', children: [] } };
             if (tool === 'pdpc') return { seq: 1, root: { id: 'n1', label: '', children: [], ok: true } };
-            if (tool === 'affinity') return { seq: 0, groups: [] };
-            if (tool === 'relations') return { seq: 0, items: [], links: [] };
-            if (tool === 'network') return { seq: 0, acts: [] };
-            if (tool === 'matrix') return { seq: 0, rows: [], cols: [], cells: {} };
+            if (tool === 'affinity') return { seq: 0, title: '', groups: [] };
+            if (tool === 'relations') return { seq: 0, title: '', items: [], links: [] };
+            if (tool === 'network') return { seq: 0, title: '', acts: [] };
+            if (tool === 'matrix') return { seq: 0, title: '', rows: [], cols: [], cells: {} };
             return { title: '', crit: [{ name: '', weight: '' }], opts: [{ name: '', scores: [''] }] };
         }
 
@@ -662,9 +662,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return null;
         }
         const AFFINITY = {
-            model(st) {
+            model(st, top = MARGIN) {
                 const COL = 210, GAP = 28, PER = 4, CG = 10, nodes = [];
-                let y = MARGIN, width = 0;
+                let y = top, width = 0;
                 for (let r = 0; r < st.groups.length; r += PER) {
                     let rowH = 0;
                     st.groups.slice(r, r + PER).forEach((g, k) => {
@@ -774,7 +774,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return { io, driver: id => maxOut > 0 && io.get(id).out === maxOut, outcome: id => maxIn > 0 && io.get(id).in === maxIn };
         }
         const RELATIONS = {
-            model(st) {
+            model(st, top = MARGIN) {
                 const W = 170, n = st.items.length, f = flows(st);
                 const R = n < 2 ? 0 : Math.max(150, (W + 36) / (2 * Math.sin(Math.PI / n)));
                 const nodes = st.items.map((it, i) => {
@@ -783,7 +783,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     return { id: it.id, kind: 'item', label: it.label, lines, w: W, h, cx: R * Math.cos(ang), cy: R * Math.sin(ang), io: f.io.get(it.id), driver: f.driver(it.id), outcome: f.outcome(it.id) };
                 });
                 const minX = Math.min(0, ...nodes.map(v => v.cx - v.w / 2)), minY = Math.min(0, ...nodes.map(v => v.cy - v.h / 2));
-                nodes.forEach(v => { v.cx += MARGIN - minX; v.cy += MARGIN - minY; v.x = v.cx - v.w / 2; v.y = v.cy - v.h / 2; });
+                nodes.forEach(v => { v.cx += MARGIN - minX; v.cy += top - minY; v.x = v.cx - v.w / 2; v.y = v.cy - v.h / 2; });
                 const byId = new Map(nodes.map(v => [v.id, v]));
                 const edges = st.links.map((l, i) => ({ i, a: byId.get(l.a), b: byId.get(l.b) })).filter(e => e.a && e.b);
                 return { nodes, edges, width: Math.max(0, ...nodes.map(v => v.x + v.w)) + MARGIN + CTL + 8, height: Math.max(0, ...nodes.map(v => v.y + v.h)) + MARGIN + CTL / 2 };
@@ -899,7 +899,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return false;
         };
         const NETWORK = {
-            model(st) {
+            model(st, top = MARGIN) {
                 const W = 200, STRIP = 22, GAPX = 72, GAPY = 24, c = cpm(st), cols = [];
                 const nodes = st.acts.map(a => {
                     const x = c.v.get(a.id), lines = a.label ? wrap(a.label, W - 24) : [''];
@@ -908,11 +908,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                     return n;
                 });
                 const colH = cols.map(col => col ? sum(col.map(n => n.h)) + GAPY * (col.length - 1) : 0), maxH = Math.max(0, ...colH);
-                cols.forEach((col, r) => { if (!col) return; let y = MARGIN + (maxH - colH[r]) / 2; col.forEach(n => { n.x = MARGIN + r * (W + GAPX); n.y = y; n.cx = n.x + W / 2; n.cy = y + n.h / 2; y += n.h + GAPY; }); });
+                cols.forEach((col, r) => { if (!col) return; let y = top + (maxH - colH[r]) / 2; col.forEach(n => { n.x = MARGIN + r * (W + GAPX); n.y = y; n.cx = n.x + W / 2; n.cy = y + n.h / 2; y += n.h + GAPY; }); });
                 const byId = new Map(nodes.map(n => [n.id, n]));
                 const edges = [];
                 nodes.forEach(n => n.deps.forEach(d => { const p = byId.get(d); if (p) edges.push({ id: `e:${n.id}:${d}`, from: p, to: n, crit: p.crit && n.crit && Math.abs(p.ef - n.es) < 1e-9 }); }));
-                return { nodes, edges, length: c.length, STRIP, width: MARGIN * 2 + cols.length * W + Math.max(0, cols.length - 1) * GAPX + CTL + 8, height: maxH + MARGIN * 2 + CTL / 2 };
+                return { nodes, edges, length: c.length, STRIP, width: MARGIN * 2 + cols.length * W + Math.max(0, cols.length - 1) * GAPX + CTL + 8, height: maxH + top + MARGIN + CTL / 2 };
             },
             draw(m, ui) {
                 const out = [], S_ = m.STRIP;
@@ -1031,14 +1031,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             };
         }
         const MATRIX = {
-            model(st) {
+            model(st, top = MARGIN) {
                 const CW = 104, TW = 64, TH = 38;
                 const rl = st.rows.map(r => r.label ? wrap(r.label, 196) : ['']);
                 const RW = Math.max(130, Math.min(220, Math.max(0, ...rl.flat().map(l => tw(l))) + 24));
                 const cl = st.cols.map(c => c.label ? wrap(c.label, CW - 16) : ['']);
                 const headH = Math.max(46, Math.max(0, ...cl.map(l => l.length)) * LH + 22);
                 const rowH = rl.map(l => Math.max(42, l.length * LH + 18));
-                const x0 = MARGIN, y0 = MARGIN, gx = x0 + RW, gy = y0 + headH;
+                const x0 = MARGIN, y0 = top, gx = x0 + RW, gy = y0 + headH;
                 const nodes = [];
                 st.cols.forEach((c, j) => nodes.push({ id: c.id, kind: 'col', label: c.label, lines: cl[j], x: gx + j * CW, y: y0, w: CW, h: headH, cx: gx + j * CW + CW / 2, cy: y0 + headH / 2 }));
                 let y = gy;
@@ -1123,10 +1123,53 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             cell(key) { commit(st => { const v = CYCLE[st.cells[key] || 0]; if (v) st.cells[key] = v; else delete st.cells[key]; }, { keepView: true }); },
         };
 
+        // ── Title band ──────────────────────────────────────────
+        // Tools without a root box get an editable title band above the drawing for the problem being worked on.
+
+        function drawTitleBand(n, ui, word) {
+            if (!ui && !n.label) return '';
+            const selected = isSel(ui, 'title'), words = n.label ? n.lines : [word.toUpperCase()];
+            return (ui ? '<g data-node="title">' : '<g>')
+                + `<rect class="box" x="${r1(n.x - 8)}" y="${r1(n.y)}" width="${r1(n.w + 16)}" height="${r1(n.h)}" fill="${selected ? P.box : 'transparent'}"${selected ? ` stroke="${P.sel}" stroke-width="3"` : ''}/>`
+                + words.map((l, q) => t(n.x, n.y + 31 + q * 28, l, { size: 22, font: HEAD, weight: 700, extra: ` letter-spacing=".04em"${n.label ? '' : ' opacity=".45"'}` })).join('')
+                + ln(n.x - 8, n.y + n.h + 8, n.x + n.w + 8, n.y + n.h + 8, P.line, 2) + '</g>';
+        }
+        function titled(ad, word) {
+            const T_ = Object.create(ad);
+            T_.titleWord = word;
+            T_.model = st => {
+                const guess = MARGIN + 60, m0 = ad.model(st, guess);
+                const w = Math.max(320, m0.width - MARGIN * 2 - CTL - 8);
+                const lines = st.title ? wrap(st.title.toUpperCase(), w, 22, HEAD, 700) : [''];
+                const h = Math.max(42, lines.length * 28 + 14), top = MARGIN + h + 26;
+                const m = top === guess ? m0 : ad.model(st, top);
+                m.titleNode = { id: 'title', kind: 'title', label: st.title || '', lines, x: MARGIN + 8, y: MARGIN, w: w - 16, h, cx: MARGIN + w / 2, cy: MARGIN + h / 2 };
+                m.width = Math.max(m.width, w + MARGIN * 2 + CTL + 8);
+                m.band = h + 26;
+                return m;
+            };
+            T_.draw = (m, ui) => drawTitleBand(m.titleNode, ui, word) + ad.draw(m, ui);
+            T_.exists = (st, id) => id === 'title' || ad.exists(st, id);
+            T_.label = (st, id) => id === 'title' ? st.title || '' : ad.label(st, id);
+            T_.setLabel = (st, id, v) => { if (id === 'title') st.title = v; else ad.setLabel(st, id, v); };
+            T_.word = (st, id) => id === 'title' ? word : ad.word(st, id);
+            T_.canDrag = (st, id) => id !== 'title' && ad.canDrag(st, id);
+            T_.canDrop = (st, d, tId) => d !== 'title' && tId !== 'title' && ad.canDrop(st, d, tId);
+            T_.remove = id => { if (id !== 'title') ad.remove(id); };
+            T_.next = id => { if (id !== 'title') ad.next(id); };
+            T_.inner = id => { if (id !== 'title') ad.inner(id); };
+            T_.aOk = (st, id) => id === 'title' || ad.aOk(st, id);
+            T_.bOk = (st, id) => id !== 'title' && ad.bOk(st, id);
+            T_.a = id => ad.a(id === 'title' ? null : id);
+            T_.b = id => { if (id !== 'title') ad.b(id); };
+            if (ad.canLink) T_.canLink = (st, id) => id !== 'title' && ad.canLink(st, id);
+            return T_;
+        }
+
         const ADAPT = {
             tree: treeAdapter({ dir: 'lr', W: 200, gap: 16, gapX: 64 }),
             pdpc: treeAdapter({ dir: 'tb', W: 190, gap: 18, gapY: 44, max: 3, levels: PDPC_LEVELS, tag: true }),
-            affinity: AFFINITY, relations: RELATIONS, network: NETWORK, matrix: MATRIX,
+            affinity: titled(AFFINITY, 'Theme'), relations: titled(RELATIONS, 'Problem'), network: titled(NETWORK, 'Project'), matrix: titled(MATRIX, 'Title'),
         };
 
         // ── Prioritization (grid tool) ──────────────────────────
@@ -1419,7 +1462,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             T.y = (r.height - model.height * T.k) / 2;
             applyView();
         }
-        const nodeOf = id => model && model.nodes.find(n => n.id === id);
+        const allNodes = () => model ? (model.titleNode ? [model.titleNode] : []).concat(model.nodes) : [];
+        const nodeOf = id => allNodes().find(n => n.id === id);
         function reveal(id) {
             const n = nodeOf(id);
             if (!n) return;
@@ -1431,7 +1475,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
         const local = e => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
         const toWorld = p => ({ x: (p.x - T.x) / T.k, y: (p.y - T.y) / T.k });
-        const nodeAt = (wp, skip) => model && model.nodes.find(n => n.id !== skip && wp.x >= n.x && wp.x <= n.x + n.w && wp.y >= n.y && wp.y <= n.y + n.h) || null;
+        const nodeAt = (wp, skip) => allNodes().find(n => n.id !== skip && wp.x >= n.x && wp.x <= n.x + n.w && wp.y >= n.y && wp.y <= n.y + n.h) || null;
 
         // ── Label editor ────────────────────────────────────────
 
@@ -1445,8 +1489,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const dark = n && (n.kind === 'group' || (n.depth === 0 && n.kind === 'node') || n.driver);
             editor.style.background = dark ? pal.series : pal.box;
             editor.style.color = dark ? pal.bg : pal.text;
-            editor.style.textAlign = n && n.kind === 'row' ? 'left' : 'center';
-            editor.style.textTransform = n && n.kind === 'group' ? 'uppercase' : 'none';
+            editor.style.textAlign = n && (n.kind === 'row' || n.kind === 'title') ? 'left' : 'center';
+            editor.style.textTransform = n && (n.kind === 'group' || n.kind === 'title') ? 'uppercase' : 'none';
             editor.value = initial != null ? initial : field ? ad.field.get(st, id) : ad.label(st, id);
             editor.placeholder = field ? toolOf(S.tool).field : ad.word(st, id);
             editor.inputMode = field ? 'decimal' : 'text';
@@ -1464,7 +1508,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             const x = f ? n.x + n.w / 3 : n.x, y = n.y, w = f ? n.w / 3 : n.w, h = f ? model.STRIP : n.h;
             Object.assign(editor.style, {
                 left: `${T.x + x * k}px`, top: `${T.y + y * k}px`, width: `${w * k}px`, height: `${Math.max(h, 30) * k}px`,
-                fontSize: `${(n.kind === 'group' ? 14 : FS) * k}px`, paddingTop: `${Math.max(0, Math.max(h, 30) * k / 2 - LH * k * 0.75)}px`,
+                fontSize: `${(n.kind === 'title' ? 22 : n.kind === 'group' ? 14 : FS) * k}px`, paddingTop: `${Math.max(0, Math.max(h, 30) * k / 2 - LH * k * 0.75)}px`,
             });
         }
         function finishEdit(keep) {
@@ -1483,7 +1527,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 return;
             }
             // An empty new box is dropped; a tree's root keeps its place even when empty.
-            const isRoot = ad === ADAPT.tree || ad === ADAPT.pdpc ? id === cur().root.id : false;
+            const isRoot = id === 'title' || (ad === ADAPT.tree || ad === ADAPT.pdpc ? id === cur().root.id : false);
             if (!keep || (!val && !isRoot)) {
                 if (isNew) { S.tools[S.tool] = JSON.parse(stack().undo.pop()); sel = prev && exists(prev) ? prev : null; render(); fit(); }
                 else render();
@@ -1618,7 +1662,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
             if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
             if (e.key === 'Escape') { if (linkFrom) linkFrom = null; else sel = null; render(); return; }
-            const order = model ? model.nodes.map(n => n.id) : [];
+            const order = allNodes().map(n => n.id);
             if (!sel) {
                 if ((e.key.startsWith('Arrow') || e.key === 'Enter') && order.length) { e.preventDefault(); selectNode(order[0]); }
                 else if (e.key === 'Enter') { e.preventDefault(); A().a(null); }
@@ -1665,6 +1709,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             sel = null; linkFrom = null;
             commit(() => { S.tools[S.tool] = blank(S.tool); }, { grid: kind() === 'grid' });
             if (S.tool === 'tree' || S.tool === 'pdpc') startEdit(cur().root.id, false);
+            else if (kind() === 'diagram' && A().titleWord) startEdit('title', false);
         });
         document.addEventListener('keydown', e => {
             if (kind() !== 'grid' || !(e.ctrlKey || e.metaKey)) return;
@@ -1706,8 +1751,8 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 P = pal;
                 const keep = [sel, hoverId, linkFrom];
                 sel = hoverId = linkFrom = null;
-                const m = A().model(cur());
-                d = { w: m.width - CTL - 8, h: m.height - CTL / 2, inner: A().draw(m, false) };
+                const m = A().model(cur()), cut = m.titleNode && !m.titleNode.label ? m.band : 0;
+                d = { w: m.width - CTL - 8, h: m.height - CTL / 2 - cut, inner: `<g transform="translate(0,${-cut})">${A().draw(m, false)}</g>` };
                 [sel, hoverId, linkFrom] = keep;
             } else d = buildChart(pal, EXPORT_W);
             P = palette();
