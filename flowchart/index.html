@@ -129,12 +129,6 @@ main{flex:1;padding:40px var(--margin) 0}
 .body{display:flex;flex-direction:column;gap:16px;padding:20px 28px 28px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.signs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;overflow:hidden;border-bottom:1px solid var(--key)}
-.sign{min-width:0;box-shadow:-1px 0 0 var(--key),0 -1px 0 var(--key)}
-.sign-head{display:flex;align-items:center;gap:8px;padding:10px 16px 0;font-family:var(--display);font-weight:700;font-size:16px;line-height:22px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.sign-head i{width:10px;height:10px;flex:none;border:1px solid var(--key)}
-.num{display:block;padding:2px 16px 10px;font-family:var(--display);font-weight:700;font-size:36px;line-height:44px;font-variant-numeric:tabular-nums}
-
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
 .tgroup{display:flex}
 .tgroup .act+.act{margin-left:-2px}
@@ -185,9 +179,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
   .exports button{padding:8px 12px}
   .exports button svg{display:none}
   .body{padding:16px}
-  .signs{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .sign-head{padding:8px 12px 0;font-size:14px}
-  .num{padding:0 12px 8px;font-size:28px;line-height:36px}
   .toolbar{gap:8px 10px}
   .act{padding:6px 10px}
   .act.shape{padding:6px 8px}
@@ -256,7 +247,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 <input type="file" id="import-file" accept="application/json,.json" hidden>
             </div>
             <div class="body" id="inputs">
-                <div class="signs" id="tally"></div>
                 <div class="toolbar" role="toolbar" aria-label="Flowchart">
                     <div class="tgroup">
                         <button class="act" type="button" id="add-next" aria-keyshortcuts="Tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Next</button>
@@ -308,12 +298,11 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
 
         const STORE_KEY = 'flowchart:chart';
         const TYPES = {
-            terminal: { name: 'Start/End',    plural: 'Start/<wbr>End',    w: 168, inner: 116 },
-            process:  { name: 'Process',      plural: 'Steps',        w: 184, inner: 156 },
-            decision: { name: 'Decision',     plural: 'Decisions',    w: 208, inner: 112 },
-            io:       { name: 'Input/Output', plural: 'Input/<wbr>Output', w: 196, inner: 136 },
+            terminal: { name: 'Start/End',    w: 168, inner: 116 },
+            process:  { name: 'Process',      w: 184, inner: 156 },
+            decision: { name: 'Decision',     w: 208, inner: 112 },
+            io:       { name: 'Input/Output', w: 196, inner: 136 },
         };
-        const KINDS = ['terminal', 'process', 'decision', 'io'];
         const PALETTES = {
             light:  { bg: '#ede3ce', box: '#f6efe1', stroke: '#4d5843', text: '#181c16', line: '#4d5843', label: '#4d5843', sel: '#d9822b', selInk: '#181c16', term: '#24422e', termInk: '#f6efe1', dec: '#e9b46e', decInk: '#181c16' },
             dark:   { bg: '#1a271f', box: '#0a0f0c', stroke: '#5f7566', text: '#f4ede2', line: '#96a498', label: '#96a498', sel: '#e5933a', selInk: '#0e1511', term: '#2d4b38', termInk: '#f4ede2', dec: '#e5933a', decInk: '#0e1511' },
@@ -945,12 +934,6 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             world.innerHTML = draw(view, P, true);
             canvas.style.background = P.bg;
             applyView();
-
-            const count = t => view.nodes.filter(n => n.type === t).length;
-            const swatch = t => t === 'terminal' ? P.term : t === 'decision' ? P.dec : P.box;
-            $('tally').innerHTML = KINDS.map(t =>
-                `<div class="sign"><div class="sign-head"><i style="background:${swatch(t)}"></i>${TYPES[t].plural}</div><output class="num">${count(t)}</output></div>`
-            ).join('') + `<div class="sign"><div class="sign-head">Arrows</div><output class="num">${view.E.length}</output></div>`;
 
             const has = view.nodes.length > 0, node = selNode() ? S.nodes[sel.id] : null;
             ['copy', 'png', 'svg', 'json', 'fit', 'zoom-in', 'zoom-out'].forEach(id => { $(id).disabled = !has; });

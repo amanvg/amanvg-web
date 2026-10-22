@@ -77,7 +77,7 @@ A Reject means make no changes and ask what to adjust.
   Exports always use the light colours on white with Work Sans and Oswald
   inlined from Google Fonts (PNG at 3×).
 - `/flowchart/`: follows `DESIGN.md` like `/kpitree/` (Copy, PNG, SVG, JSON,
-  Import in the masthead; shape tally strip; toolbar of Next, Beside, Connect,
+  Import in the masthead; toolbar of Next, Beside, Connect,
   Delete, shape chips, undo/redo, zoom, Fit, Example, Clear above the canvas).
   No free placement: a layered layout always runs top to bottom (main path
   straight, branches beside it, right-angle arrows, loop-backs up the right
