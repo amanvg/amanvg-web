@@ -71,6 +71,13 @@ A Reject means make no changes and ask what to adjust.
   purple, Measure blue); conflicts are red lines, companions double lines.
   Exports always use the light colours on white with Work Sans and Oswald
   inlined from Google Fonts (PNG at 3×).
+- `/qualitycontrol/`: follows `DESIGN.md` like `/commute/`; Copy, PNG and SVG
+  plus the seven tool chips (Flow Chart, Check Sheet, Pareto, Fishbone,
+  Scatter, Histogram, Control Chart) sit in the masthead, title and typed data
+  sit left, a tally strip and the auto-laid-out inline-SVG chart sit right and
+  update live. Nothing is dragged or placed by hand. Exports use the light
+  colours on white like `/kpitree/` (plots at 1200×675, diagrams at natural
+  size).
 - `/frontier/`: follows `DESIGN.md` like `/commute/`; reads the log from the
   Worker API, read-only until a device is Connected (no browser copy). The
   odometer is locked to the highest reading across fill-ups and services and
@@ -188,6 +195,17 @@ A Reject means make no changes and ask what to adjust.
   Duplicate and Delete lists the trees on the Worker, edits autosave there,
   and `kpitree:open` remembers the open tree; a first connect to an empty
   server uploads the browser's saved tree.
+- `/qualitycontrol/` Quality Control: the seven basic quality tools drawn
+  from typed text. Flow chart: one step per line, `?` makes a decision and
+  `no: <step>` loops to a step (or adds a side box that returns). Check sheet:
+  a column header line then `Row: n, n, ...` tallies. Pareto: `Label: count`,
+  sorted with Other last, cumulative line and 80% rule. Fishbone: categories
+  with indented causes, alternating above and below the spine. Scatter: an
+  optional `X, Y` name line then pairs, least-squares line and r. Histogram:
+  values with optional `LSL`/`USL`/`Target` lines, Sturges bins, Cpk.
+  Control chart: individuals chart, limits at mean ± 2.66 × average moving
+  range, red beyond limits, amber on runs of 8. Saved in `localStorage`
+  (`qualitycontrol:data`, version 1); no Worker.
 - `/spreadsheet/` Spreadsheet: workbook with formulas, sheets, charts and
   .xlsx/.csv open and save, saved in `localStorage` (`spreadsheet:workbook`).
 - `/seattlesports/`, `/tempest/`, `/USStates/`, `/worldmap/`, `/mlbstadiums/`:
