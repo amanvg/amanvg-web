@@ -223,7 +223,9 @@ A Reject means make no changes and ask what to adjust.
   tools. Affinity: groups with idea cards (drag cards between groups). Tree:
   goal and means left to right. PDPC: objective, activity, risk and
   countermeasure top-down, countermeasures marked feasible (○) or not (✕);
-  tally counts covered and open risks. Interrelationship: factors on a circle,
+  tally counts covered and open risks. Interrelationship: factors evenly along an oval
+  shaped like the canvas, grown only until no boxes touch and no arrow crosses
+  a box,
   Link draws cause → effect (one arrow per pair), most outgoing is the key
   driver and most incoming the key outcome. Matrix: click a cell to cycle
   positive (+1) / neutral (0) / negative (−1) opinion, with signed net totals
