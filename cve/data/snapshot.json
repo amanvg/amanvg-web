@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-23T17:05:44Z",
+ "generatedAt": "2026-10-23T21:23:26Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.21",
- "kevCount": 1754,
+ "kevCatalogVersion": "2026.10.23",
+ "kevCount": 1756,
  "epssDate": "2026-10-23",
  "items": [
   {
@@ -336,6 +336,28 @@
    "cwe": "Improper neutralization of special elements used in an OS command ('OS Command Injection')"
   },
   {
+   "id": "CVE-2026-110447",
+   "vendor": "Collabora",
+   "product": "Collabora Online – Built-in CODE Server",
+   "name": "Collabora Online – Built-in CODE Server OS Command Injection Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-23",
+    "due": "2026-10-26",
+    "ransomware": false
+   },
+   "epss": 0.012,
+   "percentile": 0.686,
+   "cvss": 9.2,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
    "id": "CVE-2026-110936",
    "vendor": "Siemens",
    "product": "Software Center",
@@ -356,6 +378,28 @@
    "impact": "total",
    "cweId": "CWE-427",
    "cwe": "Uncontrolled Search Path Element"
+  },
+  {
+   "id": "CVE-2026-114625",
+   "vendor": "Arista",
+   "product": "VeloCloud Orchestrator",
+   "name": "Arista VeloCloud Orchestrator SQL Injection Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-23",
+    "due": "2026-10-26",
+    "ransomware": false
+   },
+   "epss": 0.006,
+   "percentile": 0.456,
+   "cvss": 9.9,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-89",
+   "cwe": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
   },
   {
    "id": "CVE-2026-21589",
@@ -1522,24 +1566,6 @@
    "impact": "total",
    "cweId": "CWE-94",
    "cwe": "Improper Control of Generation of Code ('Code Injection')"
-  },
-  {
-   "id": "CVE-2026-93349",
-   "vendor": "frictionlessdata",
-   "product": "frictionless-py",
-   "name": "Frictionless OS Command Injection via explore Console Command",
-   "published": "2026-09-23",
-   "kev": null,
-   "epss": 0.021,
-   "percentile": 0.817,
-   "cvss": 8.6,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:A/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   }
  ]
 }
