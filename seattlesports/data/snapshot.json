@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-23T07:14:44.141Z",
+ "generatedAt": "2026-10-24T22:19:43.789Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -843,7 +843,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "9"
+        "displayValue": "7"
        },
        {
         "name": "losses",
@@ -853,56 +853,17 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "8"
+        "displayValue": "10"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "4"
+        "displayValue": "5"
        },
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
         "displayValue": "0"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "8",
-       "abbreviation": "LA",
-       "displayName": "Los Angeles Kings"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "2"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "11"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "4"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "6"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "2"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "2"
        }
       ]
      },
@@ -942,6 +903,45 @@
         "name": "overtimeLosses",
         "abbreviation": "OTL",
         "displayValue": "0"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "8",
+       "abbreviation": "LA",
+       "displayName": "Los Angeles Kings"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "2"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "11"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "5"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "6"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "2"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "2"
        }
       ]
      },
