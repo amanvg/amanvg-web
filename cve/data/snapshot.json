@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24T15:56:20Z",
+ "generatedAt": "2026-10-25T04:39:19Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.23",
  "kevCount": 1756,
@@ -424,28 +424,6 @@
    "cwe": "Files or Directories Accessible to External Parties"
   },
   {
-   "id": "CVE-2026-5430",
-   "vendor": "WSO2",
-   "product": "Multiple Products",
-   "name": "WSO2 Multiple Products Path Traversal Vulnerability ",
-   "published": null,
-   "kev": {
-    "added": "2026-09-24",
-    "due": "2026-09-27",
-    "ransomware": false
-   },
-   "epss": 0.006,
-   "percentile": 0.475,
-   "cvss": 10.0,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-347",
-   "cwe": "Improper Validation of Certificate With Host Mismatch"
-  },
-  {
    "id": "CVE-2026-65660",
    "vendor": "Microsoft",
    "product": "SharePoint",
@@ -488,28 +466,6 @@
    "impact": "partial",
    "cweId": "CWE-841",
    "cwe": "Improper enforcement of behavioral workflow"
-  },
-  {
-   "id": "CVE-2026-71362",
-   "vendor": "Adobe",
-   "product": "Commerce and Magento ",
-   "name": "Adobe Commerce and Magento Incorrect Authorization Vulnerability ",
-   "published": null,
-   "kev": {
-    "added": "2026-09-24",
-    "due": "2026-09-27",
-    "ransomware": false
-   },
-   "epss": 0.875,
-   "percentile": 0.998,
-   "cvss": 9.1,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-863",
-   "cwe": "Incorrect Authorization (CWE-863)"
   },
   {
    "id": "CVE-2026-76504",
