@@ -477,7 +477,11 @@
       el.className = 'merge-cell' + (content.cls.includes('wrap') ? ' wrap' : '');
       el.dataset.i = i;
       el.setAttribute('style', css.join(';'));
-      el.innerHTML = `<div class="mc-in" style="text-align:${h}">${content.html || esc(content.text)}</div>`;
+      const inner = document.createElement('div');
+      inner.className = 'mc-in';
+      inner.style.textAlign = h;
+      inner.innerHTML = content.html || esc(content.text);
+      el.appendChild(inner);
       gridInner.appendChild(el);
     });
     placeMerges();
@@ -1325,7 +1329,7 @@
   }
   function renderGallery() {
     const cur = activeStyle().cs || (Object.keys(activeStyle()).length ? '' : 'normal');
-    const tile = (x) => `<button class="cs-tile${x.key === cur ? ' current' : ''}" role="menuitem" data-style="${esc(x.key)}" title="${esc(x.name)}" style="${tileCss(x.def)}">${esc(x.name)}</button>`;
+    const tile = (x) => `<button class="cs-tile${x.key === cur ? ' current' : ''}" role="menuitem" data-style="${esc(x.key)}" title="${esc(x.name)}" style="${esc(tileCss(x.def))}">${esc(x.name)}</button>`;
     const custom = customStyles();
     const sections = custom.length ? [['Custom', custom], ...STYLE_SECTIONS] : STYLE_SECTIONS;
     $('#cellStyles').innerHTML = sections.map(([head, list]) => `<div class="cs-head">${esc(head)}</div><div class="cs-grid">${list.map(tile).join('')}</div>`).join('')
@@ -2175,7 +2179,7 @@
       const h = at(a, 'horizontal'), v = at(a, 'vertical'), rot = +at(a, 'textRotation') || 0, dir = at(a, 'readingOrder');
       const st = {
         ...fonts[+xf.getAttribute('fontId') || 0], ...fills[+xf.getAttribute('fillId') || 0], ...borders[+xf.getAttribute('borderId') || 0],
-        align: h && h !== 'general' ? (h === 'centerContinuous' ? 'centerAcross' : h) : undefined,
+        align: h && ['left', 'center', 'right', 'fill', 'justify', 'distributed', 'centerContinuous'].includes(h) ? (h === 'centerContinuous' ? 'centerAcross' : h) : undefined,
         valign: v && v !== 'bottom' ? (v === 'center' ? 'middle' : v) : undefined,
         rot: rot === 255 ? 'v' : rot > 90 ? 90 - rot : rot || undefined,
         wrap: on(a, 'wrapText'), indent: +at(a, 'indent') || undefined, jdist: on(a, 'justifyLastLine'), shrink: on(a, 'shrinkToFit'),
@@ -2777,10 +2781,10 @@
     if (e === 'mixed') return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#b0b0b0" stroke-width="2"/>`;
     if (e[0] === 'double') {
       const dx = y1 === y2 ? 0 : 1.5, dy = y1 === y2 ? 1.5 : 0;
-      if (x1 !== x2 && y1 !== y2) return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${e[1]}" stroke-width="3"/>`;
-      return `<line x1="${x1 - dx}" y1="${y1 - dy}" x2="${x2 - dx}" y2="${y2 - dy}" stroke="${e[1]}" stroke-width="1"/><line x1="${x1 + dx}" y1="${y1 + dy}" x2="${x2 + dx}" y2="${y2 + dy}" stroke="${e[1]}" stroke-width="1"/>`;
+      if (x1 !== x2 && y1 !== y2) return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${esc(e[1])}" stroke-width="3"/>`;
+      return `<line x1="${x1 - dx}" y1="${y1 - dy}" x2="${x2 - dx}" y2="${y2 - dy}" stroke="${esc(e[1])}" stroke-width="1"/><line x1="${x1 + dx}" y1="${y1 + dy}" x2="${x2 + dx}" y2="${y2 + dy}" stroke="${esc(e[1])}" stroke-width="1"/>`;
     }
-    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${e[1]}" ${dashAttr(e[0])}/>`;
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${esc(e[1])}" ${dashAttr(e[0])}/>`;
   }
   function renderBorderPane() {
     const E = FC.edges, L = 20, T = 15, R = 140, B = 105, MX = 80, MY = 60;
@@ -2831,7 +2835,7 @@
     fcd.ownerDocument.querySelectorAll('[name="feStyle"]').forEach((r) => { r.checked = r.value === FE.style; });
     const n = FE.style === 'corner' ? 4 : FE.style === 'center' ? 2 : 3;
     if (FE.variant > n) FE.variant = 1;
-    $('#feVariants').innerHTML = Array.from({ length: n }, (_, i) => `<button type="button" data-variant="${i + 1}" class="${FE.variant === i + 1 ? 'on' : ''}" style="background-image:${gradientImage({ ...FE, variant: i + 1 })}"></button>`).join('');
+    $('#feVariants').innerHTML = Array.from({ length: n }, (_, i) => `<button type="button" data-variant="${i + 1}" class="${FE.variant === i + 1 ? 'on' : ''}" style="background-image:${esc(gradientImage({ ...FE, variant: i + 1 }))}"></button>`).join('');
     $('#feSample').style.backgroundImage = gradientImage(FE);
   }
   function openFillEffects() {

@@ -920,14 +920,14 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             m.E.forEach(e => {
                 const { d, tip, from } = route(e.pts);
                 const selected = ui && sel && sel.kind === 'edge' && sel.id === e.id;
-                out.push(ui ? `<g data-edge="${e.id}">` : '<g>');
+                out.push(ui ? `<g data-edge="${esc(e.id)}">` : '<g>');
                 if (selected) out.push(`<path d="${d}" fill="none" stroke="${P.sel}" stroke-width="10" stroke-opacity=".45"/>`);
                 out.push(`<path d="${d}" fill="none" stroke="${P.line}" stroke-width="1.75"/>`, arrow(tip, from, P.line));
                 if (ui) out.push(`<path d="${d}" fill="none" stroke="transparent" stroke-width="14"/>`);
                 out.push('</g>');
                 if (e.label && !(ui && editing && editing.kind === 'edge' && editing.id === e.id)) {
                     const w = labelWidth(e.label);
-                    labels.push(`<g${ui ? ` data-edge="${e.id}"` : ''}><rect x="${r1(e.lab.x - 3)}" y="${r1(e.lab.y - 1)}" width="${r1(w + 6)}" height="17" fill="${P.bg}"${selected ? ` stroke="${P.sel}" stroke-width="1.5"` : ''}/><text x="${r1(e.lab.x)}" y="${r1(e.lab.y + 7.5)}" dominant-baseline="central" font-family="${esc(TEXT_FONT)}" font-weight="600" font-size="${LFS}" fill="${P.label}">${esc(e.label)}</text></g>`);
+                    labels.push(`<g${ui ? ` data-edge="${esc(e.id)}"` : ''}><rect x="${r1(e.lab.x - 3)}" y="${r1(e.lab.y - 1)}" width="${r1(w + 6)}" height="17" fill="${P.bg}"${selected ? ` stroke="${P.sel}" stroke-width="1.5"` : ''}/><text x="${r1(e.lab.x)}" y="${r1(e.lab.y + 7.5)}" dominant-baseline="central" font-family="${esc(TEXT_FONT)}" font-weight="600" font-size="${LFS}" fill="${P.label}">${esc(e.label)}</text></g>`);
                 }
             });
             out.push(...labels);
@@ -937,7 +937,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 const source = ui && linkFrom === n.id;
                 const ctls = ui && !linkFrom && !editing && (selected || hoverId === n.id);
                 const [fill, ink] = fillOf(n, P);
-                out.push(ui ? `<g data-node="${n.id}">` : '<g>');
+                out.push(ui ? `<g data-node="${esc(n.id)}">` : '<g>');
                 // Invisible pad so the pointer can travel from the shape onto its + controls.
                 if (ctls) out.push(`<rect x="${r1(n.x - n.w / 2)}" y="${r1(n.cy - n.h / 2)}" width="${n.w + 6 + CTL}" height="${n.h + CTL / 2}" fill="transparent"/>`);
                 if (selected || source) out.push(`<path d="${shapePath(n, 5)}" fill="none" stroke="${P.sel}" stroke-width="2.5"${source ? ' stroke-dasharray="6 4"' : ''}/>`);
@@ -949,9 +949,9 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
                 // + controls on the selected or hovered shape: below adds the next step, right adds one beside.
                 if (ctls) {
                     let bx = n.x - CTL / 2, by = n.cy + n.h / 2 - CTL / 2;
-                    out.push(`<g data-ctl="next" data-for="${n.id}" role="button" aria-label="Add next step"><rect x="${r1(bx)}" y="${r1(by)}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(r1(bx), r1(by), P)}</g>`);
+                    out.push(`<g data-ctl="next" data-for="${esc(n.id)}" role="button" aria-label="Add next step"><rect x="${r1(bx)}" y="${r1(by)}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(r1(bx), r1(by), P)}</g>`);
                     bx = n.x + n.w / 2 + 6; by = n.cy - CTL / 2;
-                    out.push(`<g data-ctl="beside" data-for="${n.id}" role="button" aria-label="Add step beside"><rect x="${r1(bx)}" y="${r1(by)}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(r1(bx), r1(by), P)}</g>`);
+                    out.push(`<g data-ctl="beside" data-for="${esc(n.id)}" role="button" aria-label="Add step beside"><rect x="${r1(bx)}" y="${r1(by)}" width="${CTL}" height="${CTL}" fill="${P.sel}"/>${plusIcon(r1(bx), r1(by), P)}</g>`);
                 }
                 out.push('</g>');
             });
