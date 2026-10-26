@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T16:16:35Z",
+ "generatedAt": "2026-10-26T04:44:53Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.23",
  "kevCount": 1756,
@@ -424,50 +424,6 @@
    "cwe": "Files or Directories Accessible to External Parties"
   },
   {
-   "id": "CVE-2026-65660",
-   "vendor": "Microsoft",
-   "product": "SharePoint",
-   "name": "Microsoft SharePoint Code Injection Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-25",
-    "due": "2026-09-28",
-    "ransomware": false
-   },
-   "epss": 0.082,
-   "percentile": 0.948,
-   "cvss": 8.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:U/RL:O/RC:C",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-94",
-   "cwe": "Improper Control of Generation of Code ('Code Injection')"
-  },
-  {
-   "id": "CVE-2026-67279",
-   "vendor": "MikroTik",
-   "product": "RouterOS",
-   "name": "Mikrotik RouterOS Improper Enforcement of Behavioral Workflow Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-25",
-    "due": "2026-09-28",
-    "ransomware": false
-   },
-   "epss": 0.023,
-   "percentile": 0.83,
-   "cvss": 6.9,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "partial",
-   "cweId": "CWE-841",
-   "cwe": "Improper enforcement of behavioral workflow"
-  },
-  {
    "id": "CVE-2026-76504",
    "vendor": "Cisco",
    "product": "Catalyst SD-WAN Manager",
@@ -532,28 +488,6 @@
    "impact": "total",
    "cweId": "CWE-787",
    "cwe": "Out-of-bounds Write"
-  },
-  {
-   "id": "CVE-2026-87902",
-   "vendor": "WordPress",
-   "product": "Core",
-   "name": "WordPress Core Remote File Inclusion Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-25",
-    "due": "2026-09-28",
-    "ransomware": false
-   },
-   "epss": 0.958,
-   "percentile": 0.999,
-   "cvss": 8.1,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-98",
-   "cwe": "Remote File Inclusion"
   },
   {
    "id": "CVE-2026-88771",
