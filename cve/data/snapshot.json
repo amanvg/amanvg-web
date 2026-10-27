@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-26T22:39:17Z",
+ "generatedAt": "2026-10-27T05:02:22Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.23",
- "kevCount": 1756,
+ "kevCatalogVersion": "2026.10.26",
+ "kevCount": 1758,
  "epssDate": "2026-10-26",
  "items": [
   {
@@ -334,6 +334,50 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper neutralization of special elements used in an OS command ('OS Command Injection')"
+  },
+  {
+   "id": "CVE-2026-109618",
+   "vendor": "PHP Group",
+   "product": "PHP",
+   "name": "PHP Memory Corruption Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-26",
+    "due": "2026-10-29",
+    "ransomware": false
+   },
+   "epss": 1.0,
+   "percentile": 1.0,
+   "cvss": 9.2,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-416",
+   "cwe": "Use after free"
+  },
+  {
+   "id": "CVE-2026-109619",
+   "vendor": "PHP Group",
+   "product": "PHP",
+   "name": "PHP Stale Internal Request-State Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-26",
+    "due": "2026-10-29",
+    "ransomware": false
+   },
+   "epss": 1.0,
+   "percentile": 1.0,
+   "cvss": 9.2,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-416",
+   "cwe": "Use after free"
   },
   {
    "id": "CVE-2026-110447",
@@ -700,24 +744,6 @@
    "impact": "total",
    "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
-  },
-  {
-   "id": "CVE-2026-100852",
-   "vendor": "AzuraCast",
-   "product": "AzuraCast",
-   "name": "AzuraCast before 0.23.8 Command Injection via Streamer Username",
-   "published": "2026-09-27",
-   "kev": null,
-   "epss": 0.046,
-   "percentile": 0.917,
-   "cvss": 8.7,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-101001",
@@ -1132,42 +1158,6 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "OS Command Injection"
-  },
-  {
-   "id": "CVE-2026-109618",
-   "vendor": "PHP Group",
-   "product": "PHP",
-   "name": "RCE via OOM corruption",
-   "published": "2026-10-21",
-   "kev": null,
-   "epss": 1.0,
-   "percentile": 1.0,
-   "cvss": 9.2,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "none",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-416",
-   "cwe": "Use after free"
-  },
-  {
-   "id": "CVE-2026-109619",
-   "vendor": "PHP Group",
-   "product": "PHP",
-   "name": "RCE via stale global state",
-   "published": "2026-10-21",
-   "kev": null,
-   "epss": 1.0,
-   "percentile": 1.0,
-   "cvss": 9.2,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "none",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-416",
-   "cwe": "Use after free"
   },
   {
    "id": "CVE-2026-110536",
