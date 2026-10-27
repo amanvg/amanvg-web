@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-10-27T17:59:21Z",
+ "generatedAt": "2026-10-27T22:12:38Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.26",
- "kevCount": 1758,
+ "kevCatalogVersion": "2026.10.27",
+ "kevCount": 1760,
  "epssDate": "2026-10-27",
  "items": [
   {
@@ -424,6 +424,28 @@
    "cwe": "Uncontrolled Search Path Element"
   },
   {
+   "id": "CVE-2026-111497",
+   "vendor": "Google",
+   "product": "Brotli",
+   "name": "Google Brotli Unchecked Return Value Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-27",
+    "due": "2026-11-10",
+    "ransomware": false
+   },
+   "epss": 0.555,
+   "percentile": 0.99,
+   "cvss": 9.2,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-787",
+   "cwe": "Out-of-bounds Write"
+  },
+  {
    "id": "CVE-2026-114625",
    "vendor": "Arista",
    "product": "VeloCloud Orchestrator",
@@ -466,6 +488,28 @@
    "impact": "total",
    "cweId": "CWE-552",
    "cwe": "Files or Directories Accessible to External Parties"
+  },
+  {
+   "id": "CVE-2026-48356",
+   "vendor": "Adobe",
+   "product": "Commerce and Magento",
+   "name": "Adobe Commerce and Magento Unrestricted Upload of File with Dangerous Type Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-27",
+    "due": "2026-11-10",
+    "ransomware": false
+   },
+   "epss": 0.306,
+   "percentile": 0.982,
+   "cvss": 9.3,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-434",
+   "cwe": "Unrestricted Upload of File with Dangerous Type (CWE-434)"
   },
   {
    "id": "CVE-2026-76504",
@@ -1410,24 +1454,6 @@
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
-  },
-  {
-   "id": "CVE-2026-111497",
-   "vendor": "Google",
-   "product": "Brotli",
-   "name": "Out-of-Bounds Write in Google Brotli Decoder",
-   "published": "2026-10-22",
-   "kev": null,
-   "epss": 0.555,
-   "percentile": 0.99,
-   "cvss": 9.2,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "none",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-787",
-   "cwe": "Out-of-bounds Write"
   },
   {
    "id": "CVE-2026-112195",
