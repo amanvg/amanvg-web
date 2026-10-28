@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-27T05:26:33.912Z",
+ "generatedAt": "2026-10-28T06:07:25.229Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -647,7 +647,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "3"
+       "displayValue": "5"
       },
       {
        "name": "losses",
@@ -674,6 +674,45 @@
     "divisionEntries": [
      {
       "team": {
+       "id": "37",
+       "abbreviation": "VGK",
+       "displayName": "Vegas Golden Knights"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "1"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "4"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "19"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "9"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "6",
        "abbreviation": "EDM",
        "displayName": "Edmonton Oilers"
@@ -687,7 +726,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "-"
+        "displayValue": "2"
        },
        {
         "name": "losses",
@@ -713,45 +752,6 @@
      },
      {
       "team": {
-       "id": "37",
-       "abbreviation": "VGK",
-       "displayName": "Vegas Golden Knights"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "1"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "4"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "17"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "8"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "124292",
        "abbreviation": "SEA",
        "displayName": "Seattle Kraken"
@@ -765,7 +765,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "3"
+        "displayValue": "5"
        },
        {
         "name": "losses",
@@ -804,12 +804,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "5"
+        "displayValue": "7"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "5"
+        "displayValue": "6"
        },
        {
         "name": "points",
@@ -820,6 +820,45 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "6"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "9"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "6"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "11"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "5"
        },
        {
         "name": "overtimeLosses",
@@ -843,46 +882,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "8"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "6"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
         "displayValue": "10"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "5"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "8"
        },
        {
         "name": "losses",
@@ -921,12 +921,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "10"
+        "displayValue": "12"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "5"
+        "displayValue": "6"
        },
        {
         "name": "points",
@@ -970,12 +970,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "5"
+        "displayValue": "7"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "overtimeLosses",
