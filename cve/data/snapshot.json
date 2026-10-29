@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-29T05:46:06Z",
+ "generatedAt": "2026-10-29T22:44:13Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.28",
- "kevCount": 1762,
- "epssDate": "2026-10-28",
+ "kevCatalogVersion": "2026.10.29",
+ "kevCount": 1764,
+ "epssDate": "2026-10-29",
  "items": [
   {
    "id": "CVE-2015-3306",
@@ -105,7 +105,7 @@
     "ransomware": false
    },
    "epss": 0.041,
-   "percentile": 0.907,
+   "percentile": 0.908,
    "cvss": 7.2,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
@@ -149,7 +149,7 @@
     "ransomware": false
    },
    "epss": 0.017,
-   "percentile": 0.776,
+   "percentile": 0.777,
    "cvss": 8.6,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A/AU:N/R:U/V:D/RE:M/U:Red",
@@ -170,8 +170,8 @@
     "due": "2026-10-05",
     "ransomware": false
    },
-   "epss": 0.02,
-   "percentile": 0.802,
+   "epss": 0.225,
+   "percentile": 0.977,
    "cvss": 8.7,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L/E:A/AU:Y/V:C",
@@ -192,8 +192,8 @@
     "due": "2026-10-05",
     "ransomware": false
    },
-   "epss": 0.009,
-   "percentile": 0.583,
+   "epss": 0.109,
+   "percentile": 0.959,
    "cvss": 8.5,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A/AU:Y/V:D",
@@ -325,7 +325,7 @@
     "ransomware": false
    },
    "epss": 0.025,
-   "percentile": 0.848,
+   "percentile": 0.849,
    "cvss": 7.8,
    "cvssVersion": "3.0",
    "cvssVector": "CVSS:3.0/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
@@ -390,8 +390,8 @@
     "due": "2026-10-26",
     "ransomware": false
    },
-   "epss": 0.116,
-   "percentile": 0.96,
+   "epss": 0.733,
+   "percentile": 0.995,
    "cvss": 9.2,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
@@ -413,7 +413,7 @@
     "ransomware": false
    },
    "epss": 0.01,
-   "percentile": 0.616,
+   "percentile": 0.617,
    "cvss": 6.7,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
@@ -434,8 +434,8 @@
     "due": "2026-11-10",
     "ransomware": false
    },
-   "epss": 0.88,
-   "percentile": 0.998,
+   "epss": 0.826,
+   "percentile": 0.997,
    "cvss": 9.2,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
@@ -500,8 +500,8 @@
     "due": "2026-11-11",
     "ransomware": false
    },
-   "epss": 0.003,
-   "percentile": 0.223,
+   "epss": 0.008,
+   "percentile": 0.553,
    "cvss": 2.7,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:L/A:N",
@@ -522,8 +522,8 @@
     "due": "2026-10-31",
     "ransomware": false
    },
-   "epss": 0.102,
-   "percentile": 0.957,
+   "epss": 0.157,
+   "percentile": 0.969,
    "cvss": 7.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
@@ -544,8 +544,8 @@
     "due": "2026-11-10",
     "ransomware": false
    },
-   "epss": 0.591,
-   "percentile": 0.991,
+   "epss": 0.446,
+   "percentile": 0.988,
    "cvss": 9.3,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:N",
@@ -554,6 +554,28 @@
    "impact": "total",
    "cweId": "CWE-434",
    "cwe": "Unrestricted Upload of File with Dangerous Type (CWE-434)"
+  },
+  {
+   "id": "CVE-2026-76418",
+   "vendor": "Cisco",
+   "product": "Secure Firewall ASA Software and Cisco Secure FTD Software",
+   "name": "Cisco Secure Firewall ASA Software and Cisco Secure FTD Software Unchecked Return Value to NULL Pointer Dereference Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-29",
+    "due": "2026-11-01",
+    "ransomware": false
+   },
+   "epss": 0.006,
+   "percentile": 0.473,
+   "cvss": 8.6,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:H",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "partial",
+   "cweId": "CWE-690",
+   "cwe": "Unchecked Return Value to NULL Pointer Dereference"
   },
   {
    "id": "CVE-2026-76504",
@@ -677,7 +699,7 @@
     "ransomware": false
    },
    "epss": 0.019,
-   "percentile": 0.801,
+   "percentile": 0.802,
    "cvss": 6.9,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
@@ -699,7 +721,7 @@
     "ransomware": false
    },
    "epss": 0.016,
-   "percentile": 0.762,
+   "percentile": 0.763,
    "cvss": 4.3,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N",
@@ -752,6 +774,28 @@
    "impact": "total",
    "cweId": "CWE-77",
    "cwe": "Improper Neutralization of Special Elements used in a Command ('Command Injection')"
+  },
+  {
+   "id": "CVE-2026-97229",
+   "vendor": "GitLab",
+   "product": "Community Edition and Enterprise Edition",
+   "name": "GitLab Community Edition and Enterprise Edition Integer Overflow or Wraparound Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-10-29",
+    "due": "2026-11-01",
+    "ransomware": false
+   },
+   "epss": 0.184,
+   "percentile": 0.972,
+   "cvss": 10.0,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-190",
+   "cwe": "Integer Overflow or Wraparound"
   },
   {
    "id": "CVE-2020-37282",
@@ -941,7 +985,7 @@
    "published": "2026-10-12",
    "kev": null,
    "epss": 0.02,
-   "percentile": 0.809,
+   "percentile": 0.81,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -959,7 +1003,7 @@
    "published": "2026-10-13",
    "kev": null,
    "epss": 0.02,
-   "percentile": 0.809,
+   "percentile": 0.81,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -977,7 +1021,7 @@
    "published": "2026-10-14",
    "kev": null,
    "epss": 0.029,
-   "percentile": 0.87,
+   "percentile": 0.871,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -1247,7 +1291,7 @@
    "published": "2026-10-19",
    "kev": null,
    "epss": 0.02,
-   "percentile": 0.81,
+   "percentile": 0.811,
    "cvss": 6.9,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N/E:P",
@@ -1319,7 +1363,7 @@
    "published": "2026-10-20",
    "kev": null,
    "epss": 0.035,
-   "percentile": 0.89,
+   "percentile": 0.891,
    "cvss": 9.3,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
@@ -1337,7 +1381,7 @@
    "published": "2026-10-22",
    "kev": null,
    "epss": 0.022,
-   "percentile": 0.825,
+   "percentile": 0.826,
    "cvss": 10.0,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
@@ -1418,24 +1462,6 @@
    "impact": "total",
    "cweId": "CWE-94",
    "cwe": "Improper Control of Generation of Code ('Code Injection')"
-  },
-  {
-   "id": "CVE-2026-97229",
-   "vendor": "GitLab",
-   "product": "GitLab",
-   "name": "Integer Overflow or Wraparound in GitLab",
-   "published": "2026-10-13",
-   "kev": null,
-   "epss": 0.184,
-   "percentile": 0.972,
-   "cvss": 10.0,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-   "exploitation": "none",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-190",
-   "cwe": "Integer Overflow or Wraparound"
   }
  ]
 }
