@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-29T22:44:13Z",
+ "generatedAt": "2026-10-30T05:46:18Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.29",
  "kevCount": 1764,
@@ -622,28 +622,6 @@
    "cwe": "Relative Path Traversal"
   },
   {
-   "id": "CVE-2026-86950",
-   "vendor": "Apple",
-   "product": "Multiple Products",
-   "name": "Apple Multiple Products Out-of-Bounds Write Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-29",
-    "due": "2026-10-13",
-    "ransomware": false
-   },
-   "epss": 0.262,
-   "percentile": 0.98,
-   "cvss": 8.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-787",
-   "cwe": "Out-of-bounds Write"
-  },
-  {
    "id": "CVE-2026-88779",
    "vendor": "Citrix",
    "product": "NetScaler",
@@ -832,42 +810,6 @@
    "impact": "total",
    "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
-  },
-  {
-   "id": "CVE-2026-102793",
-   "vendor": "Ziroom",
-   "product": "ZHOME A0101",
-   "name": "Ziroom ZHOME A0101 set_time_zone command injection",
-   "published": "2026-09-30",
-   "kev": null,
-   "epss": 0.025,
-   "percentile": 0.846,
-   "cvss": 9.4,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-77",
-   "cwe": "Command Injection"
-  },
-  {
-   "id": "CVE-2026-102794",
-   "vendor": "Ziroom",
-   "product": "ZHOME A0101",
-   "name": "Ziroom ZHOME A0101 ping command injection",
-   "published": "2026-09-30",
-   "kev": null,
-   "epss": 0.024,
-   "percentile": 0.837,
-   "cvss": 9.4,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-77",
-   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-105110",
