@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-30T22:18:11Z",
+ "generatedAt": "2026-10-31T05:38:38Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.30",
  "kevCount": 1766,
@@ -620,28 +620,6 @@
    "impact": "partial",
    "cweId": "CWE-690",
    "cwe": "Unchecked Return Value to NULL Pointer Dereference"
-  },
-  {
-   "id": "CVE-2026-76504",
-   "vendor": "Cisco",
-   "product": "Catalyst SD-WAN Manager",
-   "name": "Cisco Catalyst SD-WAN Manager Hex Encoding Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-09-30",
-    "due": "2026-10-03",
-    "ransomware": false
-   },
-   "epss": 0.389,
-   "percentile": 0.986,
-   "cvss": 9.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-177",
-   "cwe": "Improper Handling of URL Encoding (Hex Encoding)"
   },
   {
    "id": "CVE-2026-76519",
@@ -1373,6 +1351,24 @@
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
    "exploitation": "poc",
    "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-77",
+   "cwe": "Command Injection"
+  },
+  {
+   "id": "CVE-2026-116505",
+   "vendor": "TOTOLINK",
+   "product": "A950RG",
+   "name": "TOTOLINK A950RG device-information udhcpd.leases getDeviceInfo command injection",
+   "published": "2026-10-26",
+   "kev": null,
+   "epss": 0.027,
+   "percentile": 0.861,
+   "cvss": 9.4,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
+   "exploitation": "poc",
+   "automatable": "no",
    "impact": "total",
    "cweId": "CWE-77",
    "cwe": "Command Injection"
