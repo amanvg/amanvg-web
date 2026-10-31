@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-31T05:22:45.666Z",
+ "generatedAt": "2026-10-31T23:35:12.304Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -647,7 +647,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "4"
+       "displayValue": "5"
       },
       {
        "name": "losses",
@@ -687,7 +687,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "1"
+        "displayValue": "-"
        },
        {
         "name": "losses",
@@ -697,12 +697,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "20"
+        "displayValue": "22"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "overtimeLosses",
@@ -726,7 +726,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -765,7 +765,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "4"
+        "displayValue": "5"
        },
        {
         "name": "losses",
@@ -804,12 +804,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "points",
@@ -843,7 +843,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "losses",
@@ -882,7 +882,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "losses",
@@ -921,12 +921,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "11"
+        "displayValue": "12"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "points",
@@ -960,7 +960,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "14"
+        "displayValue": "15"
        },
        {
         "name": "losses",
@@ -1114,17 +1114,46 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "54"
+        "displayValue": "55"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "15"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "191",
+       "abbreviation": "SJ",
+       "displayName": "San Jose Earthquakes"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "9"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "52"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "10"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "14"
        }
       ]
      },
@@ -1167,7 +1196,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "points",
@@ -1183,35 +1212,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "14"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "191",
-       "abbreviation": "SJ",
-       "displayName": "San Jose Earthquakes"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "9"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "49"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "10"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "13"
        }
       ]
      },
@@ -1241,6 +1241,35 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "12"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "187",
+       "abbreviation": "LA",
+       "displayName": "LA Galaxy"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "11"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "44"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "11"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "11"
        }
       ]
      },
@@ -1312,7 +1341,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "14"
+        "displayValue": "15"
        },
        {
         "name": "points",
@@ -1328,35 +1357,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "12"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "187",
-       "abbreviation": "LA",
-       "displayName": "LA Galaxy"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "11"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "41"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "11"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "10"
        }
       ]
      },
@@ -1433,7 +1433,7 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "35"
+        "displayValue": "38"
        },
        {
         "name": "ties",
@@ -1443,7 +1443,7 @@
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "8"
+        "displayValue": "9"
        }
       ]
      },
@@ -1457,7 +1457,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "14"
+        "displayValue": "15"
        },
        {
         "name": "points",
@@ -1491,12 +1491,12 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "22"
+        "displayValue": "23"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "4"
+        "displayValue": "5"
        },
        {
         "name": "wins",
