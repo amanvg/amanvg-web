@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-31T23:35:12.304Z",
+ "generatedAt": "2026-11-01T05:24:56.641Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -848,7 +848,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "points",
@@ -965,7 +965,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "11"
+        "displayValue": "12"
        },
        {
         "name": "points",
@@ -1283,7 +1283,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "13"
+        "displayValue": "14"
        },
        {
         "name": "points",
