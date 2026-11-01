@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-31T21:32:00Z",
+ "generatedAt": "2026-11-01T06:00:37Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.30",
  "kevCount": 1766,
@@ -224,28 +224,6 @@
    "impact": "total",
    "cweId": "CWE-290",
    "cwe": "Authentication bypass by spoofing"
-  },
-  {
-   "id": "CVE-2026-104286",
-   "vendor": "Fortinet",
-   "product": "FortiMail",
-   "name": "Fortinet FortiMail Path Traversal Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-01",
-    "due": "2026-10-04",
-    "ransomware": false
-   },
-   "epss": 0.046,
-   "percentile": 0.916,
-   "cvss": 9.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-22",
-   "cwe": "Execute unauthorized code or commands"
   },
   {
    "id": "CVE-2026-104935",
