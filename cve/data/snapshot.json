@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-11-01T06:00:37Z",
+ "generatedAt": "2026-11-01T22:00:37Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.30",
  "kevCount": 1766,
- "epssDate": "2026-10-31",
+ "epssDate": "2026-11-01",
  "items": [
   {
    "id": "CVE-2015-3306",
@@ -523,7 +523,7 @@
     "ransomware": false
    },
    "epss": 0.007,
-   "percentile": 0.528,
+   "percentile": 0.527,
    "cvss": 2.7,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:L/A:N",
@@ -1404,24 +1404,6 @@
    "impact": "total",
    "cweId": "CWE-94",
    "cwe": "Improper Control of Generation of Code ('Code Injection')"
-  },
-  {
-   "id": "CVE-2026-90970",
-   "vendor": "GitLab",
-   "product": "GitLab AI Gateway",
-   "name": "Improper Neutralization of Special Elements Used in a Template Engine in GitLab AI Gateway",
-   "published": "2026-10-02",
-   "kev": null,
-   "epss": 0.175,
-   "percentile": 0.971,
-   "cvss": 9.9,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
-   "exploitation": "none",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-1336",
-   "cwe": "Improper Neutralization of Special Elements Used in a Template Engine"
   },
   {
    "id": "CVE-2026-93674",
