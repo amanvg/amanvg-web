@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-02T01:23:35.836Z",
+ "generatedAt": "2026-11-02T08:05:14.577Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -647,7 +647,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "6"
+       "displayValue": "7"
       },
       {
        "name": "losses",
@@ -687,7 +687,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "1"
+        "displayValue": "-"
        },
        {
         "name": "losses",
@@ -697,12 +697,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "22"
+        "displayValue": "24"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "overtimeLosses",
@@ -726,7 +726,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "4"
+        "displayValue": "5"
        },
        {
         "name": "losses",
@@ -765,7 +765,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "losses",
@@ -804,7 +804,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "8"
+        "displayValue": "9"
        },
        {
         "name": "losses",
@@ -830,6 +830,45 @@
      },
      {
       "team": {
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "11"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "7"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "13"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "6"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "3",
        "abbreviation": "CGY",
        "displayName": "Calgary Flames"
@@ -843,7 +882,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "11"
+        "displayValue": "12"
        },
        {
         "name": "losses",
@@ -869,45 +908,6 @@
      },
      {
       "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "12"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "7"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "11"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "5"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "8",
        "abbreviation": "LA",
        "displayName": "Los Angeles Kings"
@@ -921,7 +921,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "13"
+        "displayValue": "14"
        },
        {
         "name": "losses",
@@ -960,7 +960,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "16"
+        "displayValue": "17"
        },
        {
         "name": "losses",
@@ -1167,7 +1167,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "points",
@@ -1225,7 +1225,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "points",
@@ -1278,6 +1278,35 @@
        "id": "184",
        "abbreviation": "COL",
        "displayName": "Colorado Rapids"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "14"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "43"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "7"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "12"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "9723",
+       "abbreviation": "POR",
+       "displayName": "Portland Timbers"
       },
       "stats": [
        {
@@ -1362,35 +1391,6 @@
      },
      {
       "team": {
-       "id": "9723",
-       "abbreviation": "POR",
-       "displayName": "Portland Timbers"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "14"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "40"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "7"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "11"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "17362",
        "abbreviation": "MIN",
        "displayName": "Minnesota United FC"
@@ -1404,7 +1404,7 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "38"
+        "displayValue": "41"
        },
        {
         "name": "ties",
@@ -1414,7 +1414,7 @@
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "9"
+        "displayValue": "10"
        }
       ]
      },
