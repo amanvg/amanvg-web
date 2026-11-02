@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-11-02T05:59:21Z",
+ "generatedAt": "2026-11-02T15:48:06Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.10.30",
  "kevCount": 1766,
- "epssDate": "2026-11-01",
+ "epssDate": "2026-11-02",
  "items": [
   {
    "id": "CVE-2015-3306",
@@ -347,7 +347,7 @@
     "ransomware": false
    },
    "epss": 0.01,
-   "percentile": 0.618,
+   "percentile": 0.617,
    "cvss": 6.7,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
@@ -567,7 +567,7 @@
     "ransomware": false
    },
    "epss": 0.022,
-   "percentile": 0.822,
+   "percentile": 0.821,
    "cvss": 9.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -1303,6 +1303,24 @@
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
    "exploitation": "poc",
    "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-77",
+   "cwe": "Command Injection"
+  },
+  {
+   "id": "CVE-2026-120198",
+   "vendor": "WAVLINK",
+   "product": "WL-WN530BE1-A",
+   "name": "WAVLINK WL-WN530BE1-A protocol.csp con_check_read_finish command injection",
+   "published": "2026-11-01",
+   "kev": null,
+   "epss": 0.021,
+   "percentile": 0.814,
+   "cvss": 10.0,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
+   "exploitation": "poc",
+   "automatable": "yes",
    "impact": "total",
    "cweId": "CWE-77",
    "cwe": "Command Injection"
