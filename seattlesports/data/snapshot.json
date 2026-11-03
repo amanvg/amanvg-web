@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-03T01:29:06.718Z",
+ "generatedAt": "2026-11-03T08:31:09.819Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -12,7 +12,7 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-10-26T00:20Z",
+     "date": "2026-11-03T01:15Z",
      "competitions": [
       {
        "status": {
@@ -25,45 +25,8 @@
        "competitors": [
         {
          "homeAway": "home",
-         "winner": true,
-         "score": "20",
-         "team": {
-          "id": "26",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Seahawks",
-          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
          "winner": false,
-         "score": "3",
-         "team": {
-          "id": "12",
-          "abbreviation": "KC",
-          "shortDisplayName": "Chiefs",
-          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/kc.png"
-         }
-        }
-       ],
-       "broadcasts": []
-      }
-     ]
-    },
-    "liveGame": {
-     "date": "2026-11-03T01:15Z",
-     "competitions": [
-      {
-       "status": {
-        "type": {
-         "state": "in",
-         "shortDetail": "7:24 - 1st",
-         "description": "In Progress"
-        }
-       },
-       "competitors": [
-        {
-         "homeAway": "home",
+         "score": "17",
          "team": {
           "id": "26",
           "abbreviation": "SEA",
@@ -73,6 +36,8 @@
         },
         {
          "homeAway": "away",
+         "winner": true,
+         "score": "34",
          "team": {
           "id": "3",
           "abbreviation": "CHI",
@@ -85,6 +50,7 @@
       }
      ]
     },
+    "liveGame": null,
     "nextGame": {
      "date": "2026-11-08T21:25Z",
      "competitions": [
@@ -132,12 +98,12 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "2"
+       "displayValue": "2.5"
       },
       {
        "name": "losses",
        "abbreviation": "L",
-       "displayValue": "3"
+       "displayValue": "4"
       },
       {
        "name": "ties",
@@ -147,7 +113,7 @@
       {
        "name": "winPercent",
        "abbreviation": "PCT",
-       "displayValue": ".571"
+       "displayValue": ".500"
       },
       {
        "name": "wins",
@@ -201,12 +167,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2"
+        "displayValue": "2.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "3"
+        "displayValue": "4"
        },
        {
         "name": "ties",
@@ -216,7 +182,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".571"
+        "displayValue": ".500"
        },
        {
         "name": "wins",
@@ -755,12 +721,12 @@
        {
         "name": "otLosses",
         "abbreviation": "OTL",
-        "displayValue": "1"
+        "displayValue": "2"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "5"
+        "displayValue": "4"
        },
        {
         "name": "losses",
@@ -770,7 +736,7 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "19"
+        "displayValue": "20"
        },
        {
         "name": "wins",
@@ -780,7 +746,7 @@
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
-        "displayValue": "1"
+        "displayValue": "2"
        }
       ]
      },
@@ -843,7 +809,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "points",
@@ -859,6 +825,45 @@
         "name": "overtimeLosses",
         "abbreviation": "OTL",
         "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "3",
+       "abbreviation": "CGY",
+       "displayName": "Calgary Flames"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "10"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "8"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "14"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "0"
        }
       ]
      },
@@ -898,45 +903,6 @@
         "name": "overtimeLosses",
         "abbreviation": "OTL",
         "displayValue": "1"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "3",
-       "abbreviation": "CGY",
-       "displayName": "Calgary Flames"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "12"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "8"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "12"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "6"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "0"
        }
       ]
      },
