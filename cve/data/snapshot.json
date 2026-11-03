@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-11-03T14:11:10Z",
+ "generatedAt": "2026-11-03T23:22:13Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.10.30",
- "kevCount": 1766,
+ "kevCatalogVersion": "2026.11.03",
+ "kevCount": 1767,
  "epssDate": "2026-11-03",
  "items": [
   {
@@ -436,14 +436,36 @@
    },
    "epss": null,
    "percentile": null,
-   "cvss": null,
-   "cvssVersion": null,
-   "cvssVector": null,
+   "cvss": 4.3,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N",
    "exploitation": "active",
-   "automatable": null,
-   "impact": null,
-   "cweId": null,
-   "cwe": null
+   "automatable": "no",
+   "impact": "partial",
+   "cweId": "CWE-340",
+   "cwe": "Generation of Predictable Numbers or Identifiers"
+  },
+  {
+   "id": "CVE-2026-119977",
+   "vendor": "WordPress",
+   "product": "WordPress Core",
+   "name": "WordPress WordPress Core Time-of-check Time-of-use (TOCTOU) Race Condition Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-11-03",
+    "due": "2026-11-06",
+    "ransomware": false
+   },
+   "epss": 0.006,
+   "percentile": 0.488,
+   "cvss": 8.1,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-367",
+   "cwe": "Time-of-check Time-of-use (TOCTOU) Race Condition"
   },
   {
    "id": "CVE-2026-21589",
