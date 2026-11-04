@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-03T08:31:09.819Z",
+ "generatedAt": "2026-11-04T10:41:26.237Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -647,7 +647,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "7"
+       "displayValue": "8"
       },
       {
        "name": "losses",
@@ -682,7 +682,7 @@
        {
         "name": "otLosses",
         "abbreviation": "OTL",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "gamesBehind",
@@ -697,7 +697,7 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "24"
+        "displayValue": "25"
        },
        {
         "name": "wins",
@@ -707,7 +707,7 @@
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
-        "displayValue": "2"
+        "displayValue": "3"
        }
       ]
      },
@@ -726,7 +726,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "4"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -736,12 +736,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "20"
+        "displayValue": "22"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "overtimeLosses",
@@ -765,7 +765,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "losses",
@@ -791,6 +791,45 @@
      },
      {
       "team": {
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "10"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "7"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "15"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "7"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "18",
        "abbreviation": "SJ",
        "displayName": "San Jose Sharks"
@@ -804,7 +843,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "losses",
@@ -843,7 +882,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "losses",
@@ -869,45 +908,6 @@
      },
      {
       "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "11"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "7"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "13"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "6"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "8",
        "abbreviation": "LA",
        "displayName": "Los Angeles Kings"
@@ -921,7 +921,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "14"
+        "displayValue": "15"
        },
        {
         "name": "losses",
@@ -960,12 +960,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "17"
+        "displayValue": "18"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "12"
+        "displayValue": "13"
        },
        {
         "name": "points",
