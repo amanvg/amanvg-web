@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-03T23:22:13Z",
+ "generatedAt": "2026-11-04T06:19:13Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.03",
  "kevCount": 1767,
@@ -598,28 +598,6 @@
    "impact": "total",
    "cweId": "CWE-23",
    "cwe": "Relative Path Traversal"
-  },
-  {
-   "id": "CVE-2026-88779",
-   "vendor": "Citrix",
-   "product": "NetScaler",
-   "name": "Citrix NetScaler Improper Restriction of Operations within the Bounds of a Memory Buffer Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-04",
-    "due": "2026-10-07",
-    "ransomware": false
-   },
-   "epss": 0.114,
-   "percentile": 0.96,
-   "cvss": 8.7,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "partial",
-   "cweId": "CWE-119",
-   "cwe": "Improper Restriction of Operations within the Bounds of a Memory Buffer"
   },
   {
    "id": "CVE-2026-96652",
