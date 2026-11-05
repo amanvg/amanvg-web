@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-11-04T19:43:55Z",
+ "generatedAt": "2026-11-05T06:44:01Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.11.03",
- "kevCount": 1767,
+ "kevCatalogVersion": "2026.11.04",
+ "kevCount": 1768,
  "epssDate": "2026-11-04",
  "items": [
   {
@@ -114,6 +114,28 @@
    "impact": "total",
    "cweId": "CWE-312",
    "cwe": "Cleartext Storage of Sensitive Information"
+  },
+  {
+   "id": "CVE-2024-27834",
+   "vendor": "Apple",
+   "product": "Multiple Products",
+   "name": "Apple Multiple Products Improper Authentication Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-11-04",
+    "due": "2026-11-18",
+    "ransomware": false
+   },
+   "epss": 0.006,
+   "percentile": 0.487,
+   "cvss": 5.5,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "partial",
+   "cweId": "CWE-287",
+   "cwe": "Improper Authentication"
   },
   {
    "id": "CVE-2025-61624",
@@ -786,24 +808,6 @@
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
-   "id": "CVE-2026-105740",
-   "vendor": "langflow-ai",
-   "product": "langflow",
-   "name": "Langflow: Authenticated RCE via MCP Stdio transport allows any user to execute arbitrary OS commands on the server",
-   "published": "2026-10-05",
-   "kev": null,
-   "epss": 0.039,
-   "percentile": 0.903,
-   "cvss": 9.9,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
-  },
-  {
    "id": "CVE-2026-107704",
    "vendor": "jtescher",
    "product": "image_optimizer",
@@ -1427,9 +1431,9 @@
    "cvss": 8.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": null,
-   "automatable": null,
-   "impact": null,
+   "exploitation": "none",
+   "automatable": "no",
+   "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper neutralization of special elements used in an OS command ('OS command injection')"
   },
