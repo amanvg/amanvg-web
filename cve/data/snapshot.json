@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-05T19:55:50Z",
+ "generatedAt": "2026-11-06T06:41:30Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.04",
  "kevCount": 1768,
@@ -1456,6 +1456,24 @@
    "cwe": "Improper Null Termination"
   },
   {
+   "id": "CVE-2026-122051",
+   "vendor": "Edimax",
+   "product": "BR-6208AC",
+   "name": "Edimax BR-6208AC mp command injection",
+   "published": "2026-11-05",
+   "kev": null,
+   "epss": 0.026,
+   "percentile": 0.852,
+   "cvss": 10.0,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
+   "exploitation": "poc",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-77",
+   "cwe": "Command Injection"
+  },
+  {
    "id": "CVE-2026-52356",
    "vendor": "n/a",
    "product": "n/a",
@@ -1541,24 +1559,6 @@
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H",
    "exploitation": "poc",
    "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-94",
-   "cwe": "Improper Control of Generation of Code ('Code Injection')"
-  },
-  {
-   "id": "CVE-2026-93674",
-   "vendor": "IBM",
-   "product": "Langflow OSS",
-   "name": "Langflow OSS is affected by multiple vulnerabilities",
-   "published": "2026-10-07",
-   "kev": null,
-   "epss": 0.153,
-   "percentile": 0.968,
-   "cvss": 9.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "none",
-   "automatable": "yes",
    "impact": "total",
    "cweId": "CWE-94",
    "cwe": "Improper Control of Generation of Code ('Code Injection')"
