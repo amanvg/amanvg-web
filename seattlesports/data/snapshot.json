@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-05T07:12:52.714Z",
+ "generatedAt": "2026-11-06T09:43:37.311Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -692,7 +692,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "points",
@@ -726,7 +726,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "3"
+        "displayValue": "1"
        },
        {
         "name": "losses",
@@ -736,12 +736,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "22"
+        "displayValue": "24"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "overtimeLosses",
@@ -804,7 +804,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "10"
+        "displayValue": "8"
        },
        {
         "name": "losses",
@@ -814,12 +814,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "15"
+        "displayValue": "17"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "overtimeLosses",
@@ -965,7 +965,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "13"
+        "displayValue": "14"
        },
        {
         "name": "points",
