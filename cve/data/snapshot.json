@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-07T05:56:34Z",
+ "generatedAt": "2026-11-07T12:58:23Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.06",
  "kevCount": 1769,
@@ -828,24 +828,6 @@
    "impact": "total",
    "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
-  },
-  {
-   "id": "CVE-2026-105110",
-   "vendor": "Iskratel",
-   "product": "Innbox",
-   "name": "Iskratel Innbox Unauthenticated Remote Code Execution via login.xgi CLI Parameter",
-   "published": "2026-10-08",
-   "kev": null,
-   "epss": 0.03,
-   "percentile": 0.876,
-   "cvss": 9.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "poc",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
   },
   {
    "id": "CVE-2026-107704",
