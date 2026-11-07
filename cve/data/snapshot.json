@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-11-06T19:23:12Z",
+ "generatedAt": "2026-11-07T05:56:34Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.11.04",
- "kevCount": 1768,
+ "kevCatalogVersion": "2026.11.06",
+ "kevCount": 1769,
  "epssDate": "2026-11-06",
  "items": [
   {
@@ -488,6 +488,28 @@
    "impact": "total",
    "cweId": "CWE-367",
    "cwe": "Time-of-check Time-of-use (TOCTOU) Race Condition"
+  },
+  {
+   "id": "CVE-2026-19868",
+   "vendor": "SonicWall",
+   "product": "SonicOS SSLVPN",
+   "name": "SonicWall SonicOS SSLVPN Use of Single-factor Authentication Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-11-06",
+    "due": "2026-11-20",
+    "ransomware": false
+   },
+   "epss": null,
+   "percentile": null,
+   "cvss": 7.5,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:L/A:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "partial",
+   "cweId": "CWE-308",
+   "cwe": "Use of single-factor authentication"
   },
   {
    "id": "CVE-2026-21589",
