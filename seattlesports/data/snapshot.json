@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-08T12:08:02.073Z",
+ "generatedAt": "2026-11-08T22:22:13.249Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -50,16 +50,15 @@
       }
      ]
     },
-    "liveGame": null,
-    "nextGame": {
+    "liveGame": {
      "date": "2026-11-08T21:25Z",
      "competitions": [
       {
        "status": {
         "type": {
-         "state": "pre",
-         "shortDetail": "11/8 - 4:25 PM EST",
-         "description": "Scheduled"
+         "state": "in",
+         "shortDetail": "9:34 - 2nd",
+         "description": "In Progress"
         }
        },
        "competitors": [
@@ -79,6 +78,41 @@
           "abbreviation": "ARI",
           "shortDisplayName": "Cardinals",
           "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/ari.png"
+         }
+        }
+       ],
+       "broadcasts": []
+      }
+     ]
+    },
+    "nextGame": {
+     "date": "2026-11-15T21:05Z",
+     "competitions": [
+      {
+       "status": {
+        "type": {
+         "state": "pre",
+         "shortDetail": "11/15 - 4:05 PM EST",
+         "description": "Scheduled"
+        }
+       },
+       "competitors": [
+        {
+         "homeAway": "home",
+         "team": {
+          "id": "13",
+          "abbreviation": "LV",
+          "shortDisplayName": "Raiders",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/lv.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "team": {
+          "id": "26",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seahawks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png"
          }
         }
        ],
@@ -159,15 +193,15 @@
      },
      {
       "team": {
-       "id": "26",
-       "abbreviation": "SEA",
-       "displayName": "Seattle Seahawks"
+       "id": "14",
+       "abbreviation": "LAR",
+       "displayName": "Los Angeles Rams"
       },
       "stats": [
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2.5"
+        "displayValue": "2"
        },
        {
         "name": "losses",
@@ -182,20 +216,20 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".500"
+        "displayValue": ".556"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "4"
+        "displayValue": "5"
        }
       ]
      },
      {
       "team": {
-       "id": "14",
-       "abbreviation": "LAR",
-       "displayName": "Los Angeles Rams"
+       "id": "26",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Seahawks"
       },
       "stats": [
        {
