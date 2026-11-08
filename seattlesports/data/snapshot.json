@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-07T23:49:49.371Z",
+ "generatedAt": "2026-11-08T05:27:24.308Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -556,59 +556,21 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-11-05T03:00Z",
+     "date": "2026-11-07T22:00Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "post",
-         "shortDetail": "Final/OT",
+         "shortDetail": "Final",
          "description": "Final"
         }
        },
        "competitors": [
         {
          "homeAway": "home",
-         "winner": true,
-         "score": "2",
-         "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
          "winner": false,
-         "score": "1",
-         "team": {
-          "id": "3",
-          "abbreviation": "CGY",
-          "shortDisplayName": "Flames",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/cgy.png"
-         }
-        }
-       ],
-       "broadcasts": []
-      }
-     ]
-    },
-    "liveGame": {
-     "date": "2026-11-07T22:00Z",
-     "competitions": [
-      {
-       "status": {
-        "type": {
-         "state": "in",
-         "shortDetail": "End of 2nd",
-         "description": "End of Period"
-        }
-       },
-       "competitors": [
-        {
-         "homeAway": "home",
-         "score": "0",
+         "score": "3",
          "team": {
           "id": "124292",
           "abbreviation": "SEA",
@@ -618,6 +580,7 @@
         },
         {
          "homeAway": "away",
+         "winner": true,
          "score": "4",
          "team": {
           "id": "13",
@@ -631,6 +594,7 @@
       }
      ]
     },
+    "liveGame": null,
     "nextGame": {
      "date": "2026-11-12T17:00Z",
      "competitions": [
@@ -683,12 +647,12 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "8"
+       "displayValue": "9"
       },
       {
        "name": "losses",
        "abbreviation": "L",
-       "displayValue": "5"
+       "displayValue": "6"
       },
       {
        "name": "points",
@@ -723,7 +687,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -762,7 +726,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "3"
+        "displayValue": "4"
        },
        {
         "name": "losses",
@@ -801,12 +765,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "8"
+        "displayValue": "9"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "5"
+        "displayValue": "6"
        },
        {
         "name": "points",
@@ -840,7 +804,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "8"
+        "displayValue": "9"
        },
        {
         "name": "losses",
@@ -879,7 +843,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12"
+        "displayValue": "13"
        },
        {
         "name": "losses",
@@ -918,12 +882,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12"
+        "displayValue": "13"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "points",
@@ -957,12 +921,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "15"
+        "displayValue": "16"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "points",
@@ -996,7 +960,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "20"
+        "displayValue": "21"
        },
        {
         "name": "losses",
@@ -1034,7 +998,7 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-11-01T20:30Z",
+     "date": "2026-11-08T00:00Z",
      "competitions": [
       {
        "status": {
@@ -1048,12 +1012,12 @@
         {
          "homeAway": "home",
          "winner": true,
-         "score": "5",
+         "score": "2",
          "team": {
-          "id": "9727",
-          "abbreviation": "VAN",
-          "shortDisplayName": "Vancouver",
-          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9727.png"
+          "id": "9726",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Seattle",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png"
          }
         },
         {
@@ -1061,10 +1025,10 @@
          "winner": false,
          "score": "1",
          "team": {
-          "id": "9726",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Seattle",
-          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png"
+          "id": "18966",
+          "abbreviation": "LAFC",
+          "shortDisplayName": "LAFC",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/18966.png"
          }
         }
        ],
@@ -1091,7 +1055,7 @@
       {
        "name": "points",
        "abbreviation": "P",
-       "displayValue": "43"
+       "displayValue": "46"
       },
       {
        "name": "ties",
@@ -1101,7 +1065,7 @@
       {
        "name": "wins",
        "abbreviation": "W",
-       "displayValue": "11"
+       "displayValue": "12"
       }
      ]
     },
@@ -1150,12 +1114,41 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "55"
+        "displayValue": "58"
        },
        {
         "name": "ties",
         "abbreviation": "D",
         "displayValue": "10"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "16"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "21812",
+       "abbreviation": "STL",
+       "displayName": "St. Louis CITY SC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "10"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "54"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "9"
        },
        {
         "name": "wins",
@@ -1174,7 +1167,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "points",
@@ -1203,36 +1196,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "10"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "51"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "9"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "14"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "21812",
-       "abbreviation": "STL",
-       "displayName": "St. Louis CITY SC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "points",
@@ -1261,7 +1225,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "points",
@@ -1282,6 +1246,93 @@
      },
      {
       "team": {
+       "id": "9723",
+       "abbreviation": "POR",
+       "displayName": "Portland Timbers"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "14"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "46"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "7"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "13"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "9726",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Sounders FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "12"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "46"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "10"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "12"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "4771",
+       "abbreviation": "RSL",
+       "displayName": "Real Salt Lake"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "15"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "45"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
+        "displayValue": "6"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "13"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "187",
        "abbreviation": "LA",
        "displayName": "LA Galaxy"
@@ -1290,7 +1341,36 @@
        {
         "name": "losses",
         "abbreviation": "L",
+        "displayValue": "12"
+       },
+       {
+        "name": "points",
+        "abbreviation": "P",
+        "displayValue": "44"
+       },
+       {
+        "name": "ties",
+        "abbreviation": "D",
         "displayValue": "11"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "11"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "17362",
+       "abbreviation": "MIN",
+       "displayName": "Minnesota United FC"
+      },
+      "stats": [
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "12"
        },
        {
         "name": "points",
@@ -1319,138 +1399,22 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "14"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "43"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "7"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "12"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "9723",
-       "abbreviation": "POR",
-       "displayName": "Portland Timbers"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "14"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "43"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "7"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "12"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "9726",
-       "abbreviation": "SEA",
-       "displayName": "Seattle Sounders FC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "12"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "43"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "10"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "11"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "4771",
-       "abbreviation": "RSL",
-       "displayName": "Real Salt Lake"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
         "displayValue": "15"
        },
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "42"
+        "displayValue": "43"
        },
        {
         "name": "ties",
         "abbreviation": "D",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "12"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "17362",
-       "abbreviation": "MIN",
-       "displayName": "Minnesota United FC"
-      },
-      "stats": [
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "12"
-       },
-       {
-        "name": "points",
-        "abbreviation": "P",
-        "displayValue": "41"
-       },
-       {
-        "name": "ties",
-        "abbreviation": "D",
-        "displayValue": "11"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "10"
        }
       ]
      },
@@ -1464,7 +1428,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "13"
+        "displayValue": "14"
        },
        {
         "name": "points",
@@ -1493,7 +1457,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "15"
+        "displayValue": "16"
        },
        {
         "name": "points",
@@ -1527,7 +1491,7 @@
        {
         "name": "points",
         "abbreviation": "P",
-        "displayValue": "23"
+        "displayValue": "26"
        },
        {
         "name": "ties",
@@ -1537,7 +1501,7 @@
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "6"
+        "displayValue": "7"
        }
       ]
      }
