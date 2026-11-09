@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-09T01:51:46.161Z",
+ "generatedAt": "2026-11-09T09:27:46.660Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -752,6 +752,45 @@
      },
      {
       "team": {
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "7"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "7"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "21"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "10"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "124292",
        "abbreviation": "SEA",
        "displayName": "Seattle Kraken"
@@ -791,45 +830,6 @@
      },
      {
       "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "9"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "7"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "19"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "9"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       }
-      ]
-     },
-     {
-      "team": {
        "id": "3",
        "abbreviation": "CGY",
        "displayName": "Calgary Flames"
@@ -843,7 +843,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "13"
+        "displayValue": "11"
        },
        {
         "name": "losses",
@@ -853,12 +853,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "15"
+        "displayValue": "17"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "overtimeLosses",
@@ -994,8 +994,8 @@
    "displayName": "Seattle Sounders FC",
    "schedule": {
     "seasonPhase": {
-     "label": "Regular Season",
-     "cls": "phase-regular"
+     "label": "Eastern Conference Playoffs - Wild Card",
+     "cls": "phase-post"
     },
     "lastGame": {
      "date": "2026-11-08T00:00Z",
