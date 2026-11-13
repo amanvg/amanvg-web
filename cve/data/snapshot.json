@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-12T23:37:37Z",
+ "generatedAt": "2026-11-13T06:42:54Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.10",
  "kevCount": 1779,
@@ -114,28 +114,6 @@
    "impact": "total",
    "cweId": "CWE-287",
    "cwe": "Improper Authentication"
-  },
-  {
-   "id": "CVE-2026-104935",
-   "vendor": "Ivanti",
-   "product": "Connect Secure",
-   "name": "Ivanti Connect Secure Authentication Bypass by Spoofing Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-13",
-    "due": "2026-10-16",
-    "ransomware": false
-   },
-   "epss": 0.889,
-   "percentile": 0.998,
-   "cvss": 8.6,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:L",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-290",
-   "cwe": "Authentication bypass by spoofing"
   },
   {
    "id": "CVE-2026-105133",
@@ -840,28 +818,6 @@
    "impact": "total",
    "cweId": "CWE-73",
    "cwe": "External Control of File Name or Path"
-  },
-  {
-   "id": "CVE-2026-96951",
-   "vendor": "Microsoft",
-   "product": "Windows",
-   "name": "Microsoft Windows Command Injection Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-13",
-    "due": "2026-10-16",
-    "ransomware": false
-   },
-   "epss": 0.098,
-   "percentile": 0.956,
-   "cvss": 8.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H/E:F/RL:O/RC:C",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-77",
-   "cwe": "Improper Neutralization of Special Elements used in a Command ('Command Injection')"
   },
   {
    "id": "CVE-2026-97229",
