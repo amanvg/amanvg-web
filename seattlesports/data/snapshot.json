@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T00:00:26.616Z",
+ "generatedAt": "2026-11-13T07:05:15.751Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -681,7 +681,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "12"
+       "displayValue": "13"
       },
       {
        "name": "losses",
@@ -721,7 +721,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "-"
+        "displayValue": "1"
        },
        {
         "name": "losses",
@@ -760,7 +760,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "3"
+        "displayValue": "4"
        },
        {
         "name": "losses",
@@ -799,7 +799,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "losses",
@@ -838,7 +838,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "12"
+        "displayValue": "13"
        },
        {
         "name": "losses",
@@ -877,7 +877,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "13"
+        "displayValue": "14"
        },
        {
         "name": "losses",
@@ -916,7 +916,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "14"
+        "displayValue": "15"
        },
        {
         "name": "losses",
@@ -955,12 +955,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "19"
+        "displayValue": "20"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "points",
@@ -994,7 +994,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "24"
+        "displayValue": "25"
        },
        {
         "name": "losses",
