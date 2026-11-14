@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T19:40:03Z",
+ "generatedAt": "2026-11-14T06:19:52Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.13",
  "kevCount": 1781,
@@ -50,28 +50,6 @@
    "cwe": "Escalation of privilege"
   },
   {
-   "id": "CVE-2026-0322",
-   "vendor": "Palo Alto Networks",
-   "product": "PAN-OS",
-   "name": "Palo Alto Networks PAN-OS Code Injection Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-14",
-    "due": "2026-10-17",
-    "ransomware": false
-   },
-   "epss": 0.021,
-   "percentile": 0.824,
-   "cvss": 8.6,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:A/AU:N/R:U/V:D/RE:M/U:Red",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-94",
-   "cwe": "Improper Control of Generation of Code ('Code Injection')"
-  },
-  {
    "id": "CVE-2026-102764",
    "vendor": "BeyondTrust",
    "product": "Remote Support",
@@ -114,50 +92,6 @@
    "impact": "total",
    "cweId": "CWE-287",
    "cwe": "Improper Authentication"
-  },
-  {
-   "id": "CVE-2026-105133",
-   "vendor": "Ahsay",
-   "product": "AhsayCBS",
-   "name": "Ahsay AhsayCBS Improper Authentication Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-14",
-    "due": "2026-10-17",
-    "ransomware": false
-   },
-   "epss": 0.845,
-   "percentile": 0.997,
-   "cvss": 6.9,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N/E:A",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "partial",
-   "cweId": "CWE-287",
-   "cwe": "Improper Authentication"
-  },
-  {
-   "id": "CVE-2026-105134",
-   "vendor": "Ahsay",
-   "product": "AhsayCBS",
-   "name": "Ahsay AhsayCBS Command Injection Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-14",
-    "due": "2026-10-17",
-    "ransomware": false
-   },
-   "epss": 0.818,
-   "percentile": 0.997,
-   "cvss": 10.0,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:A",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "OS Command Injection"
   },
   {
    "id": "CVE-2026-106931",
@@ -752,28 +686,6 @@
    "impact": "partial",
    "cweId": "CWE-690",
    "cwe": "Unchecked Return Value to NULL Pointer Dereference"
-  },
-  {
-   "id": "CVE-2026-76519",
-   "vendor": "Cisco",
-   "product": "Secure Email Gateway",
-   "name": "Cisco Secure Email Gateway Relative Path Traversal Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-14",
-    "due": "2026-10-17",
-    "ransomware": false
-   },
-   "epss": 0.062,
-   "percentile": 0.936,
-   "cvss": 9.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-23",
-   "cwe": "Relative Path Traversal"
   },
   {
    "id": "CVE-2026-96652",
@@ -1444,6 +1356,24 @@
    "cwe": "Command Injection"
   },
   {
+   "id": "CVE-2026-124002",
+   "vendor": "Copeland",
+   "product": "XWEB EVO",
+   "name": "Dixell/Copeland XWEB EVO Pre-Auth OS Command Injection via Username",
+   "published": "2026-11-12",
+   "kev": null,
+   "epss": 0.049,
+   "percentile": 0.922,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "poc",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
    "id": "CVE-2026-124009",
    "vendor": "Copeland",
    "product": "XWEB EVO",
@@ -1457,6 +1387,24 @@
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
    "exploitation": "poc",
    "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+  },
+  {
+   "id": "CVE-2026-124010",
+   "vendor": "Copeland",
+   "product": "XWEB EVO",
+   "name": "Dixell/Copeland XWEB EVO Unauthenticated Command Injection via xwconsole.cgi",
+   "published": "2026-11-12",
+   "kev": null,
+   "epss": 0.031,
+   "percentile": 0.879,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "poc",
+   "automatable": "yes",
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
