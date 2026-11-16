@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-15T07:41:25.252Z",
+ "generatedAt": "2026-11-16T00:53:03.993Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -12,7 +12,7 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-11-08T21:25Z",
+     "date": "2026-11-15T21:05Z",
      "competitions": [
       {
        "status": {
@@ -25,24 +25,24 @@
        "competitors": [
         {
          "homeAway": "home",
+         "winner": false,
+         "score": "13",
+         "team": {
+          "id": "13",
+          "abbreviation": "LV",
+          "shortDisplayName": "Raiders",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/lv.png"
+         }
+        },
+        {
+         "homeAway": "away",
          "winner": true,
-         "score": "17",
+         "score": "21",
          "team": {
           "id": "26",
           "abbreviation": "SEA",
           "shortDisplayName": "Seahawks",
           "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
-         "winner": false,
-         "score": "3",
-         "team": {
-          "id": "22",
-          "abbreviation": "ARI",
-          "shortDisplayName": "Cardinals",
-          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/ari.png"
          }
         }
        ],
@@ -52,13 +52,13 @@
     },
     "liveGame": null,
     "nextGame": {
-     "date": "2026-11-15T21:05Z",
+     "date": "2026-11-29T21:25Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "pre",
-         "shortDetail": "11/15 - 4:05 PM EST",
+         "shortDetail": "11/29 - 4:25 PM EST",
          "description": "Scheduled"
         }
        },
@@ -66,10 +66,10 @@
         {
          "homeAway": "home",
          "team": {
-          "id": "13",
-          "abbreviation": "LV",
-          "shortDisplayName": "Raiders",
-          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/lv.png"
+          "id": "25",
+          "abbreviation": "SF",
+          "shortDisplayName": "49ers",
+          "logo": "https://a.espncdn.com/i/teamlogos/nfl/500/sf.png"
          }
         },
         {
@@ -113,12 +113,12 @@
       {
        "name": "winPercent",
        "abbreviation": "PCT",
-       "displayValue": ".556"
+       "displayValue": ".600"
       },
       {
        "name": "wins",
        "abbreviation": "W",
-       "displayValue": "5"
+       "displayValue": "6"
       }
      ]
     },
@@ -148,12 +148,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".875"
+        "displayValue": ".889"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "7"
+        "displayValue": "8"
        }
       ]
      },
@@ -182,12 +182,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".556"
+        "displayValue": ".600"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "5"
+        "displayValue": "6"
        }
       ]
      },
@@ -216,12 +216,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".556"
+        "displayValue": ".600"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "5"
+        "displayValue": "6"
        }
       ]
      },
@@ -235,12 +235,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "4.5"
+        "displayValue": "5.5"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "ties",
@@ -250,7 +250,7 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".333"
+        "displayValue": ".300"
        },
        {
         "name": "wins",
