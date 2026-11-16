@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-15T18:50:02Z",
+ "generatedAt": "2026-11-16T06:25:39Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.13",
  "kevCount": 1781,
@@ -26,50 +26,6 @@
    "impact": "partial",
    "cweId": "CWE-287",
    "cwe": "Improper Authentication"
-  },
-  {
-   "id": "CVE-2025-61624",
-   "vendor": "Fortinet",
-   "product": "Multiple Products",
-   "name": "Fortinet Multiple Products Path Traversal Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-16",
-    "due": "2026-10-19",
-    "ransomware": false
-   },
-   "epss": 0.014,
-   "percentile": 0.728,
-   "cvss": 5.4,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:U/C:N/I:H/A:H/E:P/RL:O/RC:C",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-22",
-   "cwe": "Escalation of privilege"
-  },
-  {
-   "id": "CVE-2026-102764",
-   "vendor": "BeyondTrust",
-   "product": "Remote Support",
-   "name": "BeyondTrust Remote Support Authentication Bypass by Spoofing Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-16",
-    "due": "2026-10-19",
-    "ransomware": false
-   },
-   "epss": 0.795,
-   "percentile": 0.996,
-   "cvss": 9.3,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "active",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-290",
-   "cwe": "Authentication bypass by spoofing"
   },
   {
    "id": "CVE-2026-102895",
