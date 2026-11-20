@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-18T10:33:33.496Z",
+ "generatedAt": "2026-11-20T08:59:46.999Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -590,7 +590,7 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-11-14T18:00Z",
+     "date": "2026-11-20T02:40Z",
      "competitions": [
       {
        "status": {
@@ -606,10 +606,10 @@
          "winner": true,
          "score": "5",
          "team": {
-          "id": "7",
-          "abbreviation": "CAR",
-          "shortDisplayName": "Hurricanes",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/car.png"
+          "id": "124292",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Kraken",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
          }
         },
         {
@@ -617,10 +617,10 @@
          "winner": false,
          "score": "1",
          "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
+          "id": "22",
+          "abbreviation": "VAN",
+          "shortDisplayName": "Canucks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/van.png"
          }
         }
        ],
@@ -630,13 +630,13 @@
     },
     "liveGame": null,
     "nextGame": {
-     "date": "2026-11-20T02:40Z",
+     "date": "2026-11-22T03:00Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "pre",
-         "shortDetail": "11/19 - 9:40 PM EST",
+         "shortDetail": "11/21 - 10:00 PM EST",
          "description": "Scheduled"
         }
        },
@@ -644,19 +644,19 @@
         {
          "homeAway": "home",
          "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
+          "id": "18",
+          "abbreviation": "SJ",
+          "shortDisplayName": "Sharks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sj.png"
          }
         },
         {
          "homeAway": "away",
          "team": {
-          "id": "22",
-          "abbreviation": "VAN",
-          "shortDisplayName": "Canucks",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/van.png"
+          "id": "124292",
+          "abbreviation": "SEA",
+          "shortDisplayName": "Kraken",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
          }
         }
        ],
@@ -681,7 +681,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "18"
+       "displayValue": "17"
       },
       {
        "name": "losses",
@@ -691,12 +691,12 @@
       {
        "name": "points",
        "abbreviation": "PTS",
-       "displayValue": "19"
+       "displayValue": "21"
       },
       {
        "name": "wins",
        "abbreviation": "W",
-       "displayValue": "9"
+       "displayValue": "10"
       },
       {
        "name": "overtimeLosses",
@@ -721,12 +721,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "-"
+        "displayValue": "1"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "3"
+        "displayValue": "4"
        },
        {
         "name": "points",
@@ -755,7 +755,7 @@
        {
         "name": "otLosses",
         "abbreviation": "OTL",
-        "displayValue": "4"
+        "displayValue": "5"
        },
        {
         "name": "gamesBehind",
@@ -770,7 +770,7 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "30"
+        "displayValue": "31"
        },
        {
         "name": "wins",
@@ -780,7 +780,7 @@
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
-        "displayValue": "4"
+        "displayValue": "5"
        }
       ]
      },
@@ -799,12 +799,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "14"
+        "displayValue": "15"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "10"
+        "displayValue": "11"
        },
        {
         "name": "points",
@@ -838,7 +838,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "15"
+        "displayValue": "16"
        },
        {
         "name": "losses",
@@ -864,9 +864,9 @@
      },
      {
       "team": {
-       "id": "3",
-       "abbreviation": "CGY",
-       "displayName": "Calgary Flames"
+       "id": "124292",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Kraken"
       },
       "stats": [
        {
@@ -877,12 +877,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "16"
+        "displayValue": "17"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "11"
+        "displayValue": "8"
        },
        {
         "name": "points",
@@ -903,9 +903,9 @@
      },
      {
       "team": {
-       "id": "124292",
-       "abbreviation": "SEA",
-       "displayName": "Seattle Kraken"
+       "id": "3",
+       "abbreviation": "CGY",
+       "displayName": "Calgary Flames"
       },
       "stats": [
        {
@@ -916,22 +916,22 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "18"
+        "displayValue": "17"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "8"
+        "displayValue": "12"
        },
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "19"
+        "displayValue": "21"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "9"
+        "displayValue": "10"
        },
        {
         "name": "overtimeLosses",
@@ -955,7 +955,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "23"
+        "displayValue": "22"
        },
        {
         "name": "losses",
@@ -965,12 +965,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "14"
+        "displayValue": "16"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "overtimeLosses",
@@ -994,12 +994,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "26"
+        "displayValue": "27"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "17"
+        "displayValue": "18"
        },
        {
         "name": "points",
@@ -1028,25 +1028,25 @@
    "displayName": "Seattle Sounders FC",
    "schedule": {
     "seasonPhase": {
-     "label": "Eastern Conference Playoffs - Wild Card",
+     "label": "Eastern Conference Playoffs - Round One",
      "cls": "phase-post"
     },
     "lastGame": {
-     "date": "2026-11-08T00:00Z",
+     "date": "2026-11-20T03:00Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "post",
-         "shortDetail": "FT",
-         "description": "Full Time"
+         "shortDetail": "FT-Pens",
+         "description": "Final Score - After Penalties"
         }
        },
        "competitors": [
         {
          "homeAway": "home",
-         "winner": true,
-         "score": "2",
+         "winner": false,
+         "score": "1",
          "team": {
           "id": "9726",
           "abbreviation": "SEA",
@@ -1056,13 +1056,13 @@
         },
         {
          "homeAway": "away",
-         "winner": false,
+         "winner": true,
          "score": "1",
          "team": {
-          "id": "18966",
-          "abbreviation": "LAFC",
-          "shortDisplayName": "LAFC",
-          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/18966.png"
+          "id": "4771",
+          "abbreviation": "RSL",
+          "shortDisplayName": "Salt Lake",
+          "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/4771.png"
          }
         }
        ],
