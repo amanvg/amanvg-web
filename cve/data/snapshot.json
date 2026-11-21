@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-20T20:15:26Z",
+ "generatedAt": "2026-11-21T07:03:59Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.20",
  "kevCount": 1790,
@@ -850,24 +850,6 @@
    "impact": "partial",
    "cweId": "CWE-22",
    "cwe": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
-  },
-  {
-   "id": "CVE-2026-114575",
-   "vendor": "TOTOLINK",
-   "product": "A950RG",
-   "name": "TOTOLINK A950RG product.so UploadCustomModule command injection",
-   "published": "2026-10-22",
-   "kev": null,
-   "epss": 0.022,
-   "percentile": 0.83,
-   "cvss": 10.0,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
-   "exploitation": "poc",
-   "automatable": "yes",
-   "impact": "total",
-   "cweId": "CWE-77",
-   "cwe": "Command Injection"
   },
   {
    "id": "CVE-2026-115560",
