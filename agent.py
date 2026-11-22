@@ -10,6 +10,7 @@ Usage:
   muse --dry-run  # plan only, don't write or push
 """
 
+import html
 import json
 import os
 import re
@@ -23,6 +24,9 @@ LOG = REPO / "agent.log"
 
 OPUS   = "claude-opus-4-5-20251101"
 SONNET = "claude-sonnet-4-5-20251101"
+
+FOLDER_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,39}$")
+GRADIENT_RE = re.compile(r"^linear-gradient\(90deg, #[0-9a-fA-F]{3,8}, #[0-9a-fA-F]{3,8}\)$")
 
 
 # ─────────────────────────────────────────
@@ -51,21 +55,42 @@ def load_env():
 
 
 def get_existing_projects():
-    html = INDEX.read_text()
-    return re.findall(r'href="/([^/"]+)/"', html)
+    return re.findall(r'href="/([^/"]+)/"', INDEX.read_text())
+
+
+def validate_plan(p):
+    """Model output is untrusted: it becomes a folder name and HTML in index.html."""
+    if not isinstance(p, dict):
+        raise ValueError("plan is not an object")
+    for key in ("folder", "title", "description", "icon", "gradient", "spec"):
+        if not isinstance(p.get(key), str) or not p[key].strip():
+            raise ValueError(f"plan.{key} must be a non-empty string")
+    if not FOLDER_RE.match(p["folder"]):
+        raise ValueError(f"plan.folder {p['folder']!r} must match {FOLDER_RE.pattern}")
+    if (REPO / p["folder"]).resolve().parent != REPO.resolve():
+        raise ValueError("plan.folder escapes the repository")
+    if not GRADIENT_RE.match(p["gradient"]):
+        raise ValueError(f"plan.gradient {p['gradient']!r} is not linear-gradient(90deg, #hex, #hex)")
+    if not isinstance(p.get("tags"), list) or not 1 <= len(p["tags"]) <= 6 or not all(isinstance(t, str) and t.strip() for t in p["tags"]):
+        raise ValueError("plan.tags must be 1-6 non-empty strings")
+    for key, limit in (("title", 80), ("description", 300), ("icon", 16)):
+        if len(p[key]) > limit:
+            raise ValueError(f"plan.{key} is longer than {limit} characters")
+    return p
 
 
 def add_card_to_index(card):
-    html = INDEX.read_text()
-    tags_html = "".join(f'\n            <span class="tag">{t}</span>' for t in card["tags"])
+    esc = lambda v: html.escape(str(v), quote=True)
+    page = INDEX.read_text()
+    tags_html = "".join(f'\n            <span class="tag">{esc(t)}</span>' for t in card["tags"])
     new_card = f"""
       <a class="card" href="/{card['folder']}/">
         <div class="card-stripe" style="background: {card['gradient']};"></div>
         <div class="card-top">
-          <div class="card-icon-wrap">{card['icon']}</div>
+          <div class="card-icon-wrap">{esc(card['icon'])}</div>
         </div>
-        <div class="card-title">{card['title']}</div>
-        <p class="card-desc">{card['description']}</p>
+        <div class="card-title">{esc(card['title'])}</div>
+        <p class="card-desc">{esc(card['description'])}</p>
         <div class="card-footer">
           <div class="card-tags">{tags_html}
           </div>
@@ -74,8 +99,8 @@ def add_card_to_index(card):
       </a>
 
 """
-    updated = html.replace("    </div>\n  </main>", new_card + "    </div>\n  </main>")
-    if updated == html:
+    updated = page.replace("    </div>\n  </main>", new_card + "    </div>\n  </main>")
+    if updated == page:
         raise RuntimeError("Could not find insertion point in index.html — layout may have changed.")
     INDEX.write_text(updated)
 
@@ -87,7 +112,7 @@ def git_commit_push(folder, title):
             raise RuntimeError(f"`{' '.join(cmd)}` failed:\n{result.stderr}")
         return result.stdout.strip()
 
-    run(["git", "add", "."])
+    run(["git", "add", "--", "index.html", folder])
     run(["git", "commit", "-m", f"muse: add '{title}'"])
     run(["git", "push"])
 
@@ -138,7 +163,7 @@ Respond with ONLY valid JSON."""
         messages=[{"role": "user", "content": prompt}]
     )
 
-    plan_data = json.loads(strip_fences(response.content[0].text))
+    plan_data = validate_plan(json.loads(strip_fences(response.content[0].text)))
     log(f"Opus chose: {plan_data['title']}")
     log(f"Reasoning: {plan_data['reasoning']}")
     return plan_data
