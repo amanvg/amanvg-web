@@ -133,7 +133,7 @@ A Reject means make no changes and ask what to adjust.
 - `/spreadsheet/`: keeps its own spreadsheet look (green `#107c41` title bar,
   ribbon, grid), not `DESIGN.md`. It is an installable web app
   (`manifest.webmanifest`, network-first `sw.js`; bump `CACHE` in `sw.js` when
-  adding files) with SheetJS 0.18.5 vendored in `vendor/`.
+  adding files) with SheetJS 0.20.3 vendored in `vendor/`.
 - `/carpicker/` (unlinked): still the old dark theme. Copy the `:root` tokens,
   nav (`← amanvg` back link, centered title), `.card`, and form styles from the
   page itself rather than inventing new ones. Inter from Google Fonts, 20px
