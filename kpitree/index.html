@@ -418,12 +418,31 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return st;
         }
 
+        // Rebuilds saved or server data keeping only well-formed nodes (ids are always n<digits>), so nothing odd reaches the markup.
+        function clean(d) {
+            const st = blank(), src = d && typeof d.nodes === 'object' && d.nodes ? d.nodes : {};
+            const own = Object.prototype.hasOwnProperty;
+            const has = id => typeof id === 'string' && own.call(st.nodes, id);
+            st.seq = Number.isInteger(d && d.seq) && d.seq > 0 ? d.seq : 0;
+            Object.keys(src).forEach(k => {
+                const n = src[k];
+                if (!/^n\d{1,9}$/.test(k) || !n || !Number.isInteger(n.level) || n.level < 0 || n.level >= LEVELS.length) return;
+                st.nodes[k] = { id: k, level: n.level, label: String(n.label == null ? '' : n.label), children: [] };
+                st.seq = Math.max(st.seq, +k.slice(1));
+            });
+            const uniq = (list, keep) => (Array.isArray(list) ? list : []).filter((id, i, a) => has(id) && keep(id) && a.indexOf(id) === i);
+            Object.keys(st.nodes).forEach(k => { st.nodes[k].children = uniq(src[k].children, id => id !== k); });
+            st.roots = uniq(d && d.roots, () => true);
+            st.rels = (d && Array.isArray(d.rels) ? d.rels : [])
+                .filter(r => r && has(r.a) && has(r.b) && r.a !== r.b && (r.type === 'conflict' || r.type === 'companion'))
+                .map(r => ({ a: r.a, b: r.b, type: r.type }));
+            return st;
+        }
+
         function load() {
             try {
                 const d = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
-                if (d && d.version === 2 && d.nodes && Array.isArray(d.roots)) {
-                    return { seq: d.seq || 0, nodes: d.nodes, roots: d.roots, rels: Array.isArray(d.rels) ? d.rels : [] };
-                }
+                if (d && d.version === 2 && d.nodes && Array.isArray(d.roots)) return clean(d);
                 if (d && typeof d.outline === 'string') return fromOutline(d.outline, d.links);
             } catch (e) {}
             return fromOutline(EXAMPLE.outline, EXAMPLE.links);
@@ -1300,7 +1319,7 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
         }
 
         const treeJson = () => JSON.stringify({ version: 2, ...S });
-        const fromData = d => ({ seq: d.seq || 0, nodes: d.nodes || {}, roots: d.roots || [], rels: Array.isArray(d.rels) ? d.rels : [] });
+        const fromData = clean;
         const rootLabel = st => { const r = st.roots[0] && st.nodes[st.roots[0]]; return r && r.label ? r.label.slice(0, 120) : ''; };
         const hasNodes = () => Object.keys(S.nodes).length > 0;
 

@@ -345,20 +345,22 @@ footer{margin-top:56px;background:var(--foot-bg);color:var(--foot-text);border-t
             return st;
         }
 
+        const safeId = s => typeof s === 'string' && /^[ne]\d{1,9}$/.test(s);
+
         // Accepts a saved or imported chart; returns null when it is not one.
         function fromData(d) {
             if (!d || d.version !== 1 || !d.nodes || typeof d.nodes !== 'object' || !Array.isArray(d.edges)) return null;
             const nodes = {}, num = s => +(String(s).match(/\d+$/) || [0])[0];
             let seq = Number(d.seq) || 0;
             Object.values(d.nodes).forEach(n => {
-                if (!n || typeof n.id !== 'string' || !TYPES[n.type] || nodes[n.id]) return;
+                if (!n || !safeId(n.id) || !TYPES[n.type] || nodes[n.id]) return;
                 nodes[n.id] = { id: n.id, type: n.type, label: String(n.label || '').slice(0, 300) };
                 seq = Math.max(seq, num(n.id));
             });
-            const edges = d.edges.filter(e => e && nodes[e.from] && nodes[e.to]).map(e => ({ id: String(e.id || ''), from: e.from, to: e.to, label: String(e.label || '').slice(0, 60) }));
+            const edges = d.edges.filter(e => e && safeId(e.from) && safeId(e.to) && nodes[e.from] && nodes[e.to]).map(e => ({ id: String(e.id || ''), from: e.from, to: e.to, label: String(e.label || '').slice(0, 60) }));
             edges.forEach(e => { seq = Math.max(seq, num(e.id)); });
             const ids = new Set();
-            edges.forEach(e => { if (!e.id || ids.has(e.id) || nodes[e.id]) e.id = `e${++seq}`; ids.add(e.id); });
+            edges.forEach(e => { if (!safeId(e.id) || ids.has(e.id) || nodes[e.id]) e.id = `e${++seq}`; ids.add(e.id); });
             return { seq, nodes, edges };
         }
 
