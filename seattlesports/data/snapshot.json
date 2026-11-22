@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-21T21:00:08.336Z",
+ "generatedAt": "2026-11-22T01:09:46.764Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -825,6 +825,45 @@
      },
      {
       "team": {
+       "id": "3",
+       "abbreviation": "CGY",
+       "displayName": "Calgary Flames"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "2"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "16"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "12"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "22"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "10"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "2"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "18",
        "abbreviation": "SJ",
        "displayName": "San Jose Sharks"
@@ -883,45 +922,6 @@
         "name": "losses",
         "abbreviation": "L",
         "displayValue": "8"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "21"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "10"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "3",
-       "abbreviation": "CGY",
-       "displayName": "Calgary Flames"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "17"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "12"
        },
        {
         "name": "points",
