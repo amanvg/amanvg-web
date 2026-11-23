@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-11-23T07:35:24Z",
+ "generatedAt": "2026-11-23T23:52:07Z",
  "windowDays": 30,
- "kevCatalogVersion": "2026.11.20",
- "kevCount": 1790,
- "epssDate": "2026-11-22",
+ "kevCatalogVersion": "2026.11.23",
+ "kevCount": 1792,
+ "epssDate": "2026-11-23",
  "items": [
   {
    "id": "CVE-2024-10441",
@@ -14,7 +14,7 @@
    "kev": {
     "added": "2026-11-18",
     "due": "2026-11-21",
-    "ransomware": false
+    "ransomware": true
    },
    "epss": 0.031,
    "percentile": 0.882,
@@ -39,7 +39,7 @@
     "ransomware": false
    },
    "epss": 0.016,
-   "percentile": 0.758,
+   "percentile": 0.759,
    "cvss": 5.5,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
@@ -60,8 +60,8 @@
     "due": "2026-11-23",
     "ransomware": false
    },
-   "epss": 0.007,
-   "percentile": 0.546,
+   "epss": 0.009,
+   "percentile": 0.606,
    "cvss": 6.5,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
@@ -258,8 +258,8 @@
     "due": "2026-12-01",
     "ransomware": false
    },
-   "epss": 0.012,
-   "percentile": 0.697,
+   "epss": 0.128,
+   "percentile": 0.964,
    "cvss": 9.4,
    "cvssVersion": "4.0",
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
@@ -456,8 +456,8 @@
     "due": "2026-11-24",
     "ransomware": false
    },
-   "epss": 0.019,
-   "percentile": 0.807,
+   "epss": 0.249,
+   "percentile": 0.98,
    "cvss": 6.5,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N/E:H/RL:O/RC:C",
@@ -510,6 +510,50 @@
    "impact": "total",
    "cweId": "CWE-502",
    "cwe": "Deserialization of Untrusted Data"
+  },
+  {
+   "id": "CVE-2026-133968",
+   "vendor": "Project MONAI",
+   "product": "MONAI Label",
+   "name": "Project MONAI MONAI Label Path Traversal Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-11-23",
+    "due": "2026-11-26",
+    "ransomware": false
+   },
+   "epss": 0.037,
+   "percentile": 0.899,
+   "cvss": 9.8,
+   "cvssVersion": "3.1",
+   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "exploitation": "active",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-24",
+   "cwe": "Path Traversal: '../filedir'"
+  },
+  {
+   "id": "CVE-2026-134624",
+   "vendor": "N-able",
+   "product": "MailAssure",
+   "name": "N-able MailAssure (SpamExperts) Server-Side Request Forgery (SSRF) Vulnerability",
+   "published": null,
+   "kev": {
+    "added": "2026-11-23",
+    "due": "2026-11-26",
+    "ransomware": false
+   },
+   "epss": 0.004,
+   "percentile": 0.297,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:N/SC:H/SI:H/SA:N",
+   "exploitation": "active",
+   "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-918",
+   "cwe": "Server-Side Request Forgery (SSRF)"
   },
   {
    "id": "CVE-2026-19868",
@@ -566,8 +610,8 @@
     "due": "2026-12-02",
     "ransomware": false
    },
-   "epss": 0.78,
-   "percentile": 0.996,
+   "epss": 0.828,
+   "percentile": 0.997,
    "cvss": 8.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
@@ -698,8 +742,8 @@
     "due": "2026-11-21",
     "ransomware": false
    },
-   "epss": 0.038,
-   "percentile": 0.903,
+   "epss": 0.059,
+   "percentile": 0.934,
    "cvss": 9.8,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -814,8 +858,8 @@
    "name": null,
    "published": "2026-11-17",
    "kev": null,
-   "epss": 0.456,
-   "percentile": 0.988,
+   "epss": 0.573,
+   "percentile": 0.991,
    "cvss": 8.1,
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
@@ -1578,6 +1622,24 @@
    "exploitation": "poc",
    "automatable": "no",
    "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "OS Command Injection"
+  },
+  {
+   "id": "CVE-2026-134544",
+   "vendor": "n/a",
+   "product": "jprocms",
+   "name": "jprocms Expression Language validateParam os command injection",
+   "published": "2026-11-22",
+   "kev": null,
+   "epss": 0.027,
+   "percentile": 0.861,
+   "cvss": 5.1,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N/E:P",
+   "exploitation": "poc",
+   "automatable": "no",
+   "impact": "partial",
    "cweId": "CWE-78",
    "cwe": "OS Command Injection"
   },
