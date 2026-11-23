@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-22T22:24:33.806Z",
+ "generatedAt": "2026-11-23T12:16:15.261Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -98,7 +98,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "2.5"
+       "displayValue": "3"
       },
       {
        "name": "losses",
@@ -148,12 +148,12 @@
        {
         "name": "winPercent",
         "abbreviation": "PCT",
-        "displayValue": ".889"
+        "displayValue": ".900"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "8"
+        "displayValue": "9"
        }
       ]
      },
@@ -167,7 +167,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2.5"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -201,7 +201,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2.5"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -235,7 +235,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "6"
+        "displayValue": "6.5"
        },
        {
         "name": "losses",
@@ -716,12 +716,12 @@
        {
         "name": "otLosses",
         "abbreviation": "OTL",
-        "displayValue": "3"
+        "displayValue": "4"
        },
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "2"
+        "displayValue": "1"
        },
        {
         "name": "losses",
@@ -731,7 +731,7 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "37"
+        "displayValue": "38"
        },
        {
         "name": "wins",
@@ -741,7 +741,7 @@
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
-        "displayValue": "3"
+        "displayValue": "4"
        }
       ]
      },
@@ -999,7 +999,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "18"
+        "displayValue": "19"
        },
        {
         "name": "points",
