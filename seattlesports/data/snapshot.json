@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-23T12:16:15.261Z",
+ "generatedAt": "2026-11-24T00:15:07.479Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -275,7 +275,7 @@
     "lastGame": null,
     "liveGame": null,
     "nextGame": {
-     "date": "2027-03-25T04:00Z",
+     "date": "2027-03-24T04:00Z",
      "competitions": [
       {
        "status": {
