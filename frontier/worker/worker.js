@@ -66,9 +66,18 @@ export default {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers });
     const { pathname } = new URL(req.url);
 
-    if (req.method === 'GET' && pathname === '/log') return json(await readLog(env));
+    // Per-IP rate limits (approximate, counted per Cloudflare location).
+    const ip = req.headers.get('CF-Connecting-IP') || 'unknown';
+    const limited = async (limiter) => limiter && !(await limiter.limit({ key: ip })).success;
+    const tooMany = () => new Response(JSON.stringify({ error: 'Too many requests' }), { status: 429, headers: { ...headers, 'Content-Type': 'application/json', 'Retry-After': '60' } });
 
-    // Everything below needs the key.
+    if (req.method === 'GET' && pathname === '/log') {
+      if (await limited(env.LOG_LIMITER)) return tooMany();
+      return json(await readLog(env));
+    }
+
+    // Everything below needs the key. Limited before the key is checked, so /auth cannot be probed freely.
+    if (await limited(env.KEY_LIMITER)) return tooMany();
     if (!(await authorized(req, env))) return fail(401, 'Unauthorized');
     if (req.method === 'GET' && pathname === '/auth') return new Response(null, { status: 204, headers });
 

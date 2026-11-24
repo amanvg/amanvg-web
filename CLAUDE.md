@@ -176,7 +176,11 @@ A Reject means make no changes and ask what to adjust.
   table `kpi_trees`, created on the remote database with
   `npx wrangler d1 execute frontier --remote --file schema.sql`). The key
   (`npx wrangler secret put FRONTIER_KEY`) is what a device pastes into Connect (kept in its `localStorage`, `frontier:key`).
-  CORS allows only amanvg.com and localhost:8765. `frontier/data/log.json` is
+  CORS allows only amanvg.com and localhost:8765. Requests are rate limited
+  per IP with the Workers Rate Limiting binding (`[[ratelimits]]` in
+  `wrangler.toml`, wrangler 4.36.0+): 60 a minute on `GET /log`, 120 a minute
+  on the keyed routes, checked before the key; over the limit is a 429 with
+  `Retry-After: 60`. `frontier/data/log.json` is
   the Fuelly seed only (cost 0, no price data); the page does not read it.
   Preview: `npx wrangler dev --local --port 8787` in `frontier/worker/`
   (local key from a gitignored `.dev.vars`), the page uses it on localhost.

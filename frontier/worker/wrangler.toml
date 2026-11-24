@@ -6,3 +6,20 @@ compatibility_date = "2026-10-01"
 binding = "DB"
 database_name = "frontier"
 database_id = "99b45f76-5149-4370-93c9-b9dfd0390354"
+
+# Per-IP rate limits (needs wrangler 4.36.0 or later).
+[[ratelimits]]
+name = "LOG_LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 60
+  period = 60
+
+[[ratelimits]]
+name = "KEY_LIMITER"
+namespace_id = "1002"
+
+  [ratelimits.simple]
+  limit = 120
+  period = 60
