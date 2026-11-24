@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-24T00:15:07.479Z",
+ "generatedAt": "2026-11-24T10:18:51.022Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -590,7 +590,7 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-11-22T03:00Z",
+     "date": "2026-11-24T02:40Z",
      "competitions": [
       {
        "status": {
@@ -604,23 +604,23 @@
         {
          "homeAway": "home",
          "winner": true,
-         "score": "4",
-         "team": {
-          "id": "18",
-          "abbreviation": "SJ",
-          "shortDisplayName": "Sharks",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sj.png"
-         }
-        },
-        {
-         "homeAway": "away",
-         "winner": false,
          "score": "3",
          "team": {
           "id": "124292",
           "abbreviation": "SEA",
           "shortDisplayName": "Kraken",
           "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
+         }
+        },
+        {
+         "homeAway": "away",
+         "winner": false,
+         "score": "2",
+         "team": {
+          "id": "25",
+          "abbreviation": "ANA",
+          "shortDisplayName": "Ducks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/ana.png"
          }
         }
        ],
@@ -630,13 +630,13 @@
     },
     "liveGame": null,
     "nextGame": {
-     "date": "2026-11-24T02:40Z",
+     "date": "2026-11-26T02:40Z",
      "competitions": [
       {
        "status": {
         "type": {
          "state": "pre",
-         "shortDetail": "11/23 - 9:40 PM EST",
+         "shortDetail": "11/25 - 9:40 PM EST",
          "description": "Scheduled"
         }
        },
@@ -653,10 +653,10 @@
         {
          "homeAway": "away",
          "team": {
-          "id": "25",
-          "abbreviation": "ANA",
-          "shortDisplayName": "Ducks",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/ana.png"
+          "id": "4",
+          "abbreviation": "CHI",
+          "shortDisplayName": "Blackhawks",
+          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/chi.png"
          }
         }
        ],
@@ -691,12 +691,12 @@
       {
        "name": "points",
        "abbreviation": "PTS",
-       "displayValue": "21"
+       "displayValue": "23"
       },
       {
        "name": "wins",
        "abbreviation": "W",
-       "displayValue": "10"
+       "displayValue": "11"
       },
       {
        "name": "overtimeLosses",
@@ -721,7 +721,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "1"
+        "displayValue": "3"
        },
        {
         "name": "losses",
@@ -760,7 +760,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "6"
+        "displayValue": "8"
        },
        {
         "name": "losses",
@@ -799,12 +799,12 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "15"
+        "displayValue": "17"
        },
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "12"
+        "displayValue": "13"
        },
        {
         "name": "points",
@@ -815,84 +815,6 @@
         "name": "wins",
         "abbreviation": "W",
         "displayValue": "11"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "2"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "25",
-       "abbreviation": "ANA",
-       "displayName": "Anaheim Ducks"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "16"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "12"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "23"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "11"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "3",
-       "abbreviation": "CGY",
-       "displayName": "Calgary Flames"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "2"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "17"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "12"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "22"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "10"
        },
        {
         "name": "overtimeLosses",
@@ -926,7 +848,85 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "21"
+        "displayValue": "23"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "11"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "25",
+       "abbreviation": "ANA",
+       "displayName": "Anaheim Ducks"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "18"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "13"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "23"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "11"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
+       "id": "3",
+       "abbreviation": "CGY",
+       "displayName": "Calgary Flames"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "2"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "19"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "13"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "22"
        },
        {
         "name": "wins",
@@ -936,7 +936,7 @@
        {
         "name": "overtimeLosses",
         "abbreviation": "OTL",
-        "displayValue": "1"
+        "displayValue": "2"
        }
       ]
      },
@@ -965,12 +965,12 @@
        {
         "name": "points",
         "abbreviation": "PTS",
-        "displayValue": "16"
+        "displayValue": "18"
        },
        {
         "name": "wins",
         "abbreviation": "W",
-        "displayValue": "7"
+        "displayValue": "8"
        },
        {
         "name": "overtimeLosses",
@@ -994,7 +994,7 @@
        {
         "name": "gamesBehind",
         "abbreviation": "GB",
-        "displayValue": "26"
+        "displayValue": "28"
        },
        {
         "name": "losses",
