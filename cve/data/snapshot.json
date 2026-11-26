@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-25T21:40:28Z",
+ "generatedAt": "2026-11-26T08:14:29Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.25",
  "kevCount": 1805,
@@ -176,54 +176,10 @@
    "cvssVersion": "3.1",
    "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
    "exploitation": "active",
-   "automatable": "no",
+   "automatable": "yes",
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
-  },
-  {
-   "id": "CVE-2026-109618",
-   "vendor": "PHP Group",
-   "product": "PHP",
-   "name": "PHP Memory Corruption Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-26",
-    "due": "2026-10-29",
-    "ransomware": false
-   },
-   "epss": 0.451,
-   "percentile": 0.991,
-   "cvss": 9.2,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-416",
-   "cwe": "Use after free"
-  },
-  {
-   "id": "CVE-2026-109619",
-   "vendor": "PHP Group",
-   "product": "PHP",
-   "name": "PHP Stale Internal Request-State Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-26",
-    "due": "2026-10-29",
-    "ransomware": false
-   },
-   "epss": 0.208,
-   "percentile": 0.981,
-   "cvss": 9.2,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-416",
-   "cwe": "Use after free"
   },
   {
    "id": "CVE-2026-111357",
@@ -640,8 +596,8 @@
    "exploitation": "active",
    "automatable": null,
    "impact": null,
-   "cweId": null,
-   "cwe": null
+   "cweId": "CWE-306",
+   "cwe": "Missing Authentication for Critical Function"
   },
   {
    "id": "CVE-2026-132224",
