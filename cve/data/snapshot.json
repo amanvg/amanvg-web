@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-26T21:29:29Z",
+ "generatedAt": "2026-11-27T08:28:13Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.25",
  "kevCount": 1805,
@@ -202,28 +202,6 @@
    "impact": "total",
    "cweId": "CWE-829",
    "cwe": "Inclusion of Functionality from Untrusted Control Sphere"
-  },
-  {
-   "id": "CVE-2026-111497",
-   "vendor": "Google",
-   "product": "Brotli",
-   "name": "Google Brotli Unchecked Return Value Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-27",
-    "due": "2026-11-10",
-    "ransomware": false
-   },
-   "epss": 0.33,
-   "percentile": 0.987,
-   "cvss": 9.2,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-787",
-   "cwe": "Out-of-bounds Write"
   },
   {
    "id": "CVE-2026-111560",
@@ -908,28 +886,6 @@
    "cwe": "Missing Initialization of a Variable"
   },
   {
-   "id": "CVE-2026-48356",
-   "vendor": "Adobe",
-   "product": "Commerce and Magento",
-   "name": "Adobe Commerce and Magento Unrestricted Upload of File with Dangerous Type Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-27",
-    "due": "2026-11-10",
-    "ransomware": false
-   },
-   "epss": 0.079,
-   "percentile": 0.955,
-   "cvss": 9.3,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:N",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-434",
-   "cwe": "Unrestricted Upload of File with Dangerous Type (CWE-434)"
-  },
-  {
    "id": "CVE-2026-76418",
    "vendor": "Cisco",
    "product": "Secure Firewall ASA Software and Cisco Secure FTD Software",
@@ -1038,42 +994,6 @@
    "impact": "total",
    "cweId": "CWE-190",
    "cwe": "Integer Overflow or Wraparound"
-  },
-  {
-   "id": "CVE-2013-20007",
-   "vendor": "Linksys",
-   "product": "WAG200G",
-   "name": "Linksys WAG200G through 1.01.06 OS Command Injection via timer_interval in setup.cgi",
-   "published": "2026-10-28",
-   "kev": null,
-   "epss": 0.057,
-   "percentile": 0.938,
-   "cvss": 8.6,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-78",
-   "cwe": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
-  },
-  {
-   "id": "CVE-2014-125137",
-   "vendor": "C97net",
-   "product": "qEngine CMS",
-   "name": "C97net qEngine CMS through 6.0.0, Kemana Directory through 1.5.6, Cart Engine through 3.0.0 Local File Inclusion via admin/task.php",
-   "published": "2026-10-28",
-   "kev": null,
-   "epss": 0.023,
-   "percentile": 0.844,
-   "cvss": 7.1,
-   "cvssVersion": "4.0",
-   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N",
-   "exploitation": "poc",
-   "automatable": "no",
-   "impact": "partial",
-   "cweId": "CWE-98",
-   "cwe": "Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion')"
   },
   {
    "id": "CVE-2019-25782",
