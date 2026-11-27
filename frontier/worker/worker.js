@@ -8,6 +8,41 @@ const MAX_SERVICES = 5000;
 const MAX_VISIT_ITEMS = 25;
 const MAX_TREES = 500;
 const MAX_TREE_BYTES = 512 * 1024;
+const MAX_BODY = 1024 * 1024;
+
+class HttpError extends Error {
+  constructor(status, message) { super(message); this.status = status; }
+}
+
+function baseHeaders(req) {
+  const origin = req.headers.get('Origin');
+  const headers = { Vary: 'Origin', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
+  if (origin && ORIGINS.includes(origin)) {
+    headers['Access-Control-Allow-Origin'] = origin;
+    headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Type';
+    headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+    headers['Access-Control-Max-Age'] = '86400';
+  }
+  return headers;
+}
+
+// The JSON body, read at most MAX_BODY bytes; throws 413 or 400.
+async function readJson(req) {
+  if (Number(req.headers.get('Content-Length')) > MAX_BODY) throw new HttpError(413, 'Body too large');
+  const chunks = [];
+  let size = 0;
+  if (req.body) {
+    const reader = req.body.getReader();
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > MAX_BODY) { await reader.cancel(); throw new HttpError(413, 'Body too large'); }
+      chunks.push(value);
+    }
+  }
+  try { return JSON.parse(await new Blob(chunks).text()); } catch (e) { throw new HttpError(400, 'Invalid JSON'); }
+}
 
 const isDate = (s) => {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof s === 'string' ? s : '');
@@ -33,7 +68,8 @@ function fuelRow(b) {
 }
 
 async function authorized(req, env) {
-  const given = (req.headers.get('Authorization') || '').replace(/^Bearer /, '');
+  const m = /^Bearer (.+)$/.exec(req.headers.get('Authorization') || '');
+  const given = m && m[1];
   if (!given || !env.FRONTIER_KEY) return false;
   const enc = new TextEncoder();
   const [a, b] = await Promise.all([given, env.FRONTIER_KEY].map((v) => crypto.subtle.digest('SHA-256', enc.encode(v))));
@@ -50,16 +86,9 @@ async function readLog(env) {
   return { version: 1, truck: t, services: services.results, fuel: fuel.results, exportedOn: null };
 }
 
-export default {
-  async fetch(req, env) {
-    const origin = req.headers.get('Origin');
-    const headers = { Vary: 'Origin', 'Cache-Control': 'no-store' };
-    if (origin && ORIGINS.includes(origin)) {
-      headers['Access-Control-Allow-Origin'] = origin;
-      headers['Access-Control-Allow-Headers'] = 'Authorization, Content-Type';
-      headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-      headers['Access-Control-Max-Age'] = '86400';
-    }
+const api = {
+  async handle(req, env) {
+    const headers = baseHeaders(req);
     const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...headers, 'Content-Type': 'application/json' } });
     const fail = (status, error) => json({ error }, status);
 
@@ -72,18 +101,20 @@ export default {
     const tooMany = () => new Response(JSON.stringify({ error: 'Too many requests' }), { status: 429, headers: { ...headers, 'Content-Type': 'application/json', 'Retry-After': '60' } });
 
     if (req.method === 'GET' && pathname === '/log') {
+      if (!env.LOG_LIMITER) return fail(503, 'Rate limiter unavailable');
       if (await limited(env.LOG_LIMITER)) return tooMany();
       return json(await readLog(env));
     }
 
     // Everything below needs the key. Limited before the key is checked, so /auth cannot be probed freely.
+    // Fail closed: without the limiter binding the key could be guessed at full speed.
+    if (!env.KEY_LIMITER) return fail(503, 'Rate limiter unavailable');
     if (await limited(env.KEY_LIMITER)) return tooMany();
     if (!(await authorized(req, env))) return fail(401, 'Unauthorized');
     if (req.method === 'GET' && pathname === '/auth') return new Response(null, { status: 204, headers });
 
     if (req.method === 'POST' && pathname === '/fuel') {
-      let b;
-      try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
+      const b = await readJson(req);
       const r = fuelRow(b);
       if (typeof r === 'string') return fail(400, r);
       const { n } = await env.DB.prepare('SELECT COUNT(*) AS n FROM fuel').first();
@@ -97,8 +128,7 @@ export default {
 
     const fuelId = pathname.match(/^\/fuel\/([\w-]{1,64})$/);
     if (req.method === 'PUT' && fuelId) {
-      let b;
-      try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
+      const b = await readJson(req);
       const r = fuelRow(b);
       if (typeof r === 'string') return fail(400, r);
       const [upd] = await env.DB.batch([
@@ -110,8 +140,7 @@ export default {
     }
 
     if (req.method === 'PUT' && pathname === '/truck') {
-      let b;
-      try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
+      const b = await readJson(req);
       if (!b || typeof b !== 'object') return fail(400, 'Invalid body');
       const cur = (await readLog(env)).truck;
       const year = 'year' in b ? b.year : cur.year;
@@ -125,8 +154,7 @@ export default {
     }
 
     if (req.method === 'POST' && pathname === '/services') {
-      let b;
-      try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
+      const b = await readJson(req);
       if (!b || typeof b !== 'object') return fail(400, 'Invalid body');
       const items = [...new Set(Array.isArray(b.items) ? b.items : [b.item])];
       if (!items.length || items.length > MAX_VISIT_ITEMS || !items.every((i) => typeof i === 'string' && /^[\w-]{1,80}$/.test(i))) return fail(400, 'Invalid item');
@@ -168,15 +196,14 @@ export default {
       return json({ id: row.id, name: row.name, updated: row.updated, data: JSON.parse(row.data) });
     }
     if (kpiId && req.method === 'PUT') {
-      let b;
-      try { b = await req.json(); } catch (e) { return fail(400, 'Invalid JSON'); }
+      const b = await readJson(req);
       if (!b || typeof b !== 'object') return fail(400, 'Invalid body');
       const name = typeof b.name === 'string' ? b.name.trim() : '';
       if (!name || name.length > 120) return fail(400, 'Invalid name');
       const d = b.data;
       if (!d || typeof d !== 'object' || d.version !== 2 || !d.nodes || typeof d.nodes !== 'object' || !Array.isArray(d.roots) || !Array.isArray(d.rels)) return fail(400, 'Invalid tree');
       const data = JSON.stringify(d);
-      if (data.length > MAX_TREE_BYTES) return fail(400, 'Tree too large');
+      if (new TextEncoder().encode(data).length > MAX_TREE_BYTES) return fail(400, 'Tree too large');
       const exists = await env.DB.prepare('SELECT 1 FROM kpi_trees WHERE id = ?').bind(kpiId[1]).first();
       if (!exists) {
         const { n } = await env.DB.prepare('SELECT COUNT(*) AS n FROM kpi_trees').first();
@@ -194,5 +221,17 @@ export default {
     }
 
     return fail(404, 'Not found');
+  },
+};
+
+export default {
+  async fetch(req, env) {
+    try {
+      return await api.handle(req, env);
+    } catch (e) {
+      const status = e instanceof HttpError ? e.status : 500;
+      if (status === 500) console.error(e);
+      return new Response(JSON.stringify({ error: status === 500 ? 'Server error' : e.message }), { status, headers: { ...baseHeaders(req), 'Content-Type': 'application/json' } });
+    }
   },
 };
