@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-27T21:15:41Z",
+ "generatedAt": "2026-11-28T07:46:00Z",
  "windowDays": 30,
  "kevCatalogVersion": "2026.11.27",
  "kevCount": 1808,
@@ -906,50 +906,6 @@
    "impact": "total",
    "cweId": "CWE-420",
    "cwe": "Unprotected Alternate Channel"
-  },
-  {
-   "id": "CVE-2026-41709",
-   "vendor": "Broadcom",
-   "product": "VMware ESX",
-   "name": "Broadcom VMWare ESX Insufficient Logging Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-28",
-    "due": "2026-11-11",
-    "ransomware": false
-   },
-   "epss": 0.005,
-   "percentile": 0.325,
-   "cvss": 2.7,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:L/A:N",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "partial",
-   "cweId": "CWE-778",
-   "cwe": "Insufficient logging"
-  },
-  {
-   "id": "CVE-2026-46300",
-   "vendor": "Linux",
-   "product": "Kernel",
-   "name": "Linux Kernel Missing Initialization of a Variable Vulnerability",
-   "published": null,
-   "kev": {
-    "added": "2026-10-28",
-    "due": "2026-10-31",
-    "ransomware": false
-   },
-   "epss": 0.03,
-   "percentile": 0.88,
-   "cvss": 7.8,
-   "cvssVersion": "3.1",
-   "cvssVector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
-   "exploitation": "active",
-   "automatable": "no",
-   "impact": "total",
-   "cweId": "CWE-123",
-   "cwe": "Missing Initialization of a Variable"
   },
   {
    "id": "CVE-2026-76418",
@@ -2124,6 +2080,24 @@
    "cwe": "OS Command Injection"
   },
   {
+   "id": "CVE-2026-135208",
+   "vendor": "kerberos-io",
+   "product": "Kerberos Agent",
+   "name": "Kerberos Agent before 3.14.4 Authentication Bypass via Hard-coded JWT Signing Key",
+   "published": "2026-11-23",
+   "kev": null,
+   "epss": 0.02,
+   "percentile": 0.814,
+   "cvss": 9.3,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
+   "exploitation": "poc",
+   "automatable": "yes",
+   "impact": "total",
+   "cweId": "CWE-1394",
+   "cwe": "Use of Default Cryptographic Key"
+  },
+  {
    "id": "CVE-2026-135789",
    "vendor": "D-Link",
    "product": "R95",
@@ -2137,6 +2111,24 @@
    "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
    "exploitation": "poc",
    "automatable": "no",
+   "impact": "total",
+   "cweId": "CWE-78",
+   "cwe": "OS Command Injection"
+  },
+  {
+   "id": "CVE-2026-135792",
+   "vendor": "Panabit",
+   "product": "Smart Application Gateway",
+   "name": "Panabit Smart Application Gateway Email Auth Code Sender user.cgi send_email_authcode os command injection",
+   "published": "2026-11-24",
+   "kev": null,
+   "epss": 0.023,
+   "percentile": 0.843,
+   "cvss": 10.0,
+   "cvssVersion": "4.0",
+   "cvssVector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H/E:P",
+   "exploitation": "poc",
+   "automatable": "yes",
    "impact": "total",
    "cweId": "CWE-78",
    "cwe": "OS Command Injection"
