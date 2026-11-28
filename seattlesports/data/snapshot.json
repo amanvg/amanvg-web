@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-28T02:32:57.406Z",
+ "generatedAt": "2026-11-28T11:30:15.571Z",
  "teams": {
   "Seahawks": {
    "id": "26",
@@ -590,7 +590,7 @@
      "cls": "phase-regular"
     },
     "lastGame": {
-     "date": "2026-11-26T02:40Z",
+     "date": "2026-11-28T01:00Z",
      "competitions": [
       {
        "status": {
@@ -604,44 +604,7 @@
         {
          "homeAway": "home",
          "winner": false,
-         "score": "1",
-         "team": {
-          "id": "124292",
-          "abbreviation": "SEA",
-          "shortDisplayName": "Kraken",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png"
-         }
-        },
-        {
-         "homeAway": "away",
-         "winner": true,
-         "score": "3",
-         "team": {
-          "id": "4",
-          "abbreviation": "CHI",
-          "shortDisplayName": "Blackhawks",
-          "logo": "https://a.espncdn.com/i/teamlogos/nhl/500/chi.png"
-         }
-        }
-       ],
-       "broadcasts": []
-      }
-     ]
-    },
-    "liveGame": {
-     "date": "2026-11-28T01:00Z",
-     "competitions": [
-      {
-       "status": {
-        "type": {
-         "state": "in",
-         "shortDetail": "6:16 - 2nd",
-         "description": "In Progress"
-        }
-       },
-       "competitors": [
-        {
-         "homeAway": "home",
+         "score": "2",
          "team": {
           "id": "6",
           "abbreviation": "EDM",
@@ -651,6 +614,8 @@
         },
         {
          "homeAway": "away",
+         "winner": true,
+         "score": "4",
          "team": {
           "id": "124292",
           "abbreviation": "SEA",
@@ -663,6 +628,7 @@
       }
      ]
     },
+    "liveGame": null,
     "nextGame": {
      "date": "2026-11-29T03:00Z",
      "competitions": [
@@ -715,7 +681,7 @@
       {
        "name": "gamesBehind",
        "abbreviation": "GB",
-       "displayValue": "19"
+       "displayValue": "17"
       },
       {
        "name": "losses",
@@ -725,12 +691,12 @@
       {
        "name": "points",
        "abbreviation": "PTS",
-       "displayValue": "23"
+       "displayValue": "25"
       },
       {
        "name": "wins",
        "abbreviation": "W",
-       "displayValue": "11"
+       "displayValue": "12"
       },
       {
        "name": "overtimeLosses",
@@ -760,7 +726,7 @@
        {
         "name": "losses",
         "abbreviation": "L",
-        "displayValue": "6"
+        "displayValue": "7"
        },
        {
         "name": "points",
@@ -859,6 +825,45 @@
      },
      {
       "team": {
+       "id": "124292",
+       "abbreviation": "SEA",
+       "displayName": "Seattle Kraken"
+      },
+      "stats": [
+       {
+        "name": "otLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       },
+       {
+        "name": "gamesBehind",
+        "abbreviation": "GB",
+        "displayValue": "17"
+       },
+       {
+        "name": "losses",
+        "abbreviation": "L",
+        "displayValue": "10"
+       },
+       {
+        "name": "points",
+        "abbreviation": "PTS",
+        "displayValue": "25"
+       },
+       {
+        "name": "wins",
+        "abbreviation": "W",
+        "displayValue": "12"
+       },
+       {
+        "name": "overtimeLosses",
+        "abbreviation": "OTL",
+        "displayValue": "1"
+       }
+      ]
+     },
+     {
+      "team": {
        "id": "25",
        "abbreviation": "ANA",
        "displayName": "Anaheim Ducks"
@@ -932,45 +937,6 @@
         "name": "overtimeLosses",
         "abbreviation": "OTL",
         "displayValue": "2"
-       }
-      ]
-     },
-     {
-      "team": {
-       "id": "124292",
-       "abbreviation": "SEA",
-       "displayName": "Seattle Kraken"
-      },
-      "stats": [
-       {
-        "name": "otLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
-       },
-       {
-        "name": "gamesBehind",
-        "abbreviation": "GB",
-        "displayValue": "19"
-       },
-       {
-        "name": "losses",
-        "abbreviation": "L",
-        "displayValue": "10"
-       },
-       {
-        "name": "points",
-        "abbreviation": "PTS",
-        "displayValue": "23"
-       },
-       {
-        "name": "wins",
-        "abbreviation": "W",
-        "displayValue": "11"
-       },
-       {
-        "name": "overtimeLosses",
-        "abbreviation": "OTL",
-        "displayValue": "1"
        }
       ]
      },
